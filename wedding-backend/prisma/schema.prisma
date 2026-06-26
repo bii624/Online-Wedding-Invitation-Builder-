@@ -142,7 +142,7 @@ model User {
   email         String?      @unique
   phone         String?      @unique
   passwordHash  String?      @map("password_hash") // NULL nếu đăng nhập qua social
-  fullName      String       @map("full_name")
+  fullName      String?       @map("full_name")
   avatarUrl     String?      @map("avatar_url")
   authProvider  AuthProvider @default(email) @map("auth_provider")
   providerId    String?      @map("provider_id") // id từ Google/Facebook
