@@ -6,7 +6,10 @@ import { UsersModule } from '@/users/users.module';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './passport/local.strategy';
 import { JwtStrategy } from './passport/jwt.strategy';
+import { GoogleStrategy } from './passport/google.strategy';
+import { FacebookStrategy } from './passport/facebook.strategy';
 import { AuthController } from './auth.controller';
+
 
 @Module({
   imports: [
@@ -27,8 +30,15 @@ import { AuthController } from './auth.controller';
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    GoogleStrategy,
+    FacebookStrategy,
+  ],
   exports: [AuthService],
   controllers: [AuthController],
 })
 export class AuthModule {}
+

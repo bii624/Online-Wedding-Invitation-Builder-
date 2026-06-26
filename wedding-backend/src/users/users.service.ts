@@ -174,4 +174,73 @@ export class UsersService {
     const deletedUser = await this.prisma.user.delete({ where: { id } });
     return new User(deletedUser);
   }
+
+  async updateUserToken(refreshToken: string | null, userId: string): Promise<void> {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { refreshToken },
+    });
+  }
+
+  async findUserByToken(refreshToken: string): Promise<User | null> {
+    const user = await this.prisma.user.findFirst({
+      where: { refreshToken },
+    });
+    return user ? new User(user) : null;
+  }
+
+  // =====================================================================
+  // ĐĂNG NHẬP MẠNG XÃ HỘI (GOOGLE & FACEBOOK) - TÌM HOẶC TẠO NGƯỜI DÙNG OAUTH
+  // =====================================================================
+  async findOrCreateOAuthUser(profile: {
+    email: string | null;
+    fullName: string;
+    avatarUrl: string | null;
+    providerId: string;
+    authProvider: 'google' | 'facebook';
+  }): Promise<User> {
+    // 1. Tìm user theo providerId và authProvider
+    if (profile.providerId) {
+      const user = await this.prisma.user.findFirst({
+        where: {
+          providerId: profile.providerId,
+          authProvider: profile.authProvider,
+        },
+      });
+      if (user) return new User(user);
+    }
+
+    // 2. Nếu tìm thấy email đã tồn tại ở tài khoản khác, liên kết providerId vào tài khoản đó
+    if (profile.email) {
+      const userByEmail = await this.prisma.user.findUnique({
+        where: { email: profile.email },
+      });
+      if (userByEmail) {
+        const updatedUser = await this.prisma.user.update({
+          where: { id: userByEmail.id },
+          data: {
+            providerId: profile.providerId,
+            authProvider: profile.authProvider,
+            avatarUrl: userByEmail.avatarUrl || profile.avatarUrl,
+          },
+        });
+        return new User(updatedUser);
+      }
+    }
+
+    // 3. Nếu chưa có tài khoản nào, tạo mới tài khoản
+    const newUser = await this.prisma.user.create({
+      data: {
+        email: profile.email,
+        fullName: profile.fullName,
+        avatarUrl: profile.avatarUrl,
+        providerId: profile.providerId,
+        authProvider: profile.authProvider,
+        status: 'active', // Đăng nhập qua mạng xã hội mặc định đã xác minh email
+      },
+    });
+    return new User(newUser);
+  }
 }
+
+

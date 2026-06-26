@@ -149,8 +149,10 @@ model User {
   role          UserRole     @default(user)
   status        UserStatus   @default(unverified)
   currentPlanId String?      @map("current_plan_id") @db.Uuid
+  refreshToken  String?      @map("refresh_token")
   createdAt     DateTime     @default(now()) @map("created_at")
   updatedAt     DateTime     @updatedAt @map("updated_at")
+
 
   currentPlan      Plan?            @relation(fields: [currentPlanId], references: [id], onDelete: SetNull)
   cards            Card[]

@@ -28,6 +28,10 @@ export class User implements PrismaUser {
   @Exclude()
   passwordHash!: string | null;
 
+  @Exclude()
+  refreshToken!: string | null;
+
+
   @ApiPropertyOptional({
     description: 'The full name of the user',
     example: 'Nguyen Van A',
