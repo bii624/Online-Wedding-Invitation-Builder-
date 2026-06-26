@@ -106,7 +106,20 @@ export class UsersService {
     }
     return new User(user);
   }
+  async findOneByEmail(email: string): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return null;
+    }
+    return new User(user);
+  }
 
+  async checkUserPassword(password: string, hash: string | null) {
+    if (!hash) {
+      return false;
+    }
+    return bcrypt.compareSync(password, hash);
+  }
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     // Ensure user exists
     await this.findOne(id);
