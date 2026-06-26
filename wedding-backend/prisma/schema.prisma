@@ -1,15 +1,539 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// =====================================================================
+// WEDDING CARD BUILDER - PRISMA SCHEMA
+// Tương ứng 1-1 với wedding_card_schema.sql (đã test trên PostgreSQL).
+//
+// Quy ước:
+//   - Model: PascalCase | Field: camelCase | DB table/column: snake_case
+//     (giữ nguyên qua @map / @@map để khớp với SQL gốc nếu cần chạy song song
+//     hoặc đối chiếu).
+//   - updatedAt dùng @updatedAt — Prisma tự cập nhật ở mọi lệnh update(),
+//     KHÔNG cần trigger trigger_set_updated_at() ở tầng DB nữa (trừ khi có
+//     hệ thống khác ghi trực tiếp vào DB ngoài Prisma).
+//   - id dùng @default(dbgenerated("gen_random_uuid()")) để Postgres tự sinh
+//     UUID giống bản SQL (cần extension pgcrypto, xem migration đầu tiên).
+// =====================================================================
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// =====================================================================
+// ENUMS
+// =====================================================================
+
+enum UserRole {
+  user
+  admin
+}
+
+enum UserStatus {
+  active
+  suspended
+  unverified
+}
+
+enum AuthProvider {
+  email
+  google
+  facebook
+}
+
+enum TemplateStatus {
+  draft
+  published
+  archived
+}
+
+enum CardStatus {
+  draft
+  published
+  archived
+}
+
+/// Loại trang trong thiệp (mỗi thiệp gồm nhiều "trang"/section)
+enum PageType {
+  cover // bìa / trang mở đầu
+  couple_intro // giới thiệu cô dâu & chú rể
+  love_story // câu chuyện tình yêu / timeline
+  event_info // thông tin giờ, địa điểm
+  gallery // album ảnh
+  rsvp // form xác nhận tham dự
+  wishes // tường lời chúc
+  thank_you // lời cảm ơn / kết thiệp
+  custom // trang tự do
+}
+
+/// Loại phần tử (block) kéo-thả tự do trên canvas
+enum BlockType {
+  text
+  image
+  shape
+  icon
+  line
+  video
+  audio
+  countdown // đồng hồ đếm ngược tới ngày cưới
+  map // bản đồ / chỉ đường
+  button // nút hành động
+  gallery // block hiển thị nhiều ảnh
+  rsvp_form // form RSVP nhúng vào canvas
+  wishes_wall // khung hiển thị lời chúc
+  qr_code
+}
+
+enum AssetType {
+  image
+  video
+  audio
+  font
+}
+
+enum GuestSide {
+  groom
+  bride
+  both
+}
+
+enum RsvpStatus {
+  yes
+  no
+  maybe
+}
+
+/// Loại element có sẵn trong thư viện (admin curate, user tìm kiếm & kéo vào canvas)
+enum ElementType {
+  icon // icon đơn sắc/đa sắc (hoa, nhẫn, trái tim, chim bồ câu...)
+  shape // hình khối cơ bản
+  illustration // minh hoạ phức tạp hơn icon
+  sticker // sticker trang trí
+  frame // khung viền ảnh trang trí
+  photo // ảnh stock thật (tab "Stock" / "Thay ảnh nhanh")
+}
+
+// =====================================================================
+// 1. USERS & PLANS
+// =====================================================================
+
+model Plan {
+  id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String // VD: Free, Premium, Pro
+  price        Decimal @default(0) @db.Decimal(12, 2)
+  durationDays Int?    @map("duration_days") // NULL = vĩnh viễn
+  maxCards     Int?    @map("max_cards") // NULL = không giới hạn
+  features     Json    @default("{}") // {"remove_watermark": true, ...}
+  isActive     Boolean @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  users            User[]
+  templates        Template[]
+  libraryElements  LibraryElement[]
+  cards            Card[]
+
+  @@map("plans")
+}
+
+model User {
+  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email         String?      @unique
+  phone         String?      @unique
+  passwordHash  String?      @map("password_hash") // NULL nếu đăng nhập qua social
+  fullName      String       @map("full_name")
+  avatarUrl     String?      @map("avatar_url")
+  authProvider  AuthProvider @default(email) @map("auth_provider")
+  providerId    String?      @map("provider_id") // id từ Google/Facebook
+  role          UserRole     @default(user)
+  status        UserStatus   @default(unverified)
+  currentPlanId String?      @map("current_plan_id") @db.Uuid
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+
+  currentPlan      Plan?            @relation(fields: [currentPlanId], references: [id], onDelete: SetNull)
+  cards            Card[]
+  assets           Asset[]
+  createdTemplates Template[]       @relation("TemplateCreatedBy")
+  createdElements  LibraryElement[] @relation("ElementCreatedBy")
+
+  @@index([email])
+  @@map("users")
+}
+
+// =====================================================================
+// 2. THƯ VIỆN ELEMENT CÓ SẴN (icon, hình khối, sticker, khung, ảnh stock...)
+//    Admin curate, user TÌM KIẾM (theo tên/tag) và kéo thả vào canvas.
+// =====================================================================
+
+model ElementCategory {
+  id       String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name     String // VD: "Hoa lá", "Khung viền", "Biểu tượng cưới"
+  slug     String  @unique
+  parentId String? @map("parent_id") @db.Uuid
+
+  parent   ElementCategory?  @relation("ElementCategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children ElementCategory[] @relation("ElementCategoryTree")
+  elements LibraryElement[]
+
+  @@map("element_categories")
+}
+
+model LibraryElement {
+  id              String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  categoryId      String?     @map("category_id") @db.Uuid
+  name            String // tên để admin quản lý + hiển thị khi hover
+  elementType     ElementType @map("element_type")
+  tags            String[]    @default([]) // từ khoá tìm kiếm, VD: ["hoa","lá","cưới"]
+  fileUrl         String      @map("file_url") // ảnh/SVG thật, dùng khi thả vào canvas
+  thumbnailUrl    String?     @map("thumbnail_url")
+  width           Float?
+  height          Float?
+  isRecolorable   Boolean     @default(false) @map("is_recolorable") // true nếu SVG cho phép đổi màu fill
+  isPremium       Boolean     @default(false) @map("is_premium")
+  requiredPlanId  String?     @map("required_plan_id") @db.Uuid
+  usageCount      Int         @default(0) @map("usage_count") // số lần được dùng, xếp hạng phổ biến
+  status          TemplateStatus @default(draft)
+  createdBy       String?     @map("created_by") @db.Uuid
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  category ElementCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  requiredPlan     Plan?           @relation(fields: [requiredPlanId], references: [id], onDelete: SetNull)
+  creator          User?           @relation("ElementCreatedBy", fields: [createdBy], references: [id], onDelete: SetNull)
+  templateBlocks   TemplateBlock[]
+  cardBlocks       CardBlock[]
+
+  @@index([categoryId])
+  @@index([status])
+  @@index([tags], type: Gin)
+  // Lưu ý: index GIN trigram cho tìm kiếm gần đúng theo `name`
+  // (gin_trgm_ops) cần extension pg_trgm — tạo qua migration SQL thủ công,
+  // Prisma chưa hỗ trợ khai báo operator class trực tiếp trong schema:
+  //   CREATE INDEX idx_library_elements_name_trgm
+  //     ON library_elements USING GIN (name gin_trgm_ops);
+  @@map("library_elements")
+}
+
+// =====================================================================
+// 3. TEMPLATES (thư viện mẫu do admin quản lý)
+// =====================================================================
+
+model TemplateCategory {
+  id       String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name     String // VD: "Thiệp cưới", "Tối giản", "Hoa văn"
+  slug     String  @unique
+  parentId String? @map("parent_id") @db.Uuid
+
+  parent    TemplateCategory?  @relation("TemplateCategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children  TemplateCategory[] @relation("TemplateCategoryTree")
+  templates Template[]
+
+  @@map("template_categories")
+}
+
+model Template {
+  id              String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  categoryId      String?        @map("category_id") @db.Uuid
+  name            String // VD: "Thiệp Cưới 223 Pre"
+  slug            String         @unique
+  thumbnailUrl    String?        @map("thumbnail_url")
+  isPremium       Boolean        @default(false) @map("is_premium")
+  requiredPlanId  String?        @map("required_plan_id") @db.Uuid // gói tối thiểu để dùng mẫu này
+  canvasWidth     Float          @default(414) @map("canvas_width") // kích thước canvas gốc (px, mobile-first)
+  canvasHeight    Float          @default(896) @map("canvas_height")
+  status          TemplateStatus @default(draft)
+  useCount        Int            @default(0) @map("use_count") // số lần được chọn, xếp hạng phổ biến
+  createdBy       String?        @map("created_by") @db.Uuid
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+
+  category      TemplateCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  requiredPlan  Plan?             @relation(fields: [requiredPlanId], references: [id], onDelete: SetNull)
+  creator       User?             @relation("TemplateCreatedBy", fields: [createdBy], references: [id], onDelete: SetNull)
+  pages         TemplatePage[]
+  cards         Card[]
+
+  @@index([categoryId])
+  @@index([status])
+  // Tìm kiếm gần đúng theo tên mẫu — xem ghi chú pg_trgm ở LibraryElement
+  @@map("templates")
+}
+
+/// Trang trong mẫu gốc (template). Mỗi mẫu có nhiều "trang" cuộn theo thứ tự.
+model TemplatePage {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  templateId String   @map("template_id") @db.Uuid
+  pageType   PageType @default(custom) @map("page_type")
+  position   Int      @default(0) // thứ tự hiển thị
+  width      Float    @default(414)
+  height     Float    @default(896)
+  background Json     @default("{}") // {"type":"color","value":"#fff"} | {"type":"image","url":"..."}
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  template Template        @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  blocks   TemplateBlock[]
+
+  @@index([templateId, position])
+  @@map("template_pages")
+}
+
+/// Block (phần tử) tự do trong trang mẫu gốc
+model TemplateBlock {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  pageId          String    @map("page_id") @db.Uuid
+  sourceElementId String?   @map("source_element_id") @db.Uuid // element gốc nếu lấy từ thư viện
+  blockType       BlockType @map("block_type")
+  posX            Float     @default(0) @map("pos_x")
+  posY            Float     @default(0) @map("pos_y")
+  width           Float     @default(100)
+  height          Float     @default(100)
+  rotation        Float     @default(0) // độ (0-360)
+  zIndex          Int       @default(0) @map("z_index")
+  content         Json      @default("{}") // nội dung riêng theo blockType, xem ghi chú cuối file SQL
+  style           Json      @default("{}") // màu, font, bo góc, đổ bóng, animation...
+  isLocked        Boolean   @default(false) @map("is_locked") // khoá để tránh user vô tình di chuyển
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  page          TemplatePage    @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  sourceElement LibraryElement? @relation(fields: [sourceElementId], references: [id], onDelete: SetNull)
+  clonedBlocks  CardBlock[]     @relation("CardBlockSourceTemplateBlock")
+
+  @@index([pageId, zIndex])
+  @@map("template_blocks")
+}
+
+// =====================================================================
+// 4. CARDS (thiệp do user tạo — bản "sống", chỉnh sửa tự do)
+// =====================================================================
+
+model Card {
+  id              String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId          String     @map("user_id") @db.Uuid
+  templateId      String?    @map("template_id") @db.Uuid // mẫu gốc đã dùng (NULL nếu tạo từ trang trắng)
+  slug            String     @unique // dùng cho URL public: /thiep/<slug>
+  title           String // tên nội bộ, VD "Thiệp cưới Thanh & Thuận"
+  groomName       String?    @map("groom_name")
+  brideName       String?    @map("bride_name")
+  status          CardStatus @default(draft)
+  isPublic        Boolean    @default(true) @map("is_public")
+  accessPassword  String?    @map("access_password") // mật khẩu xem thiệp (tuỳ chọn), nên hash
+  viewCount       Int        @default(0) @map("view_count")
+  planId          String?    @map("plan_id") @db.Uuid // gói áp dụng cho thiệp này
+  settings        Json       @default("{}") // nhạc nền, theme màu, font chủ đạo, hạn RSVP...
+  publishedAt     DateTime?  @map("published_at")
+  expiresAt       DateTime?  @map("expires_at") // thiệp hết hạn hiển thị (theo gói)
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  template      Template?      @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  plan          Plan?          @relation(fields: [planId], references: [id], onDelete: SetNull)
+  pages         CardPage[]
+  events        WeddingEvent[]
+  guests        Guest[]
+  rsvps         RsvpResponse[]
+  wishes        Wish[]
+  assets        Asset[]
+  views         CardView[]
+
+  @@index([userId])
+  @@index([slug])
+  @@index([status])
+  @@map("cards")
+}
+
+/// Trang trong thiệp của user (copy từ TemplatePage khi chọn mẫu, sau đó
+/// user có thể thêm/xoá/sắp xếp lại tự do)
+model CardPage {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId     String   @map("card_id") @db.Uuid
+  pageType   PageType @default(custom) @map("page_type")
+  position   Int      @default(0)
+  width      Float    @default(414)
+  height     Float    @default(896)
+  background Json     @default("{}")
+  isVisible  Boolean  @default(true) @map("is_visible")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  card   Card        @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  blocks CardBlock[]
+
+  @@index([cardId, position])
+  @@map("card_pages")
+}
+
+/// Block tự do trong trang thiệp của user — bảng trung tâm của trình
+/// editor kéo-thả (mọi hành động di chuyển/resize/xoay/đổi nội dung trên
+/// canvas đều ghi vào bảng này).
+model CardBlock {
+  id                     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  pageId                 String    @map("page_id") @db.Uuid
+  sourceTemplateBlockId  String?   @map("source_template_block_id") @db.Uuid // block gốc lúc clone, hỗ trợ "khôi phục mặc định"
+  sourceElementId        String?   @map("source_element_id") @db.Uuid // element gốc nếu kéo trực tiếp từ thư viện
+  blockType              BlockType @map("block_type")
+  posX                   Float     @default(0) @map("pos_x")
+  posY                   Float     @default(0) @map("pos_y")
+  width                  Float     @default(100)
+  height                 Float     @default(100)
+  rotation               Float     @default(0)
+  zIndex                 Int       @default(0) @map("z_index")
+  content                Json      @default("{}")
+  style                  Json      @default("{}")
+  isLocked               Boolean   @default(false) @map("is_locked")
+  isVisible              Boolean   @default(true) @map("is_visible")
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
+
+  page                CardPage        @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  sourceTemplateBlock TemplateBlock?  @relation("CardBlockSourceTemplateBlock", fields: [sourceTemplateBlockId], references: [id], onDelete: SetNull)
+  sourceElement       LibraryElement? @relation(fields: [sourceElementId], references: [id], onDelete: SetNull)
+
+  @@index([pageId, zIndex])
+  @@map("card_blocks")
+}
+
+// =====================================================================
+// 5. SỰ KIỆN CƯỚI (giờ, địa điểm)
+// =====================================================================
+
+model WeddingEvent {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId    String    @map("card_id") @db.Uuid
+  eventName String    @map("event_name") // VD: "Lễ thành hôn", "Tiệc cưới nhà trai"
+  eventDate DateTime  @map("event_date") @db.Date
+  startTime DateTime? @map("start_time") @db.Time
+  endTime   DateTime? @map("end_time") @db.Time
+  venueName String?   @map("venue_name")
+  address   String?
+  lat       Float?
+  lng       Float?
+  mapUrl    String?   @map("map_url")
+  position  Int       @default(0) // thứ tự hiển thị nếu có nhiều buổi lễ
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  card  Card           @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  rsvps RsvpResponse[]
+
+  @@index([cardId])
+  @@map("wedding_events")
+}
+
+// =====================================================================
+// 6. KHÁCH MỜI, RSVP, LỜI CHÚC
+// =====================================================================
+
+/// Danh sách khách mời (tuỳ chọn): cho phép chủ thiệp quản lý danh sách
+/// và sinh link mời riêng từng khách (biết ai đã xem / đã phản hồi).
+model Guest {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId        String    @map("card_id") @db.Uuid
+  name          String
+  phone         String?
+  groupName     String?   @map("group_name") // VD: "Họ nhà trai", "Bạn cô dâu"
+  side          GuestSide @default(both)
+  inviteToken   String    @unique @map("invite_token") // /thiep/<slug>?to=<inviteToken>
+  maxCompanions Int       @default(1) @map("max_companions")
+  viewedAt      DateTime? @map("viewed_at") // lần đầu khách mở link
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  card  Card           @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  rsvps RsvpResponse[]
+  wishes Wish[]
+  views CardView[]
+
+  @@index([cardId])
+  @@index([inviteToken])
+  @@map("guests")
+}
+
+/// Phản hồi tham dự (RSVP)
+model RsvpResponse {
+  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId       String     @map("card_id") @db.Uuid
+  guestId      String?    @map("guest_id") @db.Uuid // NULL nếu khách tự điền không qua link riêng
+  eventId      String?    @map("event_id") @db.Uuid // RSVP theo buổi lễ cụ thể (nếu có nhiều buổi)
+  guestName    String     @map("guest_name") // tên tự điền, độc lập với Guest.name
+  phone        String?
+  attending    RsvpStatus
+  numAttendees Int        @default(1) @map("num_attendees")
+  note         String?
+  createdAt    DateTime   @default(now()) @map("created_at")
+
+  card  Card          @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  guest Guest?        @relation(fields: [guestId], references: [id], onDelete: SetNull)
+  event WeddingEvent? @relation(fields: [eventId], references: [id], onDelete: SetNull)
+
+  @@index([cardId])
+  @@index([guestId])
+  @@map("rsvp_responses")
+}
+
+/// Lời chúc (guestbook / tường lời chúc)
+model Wish {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId      String   @map("card_id") @db.Uuid
+  guestId     String?  @map("guest_id") @db.Uuid
+  displayName String   @map("display_name")
+  avatarUrl   String?  @map("avatar_url")
+  message     String
+  isApproved  Boolean  @default(true) @map("is_approved") // chủ thiệp có thể duyệt trước khi public
+  isHidden    Boolean  @default(false) @map("is_hidden") // ẩn nhưng không xoá
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  card  Card   @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  guest Guest? @relation(fields: [guestId], references: [id], onDelete: SetNull)
+
+  @@index([cardId])
+  @@map("wishes")
+}
+
+// =====================================================================
+// 7. ASSETS (ảnh / video / âm thanh / font người dùng tải lên)
+// =====================================================================
+
+model Asset {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId       String?   @map("user_id") @db.Uuid
+  cardId       String?   @map("card_id") @db.Uuid // NULL = thư viện chung của user
+  type         AssetType
+  url          String
+  thumbnailUrl String?   @map("thumbnail_url")
+  fileSize     BigInt?   @map("file_size") // bytes
+  width        Int? // cho ảnh/video
+  height       Int?
+  durationMs   Int?      @map("duration_ms") // cho audio/video
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  card Card? @relation(fields: [cardId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([cardId])
+  @@map("assets")
+}
+
+// =====================================================================
+// 8. THỐNG KÊ LƯỢT XEM
+// =====================================================================
+
+model CardView {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cardId    String   @map("card_id") @db.Uuid
+  guestId   String?  @map("guest_id") @db.Uuid
+  ipHash    String?  @map("ip_hash") // hash IP, không lưu IP thô
+  userAgent String?  @map("user_agent")
+  viewedAt  DateTime @default(now()) @map("viewed_at")
+
+  card  Card   @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  guest Guest? @relation(fields: [guestId], references: [id], onDelete: SetNull)
+
+  @@index([cardId, viewedAt])
+  @@map("card_views")
 }
