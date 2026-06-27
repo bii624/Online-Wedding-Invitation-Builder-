@@ -18,15 +18,17 @@ import { AuthController } from './auth.controller';
     ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret:
-          configService.get<string>('JWT_ACCESS_TOKEN_SECRET') || 'dev-secret',
-        signOptions: {
-          expiresIn: Number(
-            configService.get<string>('JWT_ACCESS_EXPIRES') || '3600',
-          ),
-        },
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const expiresVal = configService.get<string>('JWT_ACCESS_EXPIRES') || '3600';
+        const expiresIn = /^\d+$/.test(expiresVal) ? Number(expiresVal) : expiresVal;
+        return {
+          secret:
+            configService.get<string>('JWT_ACCESS_TOKEN_SECRET') || 'dev-secret',
+          signOptions: {
+            expiresIn: expiresIn as any,
+          },
+        };
+      },
       inject: [ConfigService],
     }),
   ],
@@ -40,5 +42,5 @@ import { AuthController } from './auth.controller';
   exports: [AuthService],
   controllers: [AuthController],
 })
-export class AuthModule {}
+export class AuthModule { }
 

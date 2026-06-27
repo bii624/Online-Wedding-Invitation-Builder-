@@ -2,14 +2,14 @@
 // CHỨC NĂNG ĐĂNG NHẬP BẰNG FACEBOOK - FACEBOOK AUTH GUARD
 // =====================================================================
 
-import { Injectable } from '@nestjs/common';
+import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
 export class FacebookAuthGuard extends AuthGuard('facebook') {
-  constructor() {
-    super({
-      scope: ['email'],
-    });
+  getAuthenticateOptions(context: ExecutionContext) {
+    return {
+      scope: ['email'], // Cấu hình scope chuẩn tại đây
+    };
   }
 }
