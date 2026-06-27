@@ -60,7 +60,7 @@ export default function LoginPage() {
                 <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
                   Mật khẩu
                 </label>
-                <a href="#" className="text-xs font-bold text-rose-500 hover:underline">
+                <a href="/reset-password" className="text-xs font-bold text-rose-500 hover:underline">
                   Quên mật khẩu?
                 </a>
               </div>
@@ -121,7 +121,7 @@ export default function LoginPage() {
 
           <p className="mt-8 text-center text-xs text-zinc-400 font-medium">
             Chưa có tài khoản?{" "}
-            <a href="#" className="text-rose-500 font-bold hover:underline">
+            <a href="/signup" className="text-rose-500 font-bold hover:underline">
               Đăng ký miễn phí
             </a>
           </p>

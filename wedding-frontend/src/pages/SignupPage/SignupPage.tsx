@@ -28,10 +28,8 @@ export default function SignupPage() {
     <div className="min-h-screen bg-zinc-50 flex items-center justify-center p-0 md:p-6 font-sans">
       <div className="bg-white w-full max-w-5xl min-h-[650px] md:rounded-[2.5rem] shadow-xl border border-zinc-100 overflow-hidden grid grid-cols-1 lg:grid-cols-12">
         
-        {/* CỘT TRÁI: FORM ĐĂNG KÝ (Chiếm 5/12 cột trên màn hình lớn) */}
         <div className="lg:col-span-5 p-8 md:p-12 flex flex-col justify-center text-left">
           
-          {/* LOGO & TIÊU ĐỀ */}
           <div className="mb-6 space-y-2">
             <div className="flex items-center gap-2">
               <RevolvingHeartsIcon size={28} color="#f43f5e" />
@@ -47,7 +45,6 @@ export default function SignupPage() {
             </p>
           </div>
 
-          {/* FORM NHẬP LIỆU ĐĂNG KÝ */}
           <form onSubmit={handleSubmit} className="space-y-3.5">
             
             {/* Trường Họ và Tên */}
@@ -185,17 +182,15 @@ export default function SignupPage() {
             </button>
           </div>
 
-          {/* CHUYỂN NGƯỢC VỀ LOGIN */}
           <p className="mt-6 text-center text-xs text-zinc-400 font-medium font-poppins">
             Đã có tài khoản rồi?{" "}
-            <a href="#" className="text-rose-500 font-bold hover:underline">
+            <a href="/login" className="text-rose-500 font-bold hover:underline">
               Đăng nhập ngay
             </a>
           </p>
 
         </div>
 
-        {/* CỘT PHẢI: BANNER ẢNH CƯỚI NGHỆ THUẬT (Ẩn trên Mobile) */}
         <div className="hidden lg:block lg:col-span-7 relative bg-zinc-100">
           <img
             src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=1200" 

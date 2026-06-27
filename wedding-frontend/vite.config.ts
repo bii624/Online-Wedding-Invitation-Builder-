@@ -5,6 +5,6 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   resolve: {
-  dedupe: ['react', 'react-dom', 'framer-motion'] // Thêm cả framer-motion vào đây
+  dedupe: ['react', 'react-dom', 'framer-motion'] 
 }
 })
