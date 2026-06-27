@@ -1,0 +1,284 @@
+/* ============================================================
+   FILMSTRIP & AI COLOR PANEL STYLES
+   ============================================================ */
+
+/* ── Filmstrip ────────────────────────────────────────────── */
+.editor-filmstrip {
+  height: var(--ed-filmstrip-h);
+  background: var(--ed-bg-toolbar);
+  border-top: 1px solid var(--ed-border);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.filmstrip-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ed-text-muted);
+  white-space: nowrap;
+  margin-right: 10px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.filmstrip-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 8px 0;
+  flex: 1;
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.filmstrip-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Filmstrip Item ───────────────────────────────────────── */
+.filmstrip-item {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  position: relative;
+}
+
+.filmstrip-thumb {
+  width: 52px;
+  height: 68px;
+  border-radius: var(--ed-radius-sm);
+  border: 2px solid var(--ed-border);
+  overflow: hidden;
+  background: #f8f8fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--ed-transition);
+  position: relative;
+}
+
+.filmstrip-item:hover .filmstrip-thumb {
+  border-color: var(--ed-accent);
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);
+}
+
+.filmstrip-item.active .filmstrip-thumb {
+  border-color: var(--ed-accent);
+  box-shadow: 0 0 0 2px var(--ed-accent-light), 0 2px 8px rgba(124, 58, 237, 0.3);
+}
+
+.filmstrip-thumb-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Mini canvas preview inside thumbnail */
+.filmstrip-thumb-preview {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  color: var(--ed-text-muted);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Grid pattern inside thumbnail */
+.filmstrip-thumb-preview::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(124, 58, 237, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.06) 1px, transparent 1px);
+  background-size: 6px 6px;
+}
+
+.filmstrip-page-num {
+  font-size: 9px;
+  color: var(--ed-text-muted);
+  font-weight: 500;
+}
+
+.filmstrip-item.active .filmstrip-page-num {
+  color: var(--ed-accent);
+  font-weight: 600;
+}
+
+/* ── Add Page Button ─────────────────────────────────────── */
+.filmstrip-add-btn {
+  flex-shrink: 0;
+  width: 52px;
+  height: 68px;
+  border-radius: var(--ed-radius-sm);
+  border: 2px dashed var(--ed-border);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ed-text-muted);
+  cursor: pointer;
+  transition: all var(--ed-transition);
+  margin-top: -22px; /* align with thumbs */
+}
+.filmstrip-add-btn:hover {
+  border-color: var(--ed-accent);
+  color: var(--ed-accent);
+  background: var(--ed-accent-light);
+}
+.filmstrip-add-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── Filmstrip Nav Buttons ───────────────────────────────── */
+.filmstrip-nav-btn {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ed-bg-panel);
+  border: 1px solid var(--ed-border);
+  color: var(--ed-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--ed-shadow-sm);
+  transition: all var(--ed-transition);
+}
+.filmstrip-nav-btn:hover {
+  background: var(--ed-accent-light);
+  border-color: var(--ed-accent);
+  color: var(--ed-accent);
+}
+.filmstrip-nav-btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* ============================================================
+   AI COLOR PANEL
+   ============================================================ */
+.ai-color-panel {
+  position: fixed;
+  bottom: 120px;
+  right: calc(var(--ed-right-panel-w) + 16px);
+  z-index: 80;
+  background: var(--ed-bg-panel);
+  border: 1px solid var(--ed-border);
+  border-radius: var(--ed-radius-lg);
+  box-shadow: var(--ed-shadow-lg);
+  overflow: hidden;
+  width: 140px;
+  animation: panel-appear var(--ed-transition-slow) ease;
+}
+
+@keyframes panel-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.ai-color-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  color: #fff;
+}
+.ai-color-title {
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.ai-color-title svg {
+  width: 12px;
+  height: 12px;
+}
+.ai-color-close {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  color: #fff;
+  transition: background var(--ed-transition);
+}
+.ai-color-close:hover {
+  background: rgba(255,255,255,0.35);
+}
+
+.ai-color-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 8px;
+}
+.ai-color-swatch {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--ed-radius-sm);
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all var(--ed-transition);
+  position: relative;
+}
+.ai-color-swatch:hover {
+  transform: scale(1.15);
+  border-color: rgba(255,255,255,0.6);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+.ai-color-swatch.selected {
+  border-color: var(--ed-text-primary);
+  transform: scale(1.1);
+}
+
+.ai-color-footer {
+  padding: 6px 8px;
+  border-top: 1px solid var(--ed-border);
+}
+.ai-color-refresh-btn {
+  width: 100%;
+  padding: 5px 8px;
+  border-radius: var(--ed-radius-sm);
+  background: var(--ed-accent-light);
+  color: var(--ed-accent);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--ed-transition);
+  border: 1px solid transparent;
+}
+.ai-color-refresh-btn:hover {
+  background: var(--ed-accent);
+  color: #fff;
+}

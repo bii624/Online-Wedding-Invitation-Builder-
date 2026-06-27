@@ -1,0 +1,140 @@
+/* ============================================================
+   LEFT TOOLBAR (SIDEBAR) STYLES
+   ============================================================ */
+
+.editor-toolbar {
+  width: var(--ed-toolbar-w);
+  background: var(--ed-bg-toolbar);
+  border-right: 1px solid var(--ed-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+  flex-shrink: 0;
+  box-shadow: var(--ed-shadow-panel);
+  z-index: 50;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.toolbar-tools {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  width: 100%;
+  padding: 0 4px;
+}
+
+.toolbar-footer {
+  padding: 8px 4px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-top: 1px solid var(--ed-border);
+  margin-top: 4px;
+}
+
+/* ── Tool Button ──────────────────────────────────────────── */
+.toolbar-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  padding: 8px 4px;
+  border-radius: var(--ed-radius-md);
+  color: var(--ed-text-secondary);
+  transition: all var(--ed-transition);
+  position: relative;
+  min-height: 52px;
+  cursor: pointer;
+}
+
+.toolbar-btn:hover {
+  background: var(--ed-bg-hover);
+  color: var(--ed-text-primary);
+}
+
+.toolbar-btn.active {
+  background: var(--ed-accent-light);
+  color: var(--ed-accent);
+}
+
+.toolbar-btn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  transition: transform var(--ed-transition);
+}
+
+.toolbar-btn:hover svg {
+  transform: scale(1.1);
+}
+
+.toolbar-btn-label {
+  font-size: 10px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* ── Tooltip ──────────────────────────────────────────────── */
+.toolbar-btn::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--ed-bg-header);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: var(--ed-radius-sm);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--ed-transition);
+  z-index: 200;
+  box-shadow: var(--ed-shadow-md);
+}
+.toolbar-btn:hover::after {
+  opacity: 1;
+}
+
+/* ── Divider ──────────────────────────────────────────────── */
+.toolbar-divider {
+  width: 40px;
+  height: 1px;
+  background: var(--ed-border);
+  margin: 4px auto;
+  flex-shrink: 0;
+}
+
+/* ── Help button specific ─────────────────────────────────── */
+.toolbar-help-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--ed-bg-hover);
+  color: var(--ed-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--ed-transition);
+  border: 1px solid var(--ed-border);
+}
+.toolbar-help-btn:hover {
+  background: var(--ed-accent-light);
+  color: var(--ed-accent);
+  border-color: var(--ed-accent);
+}
+.toolbar-help-btn svg {
+  width: 16px;
+  height: 16px;
+}
