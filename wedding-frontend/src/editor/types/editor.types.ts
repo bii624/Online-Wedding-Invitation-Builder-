@@ -133,8 +133,11 @@ export interface BackgroundProperties {
 
 // ── Music Properties ──────────────────────────────────────
 export interface MusicProperties {
+  id: string;
   src: string;
   name: string;
+  duration?: number;
+  source?: 'uploaded' | 'library';
   autoPlay: boolean;
   loop: boolean;
   volume: number; // 0–1
@@ -193,6 +196,7 @@ export interface EditorState {
   selectedElement: CanvasElement | null;
   elements: CanvasElement[];
   uploadedImages: UploadedImage[];
+  uploadedMusics: MusicProperties[];
   zoom: number;
   showGrid: boolean;
   canvasWidth: number;

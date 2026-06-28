@@ -4,6 +4,7 @@
 
 import { useRef, useState } from 'react';
 import { BackgroundPanel } from './BackgroundPanel';
+import { MusicPanel } from './MusicPanel';
 import '../styles/LeftToolbar.css';
 import { useEditorStore } from '../store/editorStore';
 import type { ToolType, UploadedImage } from '../types/editor.types';
@@ -235,6 +236,7 @@ export function LeftToolbar() {
   const { activeTool, setActiveTool, addTextElement, addShapeElement } = useEditorStore();
   const [showImagePanel, setShowImagePanel] = useState(false);
   const [showShapePopup, setShowShapePopup] = useState(false);
+  const [showMusicPanel, setShowMusicPanel] = useState(false);
 
   const handleToolClick = (tool: ToolType) => {
     if (tool === 'image') {
@@ -242,6 +244,8 @@ export function LeftToolbar() {
       const next = activeTool === 'image' ? !showImagePanel : true;
       setActiveTool('image');
       setShowImagePanel(next);
+      setShowShapePopup(false);
+      setShowMusicPanel(false);
       return;
     }
     if (tool === 'tools') {
@@ -249,11 +253,21 @@ export function LeftToolbar() {
       setActiveTool('tools');
       setShowShapePopup(next);
       setShowImagePanel(false);
+      setShowMusicPanel(false);
+      return;
+    }
+    if (tool === 'music') {
+      const next = activeTool === 'music' ? !showMusicPanel : true;
+      setActiveTool('music');
+      setShowMusicPanel(next);
+      setShowShapePopup(false);
+      setShowImagePanel(false);
       return;
     }
     // Close panels when switching to another tool
     setShowImagePanel(false);
     setShowShapePopup(false);
+    setShowMusicPanel(false);
     setActiveTool(tool);
     if (tool === 'text') {
       addTextElement();
@@ -296,6 +310,11 @@ export function LeftToolbar() {
       {/* Image upload slide-out panel */}
       {showImagePanel && (
         <ImageUploadPanel onClose={() => setShowImagePanel(false)} />
+      )}
+
+      {/* Music slide-out panel */}
+      {showMusicPanel && (
+        <MusicPanel onClose={() => setShowMusicPanel(false)} />
       )}
 
       {/* Background slide-out panel */}

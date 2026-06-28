@@ -148,6 +148,8 @@ interface EditorActions {
   toggleAIColorPanel: () => void;
   addUploadedImage: (img: UploadedImage) => void;
   removeUploadedImage: (id: string) => void;
+  addUploadedMusic: (music: MusicProperties) => void;
+  removeUploadedMusic: (id: string) => void;
   setMusic: (music: MusicProperties | null) => void;
   undo: () => void;
   redo: () => void;
@@ -177,6 +179,7 @@ const INITIAL_STATE: EditorState = {
   selectedElement: INITIAL_ELEMENTS[0],
   elements: INITIAL_ELEMENTS,
   uploadedImages: [],
+  uploadedMusics: [],
   zoom: 100,
   showGrid: true,
   canvasWidth: 400,
@@ -217,7 +220,15 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     const { elements } = get();
     const updated = elements.map((el) => ({ ...el, isSelected: el.id === id }));
     const selected = id ? updated.find((el) => el.id === id) ?? null : null;
-    set({ elements: updated, selectedElement: selected });
+    
+    let activeTool = get().activeTool;
+    if (selected) {
+      if (selected.type === 'text') activeTool = 'text';
+      else if (selected.type === 'image') activeTool = 'image';
+      else if (selected.type === 'shape') activeTool = 'tools';
+    }
+
+    set({ elements: updated, selectedElement: selected, activeTool });
   },
 
   // ── Add text element ──────────────────────────────────
@@ -485,6 +496,22 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     set((s) => ({ uploadedImages: [...s.uploadedImages, img] })),
   removeUploadedImage: (id) =>
     set((s) => ({ uploadedImages: s.uploadedImages.filter((i) => i.id !== id) })),
+
+  // ── Uploaded music management ────────────────────────
+  addUploadedMusic: (music) =>
+    set((s) => ({ uploadedMusics: [music, ...s.uploadedMusics] })),
+  removeUploadedMusic: (id) => {
+    set((s) => {
+      const musicToRemove = s.uploadedMusics.find((m) => m.id === id);
+      if (musicToRemove && musicToRemove.src.startsWith('blob:')) {
+        URL.revokeObjectURL(musicToRemove.src);
+      }
+      return {
+        uploadedMusics: s.uploadedMusics.filter((m) => m.id !== id),
+        music: s.music?.id === id ? null : s.music,
+      };
+    });
+  },
 
   // ── Music ─────────────────────────────────────────────
   setMusic: (music) => set({ music }),

@@ -13,8 +13,7 @@
   flex-shrink: 0;
   box-shadow: var(--ed-shadow-panel);
   z-index: 50;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: visible;
 }
 
 .toolbar-tools {
@@ -150,7 +149,7 @@
 
 /* ── Image Upload Sub-Panel ───────────────────────────────── */
 .lt-image-panel {
-  width: 230px;
+  width: 340px;
   height: 100%;
   background: var(--ed-bg-panel);
   border-right: 1px solid var(--ed-border);
