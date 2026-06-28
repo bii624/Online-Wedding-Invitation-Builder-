@@ -20,22 +20,25 @@
   background: var(--ed-bg-panel-alt);
   flex-shrink: 0;
 }
+
 .right-panel-tab {
   flex: 1;
-  padding: 11px 8px;
+  padding: 14px 10px;
   text-align: center;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--ed-text-secondary);
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: all var(--ed-transition);
   background: none;
 }
+
 .right-panel-tab:hover {
   color: var(--ed-text-primary);
   background: var(--ed-bg-hover);
 }
+
 .right-panel-tab.active {
   color: var(--ed-accent);
   border-bottom-color: var(--ed-accent);
@@ -51,8 +54,8 @@
 
 /* ── Panel Hint ──────────────────────────────────────────── */
 .right-panel-hint {
-  padding: 8px 14px 12px;
-  font-size: 11px;
+  padding: 10px 16px 14px;
+  font-size: 12px;
   color: var(--ed-text-muted);
   border-bottom: 1px solid var(--ed-border);
   background: var(--ed-bg-panel-alt);
@@ -63,40 +66,47 @@
 .right-section {
   border-bottom: 1px solid var(--ed-border);
 }
+
 .right-section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px 8px;
+  padding: 14px 16px 10px;
   cursor: pointer;
   user-select: none;
 }
+
 .right-section-header:hover {
   background: var(--ed-bg-hover);
 }
+
 .right-section-title {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--ed-text-primary);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
+
 .right-section-title svg {
-  width: 13px;
-  height: 13px;
+  width: 14px;
+  height: 14px;
   color: var(--ed-accent);
 }
+
 .right-section-chevron {
   color: var(--ed-text-muted);
-  font-size: 10px;
+  font-size: 12px;
   transition: transform var(--ed-transition);
 }
+
 .right-section-chevron.open {
   transform: rotate(180deg);
 }
+
 .right-section-body {
-  padding: 4px 14px 12px;
+  padding: 12px 24px 18px;
 }
 
 /* ── Form Controls ───────────────────────────────────────── */
@@ -104,30 +114,34 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
-  gap: 8px;
+  margin-bottom: 12px;
+  gap: 12px;
 }
+
 .rp-field:last-child {
   margin-bottom: 0;
 }
+
 .rp-label {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ed-text-secondary);
   white-space: nowrap;
   flex-shrink: 0;
-  min-width: 52px;
+  min-width: 60px;
 }
+
 .rp-input {
   flex: 1;
-  padding: 5px 8px;
+  padding: 6px 10px;
   border: 1px solid var(--ed-border);
   border-radius: var(--ed-radius-md);
   background: var(--ed-bg-panel-alt);
   color: var(--ed-text-primary);
-  font-size: 12px;
+  font-size: 13px;
   transition: border-color var(--ed-transition);
   min-width: 0;
 }
+
 .rp-input:focus {
   outline: none;
   border-color: var(--ed-accent);
@@ -136,12 +150,12 @@
 
 .rp-select {
   flex: 1;
-  padding: 5px 6px;
+  padding: 6px 8px;
   border: 1px solid var(--ed-border);
   border-radius: var(--ed-radius-md);
   background: var(--ed-bg-panel-alt);
   color: var(--ed-text-primary);
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
   transition: border-color var(--ed-transition);
   appearance: none;
@@ -150,6 +164,7 @@
   background-position: right 8px center;
   padding-right: 24px;
 }
+
 .rp-select:focus {
   outline: none;
   border-color: var(--ed-accent);
@@ -159,32 +174,35 @@
 .rp-stepper {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   flex: 1;
 }
+
 .rp-stepper-input {
   flex: 1;
-  padding: 5px 6px;
+  padding: 6px 8px;
   border: 1px solid var(--ed-border);
   border-radius: var(--ed-radius-md);
   background: var(--ed-bg-panel-alt);
-  font-size: 12px;
+  font-size: 13px;
   text-align: center;
   color: var(--ed-text-primary);
   min-width: 0;
 }
+
 .rp-stepper-input:focus {
   outline: none;
   border-color: var(--ed-accent);
 }
+
 .rp-stepper-btn {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   border-radius: var(--ed-radius-sm);
   background: var(--ed-bg-hover);
   border: 1px solid var(--ed-border);
   color: var(--ed-text-primary);
-  font-size: 14px;
+  font-size: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -193,6 +211,7 @@
   flex-shrink: 0;
   transition: all var(--ed-transition);
 }
+
 .rp-stepper-btn:hover {
   background: var(--ed-accent-light);
   border-color: var(--ed-accent);
@@ -202,17 +221,18 @@
 /* ── Format buttons (B/I/U/S) ────────────────────────────── */
 .rp-format-group {
   display: flex;
-  gap: 3px;
+  gap: 4px;
   flex-wrap: wrap;
 }
+
 .rp-format-btn {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: var(--ed-radius-sm);
   border: 1px solid var(--ed-border);
   background: var(--ed-bg-panel-alt);
   color: var(--ed-text-secondary);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -220,15 +240,18 @@
   cursor: pointer;
   transition: all var(--ed-transition);
 }
+
 .rp-format-btn:hover {
   background: var(--ed-bg-hover);
   color: var(--ed-text-primary);
 }
+
 .rp-format-btn.active {
   background: var(--ed-accent-light);
   border-color: var(--ed-accent);
   color: var(--ed-accent);
 }
+
 .rp-format-btn svg {
   width: 12px;
   height: 12px;
@@ -237,11 +260,12 @@
 /* ── Align buttons ───────────────────────────────────────── */
 .rp-align-group {
   display: flex;
-  gap: 2px;
+  gap: 4px;
 }
+
 .rp-align-btn {
   flex: 1;
-  height: 28px;
+  height: 32px;
   border-radius: var(--ed-radius-sm);
   border: 1px solid var(--ed-border);
   background: var(--ed-bg-panel-alt);
@@ -252,15 +276,18 @@
   cursor: pointer;
   transition: all var(--ed-transition);
 }
+
 .rp-align-btn:hover {
   background: var(--ed-bg-hover);
   color: var(--ed-text-primary);
 }
+
 .rp-align-btn.active {
   background: var(--ed-accent-light);
   border-color: var(--ed-accent);
   color: var(--ed-accent);
 }
+
 .rp-align-btn svg {
   width: 13px;
   height: 13px;
@@ -273,21 +300,24 @@
   gap: 8px;
   margin-bottom: 10px;
 }
+
 .rp-color-label {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--ed-text-secondary);
-  min-width: 52px;
+  min-width: 60px;
   flex-shrink: 0;
 }
+
 .rp-color-swatch-wrap {
   display: flex;
   align-items: center;
   gap: 6px;
   flex: 1;
 }
+
 .rp-color-swatch {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: var(--ed-radius-sm);
   border: 1px solid var(--ed-border);
   cursor: pointer;
@@ -296,10 +326,12 @@
   flex-shrink: 0;
   transition: transform var(--ed-transition), box-shadow var(--ed-transition);
 }
+
 .rp-color-swatch:hover {
   transform: scale(1.1);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
+
 .rp-color-swatch input[type='color'] {
   position: absolute;
   inset: -4px;
@@ -310,12 +342,14 @@
   padding: 0;
   border: none;
 }
+
 .rp-color-hex {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--ed-text-secondary);
   font-family: 'SF Mono', 'Fira Code', monospace;
   letter-spacing: 0.5px;
 }
+
 .rp-color-transparent {
   background: repeating-conic-gradient(#d0d0d0 0% 25%, #ffffff 0% 50%) 0 0 / 8px 8px;
 }
@@ -327,6 +361,7 @@
   gap: 8px;
   flex: 1;
 }
+
 .rp-slider {
   flex: 1;
   -webkit-appearance: none;
@@ -337,6 +372,7 @@
   outline: none;
   cursor: pointer;
 }
+
 .rp-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 14px;
@@ -347,11 +383,12 @@
   border: 2px solid #fff;
   box-shadow: 0 1px 4px rgba(124, 58, 237, 0.4);
 }
+
 .rp-slider-val {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--ed-text-primary);
-  min-width: 28px;
+  min-width: 32px;
   text-align: right;
 }
 
@@ -360,27 +397,32 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px;
+  margin-bottom: 20px;
 }
+
 .rp-grid-input-wrap {
   display: flex;
   flex-direction: column;
   gap: 3px;
 }
+
 .rp-grid-input-label {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--ed-text-muted);
   text-align: center;
 }
+
 .rp-grid-input {
   width: 100%;
-  padding: 4px 6px;
+  padding: 6px 8px;
   border: 1px solid var(--ed-border);
   border-radius: var(--ed-radius-sm);
   background: var(--ed-bg-panel-alt);
-  font-size: 12px;
+  font-size: 13px;
   text-align: center;
   color: var(--ed-text-primary);
 }
+
 .rp-grid-input:focus {
   outline: none;
   border-color: var(--ed-accent);
@@ -397,11 +439,13 @@
   color: var(--ed-text-muted);
   text-align: center;
 }
+
 .right-panel-empty svg {
   width: 40px;
   height: 40px;
   opacity: 0.3;
 }
+
 .right-panel-empty p {
   font-size: 12px;
   line-height: 1.5;
@@ -414,6 +458,7 @@
   gap: 8px;
   padding: 12px 14px;
 }
+
 .effect-card {
   border: 1.5px solid var(--ed-border);
   border-radius: var(--ed-radius-md);
@@ -421,13 +466,16 @@
   cursor: pointer;
   transition: all var(--ed-transition);
 }
+
 .effect-card:hover {
   border-color: var(--ed-accent);
   box-shadow: 0 0 0 2px var(--ed-accent-light);
 }
+
 .effect-card.active {
   border-color: var(--ed-accent);
 }
+
 .effect-preview {
   height: 64px;
   background: var(--ed-bg-hover);
@@ -436,6 +484,7 @@
   justify-content: center;
   font-size: 20px;
 }
+
 .effect-name {
   padding: 5px 6px;
   font-size: 10px;
@@ -452,7 +501,7 @@
 /* ── Image preview box ───────────────────────────────────── */
 .rp-image-preview-box {
   width: 100%;
-  height: 96px;
+  height: 120px;
   border: 1px solid var(--ed-border);
   border-radius: var(--ed-radius-md);
   background: var(--ed-bg-panel-alt);
@@ -460,58 +509,64 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
+
 .rp-image-preview-thumb {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
   display: block;
 }
+
 .rp-image-preview-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   color: var(--ed-text-muted);
-  font-size: 11px;
+  font-size: 13px;
 }
+
 .rp-image-preview-empty svg {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   opacity: 0.35;
 }
 
 /* ── Action buttons row ──────────────────────────────────── */
 .rp-image-actions {
   display: flex;
-  gap: 6px;
-  margin-bottom: 8px;
+  gap: 8px;
+  margin-bottom: 12px;
 }
+
 .rp-image-action-btn {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  padding: 6px 8px;
+  gap: 6px;
+  padding: 8px 12px;
   border: 1px solid var(--ed-border);
   border-radius: var(--ed-radius-md);
   background: var(--ed-bg-panel-alt);
   color: var(--ed-text-secondary);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: all var(--ed-transition);
 }
+
 .rp-image-action-btn:hover {
   background: var(--ed-bg-hover);
   color: var(--ed-text-primary);
   border-color: var(--ed-accent);
 }
+
 .rp-image-action-btn svg {
-  width: 13px;
-  height: 13px;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
 }
 
@@ -521,59 +576,65 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 8px 12px;
+  gap: 8px;
+  padding: 10px 16px;
   border-radius: var(--ed-radius-md);
   background: var(--ed-accent);
   color: #fff;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   border: none;
   transition: all var(--ed-transition);
 }
+
 .rp-remove-bg-btn:hover {
   background: var(--ed-accent-hover, #6d28d9);
   box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35);
 }
+
 .rp-remove-bg-btn svg {
-  width: 13px;
-  height: 13px;
+  width: 16px;
+  height: 16px;
 }
 
 /* ── Flip buttons ────────────────────────────────────────── */
 .rp-flip-group {
   display: flex;
-  gap: 6px;
+  gap: 8px;
 }
+
 .rp-flip-btn {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  padding: 7px 8px;
+  gap: 6px;
+  padding: 8px 12px;
   border: 1px solid var(--ed-border);
   border-radius: var(--ed-radius-md);
   background: var(--ed-bg-panel-alt);
   color: var(--ed-text-secondary);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: all var(--ed-transition);
 }
+
 .rp-flip-btn:hover {
   background: var(--ed-bg-hover);
   color: var(--ed-text-primary);
 }
+
 .rp-flip-btn.active {
   background: var(--ed-accent-light);
   border-color: var(--ed-accent);
   color: var(--ed-accent);
 }
+
 .rp-flip-btn svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
 }
 
 /* ── Page align group ────────────────────────────────────── */
@@ -598,15 +659,18 @@
   transition: all var(--ed-transition);
   flex-shrink: 0;
 }
+
 .rp-lock-btn:hover {
   background: var(--ed-bg-hover);
   color: var(--ed-text-primary);
 }
+
 .rp-lock-btn.active {
   background: var(--ed-accent-light);
   border-color: var(--ed-accent);
   color: var(--ed-accent);
 }
+
 .rp-lock-btn svg {
   width: 13px;
   height: 13px;
@@ -619,6 +683,7 @@
   flex: 1;
   flex-wrap: wrap;
 }
+
 .rp-border-style-btn {
   flex: 1;
   min-width: 36px;
@@ -634,13 +699,14 @@
   transition: all var(--ed-transition);
   white-space: nowrap;
 }
+
 .rp-border-style-btn:hover {
   background: var(--ed-bg-hover);
   color: var(--ed-text-primary);
 }
+
 .rp-border-style-btn.active {
   background: var(--ed-accent-light);
   border-color: var(--ed-accent);
   color: var(--ed-accent);
 }
-

@@ -6,47 +6,18 @@
 //   panels/RightPanelShared.tsx
 // ============================================================
 
-import { useState } from 'react';
 import '../styles/RightPanel.css';
+import 'animate.css';
+import '../styles/animations.css';
 import { useEditorStore } from '../store/editorStore';
 import { CursorIcon } from './RightPanels/RightPanelShared';
 import { TextRightPanel } from './RightPanels/TextRightPanel';
 import { ImageRightPanel } from './RightPanels/ImageRightPanel';
 import { ShapeRightPanel } from './RightPanels/ShapeRightPanel';
+import { EffectsRightPanel } from './RightPanels/EffectsRightPanel';
 
 
-// ── Effects tab ────────────────────────────────────────────
-const EFFECTS = [
-  { id: 'none', name: 'Bình thường', emoji: '⬜' },
-  { id: 'blur', name: 'Làm mờ', emoji: '🌫' },
-  { id: 'shadow', name: 'Đổ bóng', emoji: '🌑' },
-  { id: 'glow', name: 'Phát sáng', emoji: '✨' },
-  { id: 'outline', name: 'Viền chữ', emoji: '🔠' },
-  { id: 'neon', name: 'Neon', emoji: '💡' },
-  { id: '3d', name: '3D', emoji: '🏆' },
-  { id: 'retro', name: 'Cổ điển', emoji: '📷' },
-];
 
-function EffectsTab() {
-  const [activeEffect, setActiveEffect] = useState('none');
-  return (
-    <div>
-      <div className="effects-grid">
-        {EFFECTS.map((ef) => (
-          <div
-            key={ef.id}
-            id={`effect-${ef.id}`}
-            className={`effect-card ${activeEffect === ef.id ? 'active' : ''}`}
-            onClick={() => setActiveEffect(ef.id)}
-          >
-            <div className="effect-preview">{ef.emoji}</div>
-            <div className="effect-name">{ef.name}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // ── Tool placeholder ───────────────────────────────────────
 function ToolPlaceholderPanel({ toolName, description, icon }: {
@@ -141,7 +112,12 @@ export function RightPanel() {
 
       {/* Content */}
       <div className="right-panel-content">
-        {activeRightTab === 'settings' ? renderSettingsContent() : <EffectsTab />}
+        {activeRightTab === 'settings'
+          ? renderSettingsContent()
+          : selectedElement
+            ? <EffectsRightPanel elementId={selectedElement.id} />
+            : <EmptyState />
+        }
       </div>
     </aside>
   );

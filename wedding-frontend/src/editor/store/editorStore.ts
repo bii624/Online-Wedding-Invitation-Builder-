@@ -15,9 +15,21 @@ import type {
   MusicProperties,
   ImageCropData,
   BackgroundProperties,
+  AnimationProperties,
 } from '../types/editor.types';
 
-// ── Default property sets ─────────────────────────────────
+// ── Default property sets ────────────────────────────────
+export const DEFAULT_ANIMATION_PROPS: AnimationProperties = {
+  entryEnabled: false,
+  entryEffect: 'none',
+  entryDuration: 1,
+  entryDelay: 0,
+  entryEasing: 'ease',
+  loopEnabled: false,
+  loopEffect: 'none',
+  loopDuration: 2,
+  loopDelay: 0,
+};
 const DEFAULT_TEXT_PROPS: TextProperties = {
   content: 'Nội dung',
   fontFamily: 'Playfair Display',
@@ -160,6 +172,7 @@ interface EditorActions {
   updateElementCrop: (id: string, cropData: ImageCropData, newWidth: number, newHeight: number) => void;
   updateCanvasBackground: (props: Partial<BackgroundProperties>) => void;
   addRecentColor: (color: string) => void;
+  updateAnimationProps: (id: string, props: Partial<AnimationProperties>) => void;
 }
 
 
@@ -242,7 +255,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       y: 80 + Math.random() * 100,
       width: 280,
       height: 60,
-      zIndex: elements.length + 1,
+      zIndex: elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) + 1 : 1,
       rotation: 0,
       isSelected: true,
       textProps: { ...DEFAULT_TEXT_PROPS, content: 'Văn bản mới' },
@@ -269,7 +282,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       y: defaultY,
       width: 240,
       height: 300,
-      zIndex: elements.length + 1,
+      zIndex: elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) + 1 : 1,
       rotation: 0,
       isSelected: true,
       imageProps: { ...DEFAULT_IMAGE_PROPS, src, alt: name },
@@ -311,7 +324,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       y,
       width,
       height,
-      zIndex: elements.length + 1,
+      zIndex: elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) + 1 : 1,
       rotation: 0,
       isSelected: true,
       shapeProps: { ...DEFAULT_SHAPE_PROPS, shapeType },
@@ -470,10 +483,11 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       id: `el-${Date.now()}`,
       x: src.x + 20,
       y: src.y + 20,
-      zIndex: elements.length + 1,
+      zIndex: elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) + 1 : 1,
       isSelected: true,
       textProps: src.textProps ? { ...src.textProps } : undefined,
       imageProps: src.imageProps ? { ...src.imageProps } : undefined,
+      shapeProps: src.shapeProps ? { ...src.shapeProps } : undefined,
     };
     const updated = elements.map((el) => ({ ...el, isSelected: false }));
     set({ elements: [...updated, newEl], selectedElement: newEl });
@@ -520,29 +534,19 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
   bringElementForward: (id) => {
     const { elements, selectedElement } = get();
 
-    // Sort by zIndex to find neighbours
-    const sorted = [...elements].sort((a, b) => a.zIndex - b.zIndex);
+    let sorted = [...elements].sort((a, b) => a.zIndex - b.zIndex);
     const index = sorted.findIndex((el) => el.id === id);
     if (index === -1 || index === sorted.length - 1) return; // already on top
 
-    // Swap zIndex values between target and the one directly above it
-    const targetZ = sorted[index].zIndex;
-    const aboveZ = sorted[index + 1].zIndex;
+    // Swap with the element directly above
+    const temp = sorted[index];
+    sorted[index] = sorted[index + 1];
+    sorted[index + 1] = temp;
 
-    // If both have the same zIndex, force a gap
-    const newTargetZ = aboveZ === targetZ ? aboveZ + 1 : aboveZ;
-    const newAboveZ = aboveZ === targetZ ? targetZ : targetZ;
+    // Re-assign z-index cleanly
+    const updatedElements = sorted.map((el, i) => ({ ...el, zIndex: i + 1 }));
 
-    const updatedElements = elements.map((el) => {
-      if (el.id === sorted[index].id) return { ...el, zIndex: newTargetZ };
-      if (el.id === sorted[index + 1].id) return { ...el, zIndex: newAboveZ };
-      return el;
-    });
-
-    const updatedSelected =
-      selectedElement?.id === id
-        ? { ...selectedElement, zIndex: newTargetZ }
-        : selectedElement;
+    const updatedSelected = updatedElements.find(el => el.id === selectedElement?.id) ?? null;
 
     set({ elements: updatedElements, selectedElement: updatedSelected });
     get().pushHistory();
@@ -551,26 +555,19 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
   sendElementBackward: (id) => {
     const { elements, selectedElement } = get();
 
-    const sorted = [...elements].sort((a, b) => a.zIndex - b.zIndex);
+    let sorted = [...elements].sort((a, b) => a.zIndex - b.zIndex);
     const index = sorted.findIndex((el) => el.id === id);
     if (index === -1 || index === 0) return; // already on bottom
 
-    const targetZ = sorted[index].zIndex;
-    const belowZ = sorted[index - 1].zIndex;
+    // Swap with the element directly below
+    const temp = sorted[index];
+    sorted[index] = sorted[index - 1];
+    sorted[index - 1] = temp;
 
-    const newTargetZ = belowZ === targetZ ? Math.max(1, belowZ - 1) : belowZ;
-    const newBelowZ = belowZ === targetZ ? belowZ : targetZ;
+    // Re-assign z-index cleanly
+    const updatedElements = sorted.map((el, i) => ({ ...el, zIndex: i + 1 }));
 
-    const updatedElements = elements.map((el) => {
-      if (el.id === sorted[index].id) return { ...el, zIndex: newTargetZ };
-      if (el.id === sorted[index - 1].id) return { ...el, zIndex: newBelowZ };
-      return el;
-    });
-
-    const updatedSelected =
-      selectedElement?.id === id
-        ? { ...selectedElement, zIndex: newTargetZ }
-        : selectedElement;
+    const updatedSelected = updatedElements.find(el => el.id === selectedElement?.id) ?? null;
 
     set({ elements: updatedElements, selectedElement: updatedSelected });
     get().pushHistory();
@@ -615,4 +612,19 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       selectedElement: null 
     });
   },
+  // ── Animation ────────────────────────────────────────
+  updateAnimationProps: (id, props) => {
+    const { elements, selectedElement } = get();
+    const updated = elements.map((el) =>
+      el.id === id
+        ? { ...el, animationProps: { ...(el.animationProps ?? DEFAULT_ANIMATION_PROPS), ...props } }
+        : el
+    );
+    const updatedSelected =
+      selectedElement?.id === id
+        ? { ...selectedElement, animationProps: { ...(selectedElement.animationProps ?? DEFAULT_ANIMATION_PROPS), ...props } }
+        : selectedElement;
+    set({ elements: updated, selectedElement: updatedSelected });
+  },
+
 }));

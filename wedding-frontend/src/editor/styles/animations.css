@@ -1,0 +1,77 @@
+/* ==========================================================
+   EDITOR ANIMATION CLASSES
+   Chuyển động liên tục (loop) – custom keyframes
+   ========================================================== */
+
+/* ── Bay lơ lửng ──────────────────────────────────────────── */
+@keyframes bay-lo-lung {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-12px); }
+}
+.animate-bay-lo-lung {
+  animation: bay-lo-lung var(--anim-dur, 3s) ease-in-out var(--anim-delay, 0s) infinite;
+}
+
+/* ── Nảy ──────────────────────────────────────────────────── */
+@keyframes nay {
+  0%, 100%  { transform: translateY(0); animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); }
+  40%       { transform: translateY(-18px); animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06); }
+  70%       { transform: translateY(-9px); animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06); }
+  90%       { transform: translateY(-4px); }
+}
+.animate-nay {
+  animation: nay var(--anim-dur, 1.2s) ease var(--anim-delay, 0s) infinite;
+}
+
+/* ── Nhấp nháy ────────────────────────────────────────────── */
+@keyframes nhap-nhay {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.2; }
+}
+.animate-nhap-nhay {
+  animation: nhap-nhay var(--anim-dur, 1.4s) ease-in-out var(--anim-delay, 0s) infinite;
+}
+
+/* ── Xoay tròn ────────────────────────────────────────────── */
+@keyframes xoay-tron {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.animate-xoay-tron {
+  animation: xoay-tron var(--anim-dur, 2s) linear var(--anim-delay, 0s) infinite;
+}
+
+/* ── Lắc ngang ────────────────────────────────────────────── */
+@keyframes lac {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-8px); }
+  40%      { transform: translateX(8px); }
+  60%      { transform: translateX(-5px); }
+  80%      { transform: translateX(5px); }
+}
+.animate-lac {
+  animation: lac var(--anim-dur, 0.8s) ease var(--anim-delay, 0s) infinite;
+}
+
+/* ── Lắc lư ───────────────────────────────────────────────── */
+@keyframes lac-lu {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(6deg); }
+  75%      { transform: rotate(-6deg); }
+}
+.animate-lac-lu {
+  animation: lac-lu var(--anim-dur, 1.2s) ease-in-out var(--anim-delay, 0s) infinite;
+  transform-origin: center bottom;
+}
+
+/* ── Lắc lư nhún nhảy ─────────────────────────────────────── */
+@keyframes lac-lu-nhun-nhay {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  25%      { transform: rotate(5deg) translateY(-6px); }
+  50%      { transform: rotate(0deg) translateY(-12px); }
+  75%      { transform: rotate(-5deg) translateY(-6px); }
+}
+.animate-lac-lu-nhun-nhay {
+  animation: lac-lu-nhun-nhay var(--anim-dur, 1.6s) ease-in-out var(--anim-delay, 0s) infinite;
+  transform-origin: center bottom;
+}

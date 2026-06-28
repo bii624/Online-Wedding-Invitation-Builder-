@@ -2,9 +2,10 @@
 // MAIN CANVAS COMPONENT
 // ============================================================
 
-import { useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback, useEffect, useMemo } from 'react';
 import '../styles/Canvas.css';
 import { useEditorStore } from '../store/editorStore';
+import { DEFAULT_ANIMATION_PROPS } from '../store/editorStore';
 import type { CanvasElement } from '../types/editor.types';
 import { TextEditorElement } from './TextEditorElement';
 import { ImageEditorElement } from './ImageEditorElement';
@@ -82,7 +83,60 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
 
   // Persist drag state without triggering re-render
   const dragRef = useRef({ isDragging: false, startX: 0, startY: 0, origX: 0, origY: 0 });
+  const elementRef = useRef<HTMLDivElement>(null);
   const isSelected = selectedElement?.id === element.id;
+  const ap = element.animationProps ?? DEFAULT_ANIMATION_PROPS;
+
+  // ── Loop animation CSS class ─────────────────────────────
+  const loopClass = useMemo(() => {
+    if (!ap.loopEnabled || ap.loopEffect === 'none') return '';
+    switch (ap.loopEffect) {
+      case 'bay-lo-lung':       return 'animate-bay-lo-lung';
+      case 'nay':               return 'animate-nay';
+      case 'nhap-nhay':         return 'animate-nhap-nhay';
+      case 'xoay-tron':         return 'animate-xoay-tron';
+      case 'lac':               return 'animate-lac';
+      case 'lac-lu':            return 'animate-lac-lu';
+      case 'lac-lu-nhun-nhay':  return 'animate-lac-lu-nhun-nhay';
+      default: return '';
+    }
+  }, [ap.loopEnabled, ap.loopEffect]);
+
+  // ── Entry animation via IntersectionObserver ─────────────
+  useEffect(() => {
+    const el = elementRef.current;
+    if (!el || !ap.entryEnabled || ap.entryEffect === 'none') return;
+
+    const applyEntry = () => {
+      el.style.animationDuration = `${ap.entryDuration}s`;
+      el.style.animationDelay = `${ap.entryDelay}s`;
+      el.style.animationTimingFunction = ap.entryEasing;
+      // Remove first to re-trigger
+      el.classList.remove('animate__animated', `animate__${ap.entryEffect}`);
+      void el.offsetHeight; // reflow
+      el.classList.add('animate__animated', `animate__${ap.entryEffect}`);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            applyEntry();
+          } else {
+            // Remove so it re-triggers on next scroll in
+            el.classList.remove('animate__animated', `animate__${ap.entryEffect}`);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      el.classList.remove('animate__animated', `animate__${ap.entryEffect}`);
+    };
+  }, [ap.entryEnabled, ap.entryEffect, ap.entryDuration, ap.entryDelay, ap.entryEasing]);
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -254,22 +308,40 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
   );
 
 
-  const wrapperStyle: React.CSSProperties = {
+  const entryWrapperStyle: React.CSSProperties = {
+    position: 'absolute',
     left: element.x,
     top: element.y,
     width: element.width,
     height: element.height,
-    zIndex: element.zIndex, // Bỏ cộng 100 để hiển thị đúng thứ tự thực tế ngay khi đang select
+    zIndex: element.zIndex,
+    pointerEvents: 'none',
+  };
+
+  const innerWrapperStyle: React.CSSProperties = {
+    width: '100%',
+    height: '100%',
+    pointerEvents: 'auto',
     transform: element.rotation ? `rotate(${element.rotation}deg)` : undefined,
+    // Loop animation CSS variables
+    ...(ap.loopEnabled && ap.loopEffect !== 'none' ? {
+      '--anim-dur': `${ap.loopDuration}s`,
+      '--anim-delay': `${ap.loopDelay}s`,
+    } as React.CSSProperties : {}),
   };
 
   return (
     <div
-      className={`canvas-element ${isSelected ? 'selected' : ''}`}
-      style={wrapperStyle}
-      onMouseDown={handleMouseDown}
-      data-element-id={element.id}
+      ref={elementRef}
+      className={`canvas-element-entry`}
+      style={entryWrapperStyle}
     >
+      <div
+        className={`canvas-element ${isSelected ? 'selected' : ''} ${loopClass}`}
+        style={innerWrapperStyle}
+        onMouseDown={handleMouseDown}
+        data-element-id={element.id}
+      >
       {/* Selection border overlay */}
       <div className="canvas-el-border" />
 
@@ -344,6 +416,7 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
         </>
       )}
 
+      </div>
     </div>
   );
 }

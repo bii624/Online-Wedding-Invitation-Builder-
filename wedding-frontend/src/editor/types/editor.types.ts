@@ -143,6 +143,22 @@ export interface MusicProperties {
   volume: number; // 0–1
 }
 
+// ── Animation Properties ───────────────────────────────
+export interface AnimationProperties {
+  // Hiệu ứng xuất hiện (chạy 1 lần khi scroll đến)
+  entryEnabled: boolean;
+  entryEffect: string;       // 'none' | 'bounce' | 'fadeIn' | ...
+  entryDuration: number;     // giây
+  entryDelay: number;        // giây
+  entryEasing: string;       // 'ease' | 'ease-in' | 'ease-out' | 'elastic'
+
+  // Chuyển động liên tục (loop)
+  loopEnabled: boolean;
+  loopEffect: string;        // 'none' | 'bay-lo-lung' | 'nay' | ...
+  loopDuration: number;      // giây
+  loopDelay: number;         // giây
+}
+
 // ── Canvas Element (base + union) ─────────────────────────
 export type CanvasElementType = 'text' | 'image' | 'shape';
 
@@ -160,6 +176,7 @@ export interface CanvasElement {
   textProps?: TextProperties;
   imageProps?: ImageProperties;
   shapeProps?: ShapeProperties;
+  animationProps?: AnimationProperties;
 }
 
 // ── Uploaded Image Record ─────────────────────────────────

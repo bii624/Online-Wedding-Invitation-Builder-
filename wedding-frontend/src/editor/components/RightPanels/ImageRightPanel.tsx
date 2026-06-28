@@ -155,23 +155,7 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
           <EraserIcon />
           Xóa nền
         </button>
-      </Section>
-
-      {/* ── Độ mờ ────────────────────────────────────────── */}
-      <Section title="Độ mờ" icon={<PaletteIcon />} defaultOpen>
-        <Slider
-          label=""
-          value={props.opacity}
-          min={0} max={1} step={0.01}
-          onChange={(v) => upd('opacity', v, false)}
-          onCommit={pushHistory}
-          displayVal={props.opacity.toFixed(2)}
-        />
-      </Section>
-
-      {/* ── Căn chỉnh theo trang ─────────────────────────── */}
-      <Section title="Căn chỉnh" icon={<LayoutIcon />} defaultOpen>
-        <div className="rp-field">
+        <div className="rp-field" style={{ marginBlock: 25 }}>
           <span className="rp-label">Theo trang</span>
           <div className="rp-align-page-group">
             <button className="rp-align-btn" title="Căn trái" onClick={() => handlePageAlign('left')}><AlignLeftIcon /></button>
@@ -179,7 +163,20 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
             <button className="rp-align-btn" title="Căn phải" onClick={() => handlePageAlign('right')}><AlignRightIcon /></button>
           </div>
         </div>
+        <Slider
+          label="Độ mờ"
+          value={props.opacity}
+          min={0} max={1} step={0.01}
+          onChange={(v) => upd('opacity', v, false)}
+          onCommit={pushHistory}
+          displayVal={props.opacity.toFixed(2)}
+
+        />
       </Section>
+
+
+
+
 
       {/* ── Lật ảnh ──────────────────────────────────────── */}
       <Section title="Lật ảnh" icon={<FlipHIcon />} defaultOpen>
