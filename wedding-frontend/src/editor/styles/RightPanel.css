@@ -444,3 +444,203 @@
   color: var(--ed-text-secondary);
   background: var(--ed-bg-panel-alt);
 }
+
+/* ============================================================
+   IMAGE PANEL STYLES
+   ============================================================ */
+
+/* ── Image preview box ───────────────────────────────────── */
+.rp-image-preview-box {
+  width: 100%;
+  height: 96px;
+  border: 1px solid var(--ed-border);
+  border-radius: var(--ed-radius-md);
+  background: var(--ed-bg-panel-alt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.rp-image-preview-thumb {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.rp-image-preview-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--ed-text-muted);
+  font-size: 11px;
+}
+.rp-image-preview-empty svg {
+  width: 24px;
+  height: 24px;
+  opacity: 0.35;
+}
+
+/* ── Action buttons row ──────────────────────────────────── */
+.rp-image-actions {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.rp-image-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 8px;
+  border: 1px solid var(--ed-border);
+  border-radius: var(--ed-radius-md);
+  background: var(--ed-bg-panel-alt);
+  color: var(--ed-text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--ed-transition);
+}
+.rp-image-action-btn:hover {
+  background: var(--ed-bg-hover);
+  color: var(--ed-text-primary);
+  border-color: var(--ed-accent);
+}
+.rp-image-action-btn svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+/* ── Remove background button ────────────────────────────── */
+.rp-remove-bg-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: var(--ed-radius-md);
+  background: var(--ed-accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all var(--ed-transition);
+}
+.rp-remove-bg-btn:hover {
+  background: var(--ed-accent-hover, #6d28d9);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35);
+}
+.rp-remove-bg-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* ── Flip buttons ────────────────────────────────────────── */
+.rp-flip-group {
+  display: flex;
+  gap: 6px;
+}
+.rp-flip-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 8px;
+  border: 1px solid var(--ed-border);
+  border-radius: var(--ed-radius-md);
+  background: var(--ed-bg-panel-alt);
+  color: var(--ed-text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--ed-transition);
+}
+.rp-flip-btn:hover {
+  background: var(--ed-bg-hover);
+  color: var(--ed-text-primary);
+}
+.rp-flip-btn.active {
+  background: var(--ed-accent-light);
+  border-color: var(--ed-accent);
+  color: var(--ed-accent);
+}
+.rp-flip-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── Page align group ────────────────────────────────────── */
+.rp-align-page-group {
+  display: flex;
+  gap: 3px;
+  flex: 1;
+}
+
+/* ── Lock aspect ratio button ────────────────────────────── */
+.rp-lock-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--ed-radius-sm);
+  border: 1px solid var(--ed-border);
+  background: var(--ed-bg-panel-alt);
+  color: var(--ed-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--ed-transition);
+  flex-shrink: 0;
+}
+.rp-lock-btn:hover {
+  background: var(--ed-bg-hover);
+  color: var(--ed-text-primary);
+}
+.rp-lock-btn.active {
+  background: var(--ed-accent-light);
+  border-color: var(--ed-accent);
+  color: var(--ed-accent);
+}
+.rp-lock-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* ── Border style picker ─────────────────────────────────── */
+.rp-border-style-group {
+  display: flex;
+  gap: 3px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+.rp-border-style-btn {
+  flex: 1;
+  min-width: 36px;
+  padding: 5px 4px;
+  border: 1px solid var(--ed-border);
+  border-radius: var(--ed-radius-sm);
+  background: var(--ed-bg-panel-alt);
+  color: var(--ed-text-secondary);
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--ed-transition);
+  white-space: nowrap;
+}
+.rp-border-style-btn:hover {
+  background: var(--ed-bg-hover);
+  color: var(--ed-text-primary);
+}
+.rp-border-style-btn.active {
+  background: var(--ed-accent-light);
+  border-color: var(--ed-accent);
+  color: var(--ed-accent);
+}
+

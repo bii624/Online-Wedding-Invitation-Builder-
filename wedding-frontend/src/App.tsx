@@ -2,7 +2,7 @@
 // APP ROOT - Routes to Editor
 // ============================================================
 
-import { EditorPage } from './editor/components/EditorPage';
+import { EditorPage } from './editor/page/EditorPage';
 
 function App() {
   return <EditorPage />;

@@ -2,9 +2,11 @@
 // LEFT TOOLBAR COMPONENT
 // ============================================================
 
+import { useRef, useState } from 'react';
+import { BackgroundPanel } from './BackgroundPanel';
 import '../styles/LeftToolbar.css';
 import { useEditorStore } from '../store/editorStore';
-import type { ToolType } from '../types/editor.types';
+import type { ToolType, UploadedImage } from '../types/editor.types';
 import type { JSX } from 'react';
 
 // ── SVG Icons ─────────────────────────────────────────────
@@ -63,6 +65,149 @@ const HelpIcon = () => (
     <circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" />
   </svg>
 );
+const UploadIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="16 16 12 12 8 16" /><line x1="12" y1="12" x2="12" y2="21" /><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3" />
+  </svg>
+);
+const TrashSmIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" /><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+  </svg>
+);
+const CloseIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
+
+// ── Image Upload Sub-Panel ────────────────────────────────
+function ImageUploadPanel({ onClose }: { onClose: () => void }) {
+  const { addImageElement, addUploadedImage, removeUploadedImage, uploadedImages } = useEditorStore();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
+
+  const processFiles = (files: FileList | null) => {
+    if (!files) return;
+    Array.from(files).forEach((file) => {
+      if (!file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const src = ev.target?.result as string;
+        if (!src) return;
+        const uploaded: UploadedImage = {
+          id: `upl-${Date.now()}-${Math.random()}`,
+          src,
+          name: file.name,
+          thumbnailSrc: src,
+        };
+        addUploadedImage(uploaded);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDraggingOver(false);
+    processFiles(e.dataTransfer.files);
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    processFiles(e.target.files);
+    e.target.value = '';
+  };
+
+  return (
+    <div className="lt-image-panel">
+      {/* Header */}
+      <div className="lt-image-panel-header">
+        <span className="lt-image-panel-title">
+          <ImageIcon /> Hình ảnh
+        </span>
+        <button className="lt-panel-close-btn" onClick={onClose} title="Đóng">
+          <CloseIcon />
+        </button>
+      </div>
+
+      {/* Upload zone */}
+      <div
+        className={`lt-upload-zone ${isDraggingOver ? 'dragging' : ''}`}
+        onClick={() => fileInputRef.current?.click()}
+        onDragOver={(e) => { e.preventDefault(); setIsDraggingOver(true); }}
+        onDragLeave={() => setIsDraggingOver(false)}
+        onDrop={handleDrop}
+      >
+        <div className="lt-upload-icon"><UploadIcon /></div>
+        <p className="lt-upload-text">Kéo thả hoặc nhấn vào đây để tải lên. Có thể tải lên nhiều lần cùng một lúc.</p>
+        <div className="lt-upload-meta">
+          Tối đa 1/10 • Còn lại 9
+        </div>
+        <button className="lt-upload-btn" onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}>
+          Tải lên Root
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          style={{ display: 'none' }}
+          onChange={handleFileSelect}
+        />
+      </div>
+
+      {/* Folder row */}
+      <div className="lt-folder-row">
+        <span className="lt-folder-label">Thư mục</span>
+        <button className="lt-add-folder-btn">Thêm thư mục</button>
+      </div>
+
+      {/* Uploaded list */}
+      {uploadedImages.length > 0 ? (
+        <div className="lt-uploaded-section">
+          <div className="lt-uploaded-header">
+            <span>Ảnh đã tải lên</span>
+            <span className="lt-uploaded-meta">Tổng 1 tập / {uploadedImages.length} ảnh</span>
+          </div>
+          <div className="lt-image-grid">
+            {uploadedImages.map((img) => (
+              <div
+                key={img.id}
+                className="lt-image-thumb-wrap"
+                title={img.name}
+                draggable={true}
+                onDragStart={(e) => {
+                  e.dataTransfer.setData('text/plain', img.src);
+                  e.dataTransfer.setData('image-name', img.name);
+                  e.dataTransfer.effectAllowed = 'copy';
+                }}
+              >
+                <img
+                  src={img.thumbnailSrc ?? img.src}
+                  alt={img.name}
+                  className="lt-image-thumb"
+                  onClick={() => addImageElement(img.src, img.name)}
+                  draggable={false}
+                />
+                <button
+                  className="lt-image-thumb-delete"
+                  title="Xóa ảnh"
+                  onClick={(e) => { e.stopPropagation(); removeUploadedImage(img.id); }}
+                >
+                  <TrashSmIcon />
+                </button>
+              </div>
+            ))}
+
+          </div>
+          <p className="lt-uploaded-hint">Đã hiển thị tất cả ảnh.</p>
+        </div>
+      ) : (
+        <p className="lt-uploaded-hint" style={{ marginTop: 16 }}>Đã hiển thị tất cả ảnh.</p>
+      )}
+    </div>
+  );
+}
 
 // ── Tool config ────────────────────────────────────────────
 interface ToolConfig {
@@ -85,10 +230,21 @@ const TOOLS: ToolConfig[] = [
   { id: 'presets',    label: 'Bộ cài',     icon: PresetsIcon,    tooltip: 'Thiết lập sẵn' },
 ];
 
+// ── Left Toolbar ───────────────────────────────────────────
 export function LeftToolbar() {
   const { activeTool, setActiveTool, addTextElement } = useEditorStore();
+  const [showImagePanel, setShowImagePanel] = useState(false);
 
   const handleToolClick = (tool: ToolType) => {
+    if (tool === 'image') {
+      // Toggle image upload panel
+      const next = activeTool === 'image' ? !showImagePanel : true;
+      setActiveTool('image');
+      setShowImagePanel(next);
+      return;
+    }
+    // Close image panel when switching to another tool
+    setShowImagePanel(false);
     setActiveTool(tool);
     if (tool === 'text') {
       addTextElement();
@@ -96,35 +252,47 @@ export function LeftToolbar() {
   };
 
   return (
-    <aside className="editor-toolbar" aria-label="Công cụ">
-      <div className="toolbar-tools">
-        {TOOLS.map((tool, index) => (
-          <div key={tool.id ?? index}>
-            {index === 5 && <div className="toolbar-divider" />}
-            <button
-              id={`tool-${tool.id}`}
-              className={`toolbar-btn ${activeTool === tool.id ? 'active' : ''}`}
-              onClick={() => handleToolClick(tool.id)}
-              data-tooltip={tool.tooltip}
-              aria-label={tool.label}
-            >
-              <tool.icon />
-              <span className="toolbar-btn-label">{tool.label}</span>
-            </button>
-          </div>
-        ))}
-      </div>
+    <div className="editor-toolbar-wrapper">
+      <aside className="editor-toolbar" aria-label="Công cụ">
+        <div className="toolbar-tools">
+          {TOOLS.map((tool, index) => (
+            <div key={tool.id ?? index}>
+              {index === 5 && <div className="toolbar-divider" />}
+              <button
+                id={`tool-${tool.id}`}
+                className={`toolbar-btn ${activeTool === tool.id ? 'active' : ''}`}
+                onClick={() => handleToolClick(tool.id)}
+                data-tooltip={tool.tooltip}
+                aria-label={tool.label}
+              >
+                <tool.icon />
+                <span className="toolbar-btn-label">{tool.label}</span>
+              </button>
+            </div>
+          ))}
+        </div>
 
-      <div className="toolbar-footer">
-        <button
-          id="tool-help"
-          className="toolbar-help-btn"
-          title="Hỗ trợ & Hướng dẫn"
-          aria-label="Hỗ trợ"
-        >
-          <HelpIcon />
-        </button>
-      </div>
-    </aside>
+        <div className="toolbar-footer">
+          <button
+            id="tool-help"
+            className="toolbar-help-btn"
+            title="Hỗ trợ & Hướng dẫn"
+            aria-label="Hỗ trợ"
+          >
+            <HelpIcon />
+          </button>
+        </div>
+      </aside>
+
+      {/* Image upload slide-out panel */}
+      {showImagePanel && (
+        <ImageUploadPanel onClose={() => setShowImagePanel(false)} />
+      )}
+
+      {/* Background slide-out panel */}
+      {activeTool === 'background' && (
+        <BackgroundPanel onClose={() => setActiveTool('text')} />
+      )}
+    </div>
   );
 }

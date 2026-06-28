@@ -3,12 +3,13 @@
 // ============================================================
 
 import '../styles/editor.css';
-import { Header } from './Header';
-import { LeftToolbar } from './LeftToolbar';
-import { MainCanvas } from './Canvas';
-import { RightPanel } from './RightPanel';
-import { Filmstrip } from './Filmstrip';
-import { AIColorPanel } from './AIColorPanel';
+import { Header } from '../components/Header';
+import { LeftToolbar } from '../components/LeftToolbar';
+import { MainCanvas } from '../components/Canvas';
+import { RightPanel } from '../components/RightPanel';
+import { Filmstrip } from '../components/Filmstrip';
+import { AIColorPanel } from '../components/AIColorPanel';
+import { ImageCropModal } from '../components/ImageCropModal';
 
 export function EditorPage() {
   return (
@@ -33,6 +34,9 @@ export function EditorPage() {
 
       {/* ── Floating AI Color Panel ──────── */}
       <AIColorPanel />
+
+      {/* ── Modals ───────────────────────── */}
+      <ImageCropModal />
     </div>
   );
 }

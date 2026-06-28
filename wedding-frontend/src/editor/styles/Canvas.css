@@ -47,19 +47,99 @@
   transition: all var(--ed-transition);
   cursor: pointer;
 }
+
 .canvas-ctrl-btn:hover {
   background: var(--ed-bg-hover);
   color: var(--ed-text-primary);
   border-color: var(--ed-border-strong);
 }
+
 .canvas-ctrl-btn svg {
   width: 13px;
   height: 13px;
 }
+
 .canvas-ctrl-btn.active {
   background: var(--ed-accent-light);
   color: var(--ed-accent);
   border-color: var(--ed-accent);
+}
+
+/* ── Canvas Size Popup ───────────────────────────────────── */
+.canvas-size-popup {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: var(--ed-bg-panel);
+  border: 1px solid var(--ed-border);
+  border-radius: var(--ed-radius-md);
+  padding: 12px;
+  box-shadow: var(--ed-shadow-lg);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 160px;
+}
+
+.canvas-size-popup-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.canvas-size-popup-row input {
+  width: 60px;
+  padding: 6px 4px;
+  text-align: center;
+  border: 1px solid var(--ed-border);
+  border-radius: var(--ed-radius-sm);
+  background: var(--ed-bg);
+  color: var(--ed-text-primary);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  outline: none;
+  transition: border-color var(--ed-transition);
+}
+
+.canvas-size-popup-row input:focus {
+  border-color: var(--ed-accent);
+}
+
+/* Ẩn mũi tên lên xuống của input number cho đẹp */
+.canvas-size-popup-row input::-webkit-outer-spin-button,
+.canvas-size-popup-row input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.canvas-size-popup-row input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.canvas-size-popup-x {
+  color: var(--ed-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.canvas-size-apply-btn {
+  width: 100%;
+  padding: 6px;
+  background: var(--ed-accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--ed-radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--ed-transition);
+}
+
+.canvas-size-apply-btn:hover {
+  background: var(--ed-accent-hover, #6D28D9); /* Thay thế màu hover tương ứng */
 }
 
 /* ── Zoom Controls (bottom-right) ────────────────────────── */
@@ -102,6 +182,7 @@
   cursor: pointer;
   font-weight: 600;
 }
+
 .canvas-zoom-btn:hover {
   background: var(--ed-bg-hover);
   border-color: var(--ed-border-strong);
@@ -111,7 +192,7 @@
 .canvas-frame {
   position: relative;
   background: #ffffff;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08);
   border-radius: 2px;
   overflow: hidden;
   flex-shrink: 0;
@@ -131,6 +212,96 @@
   background-size: 20px 20px;
 }
 
+/* ── Canvas Bottom Resize Handle ─────────────────────────── */
+.canvas-bottom-resize-area {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 16px;
+  transform: translateY(50%);
+  cursor: ns-resize;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.canvas-bottom-resize-line {
+  width: 40px;
+  height: 4px;
+  background: var(--ed-border-strong);
+  border-radius: 2px;
+  transition: background var(--ed-transition);
+}
+
+.canvas-bottom-resize-area:hover .canvas-bottom-resize-line {
+  background: var(--ed-accent);
+}
+
+/* ── Canvas Height Pill UI ───────────────────────────────── */
+.canvas-height-pill {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid var(--ed-border);
+  border-radius: 20px;
+  padding: 4px 8px;
+  box-shadow: var(--ed-shadow-md);
+  gap: 8px;
+  z-index: 10;
+}
+
+.canvas-height-pill-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: var(--ed-bg-panel);
+  color: var(--ed-text-secondary);
+  cursor: pointer;
+  transition: all var(--ed-transition);
+}
+.canvas-height-pill-btn:hover {
+  background: var(--ed-bg-hover);
+  color: var(--ed-text-primary);
+}
+.canvas-height-pill-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.canvas-height-pill-input {
+  width: 50px;
+  text-align: center;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ed-text-primary);
+  outline: none;
+  background: transparent;
+  padding: 2px;
+  transition: border-color var(--ed-transition);
+}
+.canvas-height-pill-input:focus {
+  border-color: var(--ed-accent);
+  background: var(--ed-bg-panel);
+}
+.canvas-height-pill-input::-webkit-outer-spin-button,
+.canvas-height-pill-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.canvas-height-pill-input[type=number] {
+  -moz-appearance: textfield;
+}
+
 /* ── Canvas Element ──────────────────────────────────────── */
 .canvas-element {
   position: absolute;
@@ -138,9 +309,11 @@
   user-select: none;
   transition: none;
 }
+
 .canvas-element:hover .canvas-el-border {
   border-color: rgba(124, 58, 237, 0.4);
 }
+
 .canvas-element.selected .canvas-el-border {
   border-color: var(--ed-accent);
   box-shadow: 0 0 0 1px var(--ed-accent);
@@ -192,14 +365,17 @@
   transition: all var(--ed-transition);
   cursor: pointer;
 }
+
 .canvas-el-ctrl-btn:hover {
   background: var(--ed-bg-hover);
   color: var(--ed-text-primary);
 }
+
 .canvas-el-ctrl-btn.danger:hover {
   background: #fef2f2;
   color: var(--ed-danger);
 }
+
 .canvas-el-ctrl-btn svg {
   width: 13px;
   height: 13px;
@@ -215,14 +391,58 @@
   border-radius: 2px;
   z-index: 10;
 }
-.canvas-handle.tl { top: -4px; left: -4px; cursor: nw-resize; }
-.canvas-handle.tr { top: -4px; right: -4px; cursor: ne-resize; }
-.canvas-handle.bl { bottom: -4px; left: -4px; cursor: sw-resize; }
-.canvas-handle.br { bottom: -4px; right: -4px; cursor: se-resize; }
-.canvas-handle.tm { top: -4px; left: 50%; transform: translateX(-50%); cursor: n-resize; }
-.canvas-handle.bm { bottom: -4px; left: 50%; transform: translateX(-50%); cursor: s-resize; }
-.canvas-handle.ml { left: -4px; top: 50%; transform: translateY(-50%); cursor: w-resize; }
-.canvas-handle.mr { right: -4px; top: 50%; transform: translateY(-50%); cursor: e-resize; }
+
+.canvas-handle.tl {
+  top: -4px;
+  left: -4px;
+  cursor: nw-resize;
+}
+
+.canvas-handle.tr {
+  top: -4px;
+  right: -4px;
+  cursor: ne-resize;
+}
+
+.canvas-handle.bl {
+  bottom: -4px;
+  left: -4px;
+  cursor: sw-resize;
+}
+
+.canvas-handle.br {
+  bottom: -4px;
+  right: -4px;
+  cursor: se-resize;
+}
+
+.canvas-handle.tm {
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: n-resize;
+}
+
+.canvas-handle.bm {
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: s-resize;
+}
+
+.canvas-handle.ml {
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: w-resize;
+}
+
+.canvas-handle.mr {
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: e-resize;
+}
 
 /* ── Rotate handle ───────────────────────────────────────── */
 .canvas-handle.rotate {
@@ -236,6 +456,7 @@
   width: 10px;
   height: 10px;
 }
+
 .canvas-handle.rotate::before {
   content: '';
   position: absolute;
@@ -259,11 +480,13 @@
   pointer-events: none;
   gap: 8px;
 }
+
 .canvas-empty-hint svg {
   width: 32px;
   height: 32px;
   opacity: 0.4;
 }
+
 .canvas-empty-hint p {
   font-size: 12px;
   opacity: 0.6;
