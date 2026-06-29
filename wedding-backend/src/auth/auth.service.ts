@@ -66,6 +66,7 @@ export class AuthService {
       email: user.email,
       role: user.role,
       fullName: user.fullName,
+      avatarUrl: user.avatarUrl,
     };
 
     const accessToken = this.jwtService.sign(payload);
@@ -76,10 +77,12 @@ export class AuthService {
     if (response) {
       response.cookie('access_token', accessToken, {
         httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // Dùng Secure nếu trên HTTPS
         sameSite: 'lax',
       });
       response.cookie('refresh_token', refreshToken, {
         httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: parseMs(this.configService.get<string>('JWT_REFRESH_EXPIRES') || '7d'),
       });
@@ -93,6 +96,7 @@ export class AuthService {
         email: user.email,
         fullName: user.fullName,
         role: user.role,
+        avatarUrl: user.avatarUrl,
       },
     };
   }
@@ -111,7 +115,7 @@ export class AuthService {
       this.jwtService.verify(refresh_token, {
         secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
       });
-      
+
       const user = await this.usersService.findUserByToken(refresh_token);
       if (user) {
         // update refreshToken
@@ -121,6 +125,7 @@ export class AuthService {
           email,
           role,
           fullName,
+          avatarUrl: user.avatarUrl,
         };
         const refreshToken = this.createRefreshToken(payload);
 
@@ -133,7 +138,7 @@ export class AuthService {
           sameSite: 'lax',
           maxAge: parseMs(this.configService.get<string>('JWT_REFRESH_EXPIRES') || '7d'),
         });
-        
+
         return {
           accessToken: this.jwtService.sign(payload),
           refreshToken,
@@ -142,6 +147,7 @@ export class AuthService {
             fullName,
             email,
             role,
+            avatarUrl: user.avatarUrl,
           },
         };
       } else {

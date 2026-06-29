@@ -13,7 +13,7 @@ import { PrismaService } from '@/prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   private async validateCurrentPlanId(
     currentPlanId: string | null | undefined,
@@ -49,7 +49,7 @@ export class UsersService {
         where: { email },
       });
       if (existingUser) {
-        throw new ConflictException('Email already exists');
+        throw new ConflictException('Email đã tồn tại. Vui vòng nhập email khác!');
       }
     }
 
@@ -132,7 +132,7 @@ export class UsersService {
         where: { email, NOT: { id } },
       });
       if (existingUser) {
-        throw new ConflictException('Email already exists');
+        throw new ConflictException('Email đã tồn tại. Vui vòng nhập email khác!');
       }
     }
 
@@ -207,7 +207,16 @@ export class UsersService {
           authProvider: profile.authProvider,
         },
       });
-      if (user) return new User(user);
+      if (user) {
+        if (profile.avatarUrl && user.avatarUrl !== profile.avatarUrl) {
+          const updatedUser = await this.prisma.user.update({
+            where: { id: user.id },
+            data: { avatarUrl: profile.avatarUrl },
+          });
+          return new User(updatedUser);
+        }
+        return new User(user);
+      }
     }
 
     // 2. Nếu tìm thấy email đã tồn tại ở tài khoản khác, liên kết providerId vào tài khoản đó

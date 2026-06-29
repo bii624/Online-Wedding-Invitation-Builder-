@@ -11,9 +11,20 @@ import SignupPage from "./pages/SignupPage/SignupPage";
 import ResetPasswordPage from "./pages/PasswordPage/ResetPasswordPage";
 import LoadingPage from "./pages/Loading/Loadingpage";
 
+import { Toaster } from 'sonner';
+import { useEffect } from 'react';
+import { useAuthStore } from './store/authStore';
+
 function App() {
+  const checkAuth = useAuthStore((state) => state.checkAuth);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
   return (
     <BrowserRouter>
+      <Toaster richColors position="top-center" />
       <Routes>
         <Route path="/design" element={<EditorPage />} />
         {/* Redirect root to /design for convenience */}

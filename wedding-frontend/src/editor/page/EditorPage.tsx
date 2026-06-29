@@ -2,7 +2,7 @@
 // EDITOR PAGE - Main editor layout assembler
 // ============================================================
 
-import '../styles/editor.css';
+import styles from '../styles/editor.module.css';
 import { Header } from '../components/Header';
 import { LeftToolbar } from '../components/LeftToolbar';
 import { MainCanvas } from '../components/Canvas';
@@ -13,12 +13,12 @@ import { ImageCropModal } from '../components/ImageCropModal';
 
 export function EditorPage() {
   return (
-    <div className="editor-root">
+    <div className={styles['editor-root']}>
       {/* ── Header ──────────────────────── */}
       <Header />
 
       {/* ── Main Body ───────────────────── */}
-      <div className="editor-body">
+      <div className={styles['editor-body']}>
         {/* Left Toolbar */}
         <LeftToolbar />
 

@@ -55,7 +55,7 @@
   --ed-filmstrip-h: 100px;
 
   /* Typography */
-  --ed-font: 'Inter', system-ui, -apple-system, sans-serif;
+  --ed-font: 'Poppins', system-ui, -apple-system, sans-serif;
 
   /* Transitions */
   --ed-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -89,33 +89,66 @@
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--ed-border-strong);
   border-radius: var(--ed-radius-full);
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--ed-text-muted);
 }
 
 /* ── Utility classes ─────────────────────────────────────── */
-.ed-flex { display: flex; }
-.ed-flex-col { display: flex; flex-direction: column; }
-.ed-items-center { align-items: center; }
-.ed-justify-center { justify-content: center; }
-.ed-justify-between { justify-content: space-between; }
-.ed-gap-1 { gap: 4px; }
-.ed-gap-2 { gap: 8px; }
-.ed-gap-3 { gap: 12px; }
-.ed-w-full { width: 100%; }
+.ed-flex {
+  display: flex;
+}
+
+.ed-flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.ed-items-center {
+  align-items: center;
+}
+
+.ed-justify-center {
+  justify-content: center;
+}
+
+.ed-justify-between {
+  justify-content: space-between;
+}
+
+.ed-gap-1 {
+  gap: 4px;
+}
+
+.ed-gap-2 {
+  gap: 8px;
+}
+
+.ed-gap-3 {
+  gap: 12px;
+}
+
+.ed-w-full {
+  width: 100%;
+}
 
 /* Reset */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
-button {
+
+._editor-root_ejcjc_131 button {
   cursor: pointer;
   border: none;
   background: none;
@@ -125,7 +158,10 @@ button {
   font-size: inherit;
   color: inherit;
 }
-input, select, textarea {
+
+.editor-root input,
+select,
+textarea {
   font-family: inherit;
   font-size: inherit;
   color: inherit;

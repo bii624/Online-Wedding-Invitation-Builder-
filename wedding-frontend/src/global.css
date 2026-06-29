@@ -1,17 +1,16 @@
-
 @theme {
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
-  
+
   --color-primary: hsl(var(--primary));
   --color-primary-foreground: hsl(var(--primary-foreground));
-  
+
   --color-popover: hsl(var(--popover));
   --color-popover-foreground: hsl(var(--popover-foreground));
-  
+
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
 }
@@ -21,6 +20,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -32,6 +32,7 @@
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -46,6 +47,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -147,9 +149,12 @@
 
 /* Pulse Animation */
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.5;
   }
@@ -164,6 +169,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -220,6 +226,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -231,10 +238,21 @@
   animation-fill-mode: both;
 }
 
-.grid-item:nth-child(1) { animation-delay: 0.05s; }
-.grid-item:nth-child(2) { animation-delay: 0.1s; }
-.grid-item:nth-child(3) { animation-delay: 0.15s; }
-.grid-item:nth-child(4) { animation-delay: 0.2s; }
+.grid-item:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.grid-item:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.grid-item:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.grid-item:nth-child(4) {
+  animation-delay: 0.2s;
+}
 
 /* Glow Effect */
 .glow {

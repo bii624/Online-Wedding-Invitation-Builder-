@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -19,7 +20,12 @@ import {
 } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
+
 @ApiTags('users')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

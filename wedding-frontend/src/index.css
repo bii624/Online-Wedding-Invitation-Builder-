@@ -20,7 +20,7 @@
 }
 
 @theme {
-    --font-sans: 'Inter', sans-serif;
+    --font-sans: 'Poppins', sans-serif;
     --font-mono: ui-monospace, monospace;
     --font-inter: 'Inter', sans-serif;
     --font-poppins: 'Poppins', sans-serif;
@@ -38,6 +38,27 @@
     font-family: 'Poppins';
     src: url('./assets/fonts/FZ Poppins-Regular.ttf') format('truetype');
     font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('./assets/fonts/FZ Poppins-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('./assets/fonts/FZ Poppins-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('./assets/fonts/FZ Poppins-Bold.ttf') format('truetype');
+    font-weight: 700;
     font-style: normal;
 }
 
@@ -111,168 +132,163 @@
         --chart-4: 43 74% 66%;
         --chart-5: 27 87% 67%;
 
-        /* Remove default link styles */
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        .dark {
-
-            --background: 0 0% 3.9%;
-            --foreground: 0 0% 98%;
-            --card: 0 0% 3.9%;
-            --card-foreground: 0 0% 98%;
-            --popover: 0 0% 3.9%;
-            --popover-foreground: 0 0% 98%;
-            --primary: 0 0% 98%;
-            --primary-foreground: 0 0% 9%;
-            --secondary: 0 0% 14.9%;
-            --secondary-foreground: 0 0% 98%;
-            --muted: 0 0% 14.9%;
-            --muted-foreground: 0 0% 63.9%;
-            --accent: 0 0% 14.9%;
-            --accent-foreground: 0 0% 98%;
-            --destructive: 0 62.8% 30.6%;
-            --border: 0 0% 14.9%;
-            --input: 0 0% 14.9%;
-            --ring: 0 0% 83.1%;
-            --destructive-foreground: 0 0% 98%;
-            --chart-1: 220 70% 50%;
-            --chart-2: 160 60% 45%;
-            --chart-3: 30 80% 55%;
-            --chart-4: 280 65% 60%;
-            --chart-5: 340 75% 55%;
-        }
-
-        * {
-            @apply border-border;
-        }
-
-        body {
-            @apply bg-background text-foreground;
-        }
     }
 
+    .dark {
 
-
-    @keyframes glowPulse {
-
-        0%,
-        100% {
-            box-shadow: 0 0 8px 2px rgba(139, 92, 246, 0.4);
-        }
-
-        50% {
-            box-shadow: 0 0 12px 4px rgba(139, 92, 246, 0.7);
-        }
+        --background: 0 0% 3.9%;
+        --foreground: 0 0% 98%;
+        --card: 0 0% 3.9%;
+        --card-foreground: 0 0% 98%;
+        --popover: 0 0% 3.9%;
+        --popover-foreground: 0 0% 98%;
+        --primary: 0 0% 98%;
+        --primary-foreground: 0 0% 9%;
+        --secondary: 0 0% 14.9%;
+        --secondary-foreground: 0 0% 98%;
+        --muted: 0 0% 14.9%;
+        --muted-foreground: 0 0% 63.9%;
+        --accent: 0 0% 14.9%;
+        --accent-foreground: 0 0% 98%;
+        --destructive: 0 62.8% 30.6%;
+        --border: 0 0% 14.9%;
+        --input: 0 0% 14.9%;
+        --ring: 0 0% 83.1%;
+        --destructive-foreground: 0 0% 98%;
+        --chart-1: 220 70% 50%;
+        --chart-2: 160 60% 45%;
+        --chart-3: 30 80% 55%;
+        --chart-4: 280 65% 60%;
+        --chart-5: 340 75% 55%;
     }
 
-    /* Tạo class custom glow animation */
-    .glow-border {
-        animation: glowPulse 3s ease-in-out infinite;
-        border-color: rgba(139, 92, 246, 0.5) !important;
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+
+
+@keyframes glowPulse {
+
+    0%,
+    100% {
         box-shadow: 0 0 8px 2px rgba(139, 92, 246, 0.4);
     }
 
-    .button-hover-effect:hover,
-    .button-hover-effect:focus {
-        background-color: #111827;
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
-        transform: translateY(-2px);
-        transition: all 0.3s ease;
+    50% {
+        box-shadow: 0 0 12px 4px rgba(139, 92, 246, 0.7);
+    }
+}
+
+/* Tạo class custom glow animation */
+.glow-border {
+    animation: glowPulse 3s ease-in-out infinite;
+    border-color: rgba(139, 92, 246, 0.5) !important;
+    box-shadow: 0 0 8px 2px rgba(139, 92, 246, 0.4);
+}
+
+.button-hover-effect:hover,
+.button-hover-effect:focus {
+    background-color: #111827;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+.button-hover-effect {
+    transition: all 0.3s ease;
+}
+
+@keyframes border-move {
+    0% {
+        background-position: 0% 50%;
     }
 
-    .button-hover-effect {
-        transition: all 0.3s ease;
+    100% {
+        background-position: 200% 50%;
+    }
+}
+
+.animated-border {
+    position: relative;
+    border-radius: 9999px;
+    padding: 1px;
+    background: linear-gradient(270deg, #3b82f6, #8b5cf6, #3b82f6);
+    background-size: 200% 200%;
+    animation: border-move 3s linear infinite;
+    opacity: 0.9;
+}
+
+.animated-border>button {
+    position: relative;
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1.15rem;
+    border-radius: 9999px;
+    border: none;
+    background-color: black;
+    font-weight: 700;
+    color: whitesmoke;
+    cursor: pointer;
+    width: 100%;
+    gap: 0.75rem;
+    transition: background-color 0.3s ease;
+}
+
+.animated-border>button:hover {
+    background-color: #111;
+    color: #f3f4f6;
+}
+
+@keyframes border-move {
+    0% {
+        background-position: 0% 50%;
     }
 
-    @keyframes border-move {
-        0% {
-            background-position: 0% 50%;
-        }
-
-        100% {
-            background-position: 200% 50%;
-        }
+    100% {
+        background-position: 100% 50%;
     }
+}
 
-    .animated-border {
-        position: relative;
-        border-radius: 9999px;
-        padding: 1px;
-        background: linear-gradient(270deg, #3b82f6, #8b5cf6, #3b82f6);
-        background-size: 200% 200%;
-        animation: border-move 3s linear infinite;
-        opacity: 0.9;
-    }
+::-webkit-scrollbar {
+    height: 6px;
+}
 
-    .animated-border>button {
-        position: relative;
-        z-index: 10;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.5rem 1.15rem;
-        border-radius: 9999px;
-        border: none;
-        background-color: black;
-        font-weight: 700;
-        color: whitesmoke;
-        cursor: pointer;
-        width: 100%;
-        gap: 0.75rem;
-        transition: background-color 0.3s ease;
-    }
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 138, 191, 0.929);
+    border-radius: 4px;
+}
 
-    .animated-border>button:hover {
-        background-color: #111;
-        color: #f3f4f6;
-    }
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(251, 106, 133, 0.6);
+}
 
-    @keyframes border-move {
-        0% {
-            background-position: 0% 50%;
-        }
+/* Custom scrollbar */
+.scrollbar-thin::-webkit-scrollbar {
+    height: 6px;
+}
 
-        100% {
-            background-position: 100% 50%;
-        }
-    }
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 100, 108, 0.4);
+    border-radius: 8px;
+}
 
-    ::-webkit-scrollbar {
-        height: 6px;
-    }
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(244, 244, 245, 0.8);
+}
 
-    ::-webkit-scrollbar-thumb {
-        background: rgba(255, 138, 191, 0.929);
-        border-radius: 4px;
-    }
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
 
-    ::-webkit-scrollbar-thumb:hover {
-        background: rgba(251, 106, 133, 0.6);
-    }
-
-    /* Custom scrollbar */
-    .scrollbar-thin::-webkit-scrollbar {
-        height: 6px;
-    }
-
-    .scrollbar-thin::-webkit-scrollbar-thumb {
-        background-color: rgba(255, 100, 108, 0.4);
-        border-radius: 8px;
-    }
-
-    .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-        background-color: rgba(244, 244, 245, 0.8);
-    }
-
-    .scrollbar-hide::-webkit-scrollbar {
-        display: none;
-    }
-
-    .scrollbar-hide {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }

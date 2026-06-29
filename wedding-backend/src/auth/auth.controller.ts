@@ -36,7 +36,7 @@ import { User } from '@/users/entities/user.entity';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   // =====================================================================
   // ĐĂNG NHẬP LOCAL (EMAIL + PASSWORD)
@@ -48,10 +48,10 @@ export class AuthController {
     schema: {
       type: 'object',
       properties: {
-        username: { type: 'string', example: 'user@example.com', description: 'Địa chỉ email đăng nhập' },
+        email: { type: 'string', example: 'user@example.com', description: 'Địa chỉ email đăng nhập' },
         password: { type: 'string', example: '123456', description: 'Mật khẩu tài khoản' },
       },
-      required: ['username', 'password'],
+      required: ['email', 'password'],
     },
   })
   @ApiOkResponse({
@@ -160,15 +160,14 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
   @ApiOperation({ summary: 'Callback xử lý đăng nhập Google' })
-  @ApiOkResponse({
-    description: 'Xác thực Google thành công, trả về JSON chứa tokens và thông tin user.',
-    type: LoginResponseDto,
-  })
-  async googleAuthRedirect(@Req() req: any, @Res({ passthrough: true }) res: Response) {
+  async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
     // Đăng ký hoặc tìm user OAuth Google
     const user = await this.authService.findOrCreateOAuthUser(req.user);
-    // Đăng nhập, set cookie và trả về JSON chứa tokens + thông tin user
-    return this.authService.login(user, res);
+    // Đăng nhập, set cookie (HttpOnly, Secure, SameSite)
+    await this.authService.login(user, res);
+    
+    // Redirect về frontend, FE sẽ tự động nhận cookie
+    return res.redirect('http://localhost:5173/');
   }
 
   // =====================================================================
@@ -184,14 +183,13 @@ export class AuthController {
   @Get('facebook/callback')
   @UseGuards(FacebookAuthGuard)
   @ApiOperation({ summary: 'Callback xử lý đăng nhập Facebook' })
-  @ApiOkResponse({
-    description: 'Xác thực Facebook thành công, trả về JSON chứa tokens và thông tin user.',
-    type: LoginResponseDto,
-  })
-  async facebookAuthRedirect(@Req() req: any, @Res({ passthrough: true }) res: Response) {
+  async facebookAuthRedirect(@Req() req: any, @Res() res: Response) {
     // Đăng ký hoặc tìm user OAuth Facebook
     const user = await this.authService.findOrCreateOAuthUser(req.user);
-    // Đăng nhập, set cookie và trả về JSON chứa tokens + thông tin user
-    return this.authService.login(user, res);
+    // Đăng nhập, set cookie (HttpOnly, Secure, SameSite)
+    await this.authService.login(user, res);
+    
+    // Redirect về frontend, FE sẽ tự động nhận cookie
+    return res.redirect('http://localhost:5173/');
   }
 }

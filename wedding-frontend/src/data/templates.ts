@@ -45,9 +45,9 @@ export const templatesData: TemplateItem[] = [
     description: "Đậm đà nét đẹp truyền thống với họa tiết song hỷ và tone màu đỏ may mắn, được cách điệu nhẹ nhàng phù hợp xu hướng thời đại."
   },
   {
-    id: 2,
+    id: 4,
     title: "Mẫu thiệp mời Truyền thống Á Đông",
-    code: "DL-2026-02",
+    code: "DL-2026-04",
     tag: "TRADITIONAL",
     price: "Miễn phí",
     mainImage: WeddingImg2,
@@ -55,9 +55,9 @@ export const templatesData: TemplateItem[] = [
     description: "Đậm đà nét đẹp truyền thống với họa tiết song hỷ và tone màu đỏ may mắn, được cách điệu nhẹ nhàng phù hợp xu hướng thời đại."
   },
   {
-    id: 2,
+    id: 5,
     title: "Mẫu thiệp mời Truyền thống Á Đông",
-    code: "DL-2026-02",
+    code: "DL-2026-05",
     tag: "TRADITIONAL",
     price: "Miễn phí",
     mainImage: WeddingImg2,
@@ -65,9 +65,9 @@ export const templatesData: TemplateItem[] = [
     description: "Đậm đà nét đẹp truyền thống với họa tiết song hỷ và tone màu đỏ may mắn, được cách điệu nhẹ nhàng phù hợp xu hướng thời đại."
   },
   {
-    id: 2,
+    id: 6,
     title: "Mẫu thiệp mời Truyền thống Á Đông",
-    code: "DL-2026-02",
+    code: "DL-2026-06",
     tag: "TRADITIONAL",
     price: "Miễn phí",
     mainImage: WeddingImg2,
@@ -75,9 +75,9 @@ export const templatesData: TemplateItem[] = [
     description: "Đậm đà nét đẹp truyền thống với họa tiết song hỷ và tone màu đỏ may mắn, được cách điệu nhẹ nhàng phù hợp xu hướng thời đại."
   },
   {
-    id: 2,
+    id: 7,
     title: "Mẫu thiệp mời Truyền thống Á Đông",
-    code: "DL-2026-02",
+    code: "DL-2026-07",
     tag: "TRADITIONAL",
     price: "Miễn phí",
     mainImage: WeddingImg2,
@@ -85,9 +85,9 @@ export const templatesData: TemplateItem[] = [
     description: "Đậm đà nét đẹp truyền thống với họa tiết song hỷ và tone màu đỏ may mắn, được cách điệu nhẹ nhàng phù hợp xu hướng thời đại."
   },
   {
-    id: 2,
+    id: 8,
     title: "Mẫu thiệp mời Truyền thống Á Đông",
-    code: "DL-2026-02",
+    code: "DL-2026-08",
     tag: "TRADITIONAL",
     price: "Miễn phí",
     mainImage: WeddingImg2,

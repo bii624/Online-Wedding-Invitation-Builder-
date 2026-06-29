@@ -4,6 +4,7 @@
 
 import '../styles/Header.css';
 import { useEditorStore } from '../store/editorStore';
+import { useAuthStore } from '../../store/authStore';
 
 // SVG Icons as inline components for zero deps
 const UndoIcon = () => (
@@ -29,6 +30,7 @@ const PublishIcon = () => (
 
 export function Header() {
   const { undo, redo, historyIndex, history } = useEditorStore();
+  const { user } = useAuthStore();
 
   const canUndo = historyIndex > 0;
   const canRedo = historyIndex < history.length - 1;
@@ -81,8 +83,12 @@ export function Header() {
           Xuất bản
         </button>
         <div className="header-divider" />
-        <div className="header-avatar" title="Hồ sơ người dùng">
-          U
+        <div className="header-avatar" title="Hồ sơ người dùng" style={{ overflow: 'hidden' }}>
+          {user?.avatarUrl ? (
+            <img src={user.avatarUrl} alt={user.fullName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            user?.fullName ? user.fullName.charAt(0) : 'U'
+          )}
         </div>
       </div>
     </header>
