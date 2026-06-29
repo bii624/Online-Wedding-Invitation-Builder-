@@ -67,8 +67,8 @@ export function TextEditorElement({ element }: TextEditorElementProps) {
       tp.textAlign === 'center'
         ? 'center'
         : tp.textAlign === 'right'
-        ? 'flex-end'
-        : 'flex-start',
+          ? 'flex-end'
+          : 'flex-start',
     overflow: 'hidden',
     wordBreak: 'break-word',
     whiteSpace: 'pre-wrap',

@@ -11,7 +11,7 @@
   padding: 0 12px;
   flex-shrink: 0;
   z-index: 100;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.06);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 /* ── Logo ─────────────────────────────────────────────────── */
@@ -22,6 +22,7 @@
   text-decoration: none;
   flex-shrink: 0;
 }
+
 .header-logo-icon {
   width: 28px;
   height: 28px;
@@ -35,12 +36,14 @@
   font-weight: 700;
   box-shadow: 0 2px 8px rgba(225, 29, 72, 0.4);
 }
+
 .header-logo-text {
   font-size: 16px;
   font-weight: 700;
   color: #ffffff;
   letter-spacing: -0.3px;
 }
+
 .header-logo-text span {
   color: #f472b6;
 }
@@ -52,6 +55,7 @@
   gap: 2px;
   margin-left: 16px;
 }
+
 .header-history-btn {
   display: flex;
   align-items: center;
@@ -62,14 +66,17 @@
   color: rgba(255, 255, 255, 0.6);
   transition: background var(--ed-transition), color var(--ed-transition);
 }
+
 .header-history-btn:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
 }
+
 .header-history-btn:disabled {
   opacity: 0.3;
   cursor: not-allowed;
 }
+
 .header-history-btn svg {
   width: 16px;
   height: 16px;
@@ -88,6 +95,7 @@
   font-size: 11px;
   font-weight: 500;
 }
+
 .header-status-dot {
   width: 6px;
   height: 6px;
@@ -95,9 +103,17 @@
   background: #10b981;
   animation: pulse-dot 2s infinite;
 }
+
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
 }
 
 /* ── Right Actions ─────────────────────────────────────────── */
@@ -106,6 +122,7 @@
   align-items: center;
   gap: 8px;
 }
+
 .header-left {
   display: flex;
   align-items: center;
@@ -123,6 +140,7 @@
   transition: all var(--ed-transition);
   white-space: nowrap;
 }
+
 .header-btn svg {
   width: 14px;
   height: 14px;
@@ -133,6 +151,7 @@
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
+
 .header-btn-ghost:hover {
   background: rgba(255, 255, 255, 0.14);
   color: #ffffff;
@@ -145,11 +164,13 @@
   border: 1px solid transparent;
   box-shadow: 0 2px 8px rgba(225, 29, 72, 0.35);
 }
+
 .header-btn-publish:hover {
   background: linear-gradient(135deg, #f43f5e, #e11d48);
   box-shadow: 0 4px 14px rgba(225, 29, 72, 0.45);
   transform: translateY(-1px);
 }
+
 .header-btn-publish:active {
   transform: translateY(0);
 }
@@ -178,6 +199,7 @@
   transition: border-color var(--ed-transition);
   flex-shrink: 0;
 }
+
 .header-avatar:hover {
   border-color: rgba(255, 255, 255, 0.5);
 }

@@ -634,10 +634,10 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
 
   applyGlobalAnimation: (presetId, preset) => {
     const { elements, selectedElement } = get();
-    
+
     // Sort elements by Y coordinate (or zIndex) to determine sequential order.
     const sorted = [...elements].sort((a, b) => a.y - b.y);
-    
+
     const updated = elements.map((el) => {
       const index = sorted.findIndex(e => e.id === el.id);
       const props = preset(index);

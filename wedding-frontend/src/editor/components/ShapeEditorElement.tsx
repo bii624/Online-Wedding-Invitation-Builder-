@@ -38,7 +38,7 @@ export function ShapeEditorElement({ element }: ShapeEditorElementProps) {
     : 'none';
 
   // Background style
-  const backgroundStyle = fillType === 'gradient' 
+  const backgroundStyle = fillType === 'gradient'
     ? { background: `linear-gradient(${gradientAngle}deg, ${gradientFrom}, ${gradientTo})` }
     : { backgroundColor: fillColor };
 
@@ -60,7 +60,7 @@ export function ShapeEditorElement({ element }: ShapeEditorElementProps) {
   const y1 = Math.round(50 + Math.sin(angleRad + Math.PI) * 50) + '%';
   const x2 = Math.round(50 + Math.cos(angleRad) * 50) + '%';
   const y2 = Math.round(50 + Math.sin(angleRad) * 50) + '%';
-  
+
   const defs = fillType === 'gradient' && (
     <defs>
       <linearGradient id={gradId} x1={x1} y1={y1} x2={x2} y2={y2}>
@@ -113,7 +113,7 @@ export function ShapeEditorElement({ element }: ShapeEditorElementProps) {
             strokeWidth={element.height} // Line width equals element height
             strokeDasharray={
               borderStyle === 'dashed' ? '8,8' :
-              borderStyle === 'dotted' ? '2,4' : 'none'
+                borderStyle === 'dotted' ? '2,4' : 'none'
             }
           />
         </svg>
@@ -133,7 +133,7 @@ export function ShapeEditorElement({ element }: ShapeEditorElementProps) {
             strokeWidth={borderWidth}
             strokeDasharray={
               borderStyle === 'dashed' ? '8,8' :
-              borderStyle === 'dotted' ? '2,4' : 'none'
+                borderStyle === 'dotted' ? '2,4' : 'none'
             }
             vectorEffect="non-scaling-stroke"
           />
