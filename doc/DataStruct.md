@@ -4,14 +4,15 @@
 
 Wedding Card Builder là nền tảng tạo thiệp cưới điện tử với trình chỉnh sửa kéo-thả tự do (Canva-like Editor).
 
+**Kiến trúc Single-page**: Toàn bộ nội dung thiệp được hiển thị trên một canvas cuộn dài duy nhất. Người dùng thêm/sắp xếp các block (text, ảnh, countdown, map...) tự do theo trục Y.
+
 Các chức năng chính:
 
 - Quản lý người dùng và gói dịch vụ
 - Thư viện mẫu thiệp (Templates)
-- Tạo thiệp cá nhân từ mẫu
+- Tạo thiệp cá nhân từ mẫu hoặc từ trang trắng
 - Trình chỉnh sửa kéo-thả (Canvas Editor)
-- Quản lý sự kiện cưới
-- RSVP xác nhận tham dự
+- RSVP xác nhận tham dự (gắn với toàn bộ thiệp)
 - Tường lời chúc
 - Quản lý media assets
 - Thống kê lượt xem
@@ -23,25 +24,24 @@ Các chức năng chính:
 ```
 Users
  ├── Cards
- │    ├── CardPages
- │    │     └── CardBlocks
- │    │
- │    ├── WeddingEvents
+ │    ├── CardBlocks          ← trỏ thẳng vào Card (không qua CardPage)
  │    ├── Guests
- │    │     ├── RSVPResponses
+ │    │     ├── RSVPResponses ← RSVP cho toàn thiệp (không theo sự kiện)
  │    │     └── Wishes
- │    │
  │    ├── Assets
  │    └── CardViews
  │
  └── Plans
 
 Templates
- ├── TemplatePages
- │     └── TemplateBlocks
- │
+ ├── TemplateBlocks           ← trỏ thẳng vào Template (không qua TemplatePage)
  └── TemplateCategories
+
+LibraryElements
+ └── ElementCategories
 ```
+
+> **Đã loại bỏ**: `CardPage`, `TemplatePage`, `WeddingEvent`.
 
 ---
 
@@ -91,20 +91,11 @@ Thông tin tài khoản.
 | status          | ENUM |
 | current_plan_id | UUID |
 
-### Quan hệ
-
-```
-User
- ├── Plans
- ├── Cards
- └── Assets
-```
-
 ---
 
 # 4. TEMPLATE SYSTEM
 
-Template là mẫu thiệp do Admin thiết kế sẵn.
+Template là mẫu thiệp do Admin thiết kế sẵn (single-page, không phân trang).
 
 ## template_categories
 
@@ -126,87 +117,66 @@ Thiệp cưới
 
 Thông tin template.
 
-| Cột           | Mô tả             |
-| ------------- | ----------------- |
-| name          | Tên mẫu           |
-| slug          | URL SEO           |
-| thumbnail_url | Ảnh xem trước     |
-| canvas_width  | Chiều rộng canvas |
-| canvas_height | Chiều cao canvas  |
-| status        | draft/published   |
+| Cột           | Mô tả                             |
+| ------------- | --------------------------------- |
+| name          | Tên mẫu                           |
+| slug          | URL SEO                           |
+| thumbnail_url | Ảnh xem trước                     |
+| canvas_width  | Chiều rộng canvas (px, mobile-first) |
+| background    | JSONB nền canvas mặc định         |
+| status        | draft/published/archived          |
 
----
-
-## template_pages
-
-Mỗi template gồm nhiều page.
-
-Ví dụ:
-
-```
-Page 1 - Cover
-Page 2 - Couple Intro
-Page 3 - Love Story
-Page 4 - Event Info
-Page 5 - RSVP
-Page 6 - Wishes
-```
+> **Lưu ý**: Đã bỏ `canvas_height` — thiệp cuộn dài không có chiều cao cố định.
 
 ### background JSON
 
 ```json
-{
-    "type": "color",
-    "value": "#FFFFFF"
-}
+{ "type": "color", "value": "#FFFFFF" }
 ```
 
 hoặc
 
 ```json
-{
-    "type": "image",
-    "url": "https://cdn.example.com/bg.jpg"
-}
+{ "type": "image", "url": "https://cdn.example.com/bg.jpg" }
 ```
 
 ---
 
 ## template_blocks
 
-Các thành phần xuất hiện trên page.
+Các block kéo-thả trong template. Trỏ **thẳng vào `template_id`** (không qua page).
 
-### Thuộc tính editor
+### Thuộc tính vị trí
 
-| Cột      | Ý nghĩa      |
-| -------- | ------------ |
-| pos_x    | Tọa độ X     |
-| pos_y    | Tọa độ Y     |
-| width    | Chiều rộng   |
-| height   | Chiều cao    |
-| rotation | Góc xoay     |
-| z_index  | Lớp hiển thị |
+| Cột       | Ý nghĩa      |
+| --------- | ------------ |
+| template_id | FK → templates |
+| pos_x     | Tọa độ X     |
+| pos_y     | Tọa độ Y     |
+| width     | Chiều rộng   |
+| height    | Chiều cao    |
+| rotation  | Góc xoay     |
+| z_index   | Lớp hiển thị |
 
 ---
 
 # 5. CARD SYSTEM
 
-Card là thiệp thực tế của khách hàng.
+Card là thiệp thực tế của khách hàng (single-page).
 
 ## cards
 
 Thông tin tổng thể của thiệp.
 
-| Cột        | Mô tả             |
-| ---------- | ----------------- |
-| title      | Tên thiệp         |
-| groom_name | Tên chú rể        |
-| bride_name | Tên cô dâu        |
-| slug       | URL công khai     |
-| status     | draft/published   |
-| settings   | Cấu hình toàn cục |
-
----
+| Cột        | Mô tả                         |
+| ---------- | ----------------------------- |
+| title      | Tên thiệp                     |
+| groom_name | Tên chú rể                    |
+| bride_name | Tên cô dâu                    |
+| slug       | URL công khai                 |
+| status     | draft/published/archived      |
+| background | Nền canvas toàn cục (JSONB)   |
+| settings   | Cấu hình toàn cục (JSONB)     |
 
 ### settings JSON
 
@@ -222,22 +192,11 @@ Thông tin tổng thể của thiệp.
 
 ---
 
-## card_pages
-
-Trang thuộc thiệp.
-
-Cho phép:
-
-- Thêm page mới
-- Xóa page
-- Đổi thứ tự
-- Ẩn page
-
----
-
 ## card_blocks
 
 Bảng quan trọng nhất của hệ thống.
+
+Trỏ **thẳng vào `card_id`** (không qua `card_pages`).
 
 Mọi thao tác trong editor đều cập nhật bảng này.
 
@@ -336,6 +295,8 @@ Người dùng:
 
 ## Countdown Block
 
+Người dùng tự nhập ngày tháng trực tiếp trên canvas.
+
 ### content
 
 ```json
@@ -356,6 +317,8 @@ Người dùng:
 ---
 
 ## Map Block
+
+Người dùng tự nhập địa điểm trực tiếp trên canvas.
 
 ### content
 
@@ -399,12 +362,13 @@ Người dùng:
 
 ## RSVP Form Block
 
+> **Lưu ý**: Không còn `eventId` trong content. RSVP gắn với toàn bộ thiệp.
+
 ### content
 
 ```json
 {
     "fields": ["name", "phone", "attending", "numAttendees"],
-    "eventId": "uuid",
     "submitLabel": "Xác nhận tham dự"
 }
 ```
@@ -438,40 +402,7 @@ Người dùng:
 
 ---
 
-# 7. WEDDING EVENTS
-
-## wedding_events
-
-Một thiệp có thể chứa nhiều sự kiện.
-
-Ví dụ:
-
-### Nhà trai
-
-```text
-Lễ Vu Quy
-08:00
-12/12/2026
-```
-
-### Nhà gái
-
-```text
-Tiệc Cưới
-18:00
-12/12/2026
-```
-
-### Quan hệ
-
-```
-Card
- └── WeddingEvents
-```
-
----
-
-# 8. GUEST MANAGEMENT
+# 7. GUEST MANAGEMENT
 
 ## guests
 
@@ -500,11 +431,21 @@ Sinh link cá nhân hóa.
 
 ---
 
-# 9. RSVP
+# 8. RSVP
 
 ## rsvp_responses
 
-Lưu phản hồi tham dự.
+Lưu phản hồi tham dự **cho toàn bộ thiệp** (không theo sự kiện riêng lẻ).
+
+| Cột          | Kiểu | Mô tả                                     |
+| ------------ | ---- | ----------------------------------------- |
+| card_id      | UUID | FK → cards                                |
+| guest_id     | UUID | FK → guests (NULL nếu điền tự do)         |
+| guest_name   | TEXT | Tên tự điền                               |
+| phone        | TEXT | SĐT                                       |
+| attending    | ENUM | yes / no / maybe                          |
+| num_attendees| INT  | Số người tham dự                          |
+| note         | TEXT | Ghi chú                                   |
 
 ### Example
 
@@ -519,7 +460,7 @@ Lưu phản hồi tham dự.
 
 ---
 
-# 10. WISHES
+# 9. WISHES
 
 ## wishes
 
@@ -536,7 +477,7 @@ Lưu lời chúc từ khách.
 
 ---
 
-# 11. ASSETS
+# 10. ASSETS
 
 ## assets
 
@@ -562,7 +503,7 @@ Hỗ trợ:
 
 ---
 
-# 12. VIEW ANALYTICS
+# 11. VIEW ANALYTICS
 
 ## card_views
 
@@ -574,31 +515,22 @@ Theo dõi lượt xem.
 - Thống kê khách truy cập
 - Biết khách nào đã mở thiệp
 
-### Quan hệ
-
-```
-Card
- └── CardViews
-```
-
 ---
 
-# 13. Luồng hoạt động chính
+# 12. Luồng hoạt động chính
 
 ## Tạo thiệp
 
 ```
-Admin tạo Template
+Admin tạo Template (+ TemplateBlocks)
         ↓
 User chọn Template
         ↓
-Clone Template
+Clone Template → Cards + CardBlocks (card_id trỏ thẳng)
         ↓
-Cards
+User chỉnh sửa tự do trên Canvas
         ↓
-CardPages
-        ↓
-CardBlocks
+Publish → thiệp live tại /thiep/<slug>
 ```
 
 ## RSVP
@@ -606,9 +538,9 @@ CardBlocks
 ```
 Khách mở thiệp
         ↓
-Điền RSVP
+Điền RSVP Form (block trên canvas)
         ↓
-rsvp_responses
+rsvp_responses (card_id, không cần event_id)
 ```
 
 ## Wishes
@@ -618,24 +550,35 @@ Khách nhập lời chúc
         ↓
 wishes
         ↓
-Hiển thị Wishes Wall
+Hiển thị Wishes Wall Block
 ```
 
 ---
 
-# 14. Bảng quan trọng nhất
+# 13. Bảng quan trọng nhất
 
-| Bảng            | Vai trò          |
-| --------------- | ---------------- |
-| users           | Người dùng       |
-| templates       | Mẫu thiệp        |
-| template_blocks | Block mẫu        |
-| cards           | Thiệp thực tế    |
-| card_blocks     | Canvas editor    |
-| wedding_events  | Sự kiện cưới     |
-| guests          | Khách mời        |
-| rsvp_responses  | Xác nhận tham dự |
-| wishes          | Lời chúc         |
-| assets          | Kho media        |
+| Bảng            | Vai trò               |
+| --------------- | --------------------- |
+| users           | Người dùng            |
+| templates       | Mẫu thiệp             |
+| template_blocks | Block mẫu (no page)   |
+| cards           | Thiệp thực tế         |
+| card_blocks     | Canvas editor (no page)|
+| guests          | Khách mời             |
+| rsvp_responses  | Xác nhận tham dự      |
+| wishes          | Lời chúc              |
+| assets          | Kho media             |
+| library_elements| Thư viện icon/sticker |
 
 `card_blocks` là trung tâm của toàn bộ hệ thống editor kéo-thả.
+
+---
+
+# 14. Những gì đã loại bỏ & lý do
+
+| Bỏ               | Lý do                                                         |
+| ---------------- | ------------------------------------------------------------- |
+| `card_pages`     | Kiến trúc chuyển sang single-page, canvas cuộn dài            |
+| `template_pages` | Tương tự                                                      |
+| `wedding_events` | Người dùng nhập ngày/địa điểm trực tiếp qua block trên canvas |
+| `event_id` (RSVP)| RSVP gắn với toàn bộ thiệp, không còn phân theo buổi lễ       |

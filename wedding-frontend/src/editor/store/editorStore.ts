@@ -17,6 +17,7 @@ import type {
   BackgroundProperties,
   AnimationProperties,
 } from '../types/editor.types';
+import { assetsApi } from '../../api/assetsApi';
 
 // ── Default property sets ────────────────────────────────
 export const DEFAULT_ANIMATION_PROPS: AnimationProperties = {
@@ -175,6 +176,7 @@ interface EditorActions {
   updateElementCrop: (id: string, cropData: ImageCropData, newWidth: number, newHeight: number) => void;
   updateCanvasBackground: (props: Partial<BackgroundProperties>) => void;
   addRecentColor: (color: string) => void;
+  fetchUploadedAssets: () => Promise<void>;
 }
 
 
@@ -198,7 +200,7 @@ const INITIAL_STATE: EditorState = {
   zoom: 100,
   showGrid: true,
   canvasWidth: 400,
-  canvasHeight: 566,
+  canvasHeight: 2000,
   cropElementId: null,
   filmstripItems: Array.from({ length: 14 }, (_, i) => ({
     id: `page-${i + 1}`,
@@ -529,6 +531,41 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         music: s.music?.id === id ? null : s.music,
       };
     });
+  },
+
+  fetchUploadedAssets: async () => {
+    try {
+      const assets = await assetsApi.getAssets();
+      
+      const images: UploadedImage[] = [];
+      const musics: MusicProperties[] = [];
+
+      assets.forEach(asset => {
+        if (asset.type === 'image' || asset.type === 'video') {
+          images.push({
+            id: asset.id,
+            src: asset.url,
+            name: `Ảnh của tôi`, // Optional: extract filename from url if needed
+            thumbnailSrc: asset.thumbnailUrl || asset.url,
+          });
+        } else if (asset.type === 'audio') {
+          musics.push({
+            id: asset.id,
+            name: `Nhạc của tôi`,
+            src: asset.url,
+            duration: asset.durationMs ? asset.durationMs / 1000 : 0,
+            source: 'uploaded',
+            autoPlay: true,
+            loop: true,
+            volume: 0.5
+          });
+        }
+      });
+
+      set({ uploadedImages: images, uploadedMusics: musics });
+    } catch (error) {
+      console.error('Failed to fetch assets', error);
+    }
   },
 
   // ── Music ─────────────────────────────────────────────

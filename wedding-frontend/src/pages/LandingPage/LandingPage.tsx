@@ -32,6 +32,7 @@ import {
   Play,
   Pen,
   LogOut,
+  Zap,
 } from 'lucide-react';
 
 import { useAuthStore } from '../../store/authStore';
@@ -314,25 +315,20 @@ export const Header = () => {
 
           <div className="flex items-center space-x-2 ml-auto md:ml-0">
             {user ? (
-              <div className="flex items-center gap-2 md:gap-4">
-                <div className="hidden md:flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 font-bold uppercase overflow-hidden">
-                    {user.avatarUrl ? (
-                      <img src={user.avatarUrl} alt={user.fullName} className="w-full h-full object-cover" />
-                    ) : (
-                      user.fullName.charAt(0)
-                    )}
-                  </div>
-                  <span className="text-sm font-semibold text-zinc-700">{user.fullName}</span>
+              <div className="flex items-center bg-white border border-zinc-200 p-1.5 rounded-full shadow-sm">
+                <div className="w-9 h-9 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 font-bold uppercase overflow-hidden shrink-0">
+                  {user.avatarUrl ? (
+                    <img src={user.avatarUrl} alt={user.fullName} className="w-full h-full object-cover" />
+                  ) : (
+                    user.fullName.charAt(0)
+                  )}
                 </div>
-                <Link to="/design">
-                  <Button variant="default" className="rounded-xl px-4  hover:bg-zinc-800 text-white shadow-none text-sm">
-                    Vào thiết kế
+                <Link to="/design" className="ml-2">
+                  <Button variant="default" className="rounded-full h-9 px-4 text-white shadow-none text-sm flex items-center gap-1.5 font-medium border-0">
+                    <Zap className="w-4 h-4" />
+                    Tạo thiết kế
                   </Button>
                 </Link>
-                <Button variant="ghost" size="icon" onClick={logout} className="rounded-full hover:bg-rose-50 text-zinc-500 hover:text-rose-600">
-                  <LogOut className="w-4 h-4" />
-                </Button>
               </div>
             ) : (
               <>

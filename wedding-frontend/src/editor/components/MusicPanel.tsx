@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { useEditorStore } from '../store/editorStore';
 import type { MusicProperties } from '../types/editor.types';
 import '../styles/MusicPanel.css';
+import { assetsApi } from '../../api/assetsApi';
+import { toast } from 'sonner';
 
 // ── Icons ──────────────────────────────────────────────────
 const CloseIcon = () => (
@@ -50,13 +52,18 @@ function formatDuration(seconds: number) {
 
 // ============================================================
 export function MusicPanel({ onClose }: { onClose: () => void }) {
-  const { music, setMusic, uploadedMusics, addUploadedMusic, removeUploadedMusic } = useEditorStore();
+  const { music, setMusic, uploadedMusics, addUploadedMusic, removeUploadedMusic, fetchUploadedAssets } = useEditorStore();
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+
+  useEffect(() => {
+    fetchUploadedAssets();
+  }, [fetchUploadedAssets]);
 
   // Initialize audio element
   useEffect(() => {
@@ -95,37 +102,52 @@ export function MusicPanel({ onClose }: { onClose: () => void }) {
     }
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Check size < 15MB
     if (file.size > 15 * 1024 * 1024) {
-      alert('File nhạc quá lớn. Vui lòng chọn file dưới 15MB.');
+      toast.error('File nhạc quá lớn. Vui lòng chọn file dưới 15MB.');
       return;
     }
 
-    const src = URL.createObjectURL(file);
-    const name = file.name.replace(/\.[^/.]+$/, ""); // remove extension
-
-    // Get duration via a temporary audio element
-    const tempAudio = new Audio(src);
-    tempAudio.addEventListener('loadedmetadata', () => {
-      const duration = tempAudio.duration;
-      addUploadedMusic({
-        id: `upl-${Date.now()}`,
-        name,
-        src,
-        duration,
+    setIsUploading(true);
+    try {
+      const asset = await assetsApi.uploadAsset(file);
+      const newMusic: MusicProperties = {
+        id: asset.id,
+        name: file.name.replace(/\.[^/.]+$/, ""),
+        src: asset.url,
+        duration: asset.durationMs ? asset.durationMs / 1000 : 0,
         source: 'uploaded',
         autoPlay: true,
         loop: true,
         volume: 0.5
-      });
-    });
+      };
+      addUploadedMusic(newMusic);
+      toast.success('Tải nhạc lên thành công');
+    } catch (error: any) {
+      console.error('Lỗi tải nhạc:', error);
+      const msg = error.response?.data?.message;
+      const errorText = Array.isArray(msg) ? msg[0] : (msg || error.message || 'Tải nhạc thất bại');
+      toast.error(errorText);
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
-    // Reset input
-    if (fileInputRef.current) fileInputRef.current.value = '';
+  const handleDelete = async (id: string) => {
+    try {
+      await assetsApi.deleteAsset(id);
+      removeUploadedMusic(id);
+      toast.success('Xóa nhạc thành công');
+    } catch (error: any) {
+      console.error('Lỗi khi xóa nhạc:', error);
+      const msg = error.response?.data?.message;
+      const errorText = Array.isArray(msg) ? msg[0] : (msg || error.message || 'Xóa nhạc thất bại');
+      toast.error(errorText);
+    }
   };
 
   // Helper to render an item row
@@ -157,7 +179,7 @@ export function MusicPanel({ onClose }: { onClose: () => void }) {
           {item.source === 'uploaded' && (
             <button 
               className="mp-icon-btn danger" 
-              onClick={() => removeUploadedMusic(item.id)}
+              onClick={() => handleDelete(item.id)}
               title="Xoá bài này"
             >
               <TrashIcon />
@@ -207,9 +229,9 @@ export function MusicPanel({ onClose }: { onClose: () => void }) {
         )}
 
         {/* Upload */}
-        <button className="mp-upload-btn" onClick={() => fileInputRef.current?.click()}>
+        <button className="mp-upload-btn" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
           <UploadIcon />
-          Tải nhạc lên (Max 15MB)
+          {isUploading ? 'Đang tải lên...' : 'Tải nhạc lên (Max 15MB)'}
         </button>
         <input 
           type="file" 

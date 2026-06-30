@@ -32,6 +32,10 @@
   border-bottom: 2px solid transparent;
   transition: all var(--ed-transition);
   background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .right-panel-tab:hover {

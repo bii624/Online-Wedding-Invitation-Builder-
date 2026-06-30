@@ -5,6 +5,8 @@
 import '../styles/Header.css';
 import { useEditorStore } from '../store/editorStore';
 import { useAuthStore } from '../../store/authStore';
+import { RevolvingHeartsIcon } from '../../components/icons/emojione-revolving-hearts';
+import { useNavigate } from 'react-router-dom';
 
 // SVG Icons as inline components for zero deps
 const UndoIcon = () => (
@@ -31,6 +33,7 @@ const PublishIcon = () => (
 export function Header() {
   const { undo, redo, historyIndex, history } = useEditorStore();
   const { user } = useAuthStore();
+  const navigate = useNavigate();
 
   const canUndo = historyIndex > 0;
   const canRedo = historyIndex < history.length - 1;
@@ -39,10 +42,15 @@ export function Header() {
     <header className="editor-header">
       {/* Left: Logo + History */}
       <div className="header-left">
-        <a className="header-logo" href="#">
-          <div className="header-logo-icon">Z</div>
-          <span className="header-logo-text">zen<span>love</span></span>
-        </a>
+        <div 
+          className="flex items-center gap-2.5 shrink-0 group cursor-pointer"
+          onClick={() => navigate('/')}
+        >
+          <div className="bg-white/20 backdrop-blur-sm p-2 rounded-xl transition-transform group-hover:rotate-12 shadow-sm">
+            <RevolvingHeartsIcon size={28} color="#fff" />
+          </div>
+          <span className="text-2xl font-serif font-black text-white drop-shadow-sm">DearLove</span>
+        </div>
         <div className="header-history">
           <button
             id="btn-undo"

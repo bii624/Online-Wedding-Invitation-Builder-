@@ -2,7 +2,7 @@
 // LEFT TOOLBAR COMPONENT
 // ============================================================
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { BackgroundPanel } from './BackgroundPanel';
 import { MusicPanel } from './MusicPanel';
 import { EffectsPanel } from './EffectsPanel';
@@ -10,6 +10,8 @@ import '../styles/LeftToolbar.css';
 import { useEditorStore } from '../store/editorStore';
 import type { ToolType, UploadedImage } from '../types/editor.types';
 import type { JSX } from 'react';
+import { assetsApi } from '../../api/assetsApi';
+import { toast } from 'sonner';
 
 // ── SVG Icons ─────────────────────────────────────────────
 const TextIcon = () => (
@@ -85,28 +87,54 @@ const CloseIcon = () => (
 
 // ── Image Upload Sub-Panel ────────────────────────────────
 function ImageUploadPanel({ onClose }: { onClose: () => void }) {
-  const { addImageElement, addUploadedImage, removeUploadedImage, uploadedImages } = useEditorStore();
+  const { addImageElement, addUploadedImage, removeUploadedImage, uploadedImages, fetchUploadedAssets } = useEditorStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDraggingOver, setIsDraggingOver] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
-  const processFiles = (files: FileList | null) => {
+  useEffect(() => {
+    fetchUploadedAssets();
+  }, [fetchUploadedAssets]);
+
+  const processFiles = async (files: FileList | null) => {
     if (!files) return;
-    Array.from(files).forEach((file) => {
-      if (!file.type.startsWith('image/')) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const src = ev.target?.result as string;
-        if (!src) return;
+    setIsUploading(true);
+    let successCount = 0;
+    
+    for (const file of Array.from(files)) {
+      if (!file.type.startsWith('image/')) continue;
+      try {
+        const asset = await assetsApi.uploadAsset(file);
         const uploaded: UploadedImage = {
-          id: `upl-${Date.now()}-${Math.random()}`,
-          src,
+          id: asset.id,
+          src: asset.url,
           name: file.name,
-          thumbnailSrc: src,
+          thumbnailSrc: asset.thumbnailUrl || asset.url,
         };
         addUploadedImage(uploaded);
-      };
-      reader.readAsDataURL(file);
-    });
+        successCount++;
+      } catch (error: any) {
+        console.error('Lỗi khi tải ảnh lên:', error);
+        const msg = error.response?.data?.message;
+        const errorText = Array.isArray(msg) ? msg[0] : (msg || error.message || `Lỗi tải lên: ${file.name}`);
+        toast.error(errorText);
+      }
+    }
+    setIsUploading(false);
+    if (successCount > 0) toast.success(`Đã tải lên ${successCount} ảnh`);
+  };
+
+  const handleDelete = async (imgId: string) => {
+    try {
+      await assetsApi.deleteAsset(imgId);
+      removeUploadedImage(imgId);
+      toast.success('Xóa ảnh thành công');
+    } catch (error: any) {
+      console.error('Lỗi khi xóa ảnh:', error);
+      const msg = error.response?.data?.message;
+      const errorText = Array.isArray(msg) ? msg[0] : (msg || error.message || 'Xóa ảnh thất bại');
+      toast.error(errorText);
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -143,10 +171,10 @@ function ImageUploadPanel({ onClose }: { onClose: () => void }) {
         <div className="lt-upload-icon"><UploadIcon /></div>
         <p className="lt-upload-text">Kéo thả hoặc nhấn vào đây để tải lên. Có thể tải lên nhiều lần cùng một lúc.</p>
         <div className="lt-upload-meta">
-          Tối đa 1/10 • Còn lại 9
+          {isUploading ? 'Đang tải lên...' : 'Hỗ trợ JPG, PNG, WEBP, GIF'}
         </div>
-        <button className="lt-upload-btn" onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}>
-          Tải lên Root
+        <button className="lt-upload-btn" onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }} disabled={isUploading}>
+          {isUploading ? 'Đang xử lý...' : 'Tải lên Ảnh'}
         </button>
         <input
           ref={fileInputRef}
@@ -194,7 +222,7 @@ function ImageUploadPanel({ onClose }: { onClose: () => void }) {
                 <button
                   className="lt-image-thumb-delete"
                   title="Xóa ảnh"
-                  onClick={(e) => { e.stopPropagation(); removeUploadedImage(img.id); }}
+                  onClick={(e) => { e.stopPropagation(); handleDelete(img.id); }}
                 >
                   <TrashSmIcon />
                 </button>

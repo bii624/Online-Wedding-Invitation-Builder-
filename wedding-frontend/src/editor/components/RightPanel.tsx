@@ -15,6 +15,7 @@ import { TextRightPanel } from './RightPanels/TextRightPanel';
 import { ImageRightPanel } from './RightPanels/ImageRightPanel';
 import { ShapeRightPanel } from './RightPanels/ShapeRightPanel';
 import { EffectsRightPanel } from './RightPanels/EffectsRightPanel';
+import { SlidersHorizontal, Wand2 } from 'lucide-react';
 
 
 
@@ -99,14 +100,14 @@ export function RightPanel() {
           className={`right-panel-tab ${activeRightTab === 'settings' ? 'active' : ''}`}
           onClick={() => setActiveRightTab('settings')}
         >
-          ⚙ Cài đặt
+          <SlidersHorizontal size={16} /> Cài đặt
         </button>
         <button
           id="tab-effects"
           className={`right-panel-tab ${activeRightTab === 'effects' ? 'active' : ''}`}
           onClick={() => setActiveRightTab('effects')}
         >
-          ✨ Hiệu ứng
+          <Wand2 size={16} /> Hiệu ứng
         </button>
       </div>
 

@@ -18,7 +18,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
     "framer-motion": "^12.42.0",
-    "lucide-react": "^1.21.0",
+    "lucide-react": "^1.22.0",
     "react": "^19.2.7",
     "react-colorful": "^5.7.0",
     "react-dom": "^19.2.7",

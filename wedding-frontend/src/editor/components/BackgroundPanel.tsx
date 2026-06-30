@@ -1,8 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useEditorStore } from '../store/editorStore';
 import { CustomColorPicker } from './CustomColorPicker';
 import { ImageIcon } from './RightPanels/RightPanelShared';
 import '../styles/BackgroundPanel.css';
+import { assetsApi } from '../../api/assetsApi';
+import { toast } from 'sonner';
 
 const SOLID_SWATCHES = [
   'transparent', '#000000', '#4b5563', '#9ca3af', '#d1d5db', '#ffffff',
@@ -37,10 +39,15 @@ interface BackgroundPanelProps {
 }
 
 export function BackgroundPanel({ onClose }: BackgroundPanelProps) {
-  const { canvasBackground, updateCanvasBackground } = useEditorStore();
+  const { canvasBackground, updateCanvasBackground, uploadedImages, fetchUploadedAssets } = useEditorStore();
   const [activeTab, setActiveTab] = useState<'color' | 'image'>('color');
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    fetchUploadedAssets();
+  }, [fetchUploadedAssets]);
 
   const handleSolidClick = (color: string) => {
     updateCanvasBackground({ type: 'solid', color });
@@ -54,18 +61,25 @@ export function BackgroundPanel({ onClose }: BackgroundPanelProps) {
     updateCanvasBackground({ type: 'image', imageSrc: url, imageOpacity: 1 });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const src = ev.target?.result as string;
-      if (src) {
-        updateCanvasBackground({ type: 'image', imageSrc: src, imageOpacity: 1 });
-      }
-    };
-    reader.readAsDataURL(file);
-    e.target.value = '';
+    
+    setIsUploading(true);
+    try {
+      const asset = await assetsApi.uploadAsset(file);
+      updateCanvasBackground({ type: 'image', imageSrc: asset.url, imageOpacity: 1 });
+      toast.success('Tải nền lên thành công');
+      fetchUploadedAssets(); // Refresh list to show new image
+    } catch (error: any) {
+      console.error('Lỗi tải nền:', error);
+      const msg = error.response?.data?.message;
+      const errorText = Array.isArray(msg) ? msg[0] : (msg || error.message || 'Tải nền thất bại');
+      toast.error(errorText);
+    } finally {
+      setIsUploading(false);
+      e.target.value = '';
+    }
   };
 
   const renderPreview = () => {
@@ -175,8 +189,8 @@ export function BackgroundPanel({ onClose }: BackgroundPanelProps) {
 
         {activeTab === 'image' && (
           <div className="bgp-image-tab">
-            <button className="bgp-upload-btn" onClick={() => fileInputRef.current?.click()}>
-              Chọn ảnh của tôi
+            <button className="bgp-upload-btn" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
+              {isUploading ? 'Đang tải lên...' : 'Chọn ảnh của tôi'}
             </button>
             <input
               type="file"
@@ -185,6 +199,23 @@ export function BackgroundPanel({ onClose }: BackgroundPanelProps) {
               accept="image/*"
               onChange={handleFileChange}
             />
+
+            {uploadedImages.length > 0 && (
+              <div className="bgp-texture-section">
+                <h4>Ảnh đã tải lên</h4>
+                <div className="bgp-texture-grid">
+                  {uploadedImages.map((img) => (
+                    <button
+                      key={img.id}
+                      className={`bgp-texture-item ${canvasBackground.type === 'image' && canvasBackground.imageSrc === img.src ? 'active' : ''}`}
+                      style={{ backgroundImage: `url(${img.thumbnailSrc || img.src})`, backgroundColor: '#f0f0f0', backgroundSize: 'cover' }}
+                      onClick={() => handleTextureClick(img.src)}
+                      title={img.name}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="bgp-texture-section">
               <h4>Hình nền có sẵn</h4>

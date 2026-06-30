@@ -7,8 +7,8 @@
   align-items: center;
   justify-content: space-between;
   height: var(--ed-header-h);
-  background: var(--ed-bg-header);
-  padding: 0 12px;
+  background: #f43f5e;
+  padding: 0 24px;
   flex-shrink: 0;
   z-index: 100;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
@@ -60,26 +60,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
   border-radius: var(--ed-radius-md);
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.9);
   transition: background var(--ed-transition), color var(--ed-transition);
 }
 
 .header-history-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
   color: #ffffff;
 }
 
 .header-history-btn:disabled {
-  opacity: 0.3;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 .header-history-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
 }
 
 /* ── Status Badge ─────────────────────────────────────────── */
@@ -88,10 +88,10 @@
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(244, 63, 94, 0.15); /* rose-500 */
+  border: 1px solid rgba(244, 63, 94, 0.3);
   border-radius: var(--ed-radius-full);
-  color: #10b981;
+  color: #f43f5e;
   font-size: 11px;
   font-weight: 500;
 }
@@ -100,7 +100,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #10b981;
+  background: #f43f5e;
   animation: pulse-dot 2s infinite;
 }
 
@@ -147,27 +147,27 @@
 }
 
 .header-btn-ghost {
-  color: rgba(255, 255, 255, 0.75);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .header-btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.14);
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.6);
 }
 
 .header-btn-publish {
-  background: linear-gradient(135deg, #e11d48, #be123c);
-  color: #ffffff;
+  background: #fff0f2;
+  color: #be123c;
   border: 1px solid transparent;
-  box-shadow: 0 2px 8px rgba(225, 29, 72, 0.35);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
 }
 
 .header-btn-publish:hover {
-  background: linear-gradient(135deg, #f43f5e, #e11d48);
-  box-shadow: 0 4px 14px rgba(225, 29, 72, 0.45);
+  background: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   transform: translateY(-1px);
 }
 
