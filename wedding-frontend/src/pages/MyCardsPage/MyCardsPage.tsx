@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Header } from '../LandingPage/LandingPage';
 import { useAuthStore } from '../../store/authStore';
 import { cardsApi, type QueryCardDto } from '../../api/cardsApi';
 import { toast } from 'sonner';
@@ -8,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Search, LayoutTemplate, Plus, File, Filter, MoreVertical, Edit2, Trash2, Zap, LayoutGrid, List } from 'lucide-react';
 import { Button } from '../../components/button';
 import { cn } from '../../lib/utils';
+import { Header } from '../../components/Header';
 
 export const MyCardsPage = () => {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 // src/components/Footer.tsx
 import React from "react";
-import FacebookIcon from "./icons/FacebookIcon"; 
+import FacebookIcon from "./icons/FacebookIcon";
 import InstagramIcon from "../components/icons/InstagramIcon";
 import ThreadsSquareIcon from "../components/icons/ThreadsSquareIcon";
 import TiktokLogoBlockIcon from "../components/icons/TiktokIcon";
@@ -9,11 +9,11 @@ import { RevolvingHeartsIcon } from "../components/icons/emojione-revolving-hear
 
 export default function Footer() {
   return (
-    <footer className="bg-white font-poppins font-medium border-t border-zinc-100 pt-16 pb-8 text-left">
+    <footer id="lien-he" className="bg-white font-poppins font-medium border-t border-zinc-100 pt-16 pb-8 text-left">
       <div className="max-w-7xl mx-auto px-6">
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-zinc-100">
-          
+
           {/* Cột 1: Giới thiệu chung thương hiệu */}
           <div className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-2">
@@ -59,12 +59,12 @@ export default function Footer() {
             <p className="text-sm text-zinc-500 font-medium leading-relaxed">
               Kết nối với chúng tôi để cập nhật xu hướng thiệp cưới mới nhất.
             </p>
-            
+
             <div className="flex items-center gap-3 pt-1">
               {/* NÚT FACEBOOK */}
-              <a 
-                href="#" 
-                target="_blank" 
+              <a
+                href="#"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-zinc-50 text-zinc-500 transition-all shadow-xs flex items-center justify-center hover:scale-110"
               >
@@ -72,9 +72,9 @@ export default function Footer() {
               </a>
 
               {/* NÚT INSTAGRAM */}
-              <a 
-                href="#" 
-                target="_blank" 
+              <a
+                href="#"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-zinc-50 text-zinc-500 transition-all shadow-xs flex items-center justify-center hover:scale-110"
               >
@@ -82,9 +82,9 @@ export default function Footer() {
               </a>
 
               {/* NÚT THREADS */}
-              <a 
-                href="#" 
-                target="_blank" 
+              <a
+                href="#"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-zinc-50 text-zinc-500 hover:text-zinc-950 transition-all shadow-xs flex items-center justify-center hover:scale-110"
               >
@@ -92,9 +92,9 @@ export default function Footer() {
               </a>
 
               {/* NÚT TIKTOK */}
-              <a 
-                href="#" 
-                target="_blank" 
+              <a
+                href="#"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-zinc-50 text-zinc-500 hover:text-zinc-950 transition-all shadow-xs flex items-center justify-center hover:scale-110"
               >
