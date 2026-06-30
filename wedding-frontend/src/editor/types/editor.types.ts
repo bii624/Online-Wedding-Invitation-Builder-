@@ -230,4 +230,7 @@ export interface EditorState {
   recentColors: string[];
   animationPreviewTick: number;
   activeGlobalAnimationPreset: string | null;
+  // Auto-save
+  cardId: string | null;
+  autoSaveStatus: 'idle' | 'saving' | 'saved' | 'error';
 }

@@ -29,14 +29,30 @@ const PublishIcon = () => (
     <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" />
   </svg>
 );
+const SaveIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: 15, height: 15 }}>
+    <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" />
+    <polyline points="17 21 17 13 7 13 7 21" />
+    <polyline points="7 3 7 8 15 8" />
+  </svg>
+);
+
+const AUTO_SAVE_LABELS: Record<string, { label: string; color: string; pulse: boolean }> = {
+  idle:   { label: 'Sẵn sàng',   color: '#9ca3af', pulse: false },
+  saving: { label: 'Đang lưu...', color: '#f59e0b', pulse: true  },
+  saved:  { label: 'Đã lưu',     color: '#10b981', pulse: false },
+  error:  { label: 'Lỗi lưu!',   color: '#ef4444', pulse: false },
+};
 
 export function Header() {
-  const { undo, redo, historyIndex, history } = useEditorStore();
+  const { undo, redo, historyIndex, history, autoSaveStatus, saveCanvasNow, cardId } = useEditorStore();
   const { user } = useAuthStore();
   const navigate = useNavigate();
 
   const canUndo = historyIndex > 0;
   const canRedo = historyIndex < history.length - 1;
+
+  const statusInfo = AUTO_SAVE_LABELS[autoSaveStatus] ?? AUTO_SAVE_LABELS.idle;
 
   return (
     <header className="editor-header">
@@ -75,8 +91,51 @@ export function Header() {
 
       {/* Center: Auto-save status */}
       <div className="header-status">
-        <span className="header-status-dot" />
-        Đã sao lưu
+        {/* Dot / Spinner indicator */}
+        {autoSaveStatus === 'saving' ? (
+          <span className="header-status-spinner" />
+        ) : (
+          <span
+            className="header-status-dot"
+            style={{
+              backgroundColor: statusInfo.color,
+              animation: autoSaveStatus === 'idle' ? 'none' : 'pulse-dot 2s infinite',
+            }}
+          />
+        )}
+
+        {/* Label */}
+        <span style={{ color: statusInfo.color, fontSize: 12, fontWeight: 500, transition: 'color 0.3s' }}>
+          {statusInfo.label}
+        </span>
+
+        {/* "Lưu ngay" button - chỉ hiện khi có cardId và không đang saving */}
+        {cardId && autoSaveStatus !== 'saving' && (
+          <button
+            onClick={saveCanvasNow}
+            title="Lưu ngay (Ctrl+S)"
+            style={{
+              marginLeft: 4,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              padding: '2px 9px',
+              borderRadius: 20,
+              border: '1px solid rgba(255,255,255,0.22)',
+              background: 'rgba(255,255,255,0.1)',
+              color: 'rgba(255,255,255,0.85)',
+              fontSize: 11,
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              whiteSpace: 'nowrap',
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.2)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.1)'; }}
+          >
+            <SaveIcon />
+            Lưu ngay
+          </button>
+        )}
       </div>
 
       {/* Right: Actions */}

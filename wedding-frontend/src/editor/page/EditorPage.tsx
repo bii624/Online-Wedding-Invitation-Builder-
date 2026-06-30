@@ -12,11 +12,43 @@ import { AIColorPanel } from '../components/AIColorPanel';
 import { ImageCropModal } from '../components/ImageCropModal';
 
 import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useEditorStore } from '../store/editorStore';
 
-export function EditorPage() {
-  const { selectedElement, deleteElement, duplicateElement } = useEditorStore();
+const AUTO_SAVE_INTERVAL_MS = 30_000; // 30 seconds
 
+export function EditorPage() {
+  const {
+    selectedElement,
+    deleteElement,
+    duplicateElement,
+    saveCanvasNow,
+    loadCardData,
+    cardId,
+  } = useEditorStore();
+
+  const [searchParams] = useSearchParams();
+
+  // ── Load card từ URL ?id=<uuid> ──────────────────────────
+  useEffect(() => {
+    const id = searchParams.get('id');
+    if (id) {
+      loadCardData(id);
+    }
+  }, []);
+
+  // ── Auto-save mỗi 30s ────────────────────────────────────
+  useEffect(() => {
+    if (!cardId) return;
+
+    const timer = setInterval(() => {
+      saveCanvasNow();
+    }, AUTO_SAVE_INTERVAL_MS);
+
+    return () => clearInterval(timer);
+  }, [cardId]);
+
+  // ── Keyboard shortcuts ────────────────────────────────────
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Ignore if user is typing in an input or textarea
@@ -40,11 +72,18 @@ export function EditorPage() {
         e.preventDefault();
         duplicateElement(selectedElement.id);
       }
+
+      // Ctrl+S → save ngay lập tức
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        saveCanvasNow();
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedElement, deleteElement, duplicateElement]);
+  }, [selectedElement, deleteElement, duplicateElement, saveCanvasNow]);
+
   return (
     <div className={styles['editor-root']}>
       {/* ── Header ──────────────────────── */}

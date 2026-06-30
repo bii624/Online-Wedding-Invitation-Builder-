@@ -18,6 +18,8 @@ import type {
   AnimationProperties,
 } from '../types/editor.types';
 import { assetsApi } from '../../api/assetsApi';
+import { cardsApi } from '../../api/cardsApi';
+import type { CanvasBlockPayload } from '../../api/cardsApi';
 
 // ── Default property sets ────────────────────────────────
 export const DEFAULT_ANIMATION_PROPS: AnimationProperties = {
@@ -177,6 +179,10 @@ interface EditorActions {
   updateCanvasBackground: (props: Partial<BackgroundProperties>) => void;
   addRecentColor: (color: string) => void;
   fetchUploadedAssets: () => Promise<void>;
+  setCardId: (id: string) => void;
+  setAutoSaveStatus: (status: EditorState['autoSaveStatus']) => void;
+  saveCanvasNow: () => Promise<void>;
+  loadCardData: (cardId: string) => Promise<void>;
 }
 
 
@@ -227,6 +233,8 @@ const INITIAL_STATE: EditorState = {
   recentColors: [],
   animationPreviewTick: 0,
   activeGlobalAnimationPreset: null,
+  cardId: null,
+  autoSaveStatus: 'idle',
 };
 
 // ── Store ─────────────────────────────────────────────────
@@ -695,6 +703,107 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
 
   triggerAnimationPreview: () => {
     set((state) => ({ animationPreviewTick: state.animationPreviewTick + 1 }));
-  }
+  },
+
+  // ── Auto-save ─────────────────────────────────────────
+  setCardId: (id) => set({ cardId: id }),
+  setAutoSaveStatus: (status) => set({ autoSaveStatus: status }),
+
+  saveCanvasNow: async () => {
+    const { cardId, elements, canvasBackground, music, canvasWidth } = get();
+    if (!cardId) return;
+
+    set({ autoSaveStatus: 'saving' });
+    try {
+      // Map elements → CanvasBlockPayload
+      const blocks: CanvasBlockPayload[] = elements.map((el) => ({
+        id: el.id,
+        blockType:
+          el.type === 'text' ? 'text'
+          : el.type === 'image' ? 'image'
+          : el.type === 'shape' ? 'shape'
+          : 'text',
+        posX: el.x,
+        posY: el.y,
+        width: el.width,
+        height: el.height,
+        rotation: el.rotation,
+        zIndex: el.zIndex,
+        content: (() => {
+          if (el.type === 'text') return el.textProps as object ?? {};
+          if (el.type === 'image') return el.imageProps as object ?? {};
+          if (el.type === 'shape') return el.shapeProps as object ?? {};
+          return {};
+        })(),
+        style: el.animationProps ? (el.animationProps as object) : {},
+        isLocked: false,
+        isVisible: true,
+      }));
+
+      const settings = music ? { music } : undefined;
+
+      await cardsApi.saveCanvas(cardId, {
+        blocks,
+        background: canvasBackground as object,
+        settings: settings as object | undefined,
+      });
+
+      set({ autoSaveStatus: 'saved' });
+
+      // Reset về 'idle' sau 3s để không hiển thị "Đã lưu" mãi
+      setTimeout(() => {
+        const currentStatus = get().autoSaveStatus;
+        if (currentStatus === 'saved') set({ autoSaveStatus: 'idle' });
+      }, 3000);
+    } catch (err) {
+      console.error('[AutoSave] Failed:', err);
+      set({ autoSaveStatus: 'error' });
+    }
+  },
+
+  loadCardData: async (cardId: string) => {
+    set({ cardId });
+    try {
+      const card = await cardsApi.getCard(cardId);
+      // Map blocks → elements
+      const elements = (card.blocks ?? []).map((block: any) => {
+        const base = {
+          id: block.id,
+          x: block.posX,
+          y: block.posY,
+          width: block.width,
+          height: block.height,
+          rotation: block.rotation,
+          zIndex: block.zIndex,
+          isSelected: false,
+          animationProps: block.style ?? undefined,
+        };
+        if (block.blockType === 'text') {
+          return { ...base, type: 'text' as const, textProps: block.content };
+        } else if (block.blockType === 'image') {
+          return { ...base, type: 'image' as const, imageProps: block.content };
+        } else if (block.blockType === 'shape') {
+          return { ...base, type: 'shape' as const, shapeProps: block.content };
+        }
+        return { ...base, type: 'text' as const, textProps: block.content };
+      });
+
+      const background = card.background ?? get().canvasBackground;
+      const music = card.settings?.music ?? null;
+
+      set({
+        cardId,
+        elements,
+        canvasBackground: background,
+        music,
+        canvasWidth: card.canvasWidth ?? get().canvasWidth,
+        history: [{ elements, canvasBackground: background }],
+        historyIndex: 0,
+        selectedElement: null,
+      });
+    } catch (err) {
+      console.error('[loadCardData] Failed:', err);
+    }
+  },
 }));
 
