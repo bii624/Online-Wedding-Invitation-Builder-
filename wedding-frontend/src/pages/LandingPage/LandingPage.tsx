@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import WeddingImg1 from '../../assets/images/wedding1.jpg';
 import WeddingImg2 from '../../assets/images/wedding2.jpg';
 import WeddingImg3 from '../../assets/images/wedding3.jpg';
@@ -41,6 +41,8 @@ import "./style.css";
 import { useState, useEffect } from 'react';
 import { cn } from '../../lib/utils';
 import { motion } from 'framer-motion';
+import { cardsApi } from '../../api/cardsApi';
+import { toast } from 'sonner';
 
 interface Testimonial {
   text: string;
@@ -260,6 +262,17 @@ export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { user, logout } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleCreateCard = async () => {
+    try {
+      const card = await cardsApi.createCard({ title: 'Thiệp cưới của tôi' });
+      toast.success('Tạo thiệp thành công!');
+      navigate(`/design?id=${card.id}`);
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Có lỗi xảy ra khi tạo thiệp');
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -270,11 +283,11 @@ export const Header = () => {
   }, []);
 
   const navLinks = [
-    { name: 'Trang chủ', href: '#trang-chu' },
-    { name: 'Mẫu thiệp', href: '#mau-thiep' },
-    { name: 'Thiệp đã tạo', href: '#thiep-da-tao' },
-    { name: 'Đánh giá', href: '#danh-gia' },
-    { name: 'Liên hệ', href: '#lien-he' },
+    { name: 'Trang chủ', href: '/' },
+    { name: 'Mẫu thiệp', href: '/#mau-thiep' },
+    { name: 'Thiệp đã tạo', href: '/my-cards' },
+    { name: 'Đánh giá', href: '/#danh-gia' },
+    { name: 'Liên hệ', href: '/#lien-he' },
   ];
 
   return (
@@ -323,12 +336,12 @@ export const Header = () => {
                     user.fullName.charAt(0)
                   )}
                 </div>
-                <Link to="/design" className="ml-2">
-                  <Button variant="default" className="rounded-full h-9 px-4 text-white shadow-none text-sm flex items-center gap-1.5 font-medium border-0">
+                <div className="ml-2">
+                  <Button onClick={handleCreateCard} variant="default" className="rounded-full h-9 px-4 text-white shadow-none text-sm flex items-center gap-1.5 font-medium border-0">
                     <Zap className="w-4 h-4" />
                     Tạo thiết kế
                   </Button>
-                </Link>
+                </div>
               </div>
             ) : (
               <>
@@ -432,15 +445,55 @@ const LandingPage: React.FC = () => {
   // Nhân đôi mảng để tạo luồng chạy lặp vô tận không có điểm đứt
   const [activeClickIdx, setActiveClickIdx] = useState<number | null>(null);
   const doubleImages = [...galleryImages, ...galleryImages];
+
+  // Mouse tracking for hero section
+  const heroRef = React.useRef<HTMLDivElement>(null);
+  const [mousePos, setMousePos] = React.useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!heroRef.current) return;
+      const rect = heroRef.current.getBoundingClientRect();
+      setMousePos({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+      });
+    };
+
+    const hero = heroRef.current;
+    if (hero) {
+      hero.addEventListener('mousemove', handleMouseMove);
+    }
+    return () => {
+      if (hero) hero.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
   return (
 
     <div className="min-h-screen bg-white">
       <Header />
-      <section className="relative min-h-screen bg-linear-to-br from-rose-50/50 via-white to-pink-50/30 pt-32 pb-20 px-6 md:px-12 lg:px-20 overflow-hidden flex items-center">
-        <div className="absolute inset-0 -z-10 pointer-events-none">
-          <div className="absolute top-1/4 left-[10%] w-96 h-96 bg-rose-200/40 rounded-full blur-3xl animate-pulse duration-6000" />
-          <div className="absolute bottom-1/4 right-[10%] w-96 h-96 bg-purple-200/30 rounded-full blur-3xl animate-pulse duration-8000" />
+      <section
+        ref={heroRef}
+        className="relative min-h-screen pt-32 pb-20 px-6 md:px-12 lg:px-20 overflow-hidden flex items-center bg-white"
+      >
+        {/* Fixed soft background blobs - Top only */}
+        <div className="absolute top-0 left-0 right-0 h-full -z-10 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-20%] left-[10%] w-[60vw] h-[70vh] rounded-full bg-pink-200/70 mix-blend-multiply filter blur-[120px]" />
+          <div className="absolute top-[10%] right-[-5%] w-[50vw] h-[60vh] rounded-full bg-purple-100/60 mix-blend-multiply filter blur-[120px]" />
+          <div className="absolute top-[20%] left-[20%] w-[50vw] h-[50vh] rounded-full bg-rose-200/60 mix-blend-multiply filter blur-[100px]" />
         </div>
+
+        {/* Fade to white at bottom */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-white/40 to-white pointer-events-none" />
+
+        {/* Animated Mouse Glow */}
+        <div
+          className="pointer-events-none absolute inset-0 z-0 opacity-70 transition-opacity duration-300"
+          style={{
+            background: `radial-gradient(800px circle at ${mousePos.x}px ${mousePos.y}px, rgba(236, 72, 153, 0.15), transparent 40%)`,
+          }}
+        />
 
         <div className="max-w-6xl mx-auto w-full space-y-16">
 

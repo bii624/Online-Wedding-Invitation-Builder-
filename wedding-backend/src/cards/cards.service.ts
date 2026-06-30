@@ -192,13 +192,16 @@ export class CardsService {
       }),
     };
 
+    const pageNumber = Number(page) || 1;
+    const limitNumber = Number(limit) || 20;
+
     const [total, cards] = await this.prisma.$transaction([
       this.prisma.card.count({ where }),
       this.prisma.card.findMany({
         where,
         orderBy: { [sortBy]: sortOrder },
-        skip: (page - 1) * limit,
-        take: limit,
+        skip: (pageNumber - 1) * limitNumber,
+        take: limitNumber,
         select: {
           id: true,
           slug: true,
@@ -213,6 +216,11 @@ export class CardsService {
           createdAt: true,
           updatedAt: true,
           templateId: true,
+          template: {
+            select: {
+              thumbnailUrl: true,
+            },
+          },
           _count: { select: { blocks: true } }, // đếm số block
         },
       }),
@@ -222,9 +230,9 @@ export class CardsService {
       data: cards,
       pagination: {
         total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
+        page: pageNumber,
+        limit: limitNumber,
+        totalPages: Math.ceil(total / limitNumber),
       },
     };
   }

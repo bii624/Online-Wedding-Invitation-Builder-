@@ -15,6 +15,8 @@ import { Toaster } from 'sonner';
 import { useEffect } from 'react';
 import { useAuthStore } from './store/authStore';
 
+import { MyCardsPage } from './pages/MyCardsPage/MyCardsPage';
+
 function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
 
@@ -31,6 +33,7 @@ function App() {
         {/* <Route path="/" element={<Navigate to="/design" replace />} /> */}
 
         <Route path="/" element={<LandingPage />} />
+        <Route path="/my-cards" element={<MyCardsPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />

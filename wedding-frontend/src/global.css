@@ -262,3 +262,72 @@
 .dark .glow {
   box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
 }
+
+@keyframes blob-1 {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(4%, 6%) scale(1.08);
+  }
+
+  66% {
+    transform: translate(-3%, 3%) scale(0.95);
+  }
+}
+
+@keyframes blob-2 {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(-5%, 4%) scale(0.92);
+  }
+
+  66% {
+    transform: translate(3%, -4%) scale(1.06);
+  }
+}
+
+@keyframes blob-3 {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(3%, -5%) scale(1.05);
+  }
+
+  66% {
+    transform: translate(-4%, 2%) scale(0.97);
+  }
+}
+
+.animate-blob-1 {
+  animation: blob-1 18s ease-in-out infinite;
+}
+
+.animate-blob-2 {
+  animation: blob-2 22s ease-in-out infinite;
+}
+
+.animate-blob-3 {
+  animation: blob-3 16s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .animate-blob-1,
+  .animate-blob-2,
+  .animate-blob-3 {
+    animation: none;
+  }
+}
