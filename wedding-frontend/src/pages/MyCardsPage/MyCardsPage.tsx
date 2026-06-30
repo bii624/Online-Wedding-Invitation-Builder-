@@ -143,23 +143,42 @@ export const MyCardsPage = () => {
 
       <main className="relative z-10 pt-32 pb-20 px-6 max-w-7xl mx-auto">
 
-        {/* Search & Greeting Section */}
-        <div className="flex flex-col items-center justify-center space-y-8 mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-800 text-center">
-            Hôm nay bạn muốn thiết kế gì?
+        <div className="text-center space-y-4 relative mb-10">
+
+          <div className="flex justify-center items-center gap-1.5 text-sm text-zinc-400 font-medium font-poppins">
+            <span>Trang chủ</span>
+            <span className="text-zinc-300 font-normal">&gt;</span>
+            <span className="text-zinc-800 font-semibold">Thiệp online của khách hàng</span>
+          </div>
+
+          <div className="absolute right-[25%] top-[10%] text-amber-400 animate-pulse hidden lg:block">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L15 9L22 12L15 15L12 22L9 15L2 12L9 9Z" />
+            </svg>
+          </div>
+
+          <h1 className="text-4xl md:text-5xl font-black text-zinc-900 tracking-tight leading-tight pt-2">
+            <span className="text-rose-500 font-handwritten text-[2.75rem] md:text-[3.75rem] font-normal tracking-wide block -rotate-1">Bộ sưu tập</span>
+            <span className="block mt-1">thiệp online của khách hàng</span>
           </h1>
 
-          <div className="relative w-full max-w-2xl group">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Search className="h-6 w-6 text-slate-400 group-focus-within:text-rose-500 transition-colors" />
+          <div className="flex flex-col md:flex-row justify-center items-center gap-4 max-w-3xl mx-auto pt-2">
+            <div className="shrink-0 text-purple-500 opacity-80">
+              <svg width="48" height="8" viewBox="0 0 48 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 4.5C6.33333 1.83333 10.6667 7.16667 16 4.5C21.3333 1.83333 25.6667 7.16667 31 4.5C36.3333 1.83333 40.6667 7.16667 46 4.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+              </svg>
             </div>
-            <input
-              type="text"
-              className="block w-full pl-12 pr-4 py-4 md:py-5 border border-slate-200 rounded-full leading-5 bg-white shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/50 focus:border-rose-500 text-lg transition-all"
-              placeholder="Tìm kiếm thiết kế của bạn..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+            <p className="text-zinc-500 font-poppins font-medium text-sm md:text-base leading-relaxed text-center md:text-left">
+              Khám phá bộ sưu tập thiệp online cực đẹp và độc đáo của khách hàng tại <span className="font-semibold text-rose-500">DearLove!</span>
+            </p>
+          </div>
+
+          {/* Love Count Stats */}
+          <div className="pt-2 flex justify-center items-center gap-2 text-rose-500 font-bold text-sm font-poppins">
+            <svg className="w-4 h-4 shrink-0 text-rose-500" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+            </svg>
+            <span>2.235 câu chuyện tình yêu đã được chia sẻ.</span>
           </div>
         </div>
 
