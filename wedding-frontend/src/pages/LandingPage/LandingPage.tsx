@@ -261,8 +261,9 @@ function FinalCTA() {
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const { user, logout } = useAuthStore();
+  const { user: rawUser, logout } = useAuthStore();
   const navigate = useNavigate();
+  const user = rawUser?.role === 'admin' ? null : rawUser;
 
   const handleCreateCard = async () => {
     try {

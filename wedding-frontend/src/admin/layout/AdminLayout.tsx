@@ -31,8 +31,8 @@ export function AdminLayout() {
 
   // Guard: must be authenticated AND admin
   if (!user) return <Navigate to="/login" replace />;
-  // TẠM THỜI TẮT CHECK ROLE ĐỂ TEST UI:
-  // if (user.role !== 'admin') return <Navigate to="/" replace />;
+  
+  if (user.role !== 'admin') return <Navigate to="/" replace />;
 
   const meta = PAGE_META[location.pathname] ?? { title: 'Admin', subtitle: '' };
 

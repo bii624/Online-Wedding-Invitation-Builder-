@@ -233,4 +233,7 @@ export interface EditorState {
   // Auto-save
   cardId: string | null;
   autoSaveStatus: 'idle' | 'saving' | 'saved' | 'error';
+  // Editor mode: 'card' for user cards, 'template' for admin templates
+  editorMode: 'card' | 'template';
+  templateId: string | null;
 }

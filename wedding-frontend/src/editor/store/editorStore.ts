@@ -19,6 +19,7 @@ import type {
 } from '../types/editor.types';
 import { assetsApi } from '../../api/assetsApi';
 import { cardsApi } from '../../api/cardsApi';
+import { templatesEditorApi } from '../../api/templatesEditorApi';
 import type { CanvasBlockPayload } from '../../api/cardsApi';
 
 // ── Default property sets ────────────────────────────────
@@ -183,6 +184,8 @@ interface EditorActions {
   setAutoSaveStatus: (status: EditorState['autoSaveStatus']) => void;
   saveCanvasNow: () => Promise<void>;
   loadCardData: (cardId: string) => Promise<void>;
+  loadTemplateData: (templateId: string) => Promise<void>;
+  saveTemplateNow: () => Promise<void>;
 }
 
 
@@ -235,6 +238,8 @@ const INITIAL_STATE: EditorState = {
   activeGlobalAnimationPreset: null,
   cardId: null,
   autoSaveStatus: 'idle',
+  editorMode: 'card' as const,
+  templateId: null,
 };
 
 // ── Store ─────────────────────────────────────────────────
@@ -803,6 +808,94 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       });
     } catch (err) {
       console.error('[loadCardData] Failed:', err);
+    }
+  },
+
+  // ── Template Editor ────────────────────────────────────
+  loadTemplateData: async (templateId: string) => {
+    set({ templateId, editorMode: 'template' });
+    try {
+      const template = await templatesEditorApi.getTemplateCanvas(templateId);
+      const elements = (template.blocks ?? []).map((block: any) => {
+        const base = {
+          id: block.id,
+          x: block.posX,
+          y: block.posY,
+          width: block.width,
+          height: block.height,
+          rotation: block.rotation,
+          zIndex: block.zIndex,
+          isSelected: false,
+          animationProps: block.style ?? undefined,
+        };
+        if (block.blockType === 'text') {
+          return { ...base, type: 'text' as const, textProps: block.content };
+        } else if (block.blockType === 'image') {
+          return { ...base, type: 'image' as const, imageProps: block.content };
+        } else if (block.blockType === 'shape') {
+          return { ...base, type: 'shape' as const, shapeProps: block.content };
+        }
+        return { ...base, type: 'text' as const, textProps: block.content };
+      });
+
+      const background = template.background ?? get().canvasBackground;
+
+      set({
+        templateId,
+        editorMode: 'template',
+        elements,
+        canvasBackground: background,
+        canvasWidth: template.canvasWidth ?? get().canvasWidth,
+        history: [{ elements, canvasBackground: background }],
+        historyIndex: 0,
+        selectedElement: null,
+        autoSaveStatus: 'idle',
+      });
+    } catch (err) {
+      console.error('[loadTemplateData] Failed:', err);
+    }
+  },
+
+  saveTemplateNow: async () => {
+    const { templateId, elements, canvasBackground } = get();
+    if (!templateId) return;
+
+    set({ autoSaveStatus: 'saving' });
+    try {
+      const blocks: CanvasBlockPayload[] = elements.map((el) => ({
+        blockType:
+          el.type === 'text' ? 'text'
+          : el.type === 'image' ? 'image'
+          : el.type === 'shape' ? 'shape'
+          : 'text',
+        posX: el.x,
+        posY: el.y,
+        width: el.width,
+        height: el.height,
+        rotation: el.rotation,
+        zIndex: el.zIndex,
+        content: (() => {
+          if (el.type === 'text') return el.textProps as object ?? {};
+          if (el.type === 'image') return el.imageProps as object ?? {};
+          if (el.type === 'shape') return el.shapeProps as object ?? {};
+          return {};
+        })(),
+        style: el.animationProps ? (el.animationProps as object) : {},
+        isLocked: false,
+      }));
+
+      await templatesEditorApi.saveTemplateCanvas(templateId, {
+        blocks,
+        background: canvasBackground as object,
+      });
+
+      set({ autoSaveStatus: 'saved' });
+      setTimeout(() => {
+        if (get().autoSaveStatus === 'saved') set({ autoSaveStatus: 'idle' });
+      }, 3000);
+    } catch (err) {
+      console.error('[saveTemplateNow] Failed:', err);
+      set({ autoSaveStatus: 'error' });
     }
   },
 }));

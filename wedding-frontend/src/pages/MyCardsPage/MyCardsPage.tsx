@@ -11,7 +11,13 @@ import { cn } from '../../lib/utils';
 
 export const MyCardsPage = () => {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user, isInitialized } = useAuthStore();
+
+  useEffect(() => {
+    if (isInitialized && (!user || user.role === 'admin')) {
+      navigate('/login', { replace: true });
+    }
+  }, [isInitialized, user, navigate]);
 
   // -- Mouse Gradient Animation State --
   const containerRef = useRef<HTMLDivElement>(null);

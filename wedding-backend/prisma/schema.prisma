@@ -233,6 +233,7 @@ model Template {
   background     Json           @default("{}") // {"type":"color","value":"#fff"} | {"type":"image","url":"..."}
   status         TemplateStatus @default(draft)
   useCount       Int            @default(0) @map("use_count")
+  displayOrder   Int            @default(0) @map("display_order")
   createdBy      String?        @map("created_by") @db.Uuid
   createdAt      DateTime       @default(now()) @map("created_at")
   updatedAt      DateTime       @updatedAt @map("updated_at")

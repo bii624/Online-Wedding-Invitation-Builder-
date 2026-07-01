@@ -9,5 +9,6 @@ import { PrismaModule } from '@/prisma/prisma.module';
   imports: [ConfigModule, PrismaModule],
   controllers: [AssetsController],
   providers: [AssetsService, CloudinaryProvider],
+  exports: [AssetsService],
 })
 export class AssetsModule { }

@@ -45,7 +45,7 @@ const AUTO_SAVE_LABELS: Record<string, { label: string; color: string; pulse: bo
 };
 
 export function Header() {
-  const { undo, redo, historyIndex, history, autoSaveStatus, saveCanvasNow, cardId } = useEditorStore();
+  const { undo, redo, historyIndex, history, autoSaveStatus, saveCanvasNow, saveTemplateNow, cardId, templateId, editorMode } = useEditorStore();
   const { user } = useAuthStore();
   const navigate = useNavigate();
 
@@ -109,10 +109,10 @@ export function Header() {
           {statusInfo.label}
         </span>
 
-        {/* "Lưu ngay" button - chỉ hiện khi có cardId và không đang saving */}
-        {cardId && autoSaveStatus !== 'saving' && (
+        {/* "Lưu ngay" button - chỉ hiện khi có cardId hoặc templateId và không đang saving */}
+        {(cardId || templateId) && autoSaveStatus !== 'saving' && (
           <button
-            onClick={saveCanvasNow}
+            onClick={editorMode === 'template' ? saveTemplateNow : saveCanvasNow}
             title="Lưu ngay (Ctrl+S)"
             style={{
               marginLeft: 4,

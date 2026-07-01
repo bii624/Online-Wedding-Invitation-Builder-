@@ -46,7 +46,10 @@ export interface AdminTemplate {
   isPremium: boolean;
   thumbnailUrl?: string;
   usageCount: number;
+  useCount?: number;
   createdAt: string;
+  category?: { name: string };
+  creator?: { fullName: string; email: string };
 }
 
 export interface AdminPlan {
@@ -122,6 +125,11 @@ export const adminApi = {
   // Templates
   getTemplates: async (params?: object): Promise<PaginatedResponse<AdminTemplate>> => {
     const r = await axiosClient.get('/admin/templates', { params });
+    return r.data;
+  },
+
+  createTemplate: async (data: { name: string; slug: string; isPremium?: boolean; categoryId?: string }) => {
+    const r = await axiosClient.post('/admin/templates', data);
     return r.data;
   },
 

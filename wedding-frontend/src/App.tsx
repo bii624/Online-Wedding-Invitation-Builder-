@@ -40,6 +40,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/my-cards" element={<MyCardsPage />} />
         <Route path="/design" element={<EditorPage />} />
+        <Route path="/design/template" element={<EditorPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
