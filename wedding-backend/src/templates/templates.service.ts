@@ -182,6 +182,16 @@ export class TemplatesService {
     });
   }
 
+  async updateTemplateStatus(id: string, status: any) {
+    const template = await this.prisma.template.findUnique({ where: { id } });
+    if (!template) throw new NotFoundException('Template không tồn tại');
+
+    return this.prisma.template.update({
+      where: { id },
+      data: { status }
+    });
+  }
+
   async updateTemplateOrder(id: string, displayOrder: number) {
     const template = await this.prisma.template.findUnique({ where: { id } });
     if (!template) throw new NotFoundException('Template không tồn tại');

@@ -58,6 +58,12 @@ export class AdminTemplatesController {
         return this.service.toggleTemplateStatus(id);
     }
 
+    // PATCH /api/admin/templates/:id/status
+    @Patch(':id/status')
+    updateStatus(@Param('id') id: string, @Body('status') status: string) {
+        return this.service.updateTemplateStatus(id, status);
+    }
+
     // PATCH /api/admin/templates/:id/order
     @Patch(':id/order')
     updateOrder(@Param('id') id: string, @Body() dto: UpdateTemplateOrderDto) {
