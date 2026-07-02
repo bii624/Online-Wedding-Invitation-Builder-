@@ -123,7 +123,7 @@ export function UserDetailModal({ userId, onClose, onUserUpdate }: UserDetailMod
             <img src={user.avatarUrl} alt={user.fullName} style={{ width: 84, height: 84, borderRadius: 20, objectFit: 'cover', border: '3px solid rgba(255,255,255,0.4)' }} />
           ) : (
             <div style={{ width: 84, height: 84, borderRadius: 20, background: 'rgba(255,255,255,0.2)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, fontWeight: 700, border: '3px solid rgba(255,255,255,0.4)' }}>
-              {user.fullName.charAt(0).toUpperCase()}
+              {user.fullName?.charAt(0)?.toUpperCase() || 'U'}
             </div>
           )}
           

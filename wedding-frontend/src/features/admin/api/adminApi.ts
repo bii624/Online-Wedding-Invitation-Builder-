@@ -25,6 +25,8 @@ export interface AdminUser {
   cardCount: number;
   createdAt: string;
   avatarUrl?: string;
+  authProvider?: string;
+  templateCount?: number;
 }
 
 export interface AdminCard {

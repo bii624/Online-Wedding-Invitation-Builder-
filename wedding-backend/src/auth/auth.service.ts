@@ -77,13 +77,13 @@ export class AuthService {
     if (response) {
       response.cookie('access_token', accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // Dùng Secure nếu trên HTTPS
-        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       });
       response.cookie('refresh_token', refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: parseMs(this.configService.get<string>('JWT_REFRESH_EXPIRES') || '7d'),
       });
     }
@@ -135,7 +135,8 @@ export class AuthService {
         response.clearCookie('refresh_token');
         response.cookie('refresh_token', refreshToken, {
           httpOnly: true,
-          sameSite: 'lax',
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
           maxAge: parseMs(this.configService.get<string>('JWT_REFRESH_EXPIRES') || '7d'),
         });
 

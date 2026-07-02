@@ -167,7 +167,7 @@ export class AuthController {
     await this.authService.login(user, res);
     
     // Redirect về frontend, FE sẽ tự động nhận cookie
-    return res.redirect('http://localhost:5173/');
+    return res.redirect(process.env.FRONTEND_URL || 'http://localhost:5173/');
   }
 
   // =====================================================================
@@ -190,6 +190,6 @@ export class AuthController {
     await this.authService.login(user, res);
     
     // Redirect về frontend, FE sẽ tự động nhận cookie
-    return res.redirect('http://localhost:5173/');
+    return res.redirect(process.env.FRONTEND_URL || 'http://localhost:5173/');
   }
 }

@@ -103,7 +103,7 @@ export const Header = () => {
                                     {user.avatarUrl ? (
                                         <img src={user.avatarUrl} alt={user.fullName} className="w-full h-full object-cover" />
                                     ) : (
-                                        user.fullName.charAt(0)
+                                        user.fullName?.charAt(0) || 'U'
                                     )}
                                 </div>
                                 <div className="ml-2">

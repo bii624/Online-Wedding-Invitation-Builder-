@@ -218,7 +218,7 @@ export default function SignupPage() {
             <div className="grid grid-cols-2 gap-4 font-poppins">
               <button 
                 type="button"
-                onClick={() => window.location.href = "http://localhost:8000/auth/google"}
+                onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/auth/google`}
                 className="h-11 border border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 rounded-2xl flex items-center justify-center gap-2.5 text-[13px] font-medium text-zinc-600 transition-all cursor-pointer">
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
                   <path fill="#EA4335" d="M12 5.04c1.64 0 3.12.56 4.28 1.67l3.2-3.2C17.52 1.58 14.98 1 12 1 7.35 1 3.42 3.66 1.52 7.55l3.77 2.92C6.2 7.26 8.87 5.04 12 5.04z" />
@@ -230,7 +230,7 @@ export default function SignupPage() {
               </button>
               <button 
                 type="button"
-                onClick={() => window.location.href = "http://localhost:8000/auth/facebook"}
+                onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/auth/facebook`}
                 className="h-11 border border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 rounded-2xl flex items-center justify-center gap-2.5 text-[13px] font-medium text-zinc-600 transition-all cursor-pointer">
                 <FacebookIcon size={16} />
                 Facebook

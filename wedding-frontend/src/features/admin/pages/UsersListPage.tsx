@@ -214,7 +214,7 @@ export function UsersListPage() {
                         {u.avatarUrl ? (
                           <img src={u.avatarUrl} alt={u.fullName} className="adm-user-avatar" style={{ objectFit: 'cover' }} />
                         ) : (
-                          <div className="adm-user-avatar">{u.fullName.charAt(0).toUpperCase()}</div>
+                          <div className="adm-user-avatar">{u.fullName?.charAt(0)?.toUpperCase() || 'U'}</div>
                         )}
                         <span style={{ fontWeight: 600, fontSize: 13 }}>{u.fullName}</span>
                       </div>

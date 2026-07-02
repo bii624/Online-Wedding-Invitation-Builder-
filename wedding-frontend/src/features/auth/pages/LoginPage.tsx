@@ -140,7 +140,7 @@ export default function LoginPage() {
             {/* Nút Google */}
             <button
               type="button"
-              onClick={() => window.location.href = "http://localhost:8000/auth/google"}
+              onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/auth/google`}
               className="h-10 border border-zinc-200 hover:bg-zinc-50 rounded-xl flex items-center justify-center gap-2 text-xs font-bold text-zinc-600 transition-all cursor-pointer">
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path fill="#EA4335" d="M12 5.04c1.64 0 3.12.56 4.28 1.67l3.2-3.2C17.52 1.58 14.98 1 12 1 7.35 1 3.42 3.66 1.52 7.55l3.77 2.92C6.2 7.26 8.87 5.04 12 5.04z" />
@@ -153,7 +153,7 @@ export default function LoginPage() {
             {/* Nút Facebook */}
             <button
               type="button"
-              onClick={() => window.location.href = "http://localhost:8000/auth/facebook"}
+              onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/auth/facebook`}
               className="h-10 border border-zinc-200 hover:bg-zinc-50 rounded-xl flex items-center justify-center gap-2 text-xs font-bold text-zinc-800 transition-all cursor-pointer">
               <FacebookIcon size={16} />
               Facebook

@@ -58,7 +58,7 @@ export function ModerationPage() {
                 </div>
               )}
               <div style={{ display:'flex', alignItems:'flex-start', gap:14 }}>
-                <div className="adm-user-avatar" style={{ flexShrink:0 }}>{w.guestName.charAt(0)}</div>
+                <div className="adm-user-avatar" style={{ flexShrink:0 }}>{w.guestName?.charAt(0) || 'G'}</div>
                 <div style={{ flex:1 }}>
                   <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:4 }}>
                     <span style={{ fontWeight:600, fontSize:13 }}>{w.guestName}</span>

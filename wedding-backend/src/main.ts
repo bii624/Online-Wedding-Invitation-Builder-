@@ -25,7 +25,9 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   app.enableCors({
-    origin: true, // or your frontend url
+    origin: function (origin, callback) {
+      callback(null, true);
+    },
     credentials: true,
   });
 
