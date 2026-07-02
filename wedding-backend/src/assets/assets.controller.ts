@@ -46,19 +46,19 @@ export class AssetsController {
         @UploadedFile() file: Express.Multer.File,
         @Req() req: any, // req.user được gắn sẵn bởi JwtAuthGuard/JwtStrategy
     ) {
-        const userId = req.user.userId; // tên field tùy theo payload JWT bạn đã thiết kế ở jwt.strategy.ts
+        const userId = req.user.id; // tên field tùy theo payload JWT bạn đã thiết kế ở jwt.strategy.ts
         return this.assetsService.uploadAsset(file, userId);
     }
 
     @Get()
     async getMyAssets(@Req() req: any) {
-        const userId = req.user.userId;
+        const userId = req.user.id;
         return this.assetsService.getUserAssets(userId);
     }
 
     @Delete(':id')
     async delete(@Param('id', ParseUUIDPipe) id: string, @Req() req: any) {
-        const userId = req.user.userId;
+        const userId = req.user.id;
         return this.assetsService.deleteAsset(id, userId);
     }
 }

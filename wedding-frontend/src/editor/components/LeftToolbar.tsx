@@ -6,6 +6,7 @@ import { useRef, useState, useEffect } from 'react';
 import { BackgroundPanel } from './BackgroundPanel';
 import { MusicPanel } from './MusicPanel';
 import { EffectsPanel } from './EffectsPanel';
+import { LibraryPanel } from './LibraryPanel';
 import '../styles/LeftToolbar.css';
 import { useEditorStore } from '../store/editorStore';
 import type { ToolType, UploadedImage } from '../types/editor.types';
@@ -82,6 +83,11 @@ const TrashSmIcon = () => (
 const CloseIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
     <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
+const LibraryIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z" />
   </svg>
 );
 
@@ -250,6 +256,7 @@ interface ToolConfig {
 const TOOLS: ToolConfig[] = [
   { id: 'text', label: 'Văn bản', icon: TextIcon, tooltip: 'Thêm văn bản' },
   { id: 'image', label: 'Hình ảnh', icon: ImageIcon, tooltip: 'Tải ảnh lên' },
+  { id: 'library', label: 'Thư viện', icon: LibraryIcon, tooltip: 'Thư viện Element' },
   { id: 'background', label: 'Nền', icon: BackgroundIcon, tooltip: 'Cài đặt nền' },
   { id: 'stock', label: 'Stock', icon: StockIcon, tooltip: 'Tài nguyên Stock' },
   { id: 'tools', label: 'Công cụ', icon: ToolsIcon, tooltip: 'Công cụ hình dạng' },
@@ -267,12 +274,14 @@ export function LeftToolbar() {
   const [showShapePopup, setShowShapePopup] = useState(false);
   const [showMusicPanel, setShowMusicPanel] = useState(false);
   const [showEffectsPanel, setShowEffectsPanel] = useState(false);
+  const [showLibraryPanel, setShowLibraryPanel] = useState(false);
 
   const closeAllPanels = () => {
     setShowImagePanel(false);
     setShowShapePopup(false);
     setShowMusicPanel(false);
     setShowEffectsPanel(false);
+    setShowLibraryPanel(false);
   };
 
   const handleToolClick = (tool: ToolType) => {
@@ -281,6 +290,13 @@ export function LeftToolbar() {
       setActiveTool('image');
       closeAllPanels();
       setShowImagePanel(next);
+      return;
+    }
+    if (tool === 'library') {
+      const next = activeTool === 'library' ? !showLibraryPanel : true;
+      setActiveTool('library');
+      closeAllPanels();
+      setShowLibraryPanel(next);
       return;
     }
     if (tool === 'tools') {
@@ -348,6 +364,11 @@ export function LeftToolbar() {
       {/* Image upload slide-out panel */}
       {showImagePanel && (
         <ImageUploadPanel onClose={() => setShowImagePanel(false)} />
+      )}
+
+      {/* Library element panel */}
+      {showLibraryPanel && (
+        <LibraryPanel onClose={() => { setShowLibraryPanel(false); setActiveTool(null); }} />
       )}
 
       {/* Music slide-out panel */}

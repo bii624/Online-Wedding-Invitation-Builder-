@@ -30,7 +30,16 @@ export default function LoginPage() {
       setUser(response.data.user);
 
       toast.success("Đăng nhập thành công!");
-      navigate("/");
+      
+      if (response.data.user.role === 'admin') {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          navigate("/admin");
+        } else {
+          window.location.href = "https://admin.zenlove.vn";
+        }
+      } else {
+        navigate("/");
+      }
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
     } finally {
