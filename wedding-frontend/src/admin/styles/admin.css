@@ -873,6 +873,25 @@
   }
 }
 
+@media (max-width: 600px) {
+  .adm-search {
+    min-width: unset;
+  }
+}
+
+/* ── Animated Gradient Header ────────────────────────── */
+@keyframes admGradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.adm-gradient-header {
+  background: linear-gradient(-45deg, #f43f5e, #fb7185, #f43f5e, #fca5a5);
+  background-size: 300% 300%;
+  animation: admGradientAnimation 6s ease infinite;
+}
+
 @media (max-width: 768px) {
   .adm-sidebar {
     transform: translateX(-100%);

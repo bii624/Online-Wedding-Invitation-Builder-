@@ -62,6 +62,36 @@ export interface AdminPlan {
   isActive: boolean;
 }
 
+export interface ElementCategory {
+  id: string;
+  name: string;
+  slug: string;
+  parentId: string | null;
+  _count?: { elements: number };
+}
+
+export type ElementType = 'icon' | 'shape' | 'illustration' | 'sticker' | 'frame' | 'photo';
+
+export interface LibraryElement {
+  id: string;
+  name: string;
+  elementType: ElementType;
+  categoryId: string | null;
+  category?: { id: string; name: string } | null;
+  tags: string[];
+  fileUrl: string;
+  thumbnailUrl: string | null;
+  width: number | null;
+  height: number | null;
+  isPremium: boolean;
+  isRecolorable: boolean;
+  requiredPlanId: string | null;
+  usageCount: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface PaginatedResponse<T> {
   data: T[];
   pagination: { total: number; page: number; limit: number; totalPages: number };
@@ -156,6 +186,83 @@ export const adminApi = {
 
   updatePlan: async (id: string, data: Partial<AdminPlan>) => {
     const r = await axiosClient.patch(`/admin/plans/${id}`, data);
+    return r.data;
+  },
+
+  // ── Library Elements ──────────────────────────────────
+
+  getElementCategories: async (): Promise<ElementCategory[]> => {
+    const r = await axiosClient.get('/admin/library-elements/categories');
+    return r.data;
+  },
+
+  createElementCategory: async (data: { name: string; slug: string; parentId?: string }) => {
+    const r = await axiosClient.post('/admin/library-elements/categories', data);
+    return r.data;
+  },
+
+  updateElementCategory: async (id: string, data: { name?: string; slug?: string; parentId?: string }) => {
+    const r = await axiosClient.put(`/admin/library-elements/categories/${id}`, data);
+    return r.data;
+  },
+
+  deleteElementCategory: async (id: string) => {
+    const r = await axiosClient.delete(`/admin/library-elements/categories/${id}`);
+    return r.data;
+  },
+
+  getLibraryElements: async (params?: object): Promise<PaginatedResponse<LibraryElement>> => {
+    const r = await axiosClient.get('/admin/library-elements', { params });
+    return r.data;
+  },
+
+  getLibraryElement: async (id: string): Promise<LibraryElement> => {
+    const r = await axiosClient.get(`/admin/library-elements/${id}`);
+    return r.data;
+  },
+
+  createLibraryElement: async (data: {
+    name: string;
+    elementType: string;
+    categoryId?: string;
+    tags?: string[];
+    isPremium?: boolean;
+    isRecolorable?: boolean;
+    requiredPlanId?: string;
+  }): Promise<LibraryElement> => {
+    const r = await axiosClient.post('/admin/library-elements', data);
+    return r.data;
+  },
+
+  updateLibraryElement: async (id: string, data: {
+    name?: string;
+    elementType?: string;
+    categoryId?: string;
+    tags?: string[];
+    isPremium?: boolean;
+    isRecolorable?: boolean;
+    requiredPlanId?: string;
+  }): Promise<LibraryElement> => {
+    const r = await axiosClient.put(`/admin/library-elements/${id}`, data);
+    return r.data;
+  },
+
+  uploadLibraryElementFile: async (id: string, file: File): Promise<LibraryElement> => {
+    const fd = new FormData();
+    fd.append('file', file);
+    const r = await axiosClient.post(`/admin/library-elements/${id}/upload`, fd, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return r.data;
+  },
+
+  toggleLibraryElementStatus: async (id: string): Promise<LibraryElement> => {
+    const r = await axiosClient.patch(`/admin/library-elements/${id}/toggle`);
+    return r.data;
+  },
+
+  deleteLibraryElement: async (id: string) => {
+    const r = await axiosClient.delete(`/admin/library-elements/${id}`);
     return r.data;
   },
 };

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Plus, Edit3, Trash2, CheckCircle, Archive, Crown, Loader2 } from 'lucide-react';
+import { Search, Plus, Edit3, Trash2, CheckCircle, Archive, Crown, Loader2, X, Check } from 'lucide-react';
 import { adminApi, type AdminTemplate } from '../api/adminApi';
 import { useNavigate } from 'react-router-dom';
 
@@ -50,11 +50,11 @@ export function TemplatesListPage() {
       if (premiumFilter !== 'all') params.isPremium = premiumFilter === 'premium';
 
       const res = await adminApi.getTemplates(params);
-      
+
       // Backend returns { items, total, page, totalPages }
       const items = (res as any).items || res.data || [];
       setTemplates(items);
-      
+
       setTotalPages((res as any).totalPages || res.pagination?.totalPages || 1);
       setTotal((res as any).total || res.pagination?.total || 0);
     } catch (err: any) {
@@ -94,7 +94,7 @@ export function TemplatesListPage() {
       alert('Vui lòng nhập tên template');
       return;
     }
-    
+
     // Generate simple slug
     const slug = newTemplateName
       .toLowerCase()
@@ -109,11 +109,11 @@ export function TemplatesListPage() {
         slug,
         isPremium: newTemplatePremium
       });
-      
+
       setShowCreateModal(false);
       setNewTemplateName('');
       setNewTemplatePremium(false);
-      
+
       // Navigate to the editor for the new template
       navigate(`/design/template?templateId=${res.id}`);
     } catch (err) {
@@ -153,52 +153,74 @@ export function TemplatesListPage() {
 
       {/* Create Modal */}
       {showCreateModal && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000,
-          display: 'flex', alignItems: 'center', justifyContent: 'center'
-        }}>
-          <div style={{
-            background: 'white', padding: 24, borderRadius: 8, width: 400, maxWidth: '90%'
-          }}>
-            <h3 style={{ marginTop: 0, marginBottom: 16 }}>Tạo Template Mới</h3>
-            
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 500, marginBottom: 6 }}>Tên template <span style={{color: 'red'}}>*</span></label>
-              <input 
-                className="adm-input" 
-                style={{ width: '100%', padding: '8px 12px', border: '1px solid #ddd', borderRadius: 4 }}
-                placeholder="VD: Thiệp cưới hiện đại..." 
-                value={newTemplateName} 
-                onChange={e => setNewTemplateName(e.target.value)} 
-                autoFocus
-              />
-            </div>
-            
-            <div style={{ marginBottom: 24 }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13 }}>
-                <input 
-                  type="checkbox" 
-                  checked={newTemplatePremium} 
-                  onChange={e => setNewTemplatePremium(e.target.checked)} 
-                />
-                Đây là template Premium (Yêu cầu nâng cấp)
-              </label>
-            </div>
-            
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
-              <button 
-                className="adm-btn adm-btn-outline" 
-                onClick={() => setShowCreateModal(false)}
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.6)', zIndex: 1100, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', animation: 'adm-fade-in 0.2s ease-out' }}>
+          <div style={{ background: '#ffffff', borderRadius: 24, width: 460, maxWidth: '95vw', maxHeight: '90vh', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+
+            {/* Header */}
+            <div className="adm-gradient-header" style={{
+              padding: '24px 32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexShrink: 0
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <div style={{ background: 'rgba(255,255,255,0.25)', padding: 10, borderRadius: 14, display: 'flex' }}>
+                  <Plus size={24} color="#fff" />
+                </div>
+                <div>
+                  <div style={{ fontSize: 20, fontWeight: 700, color: '#ffffff', letterSpacing: '-0.02em' }}>Tạo Template Mới</div>
+                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.9)', marginTop: 4 }}>
+                    Bắt đầu một mẫu thiết kế mới.
+                  </div>
+                </div>
+              </div>
+              <button onClick={() => setShowCreateModal(false)} style={{ background: 'rgba(0,0,0,0.1)', border: 'none', cursor: 'pointer', padding: 8, borderRadius: 12, color: '#ffffff', transition: 'all 0.2s', display: 'flex' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.2)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,0,0,0.1)'; }}
               >
+                <X size={20} strokeWidth={2.5} />
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20, padding: 32, overflowY: 'auto', flex: 1 }}>
+              <div>
+                <label style={{ fontSize: 13, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 8 }}>Tên template <span style={{ color: '#ef4444' }}>*</span></label>
+                <input
+                  style={{ width: '100%', padding: '12px 16px', borderRadius: 12, background: '#f8fafc', color: '#0f172a', transition: 'all 0.2s', border: '1px solid #e2e8f0', outline: 'none', boxSizing: 'border-box' }}
+                  placeholder="VD: Thiệp cưới hiện đại..."
+                  value={newTemplateName}
+                  onChange={e => setNewTemplateName(e.target.value)}
+                  autoFocus
+                  onFocus={e => { e.target.style.borderColor = 'var(--adm-pink)'; e.target.style.background = '#fff'; e.target.style.boxShadow = '0 0 0 4px rgba(244, 63, 94, 0.1)'; }}
+                  onBlur={e => { e.target.style.borderColor = '#e2e8f0'; e.target.style.background = '#f8fafc'; e.target.style.boxShadow = 'none'; }}
+                />
+              </div>
+
+              <div style={{ background: '#f8fafc', padding: '16px 20px', borderRadius: 16, border: '1px solid #f1f5f9' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontSize: 14, fontWeight: 500, color: '#334155' }}>
+                  <input
+                    type="checkbox"
+                    checked={newTemplatePremium}
+                    onChange={e => setNewTemplatePremium(e.target.checked)}
+                    style={{ width: 18, height: 18, accentColor: '#f59e0b', cursor: 'pointer' }}
+                  />
+                  <Crown size={16} color="#f59e0b" /> Đây là template Premium (Yêu cầu nâng cấp)
+                </label>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', padding: '20px 32px 24px', background: '#f8fafc', borderTop: '1px solid #f1f5f9', flexShrink: 0 }}>
+              <button className="adm-btn adm-btn-outline" style={{ padding: '12px 24px', fontSize: 14, borderRadius: 12, fontWeight: 600, color: '#475569', borderColor: '#cbd5e1' }} onClick={() => setShowCreateModal(false)}>
                 Hủy
               </button>
-              <button 
-                className="adm-btn adm-btn-primary" 
+              <button
+                className="adm-btn adm-btn-primary"
+                style={{ padding: '12px 32px', fontSize: 14, borderRadius: 12, fontWeight: 600, display: 'flex', gap: 8, boxShadow: '0 4px 12px rgba(244, 63, 94, 0.25)' }}
                 onClick={handleCreateTemplate}
                 disabled={!newTemplateName.trim()}
               >
-                Tạo và chuyển đến Editor
+                <Check size={16} strokeWidth={2.5} /> Tạo và chuyển đến Editor
               </button>
             </div>
           </div>

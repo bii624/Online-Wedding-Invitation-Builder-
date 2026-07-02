@@ -13,6 +13,7 @@ export type ToolType =
   | 'templates'
   | 'effects'
   | 'presets'
+  | 'library'
   | null;
 
 export type AlignType = 'left' | 'center' | 'right' | 'justify';

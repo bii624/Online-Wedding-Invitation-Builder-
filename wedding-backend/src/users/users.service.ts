@@ -250,6 +250,117 @@ export class UsersService {
     });
     return new User(newUser);
   }
+
+  // =====================================================================
+  // ADMIN API
+  // =====================================================================
+
+  async getAdminUsers(query: any) {
+    const { search, role, status, page = 1, limit = 20 } = query;
+    const skip = (page - 1) * limit;
+
+    const where: any = {};
+    if (search) {
+      where.OR = [
+        { fullName: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } }
+      ];
+    }
+    if (role && role !== 'all') {
+      where.role = role;
+    }
+    if (status && status !== 'all') {
+      where.status = status;
+    }
+
+    const [items, total] = await this.prisma.$transaction([
+      this.prisma.user.findMany({
+        where,
+        skip: Number(skip),
+        take: Number(limit),
+        orderBy: { createdAt: 'desc' },
+        include: {
+          _count: {
+            select: { cards: true }
+          }
+        }
+      }),
+      this.prisma.user.count({ where })
+    ]);
+
+    const formattedItems = items.map(user => ({
+      id: user.id,
+      fullName: user.fullName || 'Người dùng ẩn danh',
+      email: user.email || 'Không có email',
+      role: user.role,
+      status: user.status,
+      cardCount: user._count.cards,
+      createdAt: user.createdAt,
+      avatarUrl: user.avatarUrl
+    }));
+
+    return {
+      data: formattedItems,
+      pagination: {
+        total,
+        page: Number(page),
+        limit: Number(limit),
+        totalPages: Math.ceil(total / Number(limit)),
+      }
+    };
+  }
+
+  async getAdminUserDetail(id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: { cards: true, createdTemplates: true }
+        }
+      }
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return {
+      id: user.id,
+      fullName: user.fullName || 'Người dùng ẩn danh',
+      email: user.email || 'Không có email',
+      role: user.role,
+      status: user.status,
+      cardCount: user._count.cards,
+      templateCount: user._count.createdTemplates,
+      createdAt: user.createdAt,
+      avatarUrl: user.avatarUrl,
+      authProvider: user.authProvider
+    };
+  }
+
+  async updateUserStatus(id: string, status: any) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) throw new NotFoundException('User not found');
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id },
+      data: { status }
+    });
+    
+    return { id: updatedUser.id, status: updatedUser.status };
+  }
+
+  async updateUserRole(id: string, role: any) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) throw new NotFoundException('User not found');
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id },
+      data: { role }
+    });
+    
+    return { id: updatedUser.id, role: updatedUser.role };
+  }
 }
 
 

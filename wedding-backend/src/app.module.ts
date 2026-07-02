@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { AssetsModule } from './assets/assets.module';
 import { CardsModule } from './cards/cards.module';
 import { TemplatesModule } from './templates/templates.module';
+import { LibraryElementsModule } from './library-elements/library-elements.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { TemplatesModule } from './templates/templates.module';
     AssetsModule,
     CardsModule,
     TemplatesModule,
+    LibraryElementsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
