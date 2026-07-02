@@ -78,9 +78,9 @@ export const Header = () => {
 
                     <div className="hidden md:flex items-center space-x-1">
                         {navLinks.map((link) => (
-                            <a
+                            <Link
                                 key={link.name}
-                                href={link.href}
+                                to={link.href}
                                 className={cn(
                                     "px-4 py-2 text-[15px] font-medium rounded-full transition-all flex items-center gap-1",
                                     link.href === "/" || link.name === "Trang chủ"
@@ -92,7 +92,7 @@ export const Header = () => {
                                 {['Security', 'Document', 'Integration'].includes(link.name) && (
                                     <ChevronDown className="h-3.5 w-3.5 opacity-40" />
                                 )}
-                            </a>
+                            </Link>
                         ))}
                     </div>
 
@@ -142,9 +142,9 @@ export const Header = () => {
                     <div className="md:hidden mt-4 py-4 bg-white/95 rounded-2xl border border-rose-100/60 shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                         <div className="space-y-1 px-4">
                             {navLinks.map((link) => (
-                                <a
+                                <Link
                                     key={link.name}
-                                    href={link.href}
+                                    to={link.href}
                                     className={cn(
                                         "flex items-center justify-between w-full px-4 py-3 text-base font-medium rounded-xl transition-colors",
                                         link.href === "/" || link.name === "Trang chủ"
@@ -155,7 +155,7 @@ export const Header = () => {
                                 >
                                     {link.name}
                                     <ChevronDown className="h-4 w-4 -rotate-90 opacity-30" />
-                                </a>
+                                </Link>
                             ))}
                         </div>
                     </div>

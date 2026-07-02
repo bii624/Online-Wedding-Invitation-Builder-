@@ -36,6 +36,10 @@ import { LibraryElementsPage } from './features/admin/pages/LibraryElementsPage'
 import { TemplateCategoriesPage } from './features/admin/pages/TemplateCategoriesPage';
 import { ModerationPage } from './features/admin/pages/ModerationPage';
 import Templates from './pages/Templates/Templates';
+import { Reviews } from './pages/Reviews/Reviews';
+import { Contact } from './pages/Contact/Contact';
+
+
 
 function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
@@ -57,6 +61,11 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/loading" element={<LoadingPage />} />
+        
+        {/* Static Pages */}
+        <Route path="/templates" element={<Templates />} />
+        <Route path="/reviews" element={<Reviews />} />
+        <Route path="/contact" element={<Contact />} />
 
         {/* Dashboard routes - using feature components */}
         <Route path="/dashboard" element={<Navigate to="/dashboard/overview" replace />} />
@@ -82,6 +91,7 @@ function App() {
           <Route path="categories" element={<TemplateCategoriesPage />} />
           <Route path="moderation" element={<ModerationPage />} />
         </Route>
+
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

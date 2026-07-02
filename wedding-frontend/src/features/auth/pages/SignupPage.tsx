@@ -43,9 +43,9 @@ export default function SignupPage() {
     }
 
     setErrors({});
-    
+
     try {
-      await axios.post('http://localhost:8000/auth/register', {
+      await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/auth/register`, {
         fullName: name,
         email,
         password,
@@ -216,7 +216,7 @@ export default function SignupPage() {
 
             {/* SOCIAL SIGNUP */}
             <div className="grid grid-cols-2 gap-4 font-poppins">
-              <button 
+              <button
                 type="button"
                 onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/auth/google`}
                 className="h-11 border border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 rounded-2xl flex items-center justify-center gap-2.5 text-[13px] font-medium text-zinc-600 transition-all cursor-pointer">
@@ -228,7 +228,7 @@ export default function SignupPage() {
                 </svg>
                 Google
               </button>
-              <button 
+              <button
                 type="button"
                 onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/auth/facebook`}
                 className="h-11 border border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 rounded-2xl flex items-center justify-center gap-2.5 text-[13px] font-medium text-zinc-600 transition-all cursor-pointer">
