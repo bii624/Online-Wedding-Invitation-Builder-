@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import WeddingImg1 from '../../assets/images/wedding1.jpg';
 import WeddingImg2 from '../../assets/images/wedding2.jpg';
 import WeddingImg3 from '../../assets/images/wedding3.jpg';
@@ -15,13 +15,11 @@ import Image2 from '../../assets/images/2.png';
 import Image3 from '../../assets/images/3.png';
 import { templatesData, type TemplateItem } from '../../data/templates';
 import TemplateModal from '../../components/TemplateModal';
-import { RevolvingHeartsIcon } from "../../components/icons/emojione-revolving-hearts";
 import { Footer } from "../../components/Footer";
 import {
   ArrowRight,
   LayoutTemplate,
-  Menu,
-  X,
+
   UsersRound,
   Sparkles,
   Share2,
@@ -31,18 +29,16 @@ import {
   Palette,
   Play,
   Pen,
-  LogOut,
-  Zap,
+
 } from 'lucide-react';
 
-import { useAuthStore } from '../../store/authStore';
+
 import { Button } from '../../components/button';
 import "./style.css";
 import { useState, useEffect } from 'react';
-import { cn } from '../../lib/utils';
+
 import { motion } from 'framer-motion';
-import { cardsApi } from '../../api/cardsApi';
-import { toast } from 'sonner';
+
 import { Header } from '../../components/Header';
 
 

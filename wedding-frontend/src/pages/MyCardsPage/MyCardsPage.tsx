@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../../store/authStore';
 import { cardsApi, type QueryCardDto } from '../../api/cardsApi';
 import { toast } from 'sonner';
-import { Link, useNavigate } from 'react-router-dom';
-import { Search, LayoutTemplate, Plus, File, Filter, MoreVertical, Edit2, Trash2, Zap, LayoutGrid, List } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { LayoutTemplate, MoreVertical, Edit2, Trash2, Zap, LayoutGrid, List } from 'lucide-react';
 import { Button } from '../../components/button';
 import { cn } from '../../lib/utils';
 import { Header } from '../../components/Header';
@@ -47,7 +47,7 @@ export const MyCardsPage = () => {
   const [loading, setLoading] = useState(true);
 
   // -- Filter State --
-  const [search, setSearch] = useState('');
+  const [search] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [status, setStatus] = useState<string>('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
