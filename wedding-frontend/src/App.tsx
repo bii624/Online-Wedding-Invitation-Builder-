@@ -2,12 +2,12 @@
 // APP ROOT - Routes
 // ============================================================
 
-import { EditorPage } from './editor/page/EditorPage';
+import { EditorPage } from './features/editor/page/EditorPage';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage/LandingPage";
-import LoginPage from "./pages/LoginPage/LoginPage";
-import SignupPage from "./pages/SignupPage/SignupPage";
-import ResetPasswordPage from "./pages/PasswordPage/ResetPasswordPage";
+import LoginPage from "./features/auth/pages/LoginPage";
+import SignupPage from "./features/auth/pages/SignupPage";
+import ResetPasswordPage from "./features/auth/pages/ResetPasswordPage";
 import LoadingPage from "./pages/Loading/Loadingpage";
 import { Toaster } from 'sonner';
 import { useEffect } from 'react';
@@ -15,26 +15,26 @@ import { useAuthStore } from './store/authStore';
 import { MyCardsPage } from './pages/MyCardsPage/MyCardsPage';
 
 // Dashboard
-import { Overview } from './features/dashboard/Overview';
-import { MyCards as MyCardsDashboard } from './features/dashboard/MyCards';
-import { Wishes } from './features/dashboard/Wishes';
-import { RSVP } from './features/dashboard/RSVP';
-import { ReceivedGifts } from './features/dashboard/ReceivedGifts';
-import { AccountProfile } from './features/dashboard/AccountProfile';
-import { MyPlan } from './features/dashboard/MyPlan';
-import { PaymentQR } from './features/dashboard/Paymentqr';
-import { Feedback } from './features/dashboard/Feedback';
+import { Overview } from './features/dashboard/pages/Overview';
+import { MyCards as MyCardsDashboard } from './features/dashboard/pages/MyCards';
+import { Wishes } from './features/dashboard/pages/Wishes';
+import { RSVP } from './features/dashboard/pages/RSVP';
+import { ReceivedGifts } from './features/dashboard/pages/ReceivedGifts';
+import { AccountProfile } from './features/dashboard/pages/AccountProfile';
+import { MyPlan } from './features/dashboard/pages/MyPlan';
+import { PaymentQR } from './features/dashboard/pages/Paymentqr';
+import { Feedback } from './features/dashboard/pages/Feedback';
 
 // Admin
-import { AdminLayout } from './admin/layout/AdminLayout';
-import { DashboardPage } from './admin/pages/DashboardPage';
-import { UsersListPage } from './admin/pages/UsersListPage';
-import { CardsListPage } from './admin/pages/CardsListPage';
-import { TemplatesListPage } from './admin/pages/TemplatesListPage';
-import { PlansPage } from './admin/pages/PlansPage';
-import { LibraryElementsPage } from './admin/pages/LibraryElementsPage';
-import { TemplateCategoriesPage } from './admin/pages/TemplateCategoriesPage';
-import { ModerationPage } from './admin/pages/ModerationPage';
+import { AdminLayout } from './features/admin/layout/AdminLayout';
+import { DashboardPage } from './features/admin/pages/DashboardPage';
+import { UsersListPage } from './features/admin/pages/UsersListPage';
+import { CardsListPage } from './features/admin/pages/CardsListPage';
+import { TemplatesListPage } from './features/admin/pages/TemplatesListPage';
+import { PlansPage } from './features/admin/pages/PlansPage';
+import { LibraryElementsPage } from './features/admin/pages/LibraryElementsPage';
+import { TemplateCategoriesPage } from './features/admin/pages/TemplateCategoriesPage';
+import { ModerationPage } from './features/admin/pages/ModerationPage';
 import Templates from './pages/Templates/Templates';
 
 function App() {

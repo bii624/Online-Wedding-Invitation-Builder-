@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { RevolvingHeartsIcon } from '../../components/icons/emojione-revolving-hearts';
+import { RevolvingHeartsIcon } from '../../../components/icons/emojione-revolving-hearts';
 
 import { NotificationPopup } from './NotificationPopup';
 

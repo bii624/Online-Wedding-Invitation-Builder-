@@ -17,10 +17,10 @@ import type {
   BackgroundProperties,
   AnimationProperties,
 } from '../types/editor.types';
-import { assetsApi } from '../../api/assetsApi';
-import { cardsApi } from '../../api/cardsApi';
-import { templatesEditorApi } from '../../api/templatesEditorApi';
-import type { CanvasBlockPayload } from '../../api/cardsApi';
+import { assetsApi } from '../../../api/assetsApi';
+import { cardsApi } from '../../../api/cardsApi';
+import { templatesEditorApi } from '../../../api/templatesEditorApi';
+import type { CanvasBlockPayload } from '../../../api/cardsApi';
 
 // ── Default property sets ────────────────────────────────
 export const DEFAULT_ANIMATION_PROPS: AnimationProperties = {

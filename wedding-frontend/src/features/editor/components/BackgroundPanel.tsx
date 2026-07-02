@@ -3,7 +3,7 @@ import { useEditorStore } from '../store/editorStore';
 import { CustomColorPicker } from './CustomColorPicker';
 import { ImageIcon } from './RightPanels/RightPanelShared';
 import '../styles/BackgroundPanel.css';
-import { assetsApi } from '../../api/assetsApi';
+import { assetsApi } from '../../../api/assetsApi';
 import { toast } from 'sonner';
 
 const SOLID_SWATCHES = [

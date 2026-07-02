@@ -1,5 +1,5 @@
 import { Bell, Search, Settings } from 'lucide-react';
-import { useAuthStore } from '../../store/authStore';
+import { useAuthStore } from '../../../store/authStore';
 
 interface AdminHeaderProps {
   title: string;

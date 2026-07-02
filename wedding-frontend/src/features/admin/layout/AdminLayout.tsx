@@ -1,7 +1,7 @@
 import { Outlet, Navigate } from 'react-router-dom';
 import { AdminSidebar } from './AdminSidebar';
 import { AdminHeader } from './AdminHeader';
-import { useAuthStore } from '../../store/authStore';
+import { useAuthStore } from '../../../store/authStore';
 import { useLocation } from 'react-router-dom';
 import '../styles/admin.css';
 

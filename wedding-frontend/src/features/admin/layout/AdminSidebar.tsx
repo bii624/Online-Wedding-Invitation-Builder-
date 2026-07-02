@@ -5,7 +5,7 @@ import {
   Image, Package, ShieldCheck, LogOut, Heart, ChevronRight,
   FileText, Tag,
 } from 'lucide-react';
-import { useAuthStore } from '../../store/authStore';
+import { useAuthStore } from '../../../store/authStore';
 import '../styles/admin.css';
 
 interface NavItem {

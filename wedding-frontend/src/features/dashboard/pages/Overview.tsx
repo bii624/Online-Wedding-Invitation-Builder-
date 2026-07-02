@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { DashboardLayout } from './DashboardLayout';
 import { Crown, Sparkles, ArrowRight, Sparkle, ArrowUpRight } from 'lucide-react';
-import FloatingBackgroundHearts from '../../components/FloatingBackgroundHearts';
+import FloatingBackgroundHearts from '../../../components/FloatingBackgroundHearts';
 
 // --- Custom Icon Components ---
 

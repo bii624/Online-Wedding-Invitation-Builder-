@@ -14,7 +14,7 @@ import { ImageCropModal } from '../components/ImageCropModal';
 import { useEffect } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { useEditorStore } from '../store/editorStore';
-import { useAuthStore } from '../../store/authStore';
+import { useAuthStore } from '../../../store/authStore';
 
 const AUTO_SAVE_INTERVAL_MS = 30_000; // 30 seconds
 

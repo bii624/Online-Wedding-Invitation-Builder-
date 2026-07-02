@@ -4,7 +4,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useEditorStore } from '../store/editorStore';
-import { libraryElementsApi, type LibraryElement, type ElementCategory } from '../../api/libraryElementsApi';
+import { libraryElementsApi, type LibraryElement, type ElementCategory } from '../../../api/libraryElementsApi';
 import '../styles/LibraryPanel.css';
 
 // ── Icons ─────────────────────────────────────────────────

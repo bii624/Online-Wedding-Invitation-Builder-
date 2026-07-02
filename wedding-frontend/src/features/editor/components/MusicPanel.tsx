@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useEditorStore } from '../store/editorStore';
 import type { MusicProperties } from '../types/editor.types';
 import '../styles/MusicPanel.css';
-import { assetsApi } from '../../api/assetsApi';
+import { assetsApi } from '../../../api/assetsApi';
 import { toast } from 'sonner';
 
 // ── Icons ──────────────────────────────────────────────────

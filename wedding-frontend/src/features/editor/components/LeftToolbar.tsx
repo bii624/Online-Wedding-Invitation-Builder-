@@ -11,7 +11,7 @@ import '../styles/LeftToolbar.css';
 import { useEditorStore } from '../store/editorStore';
 import type { ToolType, UploadedImage } from '../types/editor.types';
 import type { JSX } from 'react';
-import { assetsApi } from '../../api/assetsApi';
+import { assetsApi } from '../../../api/assetsApi';
 import { toast } from 'sonner';
 
 // ── SVG Icons ─────────────────────────────────────────────

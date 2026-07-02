@@ -4,8 +4,8 @@
 
 import '../styles/Header.css';
 import { useEditorStore } from '../store/editorStore';
-import { useAuthStore } from '../../store/authStore';
-import { RevolvingHeartsIcon } from '../../components/icons/emojione-revolving-hearts';
+import { useAuthStore } from '../../../store/authStore';
+import { RevolvingHeartsIcon } from '../../../components/icons/emojione-revolving-hearts';
 import { useNavigate } from 'react-router-dom';
 
 // SVG Icons as inline components for zero deps
