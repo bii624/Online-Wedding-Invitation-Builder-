@@ -10,6 +10,7 @@ import type { CanvasElement } from '../types/editor.types';
 import { TextEditorElement } from './TextEditorElement';
 import { ImageEditorElement } from './ImageEditorElement';
 import { ShapeEditorElement } from './ShapeEditorElement';
+import { CountdownEditorElement } from './Widgets/CountdownEditorElement';
 
 // ── SVG Icons ─────────────────────────────────────────────
 const GridIcon = () => (
@@ -355,6 +356,9 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
       )}
       {element.type === 'shape' && (
         <ShapeEditorElement element={element} zoom={zoom} />
+      )}
+      {element.type === 'countdown' && (
+        <CountdownEditorElement element={element} zoom={zoom} />
       )}
 
       {/* Controls – visible only when selected */}

@@ -7,6 +7,7 @@ import { BackgroundPanel } from './BackgroundPanel';
 import { MusicPanel } from './MusicPanel';
 import { EffectsPanel } from './EffectsPanel';
 import { LibraryPanel } from './LibraryPanel';
+import { WidgetsPanel } from './WidgetsPanel';
 import '../styles/LeftToolbar.css';
 import { useEditorStore } from '../store/editorStore';
 import type { ToolType, UploadedImage } from '../types/editor.types';
@@ -275,6 +276,7 @@ export function LeftToolbar() {
   const [showMusicPanel, setShowMusicPanel] = useState(false);
   const [showEffectsPanel, setShowEffectsPanel] = useState(false);
   const [showLibraryPanel, setShowLibraryPanel] = useState(false);
+  const [showWidgetsPanel, setShowWidgetsPanel] = useState(false);
 
   const closeAllPanels = () => {
     setShowImagePanel(false);
@@ -282,6 +284,7 @@ export function LeftToolbar() {
     setShowMusicPanel(false);
     setShowEffectsPanel(false);
     setShowLibraryPanel(false);
+    setShowWidgetsPanel(false);
   };
 
   const handleToolClick = (tool: ToolType) => {
@@ -318,6 +321,13 @@ export function LeftToolbar() {
       setActiveTool('effects');
       closeAllPanels();
       setShowEffectsPanel(next);
+      return;
+    }
+    if (tool === 'widgets') {
+      const next = activeTool === 'widgets' ? !showWidgetsPanel : true;
+      setActiveTool('widgets');
+      closeAllPanels();
+      setShowWidgetsPanel(next);
       return;
     }
     // Close all panels for other tools
@@ -384,6 +394,11 @@ export function LeftToolbar() {
       {/* Effects global preset panel */}
       {showEffectsPanel && (
         <EffectsPanel onClose={() => setShowEffectsPanel(false)} />
+      )}
+
+      {/* Widgets Panel */}
+      {showWidgetsPanel && (
+        <WidgetsPanel onClose={() => setShowWidgetsPanel(false)} />
       )}
 
       {/* Shape Popup */}

@@ -160,8 +160,49 @@ export interface AnimationProperties {
   loopDelay: number;         // giây
 }
 
+// ── Countdown Properties ─────────────────────────────────
+export interface CountdownContent {
+  targetDate: string;
+  targetTime: string;
+  direction: 'horizontal' | 'vertical';
+  language: 'vi' | 'en';
+  spacing: number;
+  font: string;
+  fontSize: number;
+  textColor: string;
+  frameColor: string;
+  backgroundColor: string;
+  opacity: number;
+  showDays: boolean;
+  showHours: boolean;
+  showMinutes: boolean;
+  showSeconds: boolean;
+  label: {
+    days: string;
+    hours: string;
+    minutes: string;
+    seconds: string;
+  };
+  // Padding
+  paddingTop: number;
+  paddingRight: number;
+  paddingBottom: number;
+  paddingLeft: number;
+  // Border
+  borderWidth: number;
+  borderColor: string;
+  borderRadius: number;
+  borderStyle: string;
+  // Shadow
+  shadowX: number;
+  shadowY: number;
+  shadowBlur: number;
+  shadowSpread: number;
+  shadowColor: string;
+}
+
 // ── Canvas Element (base + union) ─────────────────────────
-export type CanvasElementType = 'text' | 'image' | 'shape';
+export type CanvasElementType = 'text' | 'image' | 'shape' | 'countdown';
 
 export interface CanvasElement {
   id: string;
@@ -177,6 +218,7 @@ export interface CanvasElement {
   textProps?: TextProperties;
   imageProps?: ImageProperties;
   shapeProps?: ShapeProperties;
+  countdownProps?: CountdownContent;
   animationProps?: AnimationProperties;
 }
 

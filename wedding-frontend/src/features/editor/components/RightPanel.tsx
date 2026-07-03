@@ -15,6 +15,7 @@ import { TextRightPanel } from './RightPanels/TextRightPanel';
 import { ImageRightPanel } from './RightPanels/ImageRightPanel';
 import { ShapeRightPanel } from './RightPanels/ShapeRightPanel';
 import { EffectsRightPanel } from './RightPanels/EffectsRightPanel';
+import { CountdownPanel } from './RightPanels/Widgets/CountdownPanel';
 import { SlidersHorizontal, Wand2 } from 'lucide-react';
 
 
@@ -71,6 +72,10 @@ export function RightPanel() {
 
     if (selectedElement?.type === 'shape') {
       return <ShapeRightPanel element={selectedElement} activeTab={activeRightTab} />;
+    }
+
+    if (selectedElement?.type === 'countdown') {
+      return <CountdownPanel element={selectedElement} />;
     }
 
     // ── Nothing selected: show tool-specific guidance ─────

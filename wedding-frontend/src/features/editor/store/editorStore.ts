@@ -106,6 +106,38 @@ const DEFAULT_SHAPE_PROPS: ShapeProperties = {
   shadowColor: 'rgba(0, 0, 0, 0.2)',
 };
 
+const DEFAULT_COUNTDOWN_PROPS: import('../types/editor.types').CountdownContent = {
+  targetDate: '2026-08-15',
+  targetTime: '18:30',
+  direction: 'horizontal',
+  language: 'vi',
+  spacing: 20,
+  font: 'Arial',
+  fontSize: 14,
+  textColor: '#000000',
+  frameColor: '#000000',
+  backgroundColor: 'transparent',
+  opacity: 1,
+  showDays: true,
+  showHours: true,
+  showMinutes: true,
+  showSeconds: true,
+  label: { days: 'Ngày', hours: 'Giờ', minutes: 'Phút', seconds: 'Giây' },
+  paddingTop: 0,
+  paddingRight: 0,
+  paddingBottom: 0,
+  paddingLeft: 0,
+  borderWidth: 0,
+  borderColor: '#000000',
+  borderRadius: 0,
+  borderStyle: 'none',
+  shadowX: 0,
+  shadowY: 0,
+  shadowBlur: 0,
+  shadowSpread: 0,
+  shadowColor: 'transparent',
+};
+
 // ── Initial data ──────────────────────────────────────────
 const INITIAL_ELEMENTS: CanvasElement[] = [
   {
@@ -151,6 +183,11 @@ interface EditorActions {
   updateShapeProps: (
     id: string,
     props: Partial<ShapeProperties>
+  ) => void;
+  addCountdownElement: (x?: number, y?: number) => void;
+  updateCountdownProps: (
+    id: string,
+    props: Partial<import('../types/editor.types').CountdownContent>
   ) => void;
   updateAnimationProps: (id: string, props: Partial<AnimationProperties>) => void;
   applyGlobalAnimation: (presetId: string, preset: (index: number) => Partial<AnimationProperties>) => void;
@@ -258,6 +295,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       if (selected.type === 'text') activeTool = 'text';
       else if (selected.type === 'image') activeTool = 'image';
       else if (selected.type === 'shape') activeTool = 'tools';
+      else if (selected.type === 'countdown') activeTool = 'widgets';
     }
 
     set({ elements: updated, selectedElement: selected, activeTool });
@@ -357,6 +395,33 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     get().pushHistory();
   },
 
+  // ── Add countdown element ───────────────────────────────
+  addCountdownElement: (x, y) => {
+    const { elements } = get();
+    const id = `el-countdown-${Date.now()}`;
+    const defaultX = x !== undefined ? x : 50;
+    const defaultY = y !== undefined ? y : 200;
+    const newEl: CanvasElement = {
+      id,
+      type: 'countdown',
+      x: defaultX,
+      y: defaultY,
+      width: 300,
+      height: 100,
+      zIndex: elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) + 1 : 1,
+      rotation: 0,
+      isSelected: true,
+      countdownProps: { ...DEFAULT_COUNTDOWN_PROPS },
+    };
+    const updated = elements.map((el) => ({ ...el, isSelected: false }));
+    set({
+      elements: [...updated, newEl],
+      selectedElement: newEl,
+      activeTool: 'widgets',
+    });
+    get().pushHistory();
+  },
+
 
 
   // ── Update text prop ──────────────────────────────────
@@ -406,6 +471,19 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     const updated = elements.map((el) => {
       if (el.id !== id || !el.shapeProps) return el;
       return { ...el, shapeProps: { ...el.shapeProps, ...props } };
+    });
+    const updatedSelected =
+      selectedElement?.id === id
+        ? updated.find((el) => el.id === id) ?? null
+        : selectedElement;
+    set({ elements: updated, selectedElement: updatedSelected });
+  },
+
+  updateCountdownProps: (id, props) => {
+    const { elements, selectedElement } = get();
+    const updated = elements.map((el) => {
+      if (el.id !== id || !el.countdownProps) return el;
+      return { ...el, countdownProps: { ...el.countdownProps, ...props } };
     });
     const updatedSelected =
       selectedElement?.id === id
@@ -507,6 +585,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       textProps: src.textProps ? { ...src.textProps } : undefined,
       imageProps: src.imageProps ? { ...src.imageProps } : undefined,
       shapeProps: src.shapeProps ? { ...src.shapeProps } : undefined,
+      countdownProps: src.countdownProps ? { ...src.countdownProps } : undefined,
     };
     const updated = elements.map((el) => ({ ...el, isSelected: false }));
     set({ elements: [...updated, newEl], selectedElement: newEl });
@@ -727,6 +806,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           el.type === 'text' ? 'text'
           : el.type === 'image' ? 'image'
           : el.type === 'shape' ? 'shape'
+          : el.type === 'countdown' ? 'countdown'
           : 'text',
         posX: el.x,
         posY: el.y,
@@ -738,6 +818,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           if (el.type === 'text') return el.textProps as object ?? {};
           if (el.type === 'image') return el.imageProps as object ?? {};
           if (el.type === 'shape') return el.shapeProps as object ?? {};
+          if (el.type === 'countdown') return el.countdownProps as object ?? {};
           return {};
         })(),
         style: el.animationProps ? (el.animationProps as object) : {},
@@ -789,6 +870,8 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           return { ...base, type: 'image' as const, imageProps: block.content };
         } else if (block.blockType === 'shape') {
           return { ...base, type: 'shape' as const, shapeProps: block.content };
+        } else if (block.blockType === 'countdown') {
+          return { ...base, type: 'countdown' as const, countdownProps: block.content };
         }
         return { ...base, type: 'text' as const, textProps: block.content };
       });
