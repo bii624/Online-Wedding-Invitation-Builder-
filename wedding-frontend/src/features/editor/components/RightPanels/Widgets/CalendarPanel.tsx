@@ -63,18 +63,19 @@ export function CalendarPanel({ element }: CalendarPanelProps) {
       <Section title="Thiết lập lịch" icon={<LayoutIcon />} defaultOpen>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           
-          <div className="rp-field">
+          <div className="rp-field" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
             <span className="rp-label">Chọn ngày</span>
             <input 
               type="date" 
               className="rp-input" 
               value={props.primaryDate} 
               onChange={(e) => handlePropChange('primaryDate', e.target.value)} 
-              style={{ width: '100%', marginTop: '4px' }} 
+              style={{ width: '100%' }} 
             />
           </div>
 
-          <div className="rp-field" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="rp-field" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <label htmlFor="show-two-dates" className="rp-label" style={{ cursor: 'pointer', margin: 0 }}>Hiển thị 2 ngày</label>
             <input 
               type="checkbox" 
               id="show-two-dates" 
@@ -84,47 +85,46 @@ export function CalendarPanel({ element }: CalendarPanelProps) {
                 if (!e.target.checked) handlePropChange('secondaryDate', null);
               }} 
             />
-            <label htmlFor="show-two-dates" className="rp-label" style={{ cursor: 'pointer', margin: 0 }}>Hiển thị 2 ngày</label>
           </div>
 
           {props.showTwoDates && (
             <div style={{ padding: '12px', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div className="rp-field">
-                <span className="rp-label" style={{ fontSize: 11 }}>Ngày thứ 2</span>
+              <div className="rp-field" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
+                <span className="rp-label" style={{ fontSize: 12 }}>Ngày thứ 2</span>
                 <input 
                   type="date" 
                   className="rp-input" 
                   value={props.secondaryDate || ''} 
                   onChange={(e) => handlePropChange('secondaryDate', e.target.value)} 
-                  style={{ width: '100%', marginTop: '4px' }} 
+                  style={{ width: '100%' }} 
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <div className="rp-field" style={{ flex: 1 }}>
-                  <span className="rp-label" style={{ fontSize: 11 }}>Tên ngày 1</span>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <span className="rp-label" style={{ fontSize: 12 }}>Tên ngày 1</span>
                   <input 
                     type="text" 
                     className="rp-input" 
                     value={props.groomSideLabel} 
                     onChange={(e) => handlePropChange('groomSideLabel', e.target.value)} 
-                    style={{ width: '100%', marginTop: '4px' }} 
+                    style={{ width: '100%' }} 
                   />
                 </div>
-                <div className="rp-field" style={{ flex: 1 }}>
-                  <span className="rp-label" style={{ fontSize: 11 }}>Tên ngày 2</span>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <span className="rp-label" style={{ fontSize: 12 }}>Tên ngày 2</span>
                   <input 
                     type="text" 
                     className="rp-input" 
                     value={props.brideSideLabel} 
                     onChange={(e) => handlePropChange('brideSideLabel', e.target.value)} 
-                    style={{ width: '100%', marginTop: '4px' }} 
+                    style={{ width: '100%' }} 
                   />
                 </div>
               </div>
 
               <div className="rp-field" style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span className="rp-label" style={{ fontSize: 11 }}>Màu ngày 2</span>
+                <span className="rp-label" style={{ fontSize: 12 }}>Màu ngày 2</span>
                 <div
                   onClick={() => setShowSecondaryColorPicker(!showSecondaryColorPicker)}
                   style={{ width: 24, height: 24, borderRadius: '50%', backgroundColor: props.secondaryColor, border: '1px solid #ccc', cursor: 'pointer' }}
@@ -143,9 +143,9 @@ export function CalendarPanel({ element }: CalendarPanelProps) {
             </div>
           )}
 
-          <div className="rp-field">
+          <div className="rp-field" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '8px' }}>
             <span className="rp-label">Giao diện</span>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', marginTop: '8px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', width: '100%' }}>
               {[1, 2, 3].map(id => (
                 <div 
                   key={id}
@@ -157,7 +157,7 @@ export function CalendarPanel({ element }: CalendarPanelProps) {
                     borderRadius: '6px',
                     cursor: 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 10, color: '#64748b', fontWeight: 600
+                    fontSize: 12, color: '#64748b', fontWeight: 600
                   }}
                 >
                   Mẫu {id}
