@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useEditorStore } from '../../../store/editorStore';
 import type { CanvasElement, MapContent } from '../../../types/editor.types';
-import { Section, Slider, AlignLeftIcon, AlignCenterIcon, AlignRightIcon, LayoutIcon, BorderIcon, ShadowIcon } from '../RightPanelShared';
+import { Section, Slider, AlignLeftIcon, AlignCenterIcon, AlignRightIcon, LayoutIcon, PaddingSection, BorderSection, ShadowSection } from '../RightPanelShared';
 import { CustomColorPicker } from '../../CustomColorPicker';
 import { MapPickerModal } from '../../Widgets/MapPickerModal';
 
@@ -62,25 +62,25 @@ export function MapRightPanel({ element }: MapRightPanelProps) {
           />
         </div>
 
-        <div className="rp-field" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 }}>
+        <div className="rp-field" style={{ marginTop: 20 }}>
           <span className="rp-label">Căn chỉnh</span>
-          <div style={{ display: 'flex', gap: 4 }}>
+          <div className="rp-align-group" style={{ flex: 1 }}>
             <button
-              className={`rp-icon-btn ${props.align === 'left' ? 'active' : ''}`}
+              className={`rp-align-btn ${props.align === 'left' ? 'active' : ''}`}
               onClick={() => handlePropChange('align', 'left')}
               title="Trái"
             >
               <AlignLeftIcon />
             </button>
             <button
-              className={`rp-icon-btn ${props.align === 'center' ? 'active' : ''}`}
+              className={`rp-align-btn ${props.align === 'center' ? 'active' : ''}`}
               onClick={() => handlePropChange('align', 'center')}
               title="Giữa"
             >
               <AlignCenterIcon />
             </button>
             <button
-              className={`rp-icon-btn ${props.align === 'right' ? 'active' : ''}`}
+              className={`rp-align-btn ${props.align === 'right' ? 'active' : ''}`}
               onClick={() => handlePropChange('align', 'right')}
               title="Phải"
             >
@@ -90,125 +90,18 @@ export function MapRightPanel({ element }: MapRightPanelProps) {
         </div>
       </Section>
 
-      <Section title="Khoảng đệm (Padding)" icon={<LayoutIcon />}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-          <div className="rp-field">
-            <span className="rp-label" style={{ fontSize: 11 }}>Trái (Left)</span>
-            <input type="number" className="rp-input" style={{ width: '100%' }} value={props.paddingLeft ?? 0} onChange={(e) => handlePropChange('paddingLeft', Number(e.target.value))} />
-          </div>
-          <div className="rp-field">
-            <span className="rp-label" style={{ fontSize: 11 }}>Trên (Top)</span>
-            <input type="number" className="rp-input" style={{ width: '100%' }} value={props.paddingTop ?? 0} onChange={(e) => handlePropChange('paddingTop', Number(e.target.value))} />
-          </div>
-          <div className="rp-field">
-            <span className="rp-label" style={{ fontSize: 11 }}>Phải (Right)</span>
-            <input type="number" className="rp-input" style={{ width: '100%' }} value={props.paddingRight ?? 0} onChange={(e) => handlePropChange('paddingRight', Number(e.target.value))} />
-          </div>
-          <div className="rp-field">
-            <span className="rp-label" style={{ fontSize: 11 }}>Dưới (Bottom)</span>
-            <input type="number" className="rp-input" style={{ width: '100%' }} value={props.paddingBottom ?? 0} onChange={(e) => handlePropChange('paddingBottom', Number(e.target.value))} />
-          </div>
-        </div>
-      </Section>
-
-      <Section title="Đường viền" icon={<BorderIcon />}>
-        <div className="rp-field" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span className="rp-label">Kiểu</span>
-          <select
-            className="rp-select"
-            value={props.borderStyle || 'none'}
-            onChange={(e) => handlePropChange('borderStyle', e.target.value)}
-            style={{ width: 140 }}
-          >
-            <option value="none">Không có</option>
-            <option value="solid">Nét liền</option>
-            <option value="dashed">Nét đứt</option>
-            <option value="dotted">Nét chấm</option>
-          </select>
-        </div>
-
-        <div className="rp-field" style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
-          <span className="rp-label">Màu viền</span>
-          <div
-            className="rp-color-swatch-circle"
-            style={{ width: 24, height: 24, borderRadius: '50%', background: props.borderColor, cursor: 'pointer', border: '1px solid var(--ed-border)' }}
-            onClick={() => setShowBorderColorPicker(!showBorderColorPicker)}
-          />
-          {showBorderColorPicker && (
-            <div style={{ position: 'absolute', top: 30, right: 0, zIndex: 10 }}>
-              <CustomColorPicker
-                onClose={() => setShowBorderColorPicker(false)}
-                forceSolid={true}
-                initialType="solid"
-                initialColor={props.borderColor}
-                onChange={(data) => handlePropChange('borderColor', data.color)}
-                alignRight={true}
-              />
-            </div>
-          )}
-        </div>
-
-        <Slider
-          label="Độ dày"
-          value={props.borderWidth ?? 0}
-          min={0} max={50} step={1}
-          onChange={(v) => handlePropChange('borderWidth', v)}
-        />
-        <Slider
-          label="Bo góc"
-          value={props.borderRadius ?? 0}
-          min={0} max={100} step={1}
-          onChange={(v) => handlePropChange('borderRadius', v)}
-        />
-      </Section>
-
-      <Section title="Đổ bóng" icon={<ShadowIcon />}>
-        <div className="rp-field" style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-          <span className="rp-label">Màu bóng</span>
-          <div
-            className="rp-color-swatch-circle"
-            style={{ width: 24, height: 24, borderRadius: '50%', background: props.shadowColor, cursor: 'pointer', border: '1px solid var(--ed-border)' }}
-            onClick={() => setShowShadowColorPicker(!showShadowColorPicker)}
-          />
-          {showShadowColorPicker && (
-            <div style={{ position: 'absolute', top: 30, right: 0, zIndex: 10 }}>
-              <CustomColorPicker
-                onClose={() => setShowShadowColorPicker(false)}
-                forceSolid={true}
-                initialType="solid"
-                initialColor={props.shadowColor}
-                onChange={(data) => handlePropChange('shadowColor', data.color)}
-                alignRight={true}
-              />
-            </div>
-          )}
-        </div>
-
-        <Slider
-          label="Trục X"
-          value={props.shadowX ?? 0}
-          min={-50} max={50} step={1}
-          onChange={(v) => handlePropChange('shadowX', v)}
-        />
-        <Slider
-          label="Trục Y"
-          value={props.shadowY ?? 0}
-          min={-50} max={50} step={1}
-          onChange={(v) => handlePropChange('shadowY', v)}
-        />
-        <Slider
-          label="Độ mờ (Blur)"
-          value={props.shadowBlur ?? 0}
-          min={0} max={100} step={1}
-          onChange={(v) => handlePropChange('shadowBlur', v)}
-        />
-        <Slider
-          label="Độ lan (Spread)"
-          value={props.shadowSpread ?? 0}
-          min={-50} max={50} step={1}
-          onChange={(v) => handlePropChange('shadowSpread', v)}
-        />
-      </Section>
+      <PaddingSection
+        padding={{ top: props.paddingTop || 0, right: props.paddingRight || 0, bottom: props.paddingBottom || 0, left: props.paddingLeft || 0 }}
+        onChange={(p) => { handlePropChange('paddingTop', p.top); handlePropChange('paddingRight', p.right); handlePropChange('paddingBottom', p.bottom); handlePropChange('paddingLeft', p.left); }}
+      />
+      <BorderSection
+        border={{ width: props.borderWidth || 0, style: props.borderStyle || 'none', color: props.borderColor || 'transparent', radius: props.borderRadius || 0 }}
+        onChange={(b) => { handlePropChange('borderWidth', b.width); handlePropChange('borderStyle', b.style); handlePropChange('borderColor', b.color); handlePropChange('borderRadius', b.radius); }}
+      />
+      <ShadowSection
+        shadow={{ x: props.shadowX || 0, y: props.shadowY || 0, blur: props.shadowBlur || 0, spread: props.shadowSpread || 0, color: props.shadowColor || 'transparent' }}
+        onChange={(s) => { handlePropChange('shadowX', s.x); handlePropChange('shadowY', s.y); handlePropChange('shadowBlur', s.blur); handlePropChange('shadowSpread', s.spread); handlePropChange('shadowColor', s.color); }}
+      />
 
       {showMapModal && (
         <MapPickerModal

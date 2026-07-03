@@ -50,6 +50,7 @@ const DEFAULT_TEXT_PROPS: TextProperties = {
   paddingBottom: 12,
   paddingLeft: 16,
   borderWidth: 0,
+  borderStyle: 'solid',
   borderColor: '#e0c4a8',
   borderRadius: 4,
   shadowX: 0,
@@ -171,6 +172,72 @@ const DEFAULT_QR_GIFT_BOX_PROPS: import('../types/editor.types').QrGiftBoxConten
   accounts: []
 };
 
+export const DEFAULT_CALENDAR_PROPS: import('../types/editor.types').CalendarContent = {
+  templateId: 1,
+  primaryDate: new Date().toISOString().split('T')[0],
+  showTwoDates: false,
+  secondaryDate: null,
+  groomSideLabel: "Nhà trai",
+  brideSideLabel: "Nhà gái",
+  alignment: "center",
+  font: "Arial",
+  fontSize: 14,
+  textColor: "#1a1a1a",
+  backgroundColor: "#ffffff",
+  primaryColor: "#f43f5e",
+  secondaryColor: "#3b82f6",
+  opacity: 1,
+  padding: { top: 16, right: 16, bottom: 16, left: 16 },
+  border: { width: 1, style: "solid", color: "#e4e4e7", radius: 12 },
+  shadow: { x: 0, y: 2, blur: 8, spread: 0, color: "rgba(0,0,0,0.08)" }
+};
+
+export const DEFAULT_ALBUM_PROPS: import('../types/editor.types').AlbumContent = {
+  images: [],
+  showThumbnails: true,
+  showNavButtons: true,
+  enableFullscreen: true,
+  effectType: 'fade',
+  delay: 3,
+  alignment: 'center',
+  backgroundColor: '#ffffff',
+  opacity: 1,
+  padding: { top: 0, right: 0, bottom: 0, left: 0 },
+  border: { width: 0, style: "none", color: "#e4e4e7", radius: 12 },
+  shadow: { x: 0, y: 2, blur: 8, spread: 0, color: "rgba(0,0,0,0.08)" }
+};
+
+export const DEFAULT_FORM_PROPS: import('../types/editor.types').FormContent = {
+  showGuestType: true,
+  showAttendance: true,
+  alignment: 'center',
+  fontFamily: 'Arial',
+  fontSize: 14,
+  textColor: '#000000',
+  backgroundColor: '#f9f9f9',
+  inputBorderColor: '#cccccc',
+  buttonBgColor: '#000000',
+  buttonTextColor: '#ffffff',
+  opacity: 1,
+  padding: { top: 20, right: 20, bottom: 20, left: 20 },
+  border: { width: 1, style: 'solid', color: '#e4e4e7', radius: 12 },
+  shadow: { x: 0, y: 4, blur: 12, spread: 0, color: 'rgba(0,0,0,0.1)' }
+};
+
+export const DEFAULT_BUTTON_CONTACT_PROPS: import('../types/editor.types').ButtonContactContent = {
+  phoneNumber: '0987654321',
+  buttonText: 'Liên hệ',
+  showIcon: true,
+  fontFamily: 'Arial',
+  fontSize: 16,
+  textColor: '#ffffff',
+  backgroundColor: '#f43f5e',
+  opacity: 1,
+  padding: { top: 12, right: 24, bottom: 12, left: 24 },
+  border: { width: 0, style: 'none', color: '#e4e4e7', radius: 24 },
+  shadow: { x: 0, y: 4, blur: 12, spread: 0, color: 'rgba(0,0,0,0.1)' }
+};
+
 // ── Initial data ──────────────────────────────────────────
 const INITIAL_ELEMENTS: CanvasElement[] = [
   {
@@ -231,6 +298,26 @@ interface EditorActions {
   updateQrGiftBoxProps: (
     id: string,
     props: Partial<import('../types/editor.types').QrGiftBoxContent>
+  ) => void;
+  addCalendarElement: (x?: number, y?: number) => void;
+  updateCalendarProps: (
+    id: string,
+    props: Partial<import('../types/editor.types').CalendarContent>
+  ) => void;
+  addAlbumElement: (x?: number, y?: number) => void;
+  updateAlbumProps: (
+    id: string,
+    props: Partial<import('../types/editor.types').AlbumContent>
+  ) => void;
+  addFormElement: (x?: number, y?: number) => void;
+  updateFormProps: (
+    id: string,
+    props: Partial<import('../types/editor.types').FormContent>
+  ) => void;
+  addButtonContactElement: (x?: number, y?: number) => void;
+  updateButtonContactProps: (
+    id: string,
+    props: Partial<import('../types/editor.types').ButtonContactContent>
   ) => void;
   updateAnimationProps: (id: string, props: Partial<AnimationProperties>) => void;
   applyGlobalAnimation: (presetId: string, preset: (index: number) => Partial<AnimationProperties>) => void;
@@ -338,7 +425,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       if (selected.type === 'text') activeTool = 'text';
       else if (selected.type === 'image') activeTool = 'image';
       else if (selected.type === 'shape') activeTool = 'tools';
-      else if (selected.type === 'countdown' || selected.type === 'map') activeTool = 'widgets';
+      else if (selected.type === 'countdown' || selected.type === 'map' || selected.type === 'qr_code' || selected.type === 'calendar') activeTool = 'widgets';
     }
 
     set({ elements: updated, selectedElement: selected, activeTool });
@@ -521,7 +608,88 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     get().pushHistory();
   },
 
-  // ── Update text prop ──────────────────────────────────
+  // ── Add Calendar Element ─────────────────────────────────
+  addCalendarElement: (x, y) => {
+    const { elements } = get();
+    const id = `el-calendar-${Date.now()}`;
+    const defaultX = x !== undefined ? x : 50;
+    const defaultY = y !== undefined ? y : 200;
+    const newEl: import('../types/editor.types').CanvasElement = {
+      id,
+      type: 'calendar',
+      x: defaultX,
+      y: defaultY,
+      width: 380,
+      height: 320,
+      zIndex: elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) + 1 : 1,
+      rotation: 0,
+      isSelected: true,
+      calendarProps: { ...DEFAULT_CALENDAR_PROPS },
+    };
+    const updated = elements.map((el) => ({ ...el, isSelected: false }));
+    set({
+      elements: [...updated, newEl],
+      selectedElement: newEl,
+      activeTool: 'widgets',
+    });
+    get().pushHistory();
+  },
+
+  // ── Add Album Element ────────────────────────────────────
+  addAlbumElement: (x, y) => {
+    const { elements } = get();
+    const id = `el-album-${Date.now()}`;
+    const defaultX = x !== undefined ? x : 50;
+    const defaultY = y !== undefined ? y : 200;
+    const newEl: import('../types/editor.types').CanvasElement = {
+      id,
+      type: 'album',
+      x: defaultX,
+      y: defaultY,
+      width: 380,
+      height: 300,
+      zIndex: elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) + 1 : 1,
+      rotation: 0,
+      isSelected: true,
+      albumProps: { ...DEFAULT_ALBUM_PROPS },
+    };
+    const updated = elements.map((el) => ({ ...el, isSelected: false }));
+    set({
+      elements: [...updated, newEl],
+      selectedElement: newEl,
+      activeTool: 'widgets',
+    });
+    get().pushHistory();
+  },
+
+  // ── Add Form Element ─────────────────────────────────────
+  addFormElement: (x, y) => {
+    const { elements } = get();
+    const id = `el-form-${Date.now()}`;
+    const defaultX = x !== undefined ? x : 50;
+    const defaultY = y !== undefined ? y : 200;
+    const newEl: import('../types/editor.types').CanvasElement = {
+      id,
+      type: 'form',
+      x: defaultX,
+      y: defaultY,
+      width: 400,
+      height: 350,
+      zIndex: elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) + 1 : 1,
+      rotation: 0,
+      isSelected: true,
+      formProps: { ...DEFAULT_FORM_PROPS },
+    };
+    const updated = elements.map((el) => ({ ...el, isSelected: false }));
+    set({
+      elements: [...updated, newEl],
+      selectedElement: newEl,
+      activeTool: 'widgets',
+    });
+    get().pushHistory();
+  },
+
+  // ── Updates ────────────────────────────────────────────
   updateTextProp: (id, key, value) => {
     const { elements, selectedElement } = get();
     const updated = elements.map((el) => {
@@ -615,6 +783,44 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     set({ elements: updated, selectedElement: updatedSelected });
   },
 
+  updateCalendarProps: (id, props) => {
+    const { elements, selectedElement } = get();
+    const updated = elements.map((el) => {
+      if (el.id !== id || !el.calendarProps) return el;
+      return { ...el, calendarProps: { ...el.calendarProps, ...props } };
+    });
+    const updatedSelected =
+      selectedElement?.id === id
+        ? updated.find((el) => el.id === id) ?? null
+        : selectedElement;
+    set({ elements: updated, selectedElement: updatedSelected });
+  },
+  updateAlbumProps: (id, props) => {
+    const { elements, selectedElement } = get();
+    const updated = elements.map((el) => {
+      if (el.id !== id || !el.albumProps) return el;
+      return { ...el, albumProps: { ...el.albumProps, ...props } };
+    });
+    const updatedSelected =
+      selectedElement?.id === id
+        ? updated.find((el) => el.id === id) ?? null
+        : selectedElement;
+    set({ elements: updated, selectedElement: updatedSelected });
+  },
+
+  updateFormProps: (id, props) => {
+    const { elements, selectedElement } = get();
+    const updated = elements.map((el) => {
+      if (el.id !== id || !el.formProps) return el;
+      return { ...el, formProps: { ...el.formProps, ...props } };
+    });
+    const updatedSelected =
+      selectedElement?.id === id
+        ? updated.find((el) => el.id === id) ?? null
+        : selectedElement;
+    set({ elements: updated, selectedElement: updatedSelected });
+  },
+
   // ── Geometry updates ──────────────────────────────────
   updateElementPosition: (id, x, y) => {
     const { elements, selectedElement } = get();
@@ -690,6 +896,41 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     set({
       elements: elements.filter((el) => el.id !== id),
       selectedElement: null,
+    });
+    get().pushHistory();
+  },
+
+  // ── Add Button Contact Element ───────────────────────────
+  addButtonContactElement: (x, y) => {
+    const { elements } = get();
+    const id = `el-button-contact-${Date.now()}`;
+    const defaultX = x !== undefined ? x : 100;
+    const defaultY = y !== undefined ? y : 200;
+    const newEl: import('../types/editor.types').CanvasElement = {
+      id,
+      type: 'button_contact',
+      x: defaultX,
+      y: defaultY,
+      width: 180,
+      height: 48,
+      zIndex: elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) + 1 : 1,
+      rotation: 0,
+      isSelected: true,
+      buttonContactProps: { ...DEFAULT_BUTTON_CONTACT_PROPS },
+    };
+    const updated = elements.map((el) => ({ ...el, isSelected: false }));
+    set({
+      elements: [...updated, newEl],
+      selectedElement: newEl,
+      activeTool: 'widgets',
+    });
+    get().pushHistory();
+  },
+
+  updateButtonContactProps: (id, props) => {
+    const { elements } = get();
+    set({
+      elements: elements.map((el) => (el.id === id ? { ...el, buttonContactProps: { ...el.buttonContactProps!, ...props } } : el)),
     });
     get().pushHistory();
   },
@@ -932,7 +1173,11 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
                 : el.type === 'countdown' ? 'countdown'
                   : el.type === 'map' ? 'map'
                     : el.type === 'qr_code' ? 'qr_code'
-                    : 'text',
+                      : el.type === 'calendar' ? 'calendar'
+                        : el.type === 'album' ? 'gallery'
+                          : el.type === 'form' ? 'rsvp_form'
+                            : el.type === 'button_contact' ? 'contact_button'
+                      : 'text',
         posX: el.x,
         posY: el.y,
         width: el.width,
@@ -946,6 +1191,10 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           if (el.type === 'countdown') return el.countdownProps as object ?? {};
           if (el.type === 'map') return el.mapProps as object ?? {};
           if (el.type === 'qr_code') return el.qrGiftBoxProps as object ?? {};
+          if (el.type === 'calendar') return el.calendarProps as object ?? {};
+          if (el.type === 'album') return el.albumProps as object ?? {};
+          if (el.type === 'form') return el.formProps as object ?? {};
+          if (el.type === 'button_contact') return el.buttonContactProps as object ?? {};
           return {};
         })(),
         style: el.animationProps ? (el.animationProps as object) : {},
@@ -1003,6 +1252,14 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           return { ...base, type: 'map' as const, mapProps: block.content };
         } else if (block.blockType === 'qr_code') {
           return { ...base, type: 'qr_code' as const, qrGiftBoxProps: block.content };
+        } else if (block.blockType === 'calendar') {
+          return { ...base, type: 'calendar' as const, calendarProps: block.content };
+        } else if (block.blockType === 'gallery') {
+          return { ...base, type: 'album' as const, albumProps: block.content };
+        } else if (block.blockType === 'rsvp_form') {
+          return { ...base, type: 'form' as const, formProps: block.content };
+        } else if (block.blockType === 'contact_button') {
+          return { ...base, type: 'button_contact' as const, buttonContactProps: block.content };
         }
         return { ...base, type: 'text' as const, textProps: block.content };
       });
@@ -1054,6 +1311,14 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           return { ...base, type: 'map' as const, mapProps: block.content };
         } else if (block.blockType === 'qr_code') {
           return { ...base, type: 'qr_code' as const, qrGiftBoxProps: block.content };
+        } else if (block.blockType === 'calendar') {
+          return { ...base, type: 'calendar' as const, calendarProps: block.content };
+        } else if (block.blockType === 'gallery') {
+          return { ...base, type: 'album' as const, albumProps: block.content };
+        } else if (block.blockType === 'rsvp_form') {
+          return { ...base, type: 'form' as const, formProps: block.content };
+        } else if (block.blockType === 'contact_button') {
+          return { ...base, type: 'button_contact' as const, buttonContactProps: block.content };
         }
         return { ...base, type: 'text' as const, textProps: block.content };
       });
@@ -1090,7 +1355,11 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
                 : el.type === 'countdown' ? 'countdown'
                   : el.type === 'map' ? 'map'
                     : el.type === 'qr_code' ? 'qr_code'
-                    : 'text',
+                      : el.type === 'calendar' ? 'calendar'
+                        : el.type === 'album' ? 'gallery'
+                          : el.type === 'form' ? 'rsvp_form'
+                            : el.type === 'button_contact' ? 'contact_button'
+                      : 'text',
         posX: el.x,
         posY: el.y,
         width: el.width,
@@ -1104,6 +1373,10 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           if (el.type === 'countdown') return el.countdownProps as object ?? {};
           if (el.type === 'map') return el.mapProps as object ?? {};
           if (el.type === 'qr_code') return el.qrGiftBoxProps as object ?? {};
+          if (el.type === 'calendar') return el.calendarProps as object ?? {};
+          if (el.type === 'album') return el.albumProps as object ?? {};
+          if (el.type === 'form') return el.formProps as object ?? {};
+          if (el.type === 'button_contact') return el.buttonContactProps as object ?? {};
           return {};
         })(),
         style: el.animationProps ? (el.animationProps as object) : {},

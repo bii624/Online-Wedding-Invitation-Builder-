@@ -35,7 +35,7 @@ function LocationMarker({ position, setPosition }: { position: L.LatLng | null, 
 }
 
 export function MapPickerModal({ initialAddress, initialLat, initialLng, onClose, onSave }: MapPickerModalProps) {
-  const [address, setAddress] = useState(initialAddress === 'Hà Nội' ? '' : (initialAddress || ''));
+  const [address, setAddress] = useState(initialAddress || '');
   const [position, setPosition] = useState<L.LatLng | null>(
     (initialLat && initialLng) ? new L.LatLng(Number(initialLat), Number(initialLng)) : null
   );

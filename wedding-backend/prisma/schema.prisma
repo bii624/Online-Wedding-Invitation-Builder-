@@ -73,6 +73,7 @@ enum BlockType {
   rsvp_form // form RSVP nhúng vào canvas
   wishes_wall // khung hiển thị lời chúc
   qr_code
+  calendar
 }
 
 enum AssetType {

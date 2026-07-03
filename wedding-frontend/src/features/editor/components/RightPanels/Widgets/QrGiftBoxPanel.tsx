@@ -127,7 +127,7 @@ export function QrGiftBoxPanel({ element }: QrGiftBoxPanelProps) {
   return (
     <div className="right-panel-scroll" style={{ paddingBottom: '40px' }}>
       {/* SECTION 1: Cài đặt Bao Lì Xì */}
-      <Section title="Cài đặt Bao Lì Xì" icon={<LayoutIcon />} defaultExpanded>
+      <Section title="Cấu hình bao lì xì" icon={<LayoutIcon />} defaultOpen>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '13px', color: '#475569' }}>Màu sắc bao</span>
@@ -142,7 +142,7 @@ export function QrGiftBoxPanel({ element }: QrGiftBoxPanelProps) {
             {showEnvelopeColorPicker && (
               <div style={{ position: 'absolute', right: 0, top: '36px', zIndex: 9999 }}>
                 <CustomColorPicker
-                  color={props.envelopeColor || '#b91c1c'}
+                  initialColor={props.envelopeColor || '#b91c1c'}
                   onChange={(c) => handlePropChange('envelopeColor', c.color)}
                   onClose={() => setShowEnvelopeColorPicker(false)}
                   alignRight={true}
@@ -160,7 +160,7 @@ export function QrGiftBoxPanel({ element }: QrGiftBoxPanelProps) {
       </Section>
 
       {/* SECTION 2: Bank Information */}
-      <Section title="Thông tin ngân hàng" icon={<LayoutIcon />} defaultExpanded>
+      <Section title="Thông tin người nhận" icon={<AlignLeftIcon />} defaultOpen>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
           <span style={{ fontSize: '13px', fontWeight: 600, color: '#334155' }}>QR Bank</span>
           <button
@@ -248,7 +248,7 @@ export function QrGiftBoxPanel({ element }: QrGiftBoxPanelProps) {
       </Section>
 
       {/* SECTION 3: Text content */}
-      <Section title="Tiêu đề khi hiển thị" icon={<LayoutIcon />} defaultExpanded>
+      <Section title="Hiệu ứng phong bao" icon={<LayoutIcon />} defaultOpen>
         <div style={{ marginBottom: '12px' }}>
           <input type="text" className="rp-input" value={props.title} onChange={(e) => handlePropChange('title', e.target.value)} style={{ width: '100%', fontWeight: 600 }} placeholder="Hộp Quà Yêu Thương" />
         </div>
@@ -258,20 +258,13 @@ export function QrGiftBoxPanel({ element }: QrGiftBoxPanelProps) {
       </Section>
 
       {/* SECTION 4: Alignment */}
-      <div className="rp-field" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 16px', marginTop: '16px' }}>
+      <div className="rp-field" style={{ padding: '0 16px', marginTop: '16px' }}>
         <span className="rp-label">Căn chỉnh</span>
-        <div style={{ display: 'flex', gap: 4 }}>
+        <div className="rp-align-group" style={{ flex: 1 }}>
           {(['left', 'center', 'right'] as const).map(align => (
             <button
               key={align}
-              style={{
-                padding: '4px 8px',
-                borderRadius: '4px',
-                border: props.alignment === align ? '1px solid #3b82f6' : '1px solid #e2e8f0',
-                backgroundColor: props.alignment === align ? '#eff6ff' : '#fff',
-                cursor: 'pointer',
-                color: props.alignment === align ? '#3b82f6' : '#64748b',
-              }}
+              className={`rp-align-btn ${props.alignment === align ? 'active' : ''}`}
               onClick={() => handlePropChange('alignment', align)}
             >
               {align === 'left' ? <AlignLeftIcon /> : align === 'center' ? <AlignCenterIcon /> : <AlignRightIcon />}
@@ -297,7 +290,7 @@ export function QrGiftBoxPanel({ element }: QrGiftBoxPanelProps) {
           {showBgColorPicker && (
             <div style={{ position: 'absolute', right: 0, top: 32, zIndex: 10 }}>
               <CustomColorPicker
-                color={props.backgroundColor}
+                initialColor={props.backgroundColor}
                 onChange={(c) => handlePropChange('backgroundColor', c.color)}
                 onClose={() => setShowBgColorPicker(false)}
                 alignRight={true}

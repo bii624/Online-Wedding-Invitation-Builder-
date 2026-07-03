@@ -18,6 +18,10 @@ import { EffectsRightPanel } from './RightPanels/EffectsRightPanel';
 import { CountdownPanel } from './RightPanels/Widgets/CountdownPanel';
 import { MapRightPanel } from './RightPanels/Widgets/MapRightPanel';
 import { QrGiftBoxPanel } from './RightPanels/Widgets/QrGiftBoxPanel';
+import { CalendarPanel } from './RightPanels/Widgets/CalendarPanel';
+import { AlbumRightPanel } from './RightPanels/Widgets/AlbumRightPanel';
+import { FormRightPanel } from './RightPanels/Widgets/FormRightPanel';
+import { ButtonRightPanel } from './RightPanels/Widgets/ButtonRightPanel';
 import { SlidersHorizontal, Wand2 } from 'lucide-react';
 
 
@@ -55,7 +59,6 @@ export function RightPanel() {
     if (selectedElement?.type === 'text' && selectedElement.textProps) {
       return (
         <>
-          <div className="right-panel-hint">Nhấp vào văn bản để chỉnh sửa nội dung</div>
           <TextRightPanel id={selectedElement.id} props={selectedElement.textProps} />
         </>
       );
@@ -86,6 +89,22 @@ export function RightPanel() {
 
     if (selectedElement?.type === 'qr_code') {
       return <QrGiftBoxPanel element={selectedElement} />;
+    }
+
+    if (selectedElement?.type === 'calendar') {
+      return <CalendarPanel element={selectedElement} />;
+    }
+
+    if (selectedElement?.type === 'album' && selectedElement.albumProps) {
+      return <AlbumRightPanel id={selectedElement.id} props={selectedElement.albumProps} />;
+    }
+
+    if (selectedElement?.type === 'form') {
+      return <FormRightPanel id={selectedElement.id} />;
+    }
+
+    if (selectedElement?.type === 'button_contact') {
+      return <ButtonRightPanel id={selectedElement.id} />;
     }
 
     // ── Nothing selected: show tool-specific guidance ─────

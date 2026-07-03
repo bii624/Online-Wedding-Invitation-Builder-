@@ -10,25 +10,18 @@ const CloseIcon = () => (
 );
 
 const WIDGETS = [
-  { id: 'calendar', name: 'Lịch', icon: '📅', implemented: false },
+  { id: 'calendar', name: 'Lịch', icon: '📅', implemented: true },
   { id: 'countdown', name: 'Đếm ngược', icon: '⏰', implemented: true },
   { id: 'map', name: 'Bản đồ', icon: '📍', implemented: true },
   { id: 'guest_name', name: 'Tên khách mời', icon: '💌', implemented: false },
-  { id: 'special_effect', name: 'Hiệu ứng đặc biệt', icon: '✨', implemented: false },
-  { id: 'envelope_effect', name: 'Hiệu ứng phong bì', icon: '📬', implemented: false },
   { id: 'qr_code', name: 'Hộp quà QR', icon: '🎁', implemented: true },
-  { id: 'video_embed', name: 'Nhúng Video', icon: '🎥', implemented: false },
-  { id: 'gallery', name: 'Album Ảnh', icon: '🖼️', implemented: false },
-  { id: 'carousel', name: 'Carousel', icon: '🎠', implemented: false },
-  { id: 'video_background', name: 'Video Nền', icon: '🎬', implemented: false },
-  { id: 'rsvp_form', name: 'Form tham dự', icon: '📋', implemented: false },
-  { id: 'custom_form', name: 'Biểu mẫu tùy chỉnh', icon: '📝', implemented: false },
-  { id: 'contact_button', name: 'Nút liên hệ', icon: '📞', implemented: false },
-  { id: 'reminder', name: 'Thêm lời nhắc', icon: '🔔', implemented: false },
+  { id: 'gallery', name: 'Album Ảnh', icon: '🖼️', implemented: true },
+  { id: 'rsvp_form', name: 'Form tham dự', icon: '📋', implemented: true },
+  { id: 'contact_button', name: 'Nút liên hệ', icon: '📞', implemented: true },
 ];
 
 export function WidgetsPanel({ onClose }: { onClose: () => void }) {
-  const { addCountdownElement, addMapElement, addQrCodeElement } = useEditorStore();
+  const { addCountdownElement, addMapElement, addQrCodeElement, addCalendarElement, addAlbumElement, addFormElement, addButtonContactElement } = useEditorStore();
 
   const handleAddWidget = (id: string) => {
     if (id === 'countdown') {
@@ -39,6 +32,18 @@ export function WidgetsPanel({ onClose }: { onClose: () => void }) {
       onClose();
     } else if (id === 'qr_code') {
       addQrCodeElement();
+      onClose();
+    } else if (id === 'calendar') {
+      addCalendarElement();
+      onClose();
+    } else if (id === 'gallery') {
+      addAlbumElement();
+      onClose();
+    } else if (id === 'rsvp_form') {
+      addFormElement();
+      onClose();
+    } else if (id === 'contact_button') {
+      addButtonContactElement();
       onClose();
     }
   };

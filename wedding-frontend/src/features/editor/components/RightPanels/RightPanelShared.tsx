@@ -71,15 +71,15 @@ export interface SliderProps {
 export function Slider({ label, value, min = 0, max = 1, step = 0.01, onChange, onCommit, displayVal }: SliderProps) {
   const pct = ((value - min) / (max - min)) * 100;
   return (
-    <div className="rp-field">
-      <span className="rp-label">{label}</span>
+    <div className="rp-field" >
+      <span className="rp-label" style={{ marginTop: "10px" }}>{label}</span>
       <div className="rp-slider-wrap">
         <input
           type="range"
           className="rp-slider"
           min={min} max={max} step={step}
           value={value}
-          style={{ '--pct': `${pct}%` } as React.CSSProperties}
+          style={{ '--pct': `${pct}%`, marginTop: "10px" } as React.CSSProperties}
           onChange={(e) => onChange(Number(e.target.value))}
           onMouseUp={onCommit}
           onTouchEnd={onCommit}
@@ -151,5 +151,117 @@ export function Stepper({ value, onChange, onCommit, min = 1, max = 200 }: Stepp
         onClick={() => { onChange(Math.min(max, value + 1)); onCommit?.(); }}
       >+</button>
     </div>
+  );
+}
+
+// ── Padding Section (Shared) ──────────────────────────────
+export interface PaddingProps {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
+export interface PaddingSectionProps {
+  padding: PaddingProps;
+  onChange: (padding: PaddingProps) => void;
+  onCommit?: () => void;
+  defaultOpen?: boolean;
+}
+export function PaddingSection({ padding, onChange, onCommit, defaultOpen = false }: PaddingSectionProps) {
+  return (
+    <Section title="Khoảng đệm" icon={<LayoutIcon />} defaultOpen={defaultOpen}>
+      <div className="rp-grid-2">
+        <div className="rp-grid-input-wrap">
+          <span className="rp-grid-input-label">Trên</span>
+          <input type="number" className="rp-grid-input" value={padding.top}
+            onChange={(e) => onChange({ ...padding, top: Number(e.target.value) })} onBlur={onCommit} />
+        </div>
+        <div className="rp-grid-input-wrap">
+          <span className="rp-grid-input-label">Phải</span>
+          <input type="number" className="rp-grid-input" value={padding.right}
+            onChange={(e) => onChange({ ...padding, right: Number(e.target.value) })} onBlur={onCommit} />
+        </div>
+        <div className="rp-grid-input-wrap">
+          <span className="rp-grid-input-label">Dưới</span>
+          <input type="number" className="rp-grid-input" value={padding.bottom}
+            onChange={(e) => onChange({ ...padding, bottom: Number(e.target.value) })} onBlur={onCommit} />
+        </div>
+        <div className="rp-grid-input-wrap">
+          <span className="rp-grid-input-label">Trái</span>
+          <input type="number" className="rp-grid-input" value={padding.left}
+            onChange={(e) => onChange({ ...padding, left: Number(e.target.value) })} onBlur={onCommit} />
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+// ── Border Section (Shared) ──────────────────────────────
+export interface BorderProps {
+  width: number;
+  style: string;
+  color: string;
+  radius: number;
+}
+export interface BorderSectionProps {
+  border: BorderProps;
+  onChange: (border: BorderProps) => void;
+  onCommit?: () => void;
+  defaultOpen?: boolean;
+}
+export function BorderSection({ border, onChange, onCommit, defaultOpen = false }: BorderSectionProps) {
+  return (
+    <Section title="Đường viền" icon={<BorderIcon />} defaultOpen={defaultOpen}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div className="rp-field">
+          <span className="rp-label">Kiểu viền</span>
+          <select
+            className="rp-input"
+            value={border.style}
+            onChange={(e) => { onChange({ ...border, style: e.target.value }); onCommit?.(); }}
+          >
+            <option value="none">Không viền</option>
+            <option value="solid">Nét liền</option>
+            <option value="dashed">Nét đứt</option>
+            <option value="dotted">Chấm bi</option>
+          </select>
+        </div>
+        {border.style !== 'none' && (
+          <>
+            <Slider label="Độ dày" value={border.width} min={0} max={20} onChange={(v) => onChange({ ...border, width: v })} onCommit={onCommit} />
+            <ColorField label="Màu viền" color={border.color} onChange={(c) => onChange({ ...border, color: c })} onCommit={onCommit} />
+          </>
+        )}
+        <Slider label="Bo góc" value={border.radius} min={0} max={100} onChange={(v) => onChange({ ...border, radius: v })} onCommit={onCommit} />
+      </div>
+    </Section>
+  );
+}
+
+// ── Shadow Section (Shared) ──────────────────────────────
+export interface ShadowProps {
+  x: number;
+  y: number;
+  blur: number;
+  spread: number;
+  color: string;
+}
+export interface ShadowSectionProps {
+  shadow: ShadowProps;
+  onChange: (shadow: ShadowProps) => void;
+  onCommit?: () => void;
+  defaultOpen?: boolean;
+}
+export function ShadowSection({ shadow, onChange, onCommit, defaultOpen = false }: ShadowSectionProps) {
+  return (
+    <Section title="Đổ bóng" icon={<ShadowIcon />} defaultOpen={defaultOpen}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <Slider label="Trục X" value={shadow.x} min={-50} max={50} onChange={(v) => onChange({ ...shadow, x: v })} onCommit={onCommit} />
+        <Slider label="Trục Y" value={shadow.y} min={-50} max={50} onChange={(v) => onChange({ ...shadow, y: v })} onCommit={onCommit} />
+        <Slider label="Độ nhòe" value={shadow.blur} min={0} max={100} onChange={(v) => onChange({ ...shadow, blur: v })} onCommit={onCommit} />
+        <Slider label="Độ lan" value={shadow.spread} min={-50} max={50} onChange={(v) => onChange({ ...shadow, spread: v })} onCommit={onCommit} />
+        <ColorField label="Màu bóng" color={shadow.color} onChange={(c) => onChange({ ...shadow, color: c })} onCommit={onCommit} />
+      </div>
+    </Section>
   );
 }

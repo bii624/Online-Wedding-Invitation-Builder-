@@ -26,6 +26,9 @@ import {
   RefreshIcon,
   EraserIcon,
   RotateIcon,
+  PaddingSection,
+  BorderSection,
+  ShadowSection,
   PaletteIcon,
   LayoutIcon,
   SettingsIcon,
@@ -174,10 +177,6 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
         />
       </Section>
 
-
-
-
-
       {/* ── Lật ảnh ──────────────────────────────────────── */}
       <Section title="Lật ảnh" icon={<FlipHIcon />} defaultOpen>
         <div className="rp-flip-group">
@@ -246,83 +245,21 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
         />
       </Section>
 
-      {/* ── Khoảng đệm ───────────────────────────────────── */}
-      <Section title="Khoảng đệm" icon={<LayoutIcon />} defaultOpen={false}>
-        <div className="rp-grid-2">
-          <div className="rp-grid-input-wrap">
-            <span className="rp-grid-input-label">Trên</span>
-            <input type="number" className="rp-grid-input" value={props.paddingTop}
-              onChange={(e) => upd('paddingTop', Number(e.target.value), false)} onBlur={pushHistory} />
-          </div>
-          <div className="rp-grid-input-wrap">
-            <span className="rp-grid-input-label">Phải</span>
-            <input type="number" className="rp-grid-input" value={props.paddingRight}
-              onChange={(e) => upd('paddingRight', Number(e.target.value), false)} onBlur={pushHistory} />
-          </div>
-          <div className="rp-grid-input-wrap">
-            <span className="rp-grid-input-label">Dưới</span>
-            <input type="number" className="rp-grid-input" value={props.paddingBottom}
-              onChange={(e) => upd('paddingBottom', Number(e.target.value), false)} onBlur={pushHistory} />
-          </div>
-          <div className="rp-grid-input-wrap">
-            <span className="rp-grid-input-label">Trái</span>
-            <input type="number" className="rp-grid-input" value={props.paddingLeft}
-              onChange={(e) => upd('paddingLeft', Number(e.target.value), false)} onBlur={pushHistory} />
-          </div>
-        </div>
-      </Section>
-
-      {/* ── Đường viền ───────────────────────────────────── */}
-      <Section title="Đường viền" icon={<BorderIcon />} defaultOpen={false}>
-        <div className="rp-field">
-          <span className="rp-label">Kiểu</span>
-          <div className="rp-border-style-group">
-            {BORDER_STYLES.map((bs) => (
-              <button
-                key={bs.value}
-                className={`rp-border-style-btn ${props.borderStyle === bs.value ? 'active' : ''}`}
-                onClick={() => upd('borderStyle', bs.value)}
-                title={bs.label}
-              >
-                {bs.label}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="rp-field">
-          <span className="rp-label">Độ dày</span>
-          <Stepper value={props.borderWidth} onChange={(v) => upd('borderWidth', v, false)} onCommit={pushHistory} min={0} max={20} />
-        </div>
-        <ColorField label="Màu viền" color={props.borderColor}
-          onChange={(c) => upd('borderColor', c, false)} onCommit={pushHistory} />
-        <div className="rp-field">
-          <span className="rp-label">Bo tròn</span>
-          <Stepper value={props.borderRadius} onChange={(v) => upd('borderRadius', v, false)} onCommit={pushHistory} min={0} max={200} />
-        </div>
-      </Section>
-
-      {/* ── Đổ bóng ──────────────────────────────────────── */}
-      <Section title="Đổ bóng" icon={<ShadowIcon />} defaultOpen={false}>
-        <div className="rp-grid-2">
-          <div className="rp-grid-input-wrap">
-            <span className="rp-grid-input-label">X</span>
-            <input type="number" className="rp-grid-input" value={props.shadowX}
-              onChange={(e) => upd('shadowX', Number(e.target.value), false)} onBlur={pushHistory} />
-          </div>
-          <div className="rp-grid-input-wrap">
-            <span className="rp-grid-input-label">Y</span>
-            <input type="number" className="rp-grid-input" value={props.shadowY}
-              onChange={(e) => upd('shadowY', Number(e.target.value), false)} onBlur={pushHistory} />
-          </div>
-          <div className="rp-grid-input-wrap">
-            <span className="rp-grid-input-label">Mờ</span>
-            <input type="number" className="rp-grid-input" value={props.shadowBlur}
-              onChange={(e) => upd('shadowBlur', Number(e.target.value), false)} onBlur={pushHistory} />
-          </div>
-        </div>
-        <ColorField label="Màu bóng" color={props.shadowColor}
-          onChange={(c) => upd('shadowColor', c, false)} onCommit={pushHistory} />
-      </Section>
+      <PaddingSection 
+        padding={{ top: props.paddingTop, right: props.paddingRight, bottom: props.paddingBottom, left: props.paddingLeft }} 
+        onChange={(p) => { upd('paddingTop', p.top, false); upd('paddingRight', p.right, false); upd('paddingBottom', p.bottom, false); upd('paddingLeft', p.left, false); }}
+        onCommit={pushHistory}
+      />
+      <BorderSection 
+        border={{ width: props.borderWidth, style: props.borderStyle, color: props.borderColor, radius: props.borderRadius }} 
+        onChange={(b) => { upd('borderWidth', b.width, false); upd('borderStyle', b.style as import('../../types/editor.types').BorderStyleType, false); upd('borderColor', b.color, false); upd('borderRadius', b.radius, false); }}
+        onCommit={pushHistory}
+      />
+      <ShadowSection 
+        shadow={{ x: props.shadowX, y: props.shadowY, blur: props.shadowBlur, spread: 0, color: props.shadowColor }} 
+        onChange={(s) => { upd('shadowX', s.x, false); upd('shadowY', s.y, false); upd('shadowBlur', s.blur, false); upd('shadowColor', s.color, false); }}
+        onCommit={pushHistory}
+      />
 
       {/* ── Nâng cao ─────────────────────────────────────── */}
       <Section title="Nâng cao" icon={<SettingsIcon />} defaultOpen={false}>

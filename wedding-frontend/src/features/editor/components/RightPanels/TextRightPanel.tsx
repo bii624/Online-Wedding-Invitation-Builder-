@@ -23,6 +23,9 @@ import {
   PaletteIcon,
   LayoutIcon,
   SettingsIcon,
+  PaddingSection,
+  BorderSection,
+  ShadowSection,
 } from './RightPanelShared';
 
 // ── Font list ──────────────────────────────────────────────
@@ -52,22 +55,23 @@ export function TextRightPanel({ id, props }: TextRightPanelProps) {
     if (shouldPushHistory) pushHistory();
   };
 
-  const toggleBold      = () => upd('fontWeight',     props.fontWeight     === 'bold'         ? 'normal'       : 'bold');
-  const toggleItalic    = () => upd('fontStyle',      props.fontStyle      === 'italic'       ? 'normal'       : 'italic');
-  const toggleUnderline = () => upd('textDecoration', props.textDecoration === 'underline'    ? 'none'         : 'underline');
-  const toggleStrike    = () => upd('textDecoration', props.textDecoration === 'line-through' ? 'none'         : 'line-through');
+  const toggleBold = () => upd('fontWeight', props.fontWeight === 'bold' ? 'normal' : 'bold');
+  const toggleItalic = () => upd('fontStyle', props.fontStyle === 'italic' ? 'normal' : 'italic');
+  const toggleUnderline = () => upd('textDecoration', props.textDecoration === 'underline' ? 'none' : 'underline');
+  const toggleStrike = () => upd('textDecoration', props.textDecoration === 'line-through' ? 'none' : 'line-through');
 
   return (
     <>
       {/* ── Kiểu chữ ────────────────────────────────────── */}
       <Section title="Kiểu chữ" icon={<TypeIcon />} defaultOpen>
         {/* Format buttons */}
-        <div className="rp-field" style={{ alignItems: 'flex-start', flexDirection: 'column', gap: 8 }}>
+        <div className="rp-field" >
+          <span className="rp-label">Kiểu</span>
           <div className="rp-format-group">
-            <button id="fmt-bold"      className={`rp-format-btn ${props.fontWeight     === 'bold'         ? 'active' : ''}`} onClick={toggleBold}      title="In đậm"><BoldIcon /></button>
-            <button id="fmt-italic"    className={`rp-format-btn ${props.fontStyle      === 'italic'       ? 'active' : ''}`} onClick={toggleItalic}    title="In nghiêng"><ItalicIcon /></button>
-            <button id="fmt-underline" className={`rp-format-btn ${props.textDecoration === 'underline'    ? 'active' : ''}`} onClick={toggleUnderline} title="Gạch chân"><UnderlineIcon /></button>
-            <button id="fmt-strike"    className={`rp-format-btn ${props.textDecoration === 'line-through' ? 'active' : ''}`} onClick={toggleStrike}    title="Gạch ngang"><StrikeIcon /></button>
+            <button id="fmt-bold" className={`rp-format-btn ${props.fontWeight === 'bold' ? 'active' : ''}`} onClick={toggleBold} title="In đậm"><BoldIcon /></button>
+            <button id="fmt-italic" className={`rp-format-btn ${props.fontStyle === 'italic' ? 'active' : ''}`} onClick={toggleItalic} title="In nghiêng"><ItalicIcon /></button>
+            <button id="fmt-underline" className={`rp-format-btn ${props.textDecoration === 'underline' ? 'active' : ''}`} onClick={toggleUnderline} title="Gạch chân"><UnderlineIcon /></button>
+            <button id="fmt-strike" className={`rp-format-btn ${props.textDecoration === 'line-through' ? 'active' : ''}`} onClick={toggleStrike} title="Gạch ngang"><StrikeIcon /></button>
           </div>
         </div>
 
@@ -83,9 +87,9 @@ export function TextRightPanel({ id, props }: TextRightPanelProps) {
                 onClick={() => upd('textAlign', a)}
                 title={a}
               >
-                {a === 'left'    && <AlignLeftIcon />}
-                {a === 'center'  && <AlignCenterIcon />}
-                {a === 'right'   && <AlignRightIcon />}
+                {a === 'left' && <AlignLeftIcon />}
+                {a === 'center' && <AlignCenterIcon />}
+                {a === 'right' && <AlignRightIcon />}
                 {a === 'justify' && <AlignJustifyIcon />}
               </button>
             ))}
@@ -134,67 +138,29 @@ export function TextRightPanel({ id, props }: TextRightPanelProps) {
       </Section>
 
       {/* ── Bố cục & Căn chỉnh (Padding) ─────────────────── */}
-      <Section title="Bố cục & Căn chỉnh" icon={<LayoutIcon />} defaultOpen>
-        <div className="rp-grid-2">
-          <div className="rp-grid-input-wrap">
-            <span className="rp-grid-input-label">Trên</span>
-            <input type="number" className="rp-grid-input" value={props.paddingTop}
-              onChange={(e) => upd('paddingTop', Number(e.target.value), false)} onBlur={pushHistory} />
-          </div>
-          <div className="rp-grid-input-wrap">
-            <span className="rp-grid-input-label">Phải</span>
-            <input type="number" className="rp-grid-input" value={props.paddingRight}
-              onChange={(e) => upd('paddingRight', Number(e.target.value), false)} onBlur={pushHistory} />
-          </div>
-          <div className="rp-grid-input-wrap">
-            <span className="rp-grid-input-label">Dưới</span>
-            <input type="number" className="rp-grid-input" value={props.paddingBottom}
-              onChange={(e) => upd('paddingBottom', Number(e.target.value), false)} onBlur={pushHistory} />
-          </div>
-          <div className="rp-grid-input-wrap">
-            <span className="rp-grid-input-label">Trái</span>
-            <input type="number" className="rp-grid-input" value={props.paddingLeft}
-              onChange={(e) => upd('paddingLeft', Number(e.target.value), false)} onBlur={pushHistory} />
-          </div>
-        </div>
-      </Section>
+      <PaddingSection
+        padding={{ top: props.paddingTop, right: props.paddingRight, bottom: props.paddingBottom, left: props.paddingLeft }}
+        onChange={(p) => { upd('paddingTop', p.top, false); upd('paddingRight', p.right, false); upd('paddingBottom', p.bottom, false); upd('paddingLeft', p.left, false); }}
+        onCommit={pushHistory}
+        defaultOpen={true}
+      />
 
-      {/* ── Đường viền ──────────────────────────────────── */}
-      <Section title="Đường viền" icon={<SettingsIcon />} defaultOpen={false}>
-        <div className="rp-field">
-          <span className="rp-label">Độ dày</span>
-          <Stepper value={props.borderWidth} onChange={(v) => upd('borderWidth', v, false)} onCommit={pushHistory} min={0} max={20} />
-        </div>
-        <ColorField label="Màu viền" color={props.borderColor}
-          onChange={(c) => upd('borderColor', c, false)} onCommit={pushHistory} />
-        <div className="rp-field">
-          <span className="rp-label">Bo tròn</span>
-          <Stepper value={props.borderRadius} onChange={(v) => upd('borderRadius', v, false)} onCommit={pushHistory} min={0} max={100} />
-        </div>
-      </Section>
+      <BorderSection
+        border={{ width: props.borderWidth, style: props.borderWidth > 0 ? 'solid' : 'none', color: props.borderColor, radius: props.borderRadius }}
+        onChange={(b) => {
+          const newWidth = b.style === 'none' ? 0 : (b.width === 0 ? 1 : b.width);
+          upd('borderWidth', newWidth, false);
+          upd('borderColor', b.color, false);
+          upd('borderRadius', b.radius, false);
+        }}
+        onCommit={pushHistory}
+      />
 
-      {/* ── Đổ bóng ─────────────────────────────────────── */}
-      <Section title="Đổ bóng" icon={<SettingsIcon />} defaultOpen={false}>
-        <div className="rp-grid-2">
-          <div className="rp-grid-input-wrap">
-            <span className="rp-grid-input-label">X</span>
-            <input type="number" className="rp-grid-input" value={props.shadowX}
-              onChange={(e) => upd('shadowX', Number(e.target.value), false)} onBlur={pushHistory} />
-          </div>
-          <div className="rp-grid-input-wrap">
-            <span className="rp-grid-input-label">Y</span>
-            <input type="number" className="rp-grid-input" value={props.shadowY}
-              onChange={(e) => upd('shadowY', Number(e.target.value), false)} onBlur={pushHistory} />
-          </div>
-          <div className="rp-grid-input-wrap">
-            <span className="rp-grid-input-label">Mờ</span>
-            <input type="number" className="rp-grid-input" value={props.shadowBlur}
-              onChange={(e) => upd('shadowBlur', Number(e.target.value), false)} onBlur={pushHistory} />
-          </div>
-        </div>
-        <ColorField label="Màu bóng" color={props.shadowColor}
-          onChange={(c) => upd('shadowColor', c, false)} onCommit={pushHistory} />
-      </Section>
+      <ShadowSection
+        shadow={{ x: props.shadowX, y: props.shadowY, blur: props.shadowBlur, spread: 0, color: props.shadowColor }}
+        onChange={(s) => { upd('shadowX', s.x, false); upd('shadowY', s.y, false); upd('shadowBlur', s.blur, false); upd('shadowColor', s.color, false); }}
+        onCommit={pushHistory}
+      />
 
       {/* ── Nâng cao ─────────────────────────────────────── */}
       <Section title="Nâng cao" icon={<SettingsIcon />} defaultOpen={false}>

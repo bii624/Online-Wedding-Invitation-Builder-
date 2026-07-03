@@ -50,8 +50,8 @@ export function TextEditorElement({ element }: TextEditorElementProps) {
     padding: `${tp.paddingTop}px ${tp.paddingRight}px ${tp.paddingBottom}px ${tp.paddingLeft}px`,
     border:
       tp.borderWidth > 0
-        ? `${tp.borderWidth}px solid ${tp.borderColor}`
-        : undefined,
+        ? `${tp.borderWidth}px ${tp.borderStyle || 'solid'} ${tp.borderColor}`
+        : 'none',
     borderRadius: tp.borderRadius,
     boxShadow:
       tp.shadowBlur > 0

@@ -118,7 +118,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 18px;
   gap: 12px;
 }
 
@@ -301,6 +301,7 @@
 .rp-color-field {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   margin-bottom: 10px;
 }
@@ -315,6 +316,7 @@
 .rp-color-swatch-wrap {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 6px;
   flex: 1;
 }
@@ -322,7 +324,7 @@
 .rp-color-swatch {
   width: 32px;
   height: 32px;
-  border-radius: var(--ed-radius-sm);
+  border-radius: 50%;
   border: 1px solid var(--ed-border);
   cursor: pointer;
   position: relative;

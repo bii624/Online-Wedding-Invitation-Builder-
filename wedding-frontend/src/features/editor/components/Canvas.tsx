@@ -13,6 +13,10 @@ import { ShapeEditorElement } from './ShapeEditorElement';
 import { CountdownEditorElement } from './Widgets/CountdownEditorElement';
 import { MapEditorElement } from './Widgets/MapEditorElement';
 import { QrGiftBoxEditorElement } from './Widgets/QrGiftBoxEditorElement';
+import { CalendarEditorElement } from './Widgets/CalendarEditorElement';
+import { AlbumEditorElement } from './Widgets/AlbumEditorElement';
+import { FormEditorElement } from './Widgets/FormEditorElement';
+import { ButtonEditorElement } from './Widgets/ButtonEditorElement';
 
 // ── SVG Icons ─────────────────────────────────────────────
 const GridIcon = () => (
@@ -87,7 +91,8 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
 
   // Persist drag state without triggering re-render
   const dragRef = useRef({ isDragging: false, startX: 0, startY: 0, origX: 0, origY: 0 });
-  const elementRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<HTMLDivElement>(null);
+  const animRef = useRef<HTMLDivElement>(null);
   const isSelected = selectedElement?.id === element.id;
   const ap = element.animationProps ?? DEFAULT_ANIMATION_PROPS;
 
@@ -108,8 +113,9 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
 
   // ── Entry animation via IntersectionObserver ─────────────
   useEffect(() => {
-    const el = elementRef.current;
-    if (!el || !ap.entryEnabled || ap.entryEffect === 'none') return;
+    const observerTarget = observerRef.current;
+    const el = animRef.current;
+    if (!observerTarget || !el || !ap.entryEnabled || ap.entryEffect === 'none') return;
 
     const applyEntry = () => {
       el.style.animationDuration = `${ap.entryDuration}s`;
@@ -135,7 +141,7 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
       { threshold: 0.1 }
     );
 
-    observer.observe(el);
+    observer.observe(observerTarget);
     return () => {
       observer.disconnect();
       el.classList.remove('animate__animated', `animate__${ap.entryEffect}`);
@@ -336,16 +342,20 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
 
   return (
     <div
-      ref={elementRef}
-      className={`canvas-element-entry`}
+      ref={observerRef}
       style={entryWrapperStyle}
     >
       <div
-        className={`canvas-element ${isSelected ? 'selected' : ''} ${loopClass}`}
-        style={innerWrapperStyle}
-        onMouseDown={handleMouseDown}
-        data-element-id={element.id}
+        ref={animRef}
+        className={`canvas-element-entry`}
+        style={{ width: '100%', height: '100%' }}
       >
+        <div
+          className={`canvas-element ${isSelected ? 'selected' : ''} ${loopClass}`}
+          style={innerWrapperStyle}
+          onMouseDown={handleMouseDown}
+          data-element-id={element.id}
+        >
         {/* Selection border overlay */}
         <div className="canvas-el-border" />
 
@@ -367,6 +377,18 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
         )}
         {element.type === 'qr_code' && (
           <QrGiftBoxEditorElement element={element} zoom={zoom} />
+        )}
+        {element.type === 'calendar' && (
+          <CalendarEditorElement element={element} zoom={zoom} />
+        )}
+        {element.type === 'album' && (
+          <AlbumEditorElement element={element} zoom={zoom} />
+        )}
+        {element.type === 'form' && (
+          <FormEditorElement element={element} zoom={zoom} />
+        )}
+        {element.type === 'button_contact' && (
+          <ButtonEditorElement element={element} zoom={zoom} />
         )}
 
         {/* Controls – visible only when selected */}
@@ -429,6 +451,7 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
           </>
         )}
 
+        </div>
       </div>
     </div>
   );

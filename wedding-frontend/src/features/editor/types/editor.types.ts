@@ -42,6 +42,7 @@ export interface TextProperties {
   paddingLeft: number;
   // Border
   borderWidth: number;
+  borderStyle: string;
   borderColor: string;
   borderRadius: number;
   // Shadow
@@ -250,8 +251,90 @@ export interface QrGiftBoxContent {
   accounts: BankAccount[];     // tối đa 2 phần tử
 }
 
+// ── Calendar Content ──────────────────────────────────────
+export interface CalendarDay {
+  date: string;          // format 'YYYY-MM-DD'
+  side: 'groom' | 'bride' | null;  // null = ngày thường
+}
+
+export interface CalendarContent {
+  templateId: 1 | 2 | 3;
+  primaryDate: string;             // 'YYYY-MM-DD'
+  showTwoDates: boolean;
+  secondaryDate: string | null;
+  groomSideLabel: string;
+  brideSideLabel: string;
+
+  alignment: 'left' | 'center' | 'right';
+  font: string;
+  fontSize: number;
+  textColor: string;
+  backgroundColor: string;
+  primaryColor: string;
+  secondaryColor: string;
+  opacity: number;
+
+  padding: { top: number; right: number; bottom: number; left: number };
+  border: { width: number; style: string; color: string; radius: number };
+  shadow: { x: number; y: number; blur: number; spread: number; color: string };
+}
+
+// ── Album Content ──────────────────────────────────────────
+export interface AlbumContent {
+  images: string[];
+  showThumbnails: boolean;
+  showNavButtons: boolean;
+  enableFullscreen: boolean;
+  effectType: 'fade' | 'slide' | 'zoom';
+  delay: number; // In seconds
+  alignment: 'left' | 'center' | 'right';
+  backgroundColor: string;
+  opacity: number;
+  
+  padding: { top: number; right: number; bottom: number; left: number };
+  border: { width: number; style: string; color: string; radius: number };
+  shadow: { x: number; y: number; blur: number; spread: number; color: string };
+}
+
+// ── Form Content ───────────────────────────────────────────
+export interface FormContent {
+  showGuestType: boolean;
+  showAttendance: boolean;
+  
+  alignment: 'left' | 'center' | 'right';
+  fontFamily: string;
+  fontSize: number;
+  textColor: string;
+  backgroundColor: string;
+  inputBorderColor: string;
+  buttonBgColor: string;
+  buttonTextColor: string;
+  opacity: number;
+  
+  padding: { top: number; right: number; bottom: number; left: number };
+  border: { width: number; style: string; color: string; radius: number };
+  shadow: { x: number; y: number; blur: number; spread: number; color: string };
+}
+
+// ── Button Contact Properties ─────────────────────────────
+export interface ButtonContactContent {
+  phoneNumber: string;
+  buttonText: string;
+  showIcon: boolean;
+  
+  fontFamily: string;
+  fontSize: number;
+  textColor: string;
+  backgroundColor: string;
+  opacity: number;
+  
+  padding: { top: number; right: number; bottom: number; left: number };
+  border: { width: number; style: string; color: string; radius: number };
+  shadow: { x: number; y: number; blur: number; spread: number; color: string };
+}
+
 // ── Canvas Element (base + union) ─────────────────────────
-export type CanvasElementType = 'text' | 'image' | 'shape' | 'countdown' | 'map' | 'qr_code';
+export type CanvasElementType = 'text' | 'image' | 'shape' | 'countdown' | 'map' | 'qr_code' | 'calendar' | 'album' | 'form' | 'button_contact';
 
 export interface CanvasElement {
   id: string;
@@ -270,6 +353,10 @@ export interface CanvasElement {
   countdownProps?: CountdownContent;
   mapProps?: MapContent;
   qrGiftBoxProps?: QrGiftBoxContent;
+  calendarProps?: CalendarContent;
+  albumProps?: AlbumContent;
+  formProps?: FormContent;
+  buttonContactProps?: ButtonContactContent;
   animationProps?: AnimationProperties;
 }
 
