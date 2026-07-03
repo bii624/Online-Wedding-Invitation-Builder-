@@ -201,8 +201,35 @@ export interface CountdownContent {
   shadowColor: string;
 }
 
+// ── Map Properties ───────────────────────────────────────
+export interface MapContent {
+  address: string;
+  lat: string;
+  lng: string;
+  language: 'vi' | 'en';
+  zoomLevel: number;
+  opacity: number;
+  align: 'left' | 'center' | 'right';
+  // Padding
+  paddingTop: number;
+  paddingRight: number;
+  paddingBottom: number;
+  paddingLeft: number;
+  // Border
+  borderWidth: number;
+  borderColor: string;
+  borderRadius: number;
+  borderStyle: string;
+  // Shadow
+  shadowX: number;
+  shadowY: number;
+  shadowBlur: number;
+  shadowSpread: number;
+  shadowColor: string;
+}
+
 // ── Canvas Element (base + union) ─────────────────────────
-export type CanvasElementType = 'text' | 'image' | 'shape' | 'countdown';
+export type CanvasElementType = 'text' | 'image' | 'shape' | 'countdown' | 'map';
 
 export interface CanvasElement {
   id: string;
@@ -219,6 +246,7 @@ export interface CanvasElement {
   imageProps?: ImageProperties;
   shapeProps?: ShapeProperties;
   countdownProps?: CountdownContent;
+  mapProps?: MapContent;
   animationProps?: AnimationProperties;
 }
 

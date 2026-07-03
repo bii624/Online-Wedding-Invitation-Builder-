@@ -138,6 +138,29 @@ const DEFAULT_COUNTDOWN_PROPS: import('../types/editor.types').CountdownContent 
   shadowColor: 'transparent',
 };
 
+const DEFAULT_MAP_PROPS: import('../types/editor.types').MapContent = {
+  address: '',
+  lat: '',
+  lng: '',
+  language: 'vi',
+  zoomLevel: 15,
+  opacity: 1,
+  align: 'center',
+  paddingTop: 0,
+  paddingRight: 0,
+  paddingBottom: 0,
+  paddingLeft: 0,
+  borderWidth: 0,
+  borderColor: '#000000',
+  borderRadius: 8,
+  borderStyle: 'none',
+  shadowX: 0,
+  shadowY: 0,
+  shadowBlur: 0,
+  shadowSpread: 0,
+  shadowColor: 'transparent',
+};
+
 // ── Initial data ──────────────────────────────────────────
 const INITIAL_ELEMENTS: CanvasElement[] = [
   {
@@ -188,6 +211,11 @@ interface EditorActions {
   updateCountdownProps: (
     id: string,
     props: Partial<import('../types/editor.types').CountdownContent>
+  ) => void;
+  addMapElement: (x?: number, y?: number) => void;
+  updateMapProps: (
+    id: string,
+    props: Partial<import('../types/editor.types').MapContent>
   ) => void;
   updateAnimationProps: (id: string, props: Partial<AnimationProperties>) => void;
   applyGlobalAnimation: (presetId: string, preset: (index: number) => Partial<AnimationProperties>) => void;
@@ -295,7 +323,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       if (selected.type === 'text') activeTool = 'text';
       else if (selected.type === 'image') activeTool = 'image';
       else if (selected.type === 'shape') activeTool = 'tools';
-      else if (selected.type === 'countdown') activeTool = 'widgets';
+      else if (selected.type === 'countdown' || selected.type === 'map') activeTool = 'widgets';
     }
 
     set({ elements: updated, selectedElement: selected, activeTool });
@@ -422,6 +450,33 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     get().pushHistory();
   },
 
+  // ── Add Map Element ─────────────────────────────────────
+  addMapElement: (x, y) => {
+    const { elements } = get();
+    const id = `el-map-${Date.now()}`;
+    const defaultX = x !== undefined ? x : 50;
+    const defaultY = y !== undefined ? y : 200;
+    const newEl: import('../types/editor.types').CanvasElement = {
+      id,
+      type: 'map',
+      x: defaultX,
+      y: defaultY,
+      width: 400,
+      height: 300,
+      zIndex: elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) + 1 : 1,
+      rotation: 0,
+      isSelected: true,
+      mapProps: { ...DEFAULT_MAP_PROPS },
+    };
+    const updated = elements.map((el) => ({ ...el, isSelected: false }));
+    set({
+      elements: [...updated, newEl],
+      selectedElement: newEl,
+      activeTool: 'widgets',
+    });
+    get().pushHistory();
+  },
+
 
 
   // ── Update text prop ──────────────────────────────────
@@ -484,6 +539,19 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     const updated = elements.map((el) => {
       if (el.id !== id || !el.countdownProps) return el;
       return { ...el, countdownProps: { ...el.countdownProps, ...props } };
+    });
+    const updatedSelected =
+      selectedElement?.id === id
+        ? updated.find((el) => el.id === id) ?? null
+        : selectedElement;
+    set({ elements: updated, selectedElement: updatedSelected });
+  },
+
+  updateMapProps: (id, props) => {
+    const { elements, selectedElement } = get();
+    const updated = elements.map((el) => {
+      if (el.id !== id || !el.mapProps) return el;
+      return { ...el, mapProps: { ...el.mapProps, ...props } };
     });
     const updatedSelected =
       selectedElement?.id === id
@@ -628,7 +696,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
   fetchUploadedAssets: async () => {
     try {
       const assets = await assetsApi.getAssets();
-      
+
       const images: UploadedImage[] = [];
       const musics: MusicProperties[] = [];
 
@@ -804,10 +872,11 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         id: el.id,
         blockType:
           el.type === 'text' ? 'text'
-          : el.type === 'image' ? 'image'
-          : el.type === 'shape' ? 'shape'
-          : el.type === 'countdown' ? 'countdown'
-          : 'text',
+            : el.type === 'image' ? 'image'
+              : el.type === 'shape' ? 'shape'
+                : el.type === 'countdown' ? 'countdown'
+                  : el.type === 'map' ? 'map'
+                    : 'text',
         posX: el.x,
         posY: el.y,
         width: el.width,
@@ -819,6 +888,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           if (el.type === 'image') return el.imageProps as object ?? {};
           if (el.type === 'shape') return el.shapeProps as object ?? {};
           if (el.type === 'countdown') return el.countdownProps as object ?? {};
+          if (el.type === 'map') return el.mapProps as object ?? {};
           return {};
         })(),
         style: el.animationProps ? (el.animationProps as object) : {},
@@ -872,6 +942,8 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           return { ...base, type: 'shape' as const, shapeProps: block.content };
         } else if (block.blockType === 'countdown') {
           return { ...base, type: 'countdown' as const, countdownProps: block.content };
+        } else if (block.blockType === 'map') {
+          return { ...base, type: 'map' as const, mapProps: block.content };
         }
         return { ...base, type: 'text' as const, textProps: block.content };
       });
@@ -917,6 +989,10 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           return { ...base, type: 'image' as const, imageProps: block.content };
         } else if (block.blockType === 'shape') {
           return { ...base, type: 'shape' as const, shapeProps: block.content };
+        } else if (block.blockType === 'countdown') {
+          return { ...base, type: 'countdown' as const, countdownProps: block.content };
+        } else if (block.blockType === 'map') {
+          return { ...base, type: 'map' as const, mapProps: block.content };
         }
         return { ...base, type: 'text' as const, textProps: block.content };
       });
@@ -948,9 +1024,11 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       const blocks: CanvasBlockPayload[] = elements.map((el) => ({
         blockType:
           el.type === 'text' ? 'text'
-          : el.type === 'image' ? 'image'
-          : el.type === 'shape' ? 'shape'
-          : 'text',
+            : el.type === 'image' ? 'image'
+              : el.type === 'shape' ? 'shape'
+                : el.type === 'countdown' ? 'countdown'
+                  : el.type === 'map' ? 'map'
+                    : 'text',
         posX: el.x,
         posY: el.y,
         width: el.width,
@@ -961,6 +1039,8 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           if (el.type === 'text') return el.textProps as object ?? {};
           if (el.type === 'image') return el.imageProps as object ?? {};
           if (el.type === 'shape') return el.shapeProps as object ?? {};
+          if (el.type === 'countdown') return el.countdownProps as object ?? {};
+          if (el.type === 'map') return el.mapProps as object ?? {};
           return {};
         })(),
         style: el.animationProps ? (el.animationProps as object) : {},

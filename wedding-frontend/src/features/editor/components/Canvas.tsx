@@ -11,6 +11,7 @@ import { TextEditorElement } from './TextEditorElement';
 import { ImageEditorElement } from './ImageEditorElement';
 import { ShapeEditorElement } from './ShapeEditorElement';
 import { CountdownEditorElement } from './Widgets/CountdownEditorElement';
+import { MapEditorElement } from './widgets/MapEditorElement';
 
 // ── SVG Icons ─────────────────────────────────────────────
 const GridIcon = () => (
@@ -93,13 +94,13 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
   const loopClass = useMemo(() => {
     if (!ap.loopEnabled || ap.loopEffect === 'none') return '';
     switch (ap.loopEffect) {
-      case 'bay-lo-lung':       return 'animate-bay-lo-lung';
-      case 'nay':               return 'animate-nay';
-      case 'nhap-nhay':         return 'animate-nhap-nhay';
-      case 'xoay-tron':         return 'animate-xoay-tron';
-      case 'lac':               return 'animate-lac';
-      case 'lac-lu':            return 'animate-lac-lu';
-      case 'lac-lu-nhun-nhay':  return 'animate-lac-lu-nhun-nhay';
+      case 'bay-lo-lung': return 'animate-bay-lo-lung';
+      case 'nay': return 'animate-nay';
+      case 'nhap-nhay': return 'animate-nhap-nhay';
+      case 'xoay-tron': return 'animate-xoay-tron';
+      case 'lac': return 'animate-lac';
+      case 'lac-lu': return 'animate-lac-lu';
+      case 'lac-lu-nhun-nhay': return 'animate-lac-lu-nhun-nhay';
       default: return '';
     }
   }, [ap.loopEnabled, ap.loopEffect]);
@@ -344,82 +345,85 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
         onMouseDown={handleMouseDown}
         data-element-id={element.id}
       >
-      {/* Selection border overlay */}
-      <div className="canvas-el-border" />
+        {/* Selection border overlay */}
+        <div className="canvas-el-border" />
 
-      {/* ── Delegate content rendering by type ── */}
-      {element.type === 'text' && (
-        <TextEditorElement element={element} zoom={zoom} />
-      )}
-      {element.type === 'image' && (
-        <ImageEditorElement element={element} zoom={zoom} />
-      )}
-      {element.type === 'shape' && (
-        <ShapeEditorElement element={element} zoom={zoom} />
-      )}
-      {element.type === 'countdown' && (
-        <CountdownEditorElement element={element} zoom={zoom} />
-      )}
+        {/* ── Delegate content rendering by type ── */}
+        {element.type === 'text' && (
+          <TextEditorElement element={element} zoom={zoom} />
+        )}
+        {element.type === 'image' && (
+          <ImageEditorElement element={element} zoom={zoom} />
+        )}
+        {element.type === 'shape' && (
+          <ShapeEditorElement element={element} zoom={zoom} />
+        )}
+        {element.type === 'countdown' && (
+          <CountdownEditorElement element={element} zoom={zoom} />
+        )}
+        {element.type === 'map' && (
+          <MapEditorElement element={element} zoom={zoom} />
+        )}
 
-      {/* Controls – visible only when selected */}
-      {isSelected && (
-        <>
-          {/* Top controls bar */}
-          <div
-            className="canvas-el-controls"
-            onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
-          >
-            <button
-              className="canvas-el-ctrl-btn"
-              title="Đưa lên trên"
-              onClick={(e) => { e.stopPropagation(); console.log("hihih"); bringElementForward(element.id); }}
+        {/* Controls – visible only when selected */}
+        {isSelected && (
+          <>
+            {/* Top controls bar */}
+            <div
+              className="canvas-el-controls"
+              onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
             >
-              <LayerUpIcon />
-            </button>
-            <button
-              className="canvas-el-ctrl-btn"
-              title="Đưa xuống dưới"
-              onClick={(e) => { e.stopPropagation(); sendElementBackward(element.id); }}
-            >
-              <LayerDownIcon />
-            </button>
+              <button
+                className="canvas-el-ctrl-btn"
+                title="Đưa lên trên"
+                onClick={(e) => { e.stopPropagation(); console.log("hihih"); bringElementForward(element.id); }}
+              >
+                <LayerUpIcon />
+              </button>
+              <button
+                className="canvas-el-ctrl-btn"
+                title="Đưa xuống dưới"
+                onClick={(e) => { e.stopPropagation(); sendElementBackward(element.id); }}
+              >
+                <LayerDownIcon />
+              </button>
 
-            <button
-              className="canvas-el-ctrl-btn"
-              title="Khóa"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <LockIcon />
-            </button>
-            <button
-              className="canvas-el-ctrl-btn"
-              title="Nhân bản"
-              onClick={(e) => { e.stopPropagation(); duplicateElement(element.id); }}
-            >
-              <CopyIcon />
-            </button>
-            <button
-              className="canvas-el-ctrl-btn danger"
-              title="Xóa"
-              onClick={(e) => { e.stopPropagation(); deleteElement(element.id); }}
-            >
-              <TrashIcon />
-            </button>
-          </div>
+              <button
+                className="canvas-el-ctrl-btn"
+                title="Khóa"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <LockIcon />
+              </button>
+              <button
+                className="canvas-el-ctrl-btn"
+                title="Nhân bản"
+                onClick={(e) => { e.stopPropagation(); duplicateElement(element.id); }}
+              >
+                <CopyIcon />
+              </button>
+              <button
+                className="canvas-el-ctrl-btn danger"
+                title="Xóa"
+                onClick={(e) => { e.stopPropagation(); deleteElement(element.id); }}
+              >
+                <TrashIcon />
+              </button>
+            </div>
 
 
-          {/* Resize handles */}
-          <div className="canvas-handle tl" onMouseDown={(e) => handleResizeMouseDown(e, 'tl')} />
-          <div className="canvas-handle tr" onMouseDown={(e) => handleResizeMouseDown(e, 'tr')} />
-          <div className="canvas-handle bl" onMouseDown={(e) => handleResizeMouseDown(e, 'bl')} />
-          <div className="canvas-handle br" onMouseDown={(e) => handleResizeMouseDown(e, 'br')} />
-          <div className="canvas-handle tm" onMouseDown={(e) => handleResizeMouseDown(e, 'tm')} />
-          <div className="canvas-handle bm" onMouseDown={(e) => handleResizeMouseDown(e, 'bm')} />
-          <div className="canvas-handle ml" onMouseDown={(e) => handleResizeMouseDown(e, 'ml')} />
-          <div className="canvas-handle mr" onMouseDown={(e) => handleResizeMouseDown(e, 'mr')} />
-          <div className="canvas-handle rotate" onMouseDown={handleRotateMouseDown} />
-        </>
-      )}
+            {/* Resize handles */}
+            <div className="canvas-handle tl" onMouseDown={(e) => handleResizeMouseDown(e, 'tl')} />
+            <div className="canvas-handle tr" onMouseDown={(e) => handleResizeMouseDown(e, 'tr')} />
+            <div className="canvas-handle bl" onMouseDown={(e) => handleResizeMouseDown(e, 'bl')} />
+            <div className="canvas-handle br" onMouseDown={(e) => handleResizeMouseDown(e, 'br')} />
+            <div className="canvas-handle tm" onMouseDown={(e) => handleResizeMouseDown(e, 'tm')} />
+            <div className="canvas-handle bm" onMouseDown={(e) => handleResizeMouseDown(e, 'bm')} />
+            <div className="canvas-handle ml" onMouseDown={(e) => handleResizeMouseDown(e, 'ml')} />
+            <div className="canvas-handle mr" onMouseDown={(e) => handleResizeMouseDown(e, 'mr')} />
+            <div className="canvas-handle rotate" onMouseDown={handleRotateMouseDown} />
+          </>
+        )}
 
       </div>
     </div>
@@ -474,7 +478,7 @@ export function MainCanvas() {
   const handleHeightDrag = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     const startY = e.clientY;
     const startHeight = canvasHeight;
 
@@ -616,21 +620,21 @@ export function MainCanvas() {
 
           {/* Height Pill UI */}
           <div className="canvas-height-pill" onClick={(e) => e.stopPropagation()}>
-            <button 
-              className="canvas-height-pill-btn" 
+            <button
+              className="canvas-height-pill-btn"
               onClick={() => setCanvasSize(500, Math.max(200, canvasHeight - 10))}
             >
               <MinusIcon />
             </button>
-            <input 
-              type="number" 
+            <input
+              type="number"
               className="canvas-height-pill-input"
               value={canvasHeight}
               onChange={(e) => setCanvasSize(500, Math.max(200, parseInt(e.target.value) || 200))}
             />
             <span style={{ fontSize: '12px', color: 'var(--ed-text-secondary)', marginRight: '4px' }}>px</span>
-            <button 
-              className="canvas-height-pill-btn" 
+            <button
+              className="canvas-height-pill-btn"
               onClick={() => setCanvasSize(500, canvasHeight + 10)}
             >
               <PlusIcon />

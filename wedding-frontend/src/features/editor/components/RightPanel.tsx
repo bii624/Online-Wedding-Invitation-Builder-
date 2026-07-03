@@ -16,6 +16,7 @@ import { ImageRightPanel } from './RightPanels/ImageRightPanel';
 import { ShapeRightPanel } from './RightPanels/ShapeRightPanel';
 import { EffectsRightPanel } from './RightPanels/EffectsRightPanel';
 import { CountdownPanel } from './RightPanels/Widgets/CountdownPanel';
+import { MapRightPanel } from './RightPanels/Widgets/MapRightPanel';
 import { SlidersHorizontal, Wand2 } from 'lucide-react';
 
 
@@ -76,6 +77,10 @@ export function RightPanel() {
 
     if (selectedElement?.type === 'countdown') {
       return <CountdownPanel element={selectedElement} />;
+    }
+
+    if (selectedElement?.type === 'map') {
+      return <MapRightPanel element={selectedElement} />;
     }
 
     // ── Nothing selected: show tool-specific guidance ─────

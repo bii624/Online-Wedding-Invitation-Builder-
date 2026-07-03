@@ -12,7 +12,7 @@ const CloseIcon = () => (
 const WIDGETS = [
   { id: 'calendar', name: 'Lịch', icon: '📅', implemented: false },
   { id: 'countdown', name: 'Đếm ngược', icon: '⏰', implemented: true },
-  { id: 'map', name: 'Bản đồ', icon: '📍', implemented: false },
+  { id: 'map', name: 'Bản đồ', icon: '📍', implemented: true },
   { id: 'guest_name', name: 'Tên khách mời', icon: '💌', implemented: false },
   { id: 'special_effect', name: 'Hiệu ứng đặc biệt', icon: '✨', implemented: false },
   { id: 'envelope_effect', name: 'Hiệu ứng phong bì', icon: '📬', implemented: false },
@@ -28,11 +28,14 @@ const WIDGETS = [
 ];
 
 export function WidgetsPanel({ onClose }: { onClose: () => void }) {
-  const { addCountdownElement } = useEditorStore();
+  const { addCountdownElement, addMapElement } = useEditorStore();
 
   const handleAddWidget = (id: string) => {
     if (id === 'countdown') {
       addCountdownElement();
+      onClose();
+    } else if (id === 'map') {
+      addMapElement();
       onClose();
     }
   };
@@ -95,7 +98,7 @@ export function WidgetsPanel({ onClose }: { onClose: () => void }) {
               <div style={{ fontSize: '13px', fontWeight: 500, color: '#334155', textAlign: 'center', fontFamily: 'Poppins, sans-serif' }}>
                 {widget.name}
               </div>
-              
+
               {!widget.implemented && (
                 <div style={{
                   position: 'absolute',
