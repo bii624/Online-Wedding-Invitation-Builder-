@@ -11,7 +11,8 @@ import { TextEditorElement } from './TextEditorElement';
 import { ImageEditorElement } from './ImageEditorElement';
 import { ShapeEditorElement } from './ShapeEditorElement';
 import { CountdownEditorElement } from './Widgets/CountdownEditorElement';
-import { MapEditorElement } from './widgets/MapEditorElement';
+import { MapEditorElement } from './Widgets/MapEditorElement';
+import { QrGiftBoxEditorElement } from './Widgets/QrGiftBoxEditorElement';
 
 // ── SVG Icons ─────────────────────────────────────────────
 const GridIcon = () => (
@@ -363,6 +364,9 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
         )}
         {element.type === 'map' && (
           <MapEditorElement element={element} zoom={zoom} />
+        )}
+        {element.type === 'qr_code' && (
+          <QrGiftBoxEditorElement element={element} zoom={zoom} />
         )}
 
         {/* Controls – visible only when selected */}

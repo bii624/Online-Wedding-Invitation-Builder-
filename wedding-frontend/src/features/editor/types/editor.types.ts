@@ -228,8 +228,30 @@ export interface MapContent {
   shadowColor: string;
 }
 
+// ── QR Gift Box Properties ────────────────────────────────
+export interface BankAccount {
+  id: string;                  // Unique ID for React lists
+  role: 'bride' | 'groom';
+  label: string;               // "Cô dâu" / "Chú rể"
+  name: string;                // Tên chủ tài khoản
+  bankName: string;            // Tên ngân hàng
+  accountNumber: string;       // Số tài khoản
+  qrImageUrl: string | null;   // URL ảnh QR (upload từ Cloudinary)
+}
+
+export interface QrGiftBoxContent {
+  title: string;               // "Hộp Quà Yêu Thương"
+  subtitle: string;            // "Quét QR code để gửi yêu thương..."
+  iconUrl: string | null;      // URL icon hộp quà
+  alignment: 'left' | 'center' | 'right';
+  backgroundColor: string;
+  envelopeColor?: string;
+  opacity: number;
+  accounts: BankAccount[];     // tối đa 2 phần tử
+}
+
 // ── Canvas Element (base + union) ─────────────────────────
-export type CanvasElementType = 'text' | 'image' | 'shape' | 'countdown' | 'map';
+export type CanvasElementType = 'text' | 'image' | 'shape' | 'countdown' | 'map' | 'qr_code';
 
 export interface CanvasElement {
   id: string;
@@ -247,6 +269,7 @@ export interface CanvasElement {
   shapeProps?: ShapeProperties;
   countdownProps?: CountdownContent;
   mapProps?: MapContent;
+  qrGiftBoxProps?: QrGiftBoxContent;
   animationProps?: AnimationProperties;
 }
 

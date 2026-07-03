@@ -161,6 +161,16 @@ const DEFAULT_MAP_PROPS: import('../types/editor.types').MapContent = {
   shadowColor: 'transparent',
 };
 
+const DEFAULT_QR_GIFT_BOX_PROPS: import('../types/editor.types').QrGiftBoxContent = {
+  title: "Hộp Quà Yêu Thương",
+  subtitle: "Quét QR code để gửi yêu thương trực tiếp tới:",
+  iconUrl: null,
+  alignment: "center",
+  backgroundColor: "transparent",
+  opacity: 1,
+  accounts: []
+};
+
 // ── Initial data ──────────────────────────────────────────
 const INITIAL_ELEMENTS: CanvasElement[] = [
   {
@@ -213,9 +223,14 @@ interface EditorActions {
     props: Partial<import('../types/editor.types').CountdownContent>
   ) => void;
   addMapElement: (x?: number, y?: number) => void;
+  addQrCodeElement: (x?: number, y?: number) => void;
   updateMapProps: (
     id: string,
     props: Partial<import('../types/editor.types').MapContent>
+  ) => void;
+  updateQrGiftBoxProps: (
+    id: string,
+    props: Partial<import('../types/editor.types').QrGiftBoxContent>
   ) => void;
   updateAnimationProps: (id: string, props: Partial<AnimationProperties>) => void;
   applyGlobalAnimation: (presetId: string, preset: (index: number) => Partial<AnimationProperties>) => void;
@@ -479,6 +494,33 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
 
 
 
+  // ── Add QR Code Element ─────────────────────────────────
+  addQrCodeElement: (x, y) => {
+    const { elements } = get();
+    const id = `el-qrcode-${Date.now()}`;
+    const defaultX = x !== undefined ? x : 50;
+    const defaultY = y !== undefined ? y : 200;
+    const newEl: import('../types/editor.types').CanvasElement = {
+      id,
+      type: 'qr_code',
+      x: defaultX,
+      y: defaultY,
+      width: 120,
+      height: 150,
+      zIndex: elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) + 1 : 1,
+      rotation: 0,
+      isSelected: true,
+      qrGiftBoxProps: { ...DEFAULT_QR_GIFT_BOX_PROPS },
+    };
+    const updated = elements.map((el) => ({ ...el, isSelected: false }));
+    set({
+      elements: [...updated, newEl],
+      selectedElement: newEl,
+      activeTool: 'widgets',
+    });
+    get().pushHistory();
+  },
+
   // ── Update text prop ──────────────────────────────────
   updateTextProp: (id, key, value) => {
     const { elements, selectedElement } = get();
@@ -552,6 +594,19 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     const updated = elements.map((el) => {
       if (el.id !== id || !el.mapProps) return el;
       return { ...el, mapProps: { ...el.mapProps, ...props } };
+    });
+    const updatedSelected =
+      selectedElement?.id === id
+        ? updated.find((el) => el.id === id) ?? null
+        : selectedElement;
+    set({ elements: updated, selectedElement: updatedSelected });
+  },
+
+  updateQrGiftBoxProps: (id, props) => {
+    const { elements, selectedElement } = get();
+    const updated = elements.map((el) => {
+      if (el.id !== id || !el.qrGiftBoxProps) return el;
+      return { ...el, qrGiftBoxProps: { ...el.qrGiftBoxProps, ...props } };
     });
     const updatedSelected =
       selectedElement?.id === id
@@ -876,6 +931,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
               : el.type === 'shape' ? 'shape'
                 : el.type === 'countdown' ? 'countdown'
                   : el.type === 'map' ? 'map'
+                    : el.type === 'qr_code' ? 'qr_code'
                     : 'text',
         posX: el.x,
         posY: el.y,
@@ -889,6 +945,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           if (el.type === 'shape') return el.shapeProps as object ?? {};
           if (el.type === 'countdown') return el.countdownProps as object ?? {};
           if (el.type === 'map') return el.mapProps as object ?? {};
+          if (el.type === 'qr_code') return el.qrGiftBoxProps as object ?? {};
           return {};
         })(),
         style: el.animationProps ? (el.animationProps as object) : {},
@@ -944,6 +1001,8 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           return { ...base, type: 'countdown' as const, countdownProps: block.content };
         } else if (block.blockType === 'map') {
           return { ...base, type: 'map' as const, mapProps: block.content };
+        } else if (block.blockType === 'qr_code') {
+          return { ...base, type: 'qr_code' as const, qrGiftBoxProps: block.content };
         }
         return { ...base, type: 'text' as const, textProps: block.content };
       });
@@ -993,6 +1052,8 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           return { ...base, type: 'countdown' as const, countdownProps: block.content };
         } else if (block.blockType === 'map') {
           return { ...base, type: 'map' as const, mapProps: block.content };
+        } else if (block.blockType === 'qr_code') {
+          return { ...base, type: 'qr_code' as const, qrGiftBoxProps: block.content };
         }
         return { ...base, type: 'text' as const, textProps: block.content };
       });
@@ -1028,6 +1089,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
               : el.type === 'shape' ? 'shape'
                 : el.type === 'countdown' ? 'countdown'
                   : el.type === 'map' ? 'map'
+                    : el.type === 'qr_code' ? 'qr_code'
                     : 'text',
         posX: el.x,
         posY: el.y,
@@ -1041,6 +1103,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           if (el.type === 'shape') return el.shapeProps as object ?? {};
           if (el.type === 'countdown') return el.countdownProps as object ?? {};
           if (el.type === 'map') return el.mapProps as object ?? {};
+          if (el.type === 'qr_code') return el.qrGiftBoxProps as object ?? {};
           return {};
         })(),
         style: el.animationProps ? (el.animationProps as object) : {},

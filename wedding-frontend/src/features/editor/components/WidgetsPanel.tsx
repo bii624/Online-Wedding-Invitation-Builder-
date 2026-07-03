@@ -16,7 +16,7 @@ const WIDGETS = [
   { id: 'guest_name', name: 'Tên khách mời', icon: '💌', implemented: false },
   { id: 'special_effect', name: 'Hiệu ứng đặc biệt', icon: '✨', implemented: false },
   { id: 'envelope_effect', name: 'Hiệu ứng phong bì', icon: '📬', implemented: false },
-  { id: 'qr_code', name: 'Hộp quà QR', icon: '🎁', implemented: false },
+  { id: 'qr_code', name: 'Hộp quà QR', icon: '🎁', implemented: true },
   { id: 'video_embed', name: 'Nhúng Video', icon: '🎥', implemented: false },
   { id: 'gallery', name: 'Album Ảnh', icon: '🖼️', implemented: false },
   { id: 'carousel', name: 'Carousel', icon: '🎠', implemented: false },
@@ -28,7 +28,7 @@ const WIDGETS = [
 ];
 
 export function WidgetsPanel({ onClose }: { onClose: () => void }) {
-  const { addCountdownElement, addMapElement } = useEditorStore();
+  const { addCountdownElement, addMapElement, addQrCodeElement } = useEditorStore();
 
   const handleAddWidget = (id: string) => {
     if (id === 'countdown') {
@@ -36,6 +36,9 @@ export function WidgetsPanel({ onClose }: { onClose: () => void }) {
       onClose();
     } else if (id === 'map') {
       addMapElement();
+      onClose();
+    } else if (id === 'qr_code') {
+      addQrCodeElement();
       onClose();
     }
   };
