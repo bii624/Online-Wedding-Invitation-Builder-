@@ -472,6 +472,9 @@ export function MainCanvas() {
     redo,
     addImageElement,
     canvasBackground,
+    editorMode,
+    saveCanvasNow,
+    saveTemplateNow,
   } = useEditorStore();
   const canvasRef = useRef<HTMLDivElement>(null!);
   // Keyboard shortcuts
@@ -518,11 +521,16 @@ export function MainCanvas() {
     const handleMouseUp = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
+      if (editorMode === 'template') {
+        saveTemplateNow();
+      } else {
+        saveCanvasNow();
+      }
     };
 
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
-  }, [canvasHeight, scale, setCanvasSize]);
+  }, [canvasHeight, scale, setCanvasSize, editorMode, saveTemplateNow, saveCanvasNow]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -649,7 +657,10 @@ export function MainCanvas() {
           <div className="canvas-height-pill" onClick={(e) => e.stopPropagation()}>
             <button
               className="canvas-height-pill-btn"
-              onClick={() => setCanvasSize(500, Math.max(200, canvasHeight - 10))}
+              onClick={() => {
+                setCanvasSize(500, Math.max(200, canvasHeight - 10));
+                if (editorMode === 'template') saveTemplateNow(); else saveCanvasNow();
+              }}
             >
               <MinusIcon />
             </button>
@@ -658,11 +669,17 @@ export function MainCanvas() {
               className="canvas-height-pill-input"
               value={canvasHeight}
               onChange={(e) => setCanvasSize(500, Math.max(200, parseInt(e.target.value) || 200))}
+              onBlur={() => {
+                if (editorMode === 'template') saveTemplateNow(); else saveCanvasNow();
+              }}
             />
             <span style={{ fontSize: '12px', color: 'var(--ed-text-secondary)', marginRight: '4px' }}>px</span>
             <button
               className="canvas-height-pill-btn"
-              onClick={() => setCanvasSize(500, canvasHeight + 10)}
+              onClick={() => {
+                setCanvasSize(500, canvasHeight + 10);
+                if (editorMode === 'template') saveTemplateNow(); else saveCanvasNow();
+              }}
             >
               <PlusIcon />
             </button>

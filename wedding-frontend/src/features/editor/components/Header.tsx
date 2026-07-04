@@ -37,6 +37,9 @@ const SaveIcon = () => (
   </svg>
 );
 
+import { useState } from 'react';
+import { PreviewModal } from './PreviewModal';
+
 const AUTO_SAVE_LABELS: Record<string, { label: string; color: string; pulse: boolean }> = {
   idle:   { label: 'Sẵn sàng',   color: '#9ca3af', pulse: false },
   saving: { label: 'Đang lưu...', color: '#f59e0b', pulse: true  },
@@ -45,6 +48,7 @@ const AUTO_SAVE_LABELS: Record<string, { label: string; color: string; pulse: bo
 };
 
 export function Header() {
+  const [showPreview, setShowPreview] = useState(false);
   const { undo, redo, historyIndex, history, autoSaveStatus, saveCanvasNow, saveTemplateNow, cardId, templateId, editorMode } = useEditorStore();
   const { user } = useAuthStore();
   const navigate = useNavigate();
@@ -140,7 +144,7 @@ export function Header() {
 
       {/* Right: Actions */}
       <div className="header-actions">
-        <button id="btn-preview" className="header-btn header-btn-ghost">
+        <button id="btn-preview" className="header-btn header-btn-ghost" onClick={() => setShowPreview(true)}>
           <PreviewIcon />
           Xem trước
         </button>
@@ -158,6 +162,8 @@ export function Header() {
           )}
         </div>
       </div>
+
+      <PreviewModal isOpen={showPreview} onClose={() => setShowPreview(false)} />
     </header>
   );
 }

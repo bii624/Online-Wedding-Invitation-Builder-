@@ -26,7 +26,9 @@ export class TemplatesService {
   // GET /api/templates?category=...&page=...&limit=...
   async getPublicTemplates(dto: QueryTemplatesDto) {
     const { category, page = 1, limit = 20 } = dto;
-    const skip = (page - 1) * limit;
+    const pageNum = Number(page) || 1;
+    const limitNum = Number(limit) || 20;
+    const skip = (pageNum - 1) * limitNum;
 
     const where = {
       status: 'published' as const,
@@ -39,7 +41,7 @@ export class TemplatesService {
       this.prisma.template.findMany({
         where,
         skip,
-        take: limit,
+        take: limitNum,
         orderBy: { useCount: 'desc' },
         select: {
           id: true,
@@ -58,8 +60,8 @@ export class TemplatesService {
     return {
       items,
       total,
-      page,
-      totalPages: Math.ceil(total / limit),
+      page: pageNum,
+      totalPages: Math.ceil(total / limitNum),
     };
   }
 

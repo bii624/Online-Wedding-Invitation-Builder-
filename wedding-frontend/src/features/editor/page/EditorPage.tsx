@@ -8,7 +8,6 @@ import { LeftToolbar } from '../components/LeftToolbar';
 import { MainCanvas } from '../components/Canvas';
 import { RightPanel } from '../components/RightPanel';
 import { Filmstrip } from '../components/Filmstrip';
-import { AIColorPanel } from '../components/AIColorPanel';
 import { ImageCropModal } from '../components/ImageCropModal';
 
 import { useEffect } from 'react';
@@ -133,9 +132,6 @@ export function EditorPage() {
         {/* Right Properties Panel */}
         <RightPanel />
       </div>
-
-      {/* ── Floating AI Color Panel ──────── */}
-      <AIColorPanel />
 
       {/* ── Modals ───────────────────────── */}
       <ImageCropModal />

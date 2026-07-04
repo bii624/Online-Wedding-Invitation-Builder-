@@ -3,6 +3,8 @@ import axiosClient from './axiosClient';
 export interface CreateCardDto {
   title: string;
   templateId?: string;
+  groomName?: string;
+  brideName?: string;
 }
 
 export interface QueryCardDto {

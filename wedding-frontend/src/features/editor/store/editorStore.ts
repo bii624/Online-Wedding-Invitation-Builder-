@@ -375,7 +375,7 @@ const INITIAL_STATE: EditorState = {
   uploadedMusics: [],
   zoom: 100,
   showGrid: true,
-  canvasWidth: 400,
+  canvasWidth: 500,
   canvasHeight: 2000,
   cropElementId: null,
   filmstripItems: Array.from({ length: 14 }, (_, i) => ({
@@ -1176,7 +1176,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
                       : el.type === 'calendar' ? 'calendar'
                         : el.type === 'album' ? 'gallery'
                           : el.type === 'form' ? 'rsvp_form'
-                            : el.type === 'button_contact' ? 'contact_button'
+                            : el.type === 'button_contact' ? 'button'
                       : 'text',
         posX: el.x,
         posY: el.y,
@@ -1202,12 +1202,15 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         isVisible: true,
       }));
 
-      const settings = music ? { music } : undefined;
+      const settings = {
+        ...(music ? { music } : {}),
+        canvasHeight: get().canvasHeight,
+      };
 
       await cardsApi.saveCanvas(cardId, {
         blocks,
         background: canvasBackground as object,
-        settings: settings as object | undefined,
+        settings,
       });
 
       set({ autoSaveStatus: 'saved' });
@@ -1258,7 +1261,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           return { ...base, type: 'album' as const, albumProps: block.content };
         } else if (block.blockType === 'rsvp_form') {
           return { ...base, type: 'form' as const, formProps: block.content };
-        } else if (block.blockType === 'contact_button') {
+        } else if (block.blockType === 'button') {
           return { ...base, type: 'button_contact' as const, buttonContactProps: block.content };
         }
         return { ...base, type: 'text' as const, textProps: block.content };
@@ -1266,6 +1269,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
 
       const background = card.background ?? get().canvasBackground;
       const music = card.settings?.music ?? null;
+      const height = card.settings?.canvasHeight ?? get().canvasHeight;
 
       set({
         cardId,
@@ -1273,6 +1277,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         canvasBackground: background,
         music,
         canvasWidth: card.canvasWidth ?? get().canvasWidth,
+        canvasHeight: height,
         history: [{ elements, canvasBackground: background }],
         historyIndex: 0,
         selectedElement: null,
@@ -1317,13 +1322,14 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           return { ...base, type: 'album' as const, albumProps: block.content };
         } else if (block.blockType === 'rsvp_form') {
           return { ...base, type: 'form' as const, formProps: block.content };
-        } else if (block.blockType === 'contact_button') {
+        } else if (block.blockType === 'button') {
           return { ...base, type: 'button_contact' as const, buttonContactProps: block.content };
         }
         return { ...base, type: 'text' as const, textProps: block.content };
       });
 
       const background = template.background ?? get().canvasBackground;
+      const height = template.background?.canvasHeight ?? get().canvasHeight;
 
       set({
         templateId,
@@ -1331,6 +1337,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         elements,
         canvasBackground: background,
         canvasWidth: template.canvasWidth ?? get().canvasWidth,
+        canvasHeight: height,
         history: [{ elements, canvasBackground: background }],
         historyIndex: 0,
         selectedElement: null,
@@ -1358,7 +1365,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
                       : el.type === 'calendar' ? 'calendar'
                         : el.type === 'album' ? 'gallery'
                           : el.type === 'form' ? 'rsvp_form'
-                            : el.type === 'button_contact' ? 'contact_button'
+                            : el.type === 'button_contact' ? 'button'
                       : 'text',
         posX: el.x,
         posY: el.y,
@@ -1385,7 +1392,10 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
 
       await templatesEditorApi.saveTemplateCanvas(templateId, {
         blocks,
-        background: canvasBackground as object,
+        background: {
+          ...(canvasBackground as object),
+          canvasHeight: get().canvasHeight,
+        },
       });
 
       set({ autoSaveStatus: 'saved' });

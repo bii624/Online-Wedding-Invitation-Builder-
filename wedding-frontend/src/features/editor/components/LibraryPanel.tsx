@@ -117,8 +117,8 @@ export function LibraryPanel({ onClose }: LibraryPanelProps) {
       }
       setHasMore(newPage < res.pagination.totalPages);
       setPage(newPage);
-    } catch {
-      // silent
+    } catch (error) {
+      console.error('Failed to fetch library elements:', error);
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -128,7 +128,7 @@ export function LibraryPanel({ onClose }: LibraryPanelProps) {
   useEffect(() => {
     const t = setTimeout(() => { fetchElements(1, true); }, search ? 400 : 0);
     return () => clearTimeout(t);
-  }, [search, categoryId, elementType]);
+  }, [search, categoryId, elementType, fetchElements]);
 
   // ── Use element ──────────────────────────────────────────
   const handleUse = async (el: LibraryElement) => {
