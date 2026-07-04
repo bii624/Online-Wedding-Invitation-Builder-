@@ -756,12 +756,19 @@
 .adm-template-thumb {
   width: 100%;
   aspect-ratio: 3/4;
-  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  background-color: #f8fafc;
+  background-size: cover;
+  background-position: top;
+  transition: background-position 4s ease-in-out;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   overflow: hidden;
+}
+
+.adm-template-card:hover .adm-template-thumb {
+  background-position: bottom;
 }
 
 .adm-template-thumb img {

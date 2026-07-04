@@ -615,6 +615,7 @@ export function MainCanvas() {
           }}
         >
           <div
+            id="editor-canvas-frame"
             className="canvas-frame"
             ref={canvasRef}
             style={{

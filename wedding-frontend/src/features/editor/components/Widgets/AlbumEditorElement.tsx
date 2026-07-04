@@ -133,6 +133,7 @@ export function AlbumEditorElement({ element, zoom }: AlbumEditorElementProps) {
             alt={`Gallery ${idx}`} 
             style={getEffectStyle(idx)} 
             draggable={false}
+            crossOrigin="anonymous"
           />
         ))}
 

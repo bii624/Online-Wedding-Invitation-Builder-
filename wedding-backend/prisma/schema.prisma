@@ -286,6 +286,7 @@ model Card {
   templateId     String?    @map("template_id") @db.Uuid // mẫu gốc đã dùng (NULL = trang trắng)
   slug           String     @unique // URL public: /thiep/<slug>
   title          String // tên nội bộ
+  thumbnailUrl   String?    @map("thumbnail_url")
   groomName      String?    @map("groom_name")
   brideName      String?    @map("bride_name")
   status         CardStatus @default(draft)

@@ -86,6 +86,7 @@ export function ImageEditorElement({ element }: ImageEditorElementProps) {
         alt={ip.alt}
         style={imgStyle}
         draggable={false}
+        crossOrigin="anonymous"
       />
     </div>
   );

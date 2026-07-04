@@ -437,7 +437,8 @@ const LandingPage: React.FC = () => {
                       <img
                         src={item.src}
                         alt={item.alt}
-                        className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover rounded-xl object-top group-hover:object-bottom"
+                        style={{ transition: 'object-position 4s ease-in-out' }}
                       />
                     </div>
                   ))}
@@ -460,7 +461,8 @@ const LandingPage: React.FC = () => {
                       <img
                         src={item.src}
                         alt={item.alt}
-                        className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover rounded-xl object-top group-hover:object-bottom"
+                        style={{ transition: 'object-position 4s ease-in-out' }}
                       />
                     </div>
                   ))}
@@ -483,7 +485,8 @@ const LandingPage: React.FC = () => {
                       <img
                         src={item.src}
                         alt={item.alt}
-                        className="w-full h-full object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover rounded-xl object-top group-hover:object-bottom"
+                        style={{ transition: 'object-position 4s ease-in-out' }}
                       />
                     </div>
                   ))}
@@ -661,7 +664,8 @@ const LandingPage: React.FC = () => {
                     <img
                       src={item.mainImage}
                       alt={item.title}
-                      className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-700"
+                      className="w-full h-full object-cover object-top group-hover/card:object-bottom"
+                      style={{ transition: 'object-position 4s ease-in-out' }}
                     />
 
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4">

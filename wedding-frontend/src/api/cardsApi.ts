@@ -60,6 +60,15 @@ export const cardsApi = {
     return response.data;
   },
 
+  uploadCardThumbnail: async (cardId: string, blob: Blob) => {
+    const formData = new FormData();
+    formData.append('file', blob, 'thumbnail.webp');
+    const response = await axiosClient.post(`/cards/${cardId}/thumbnail`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
+
   getCard: async (cardId: string) => {
     const response = await axiosClient.get(`/cards/${cardId}`);
     return response.data;

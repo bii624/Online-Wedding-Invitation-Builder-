@@ -8,6 +8,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { CardStatus, Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { AssetsService } from '../assets/assets.service';
 
 import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
@@ -37,7 +38,10 @@ function randomSuffix(): string {
 
 @Injectable()
 export class CardsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly assetsService: AssetsService
+  ) {}
 
   // ============================================================
   // PRIVATE HELPERS
@@ -642,6 +646,26 @@ export class CardsService {
         where: { id: cardId },
         include: { blocks: { orderBy: { zIndex: 'asc' } } },
       });
+    });
+  }
+
+  // ============================================================
+  // THUMBNAIL
+  // ============================================================
+
+  /**
+   * Upload thumbnail cho thiệp
+   */
+  async uploadCardThumbnail(cardId: string, file: Express.Multer.File, userId: string) {
+    await this.verifyCardOwner(cardId, userId);
+
+    // Upload lên Cloudinary
+    const asset = await this.assetsService.uploadAsset(file, userId);
+
+    // Cập nhật thẻ
+    return this.prisma.card.update({
+      where: { id: cardId },
+      data: { thumbnailUrl: asset.url },
     });
   }
 }

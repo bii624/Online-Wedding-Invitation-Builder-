@@ -11,7 +11,11 @@ import {
   Query,
   Req,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { Request } from 'express';
 
@@ -203,5 +207,23 @@ export class CardsController {
     @Req() req: AuthRequest,
   ) {
     return this.cardsService.reorderBlock(cardId, blockId, req.user.id, dto);
+  }
+
+  // ==========================================================================
+  // THUMBNAIL
+  // ==========================================================================
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Post(':id/thumbnail')
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({ summary: 'Upload thumbnail cho thiệp' })
+  uploadThumbnail(
+    @Param('id', ParseUUIDPipe) id: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: AuthRequest,
+  ) {
+    if (!file) throw new BadRequestException('Không tìm thấy file tải lên');
+    return this.cardsService.uploadCardThumbnail(id, file, req.user.id);
   }
 }

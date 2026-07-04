@@ -135,7 +135,8 @@ export const Templates: React.FC = () => {
                                                 <img
                                                     src={item.mainImage}
                                                     alt={item.title}
-                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                                                    className="w-full h-full object-cover object-top group-hover:object-bottom"
+                                                    style={{ transition: 'object-position 4s ease-in-out' }}
                                                 />
 
                                                 <span className="absolute top-4 left-4 bg-white/95 backdrop-blur-xs text-[9px] font-black tracking-widest text-zinc-800 px-3 py-1 rounded-full border border-zinc-100 shadow-xs uppercase font-poppins">

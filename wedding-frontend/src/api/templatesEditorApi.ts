@@ -18,4 +18,14 @@ export const templatesEditorApi = {
     const res = await axiosClient.post(`/admin/templates/${templateId}/canvas`, payload);
     return res.data;
   },
+
+  /** Upload thumbnail chụp từ canvas */
+  uploadTemplateThumbnail: async (templateId: string, blob: Blob) => {
+    const formData = new FormData();
+    formData.append('file', blob, 'thumbnail.webp');
+    const res = await axiosClient.post(`/admin/templates/${templateId}/thumbnail`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return res.data;
+  },
 };

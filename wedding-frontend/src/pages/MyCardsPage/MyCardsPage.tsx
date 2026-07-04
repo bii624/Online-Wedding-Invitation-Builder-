@@ -269,8 +269,8 @@ export const MyCardsPage = () => {
                     "bg-slate-100 flex items-center justify-center overflow-hidden relative cursor-pointer",
                     viewMode === 'list' ? "w-32 h-full shrink-0" : "w-full aspect-[4/3]"
                   )}>
-                    {card.template?.thumbnailUrl ? (
-                      <img src={card.template.thumbnailUrl} alt={card.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    {card.thumbnailUrl || card.template?.thumbnailUrl ? (
+                      <img src={card.thumbnailUrl || card.template?.thumbnailUrl} alt={card.title} className="w-full h-full object-cover object-top group-hover:object-bottom" style={{ transition: 'object-position 4s ease-in-out' }} />
                     ) : (
                       <div className="flex flex-col items-center justify-center text-slate-300 group-hover:scale-110 transition-transform duration-500">
                         <Zap size={32} className="mb-2 text-rose-300" />

@@ -3,6 +3,7 @@
 // ============================================================
 
 import { create } from 'zustand';
+import { toBlob } from 'html-to-image';
 import type {
   EditorState,
   ToolType,
@@ -374,8 +375,8 @@ const INITIAL_STATE: EditorState = {
   uploadedImages: [],
   uploadedMusics: [],
   zoom: 100,
-  showGrid: true,
-  canvasWidth: 500,
+  // Canvas dimensions
+  canvasWidth: 500, // desktop-first, user can switch
   canvasHeight: 2000,
   cropElementId: null,
   filmstripItems: Array.from({ length: 14 }, (_, i) => ({
@@ -1213,6 +1214,19 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         settings,
       });
 
+      // Capture and upload thumbnail
+      try {
+        const node = document.getElementById('editor-canvas-frame');
+        if (node) {
+          const blob = await toBlob(node, { quality: 0.8, type: 'image/webp', cacheBust: true, useCORS: true, allowTaint: true });
+          if (blob) {
+            await cardsApi.uploadCardThumbnail(cardId, blob);
+          }
+        }
+      } catch (thumbErr) {
+        console.warn('[saveCanvasNow] Failed to capture or upload thumbnail:', thumbErr);
+      }
+
       set({ autoSaveStatus: 'saved' });
 
       // Reset về 'idle' sau 3s để không hiển thị "Đã lưu" mãi
@@ -1397,6 +1411,19 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           canvasHeight: get().canvasHeight,
         },
       });
+
+      // Capture and upload thumbnail
+      try {
+        const node = document.getElementById('editor-canvas-frame');
+        if (node) {
+          const blob = await toBlob(node, { quality: 0.8, type: 'image/webp', cacheBust: true, useCORS: true, allowTaint: true });
+          if (blob) {
+            await templatesEditorApi.uploadTemplateThumbnail(templateId, blob);
+          }
+        }
+      } catch (thumbErr) {
+        console.warn('[saveTemplateNow] Failed to capture or upload thumbnail:', thumbErr);
+      }
 
       set({ autoSaveStatus: 'saved' });
       setTimeout(() => {

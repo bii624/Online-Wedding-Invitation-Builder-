@@ -4,11 +4,12 @@ import { templatesApi, type TemplateItem } from '../../../api/templatesApi';
 import { cardsApi } from '../../../api/cardsApi';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { CardRenderer } from './CardRenderer';
 import '../styles/TemplatePanel.css';
 
 // ── Icons ─────────────────────────────────────────────────
 const CloseIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
     <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
   </svg>
 );
@@ -44,6 +45,10 @@ export function TemplatePanel({ onClose }: TemplatePanelProps) {
   const [page, setPage] = useState(1);
 
   const [previewTemplate, setPreviewTemplate] = useState<TemplateItem | null>(null);
+  const [fullPreview, setFullPreview] = useState<any>(null);
+  const [loadingPreview, setLoadingPreview] = useState(false);
+  const [previewScale, setPreviewScale] = useState(1);
+  const previewContainerRef = useRef<HTMLDivElement>(null);
   const [isApplying, setIsApplying] = useState(false);
 
   const observer = useRef<IntersectionObserver | null>(null);
@@ -84,6 +89,33 @@ export function TemplatePanel({ onClose }: TemplatePanelProps) {
   useEffect(() => {
     loadTemplates(page);
   }, [page]);
+
+  useEffect(() => {
+    if (previewTemplate && !previewTemplate.thumbnailUrl) {
+      setLoadingPreview(true);
+      templatesApi.getTemplateById(previewTemplate.id)
+        .then(data => setFullPreview(data))
+        .catch(err => console.error(err))
+        .finally(() => setLoadingPreview(false));
+    } else {
+      setFullPreview(null);
+    }
+  }, [previewTemplate]);
+
+  useEffect(() => {
+    if (fullPreview && previewContainerRef.current) {
+      const resizeObserver = new ResizeObserver(entries => {
+        for (let entry of entries) {
+          const { width } = entry.contentRect;
+          if (width > 0) {
+            setPreviewScale(width / 500); // Changed to 500px as per user request
+          }
+        }
+      });
+      resizeObserver.observe(previewContainerRef.current);
+      return () => resizeObserver.disconnect();
+    }
+  }, [fullPreview]);
 
   const handleApplyTemplate = async (template: TemplateItem) => {
     try {
@@ -178,9 +210,54 @@ export function TemplatePanel({ onClose }: TemplatePanelProps) {
               </button>
             </div>
             
-            <div className="lt-template-preview-img-wrap">
+            <div className="lt-template-preview-img-wrap" ref={previewContainerRef} style={{ overflowY: 'auto' }}>
               {previewTemplate.thumbnailUrl ? (
                 <img src={previewTemplate.thumbnailUrl} alt={previewTemplate.name} className="lt-template-preview-img" />
+              ) : loadingPreview ? (
+                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ed-text-secondary)' }}>
+                  <LoaderIcon />
+                </div>
+              ) : fullPreview ? (
+                <div style={{ 
+                  width: '100%', 
+                  height: (Math.max(2000, ...(fullPreview.blocks?.map((b: any) => (b.posY || 0) + (b.height || 0)) || [2000])) + 100) * previewScale 
+                }}>
+                  <div style={{ 
+                    width: 500, // Force 500px as per user request
+                    height: Math.max(2000, ...(fullPreview.blocks?.map((b: any) => (b.posY || 0) + (b.height || 0)) || [2000])) + 100,
+                    transform: `scale(${previewScale})`,
+                    transformOrigin: 'top left'
+                  }}>
+                    <CardRenderer 
+                      elements={(fullPreview.blocks || []).map((block: any) => {
+                        const base = {
+                          id: block.id,
+                          x: block.posX,
+                          y: block.posY,
+                          width: block.width,
+                          height: block.height,
+                          rotation: block.rotation,
+                          zIndex: block.zIndex,
+                          isSelected: false,
+                          animationProps: block.style ?? undefined,
+                        };
+                        if (block.blockType === 'text') return { ...base, type: 'text', textProps: block.content };
+                        if (block.blockType === 'image') return { ...base, type: 'image', imageProps: block.content };
+                        if (block.blockType === 'shape') return { ...base, type: 'shape', shapeProps: block.content };
+                        if (block.blockType === 'countdown') return { ...base, type: 'countdown', countdownProps: block.content };
+                        if (block.blockType === 'map') return { ...base, type: 'map', mapProps: block.content };
+                        if (block.blockType === 'qr_code') return { ...base, type: 'qr_code', qrGiftBoxProps: block.content };
+                        if (block.blockType === 'calendar') return { ...base, type: 'calendar', calendarProps: block.content };
+                        if (block.blockType === 'gallery') return { ...base, type: 'album', albumProps: block.content };
+                        if (block.blockType === 'rsvp_form') return { ...base, type: 'form', formProps: block.content };
+                        if (block.blockType === 'button') return { ...base, type: 'button_contact', buttonContactProps: block.content };
+                        return { ...base, type: 'text', textProps: block.content };
+                      })} 
+                      background={fullPreview.background || { type: 'solid', color: '#fff' }} 
+                      canvasWidth={500} 
+                    />
+                  </div>
+                </div>
               ) : (
                 <div style={{ width: '100%', height: '100%', background: '#eee' }} />
               )}
