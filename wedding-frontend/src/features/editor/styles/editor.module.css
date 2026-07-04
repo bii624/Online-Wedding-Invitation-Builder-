@@ -1,0 +1,168 @@
+/* ============================================================
+   EDITOR GLOBAL CSS - Design tokens & base styles
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+/* ── Design Tokens ───────────────────────────────────────── */
+:root {
+  /* Colors */
+  --ed-bg-base: #f0f0f0;
+  --ed-bg-panel: #ffffff;
+  --ed-bg-panel-alt: #fafafa;
+  --ed-bg-hover: #fff1f2;
+  --ed-bg-active: #ffe4e6;
+  --ed-bg-header: #1a1a2e;
+  --ed-bg-toolbar: #ffffff;
+  --ed-bg-canvas: #e8e8e8;
+
+  --ed-border: #e5e5ea;
+  --ed-border-strong: #d1d1d6;
+  --ed-border-focus: #f43f5e;
+
+  --ed-text-primary: #1a1a2e;
+  --ed-text-secondary: #6b7280;
+  --ed-text-muted: #9ca3af;
+  --ed-text-inverse: #ffffff;
+
+  --ed-accent: #f43f5e;
+  --ed-accent-light: #ffe4e6;
+  --ed-accent-hover: #e11d48;
+
+  --ed-success: #10b981;
+  --ed-warning: #f59e0b;
+  --ed-danger: #ef4444;
+  --ed-publish: #e11d48;
+  --ed-publish-hover: #be123c;
+
+  /* Spacing */
+  --ed-radius-sm: 4px;
+  --ed-radius-md: 8px;
+  --ed-radius-lg: 12px;
+  --ed-radius-xl: 16px;
+  --ed-radius-full: 9999px;
+
+  /* Shadows */
+  --ed-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --ed-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --ed-shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
+  --ed-shadow-panel: 2px 0 8px rgba(0, 0, 0, 0.06);
+
+  /* Sizes */
+  --ed-header-h: 56px;
+  --ed-toolbar-w: 72px;
+  --ed-right-panel-w: 360px;
+  --ed-filmstrip-h: 100px;
+
+  /* Typography */
+  --ed-font: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Transitions */
+  --ed-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --ed-transition-slow: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Editor Root Layout ───────────────────────────────────── */
+.editor-root {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: var(--ed-font);
+  background: var(--ed-bg-base);
+  color: var(--ed-text-primary);
+  font-size: 13px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+.editor-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── Scrollbar Styles ────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ed-border-strong);
+  border-radius: var(--ed-radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ed-text-muted);
+}
+
+/* ── Utility classes ─────────────────────────────────────── */
+.ed-flex {
+  display: flex;
+}
+
+.ed-flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.ed-items-center {
+  align-items: center;
+}
+
+.ed-justify-center {
+  justify-content: center;
+}
+
+.ed-justify-between {
+  justify-content: space-between;
+}
+
+.ed-gap-1 {
+  gap: 4px;
+}
+
+.ed-gap-2 {
+  gap: 8px;
+}
+
+.ed-gap-3 {
+  gap: 12px;
+}
+
+.ed-w-full {
+  width: 100%;
+}
+
+/* Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+._editor-root_ejcjc_131 button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+.editor-root input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}

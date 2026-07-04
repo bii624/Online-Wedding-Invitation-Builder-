@@ -1,0 +1,264 @@
+/* ==========================================================
+   EFFECTS RIGHT PANEL STYLES
+   ========================================================== */
+
+.erp-root {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-bottom: 24px;
+}
+
+/* ── Section ──────────────────────────────────────────────── */
+.erp-section {
+  border: 1px solid var(--ed-border);
+  border-radius: var(--ed-radius-md);
+  margin: 16px 16px 0;
+  padding: 16px;
+  background: var(--ed-bg-panel);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.erp-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.erp-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ed-text-primary);
+}
+
+/* ── Row ──────────────────────────────────────────────────── */
+.erp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.erp-label {
+  font-size: 13px;
+  color: var(--ed-text-secondary);
+  flex: 1;
+}
+
+/* ── Toggle ───────────────────────────────────────────────── */
+.erp-toggle {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: var(--ed-border);
+  border: none;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.erp-toggle::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.erp-toggle.on {
+  background: var(--ed-accent);
+}
+
+.erp-toggle.on::after {
+  transform: translateX(20px);
+}
+
+/* ── Slider + Number input ────────────────────────────────── */
+.erp-slider-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.erp-slider {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(to right, var(--ed-accent) 0%, var(--ed-border) 0%);
+  border-radius: 2px;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.erp-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--ed-accent);
+  cursor: pointer;
+  box-shadow: 0 0 0 2px white, 0 0 0 3px var(--ed-accent);
+}
+
+.erp-number {
+  width: 56px;
+  padding: 4px 8px;
+  font-size: 13px;
+  text-align: center;
+  border: 1px solid var(--ed-border);
+  border-radius: var(--ed-radius-sm);
+  background: var(--ed-bg-panel);
+  color: var(--ed-text-primary);
+  flex-shrink: 0;
+}
+
+.erp-number:focus {
+  outline: none;
+  border-color: var(--ed-accent);
+}
+
+/* ── Select dropdown ──────────────────────────────────────── */
+.erp-select {
+  flex: 1;
+  padding: 6px 10px;
+  font-size: 13px;
+  border: 1px solid var(--ed-border);
+  border-radius: var(--ed-radius-sm);
+  background: var(--ed-bg-panel);
+  color: var(--ed-text-primary);
+  cursor: pointer;
+}
+
+.erp-select:focus { outline: none; border-color: var(--ed-accent); }
+
+/* ── Effect selector button ───────────────────────────────── */
+.erp-effect-selector {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border: 1px solid var(--ed-border);
+  border-radius: var(--ed-radius-sm);
+  background: var(--ed-bg-panel);
+  color: var(--ed-text-primary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.erp-effect-selector:hover { border-color: var(--ed-accent); }
+
+.erp-preview-btn {
+  background: none;
+  border: none;
+  color: var(--ed-text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.erp-preview-btn:hover { color: var(--ed-accent); }
+
+/* ── Modal backdrop ───────────────────────────────────────── */
+.erp-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.erp-modal {
+  background: white;
+  border-radius: 12px;
+  width: 420px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.erp-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--ed-border);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ed-text-primary);
+}
+
+.erp-modal-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--ed-text-secondary);
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.erp-modal-close:hover { background: var(--ed-bg-hover); }
+
+.erp-modal-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* ── Effect item in modal ─────────────────────────────────── */
+.erp-effect-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.erp-effect-item:hover { background: var(--ed-bg-hover); }
+
+.erp-effect-item.selected {
+  background: var(--ed-accent-light);
+  outline: 2px solid var(--ed-accent);
+}
+
+.erp-effect-preview {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ef4444;
+  flex-shrink: 0;
+}
+
+.erp-effect-label {
+  font-size: 10px;
+  color: var(--ed-text-secondary);
+  text-align: center;
+  line-height: 1.3;
+  word-break: break-word;
+}

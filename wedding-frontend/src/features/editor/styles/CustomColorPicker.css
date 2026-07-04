@@ -1,0 +1,177 @@
+.custom-color-picker-wrapper {
+  position: absolute;
+  top: 130px;
+  left: 100%;
+  margin-left: 10px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  width: 280px;
+  z-index: 100;
+  border: 1px solid #eee;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.ccp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 8px 12px;
+  background: #fafafa;
+}
+
+.ccp-tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.ccp-tab {
+  background: none;
+  border: none;
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #666;
+  font-weight: 500;
+}
+
+.ccp-tab.active {
+  background: white;
+  color: #333;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.ccp-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #999;
+  line-height: 1;
+  padding: 4px 8px;
+}
+
+.ccp-close:hover {
+  color: #333;
+}
+
+.ccp-body {
+  padding: 16px;
+}
+
+.ccp-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Override react-colorful styles slightly to fit */
+.react-colorful {
+  width: 100% !important;
+  height: 200px !important;
+}
+
+.ccp-inputs {
+  display: flex;
+  gap: 12px;
+}
+
+.ccp-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.ccp-input-group label {
+  font-size: 11px;
+  color: #888;
+  font-weight: 500;
+}
+
+.ccp-input-group input {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.ccp-gradient-stops {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.ccp-gradient-preview {
+  flex: 1;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.ccp-stop-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px #ddd;
+  cursor: pointer;
+}
+
+.ccp-stop-btn.active {
+  box-shadow: 0 0 0 2px #4f46e5;
+}
+
+.ccp-recent {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.ccp-recent p {
+  margin: 0 0 12px 0;
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+.ccp-recent-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ccp-recent-item {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.1);
+  cursor: pointer;
+  padding: 0;
+}
+
+.ccp-recent-item:hover {
+  transform: scale(1.1);
+}
+
+.ccp-align-right {
+  left: auto;
+  right: 100%;
+  margin-left: 0;
+  margin-right: 10px;
+}
+
+.ccp-align-right.custom-color-picker-wrapper {
+  position: fixed;
+  right: calc(var(--ed-right-panel-w, 320px) + 10px);
+  left: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+}
