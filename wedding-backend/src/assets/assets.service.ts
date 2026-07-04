@@ -25,12 +25,14 @@ export class AssetsService {
         fileBuffer: Buffer,
         resourceType: 'image' | 'video',
         folder: string,
+        format?: string,
     ): Promise<UploadApiResponse> {
         return new Promise((resolve, reject) => {
             const uploadStream = this.cloudinary.uploader.upload_stream(
                 {
                     folder, // ví dụ: 'dearlove/user_<userId>'
                     resource_type: resourceType, // Cloudinary gộp audio chung nhóm 'video'
+                    format: format, // Ép định dạng nếu có (VD: webp, png, jpg)
                     // Tự tạo thumbnail cho video ngay khi upload
                     eager: resourceType === 'video'
                         ? [{ width: 400, height: 400, crop: 'pad', format: 'jpg' }]
@@ -59,9 +61,19 @@ export class AssetsService {
         const resourceType = assetType === AssetType.IMAGE ? 'image' : 'video';
         const folder = `dearlove/user_${userId}`;
 
+        // Trích xuất định dạng từ mimetype để truyền cho Cloudinary
+        const formatMap: Record<string, string> = {
+            'image/webp': 'webp',
+            'image/jpeg': 'jpg',
+            'image/png': 'png',
+            'image/gif': 'gif',
+            'image/svg+xml': 'svg'
+        };
+        const format = formatMap[file.mimetype] || undefined;
+
         let result: UploadApiResponse;
         try {
-            result = await this.uploadToCloudinary(file.buffer, resourceType, folder);
+            result = await this.uploadToCloudinary(file.buffer, resourceType, folder, format);
         } catch (error: any) {
             let errorMessage = error.message || 'Lỗi khi tải file lên Cloudinary';
             if (errorMessage.includes('File size too large')) {
