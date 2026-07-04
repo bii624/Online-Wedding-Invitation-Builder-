@@ -3,7 +3,7 @@
 // ============================================================
 
 import { create } from 'zustand';
-import { toBlob } from 'html-to-image';
+import { toCanvas } from 'html-to-image';
 import type {
   EditorState,
   ToolType,
@@ -375,6 +375,7 @@ const INITIAL_STATE: EditorState = {
   uploadedImages: [],
   uploadedMusics: [],
   zoom: 100,
+  showGrid: false,
   // Canvas dimensions
   canvasWidth: 500, // desktop-first, user can switch
   canvasHeight: 2000,
@@ -1214,26 +1215,30 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         settings,
       });
 
-      // Capture and upload thumbnail
-      try {
-        const node = document.getElementById('editor-canvas-frame');
-        if (node) {
-          const blob = await toBlob(node, { quality: 0.8, type: 'image/webp', cacheBust: true, useCORS: true, allowTaint: true });
-          if (blob) {
-            await cardsApi.uploadCardThumbnail(cardId, blob);
-          }
-        }
-      } catch (thumbErr) {
-        console.warn('[saveCanvasNow] Failed to capture or upload thumbnail:', thumbErr);
-      }
-
+      // DB đã lưu xong → báo 'saved' ngay, không chờ thumbnail
       set({ autoSaveStatus: 'saved' });
-
-      // Reset về 'idle' sau 3s để không hiển thị "Đã lưu" mãi
       setTimeout(() => {
         const currentStatus = get().autoSaveStatus;
         if (currentStatus === 'saved') set({ autoSaveStatus: 'idle' });
       }, 3000);
+
+      // Capture & upload thumbnail NGẦM (fire-and-forget, không block UI)
+      void (async () => {
+        try {
+          const node = document.getElementById('editor-canvas-frame');
+          if (node) {
+            const canvas = await toCanvas(node, { cacheBust: true, useCORS: true, allowTaint: true });
+            const blob = await new Promise<Blob | null>((resolve) => {
+              canvas.toBlob((b) => resolve(b), 'image/webp', 0.8);
+            });
+            if (blob) {
+              await cardsApi.uploadCardThumbnail(cardId, blob);
+            }
+          }
+        } catch (thumbErr) {
+          console.warn('[saveCanvasNow] Thumbnail upload failed (non-critical):', thumbErr);
+        }
+      })();
     } catch (err) {
       console.error('[AutoSave] Failed:', err);
       set({ autoSaveStatus: 'error' });
@@ -1412,23 +1417,29 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         },
       });
 
-      // Capture and upload thumbnail
-      try {
-        const node = document.getElementById('editor-canvas-frame');
-        if (node) {
-          const blob = await toBlob(node, { quality: 0.8, type: 'image/webp', cacheBust: true, useCORS: true, allowTaint: true });
-          if (blob) {
-            await templatesEditorApi.uploadTemplateThumbnail(templateId, blob);
-          }
-        }
-      } catch (thumbErr) {
-        console.warn('[saveTemplateNow] Failed to capture or upload thumbnail:', thumbErr);
-      }
-
+      // DB đã lưu xong → báo 'saved' ngay, không chờ thumbnail
       set({ autoSaveStatus: 'saved' });
       setTimeout(() => {
         if (get().autoSaveStatus === 'saved') set({ autoSaveStatus: 'idle' });
       }, 3000);
+
+      // Capture & upload thumbnail NGẦM (fire-and-forget, không block UI)
+      void (async () => {
+        try {
+          const node = document.getElementById('editor-canvas-frame');
+          if (node) {
+            const canvas = await toCanvas(node, { cacheBust: true, useCORS: true, allowTaint: true });
+            const blob = await new Promise<Blob | null>((resolve) => {
+              canvas.toBlob((b) => resolve(b), 'image/webp', 0.8);
+            });
+            if (blob) {
+              await templatesEditorApi.uploadTemplateThumbnail(templateId, blob);
+            }
+          }
+        } catch (thumbErr) {
+          console.warn('[saveTemplateNow] Thumbnail upload failed (non-critical):', thumbErr);
+        }
+      })();
     } catch (err) {
       console.error('[saveTemplateNow] Failed:', err);
       set({ autoSaveStatus: 'error' });

@@ -10,13 +10,8 @@ import {
   PaddingSection,
   BorderSection,
   ShadowSection,
+  FontField,
 } from '../../RightPanels/RightPanelShared';
-
-const fonts = [
-  'Arial', 'Inter', 'Playfair Display', 'Roboto', 'Open Sans', 'Lato', 'Montserrat',
-  'Poppins', 'Raleway', 'Oswald', 'Merriweather', 'Georgia',
-  'Great Vibes', 'Dancing Script', 'Pacifico',
-];
 
 interface ButtonRightPanelProps {
   id: string;
@@ -94,17 +89,10 @@ export function ButtonRightPanel({ id }: ButtonRightPanelProps) {
       <Section title="Cài đặt giao diện" icon={<PaletteIcon />}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           
-          <div className="rp-field" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span className="rp-label">Font</span>
-            <select
-              className="rp-input"
-              value={props.fontFamily}
-              onChange={(e) => handlePropChange('fontFamily', e.target.value)}
-              style={{ width: '120px' }}
-            >
-              {fonts.map(f => <option key={f} value={f} style={{ fontFamily: f }}>{f}</option>)}
-            </select>
-          </div>
+          <FontField 
+            fontFamily={props.fontFamily} 
+            onChange={(font) => handlePropChange('fontFamily', font)} 
+          />
 
           <div className="rp-field" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span className="rp-label">Cỡ chữ</span>

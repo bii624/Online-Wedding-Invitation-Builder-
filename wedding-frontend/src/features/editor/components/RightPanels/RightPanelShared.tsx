@@ -3,7 +3,10 @@
 // Used by: TextRightPanel.tsx, ImageRightPanel.tsx, RightPanel.tsx
 // ============================================================
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { HexAlphaColorPicker } from 'react-colorful';
+import { FontPickerModal } from '../Widgets/FontPickerModal';
 
 // ── Icons (exported so panels can use them directly) ───────
 export const BoldIcon = () => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M6 4h8a4 4 0 010 8H6z" /><path d="M6 12h9a4 4 0 010 8H6z" /></svg>;
@@ -99,25 +102,148 @@ export interface ColorFieldProps {
 }
 export function ColorField({ label, color, onChange, onCommit }: ColorFieldProps) {
   const isTransparent = color === 'transparent';
+  const [isOpen, setIsOpen] = useState(false);
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const swatchRef = useRef<HTMLDivElement>(null);
+  const [coords, setCoords] = useState({ top: 0, left: 0 });
+
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (isOpen && popoverRef.current && !popoverRef.current.contains(e.target as Node) && swatchRef.current && !swatchRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+        onCommit?.();
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [isOpen, onCommit]);
+
+  const toggleOpen = () => {
+    if (!isOpen && swatchRef.current) {
+      const rect = swatchRef.current.getBoundingClientRect();
+      const popoverWidth = 240;
+      const popoverHeight = 300;
+
+      let top = rect.bottom + 8;
+      let left = rect.right - popoverWidth;
+
+      // Adjust if it goes beyond bottom of screen
+      if (top + popoverHeight > window.innerHeight) {
+        top = rect.top - popoverHeight - 8;
+      }
+
+      setCoords({ top, left });
+    }
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <div className="rp-color-field">
+    <div className="rp-color-field" style={{ position: 'relative' }}>
       <span className="rp-color-label">{label}</span>
       <div className="rp-color-swatch-wrap">
         <div
+          ref={swatchRef}
           className={`rp-color-swatch ${isTransparent ? 'rp-color-transparent' : ''}`}
-          style={!isTransparent ? { background: color } : {}}
-        >
-          <input
-            type="color"
-            value={isTransparent ? '#ffffff' : color}
-            onChange={(e) => onChange(e.target.value)}
-            onBlur={onCommit}
-          />
-        </div>
+          style={{ background: isTransparent ? undefined : color, cursor: 'pointer' }}
+          onClick={toggleOpen}
+        />
         <span className="rp-color-hex">
           {isTransparent ? 'Trong suốt' : color.toUpperCase()}
         </span>
       </div>
+
+      {isOpen && createPortal(
+        <div
+          ref={popoverRef}
+          style={{
+            position: 'fixed', top: coords.top, left: coords.left, zIndex: 99999,
+            padding: '16px', background: '#fff',
+            borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+            border: '1px solid #e2e8f0', width: '240px',
+            animation: 'fadeIn 0.2s ease-out'
+          }}
+        >
+          <div style={{ marginBottom: '16px' }}>
+            <HexAlphaColorPicker
+              color={isTransparent ? '#ffffff00' : color}
+              onChange={onChange}
+              style={{ width: '100%', height: '180px' }}
+            />
+          </div>
+
+          <div style={{ marginBottom: '16px' }}>
+            <span style={{ fontSize: '12px', fontWeight: 600, color: '#64748b', display: 'block', marginBottom: '4px' }}>Hex</span>
+            <input
+              type="text"
+              value={isTransparent ? 'transparent' : color}
+              onChange={(e) => {
+                const val = e.target.value;
+                onChange(val);
+              }}
+              onBlur={onCommit}
+              style={{
+                width: '100%', boxSizing: 'border-box', padding: '8px', fontSize: '13px',
+                border: '1px solid #cbd5e1', borderRadius: '6px',
+                color: '#334155', outline: 'none', fontFamily: 'monospace'
+              }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button
+              style={{ flex: 1, padding: '8px', fontSize: '13px', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '6px', cursor: 'pointer', color: '#475569', fontWeight: 600, transition: 'background 0.2s' }}
+              onClick={() => { onChange('transparent'); setIsOpen(false); onCommit?.(); }}
+              onMouseOver={(e) => e.currentTarget.style.background = '#f1f5f9'}
+              onMouseOut={(e) => e.currentTarget.style.background = '#f8fafc'}
+            >
+              Trong suốt
+            </button>
+            <button
+              style={{ flex: 1, padding: '8px', fontSize: '13px', background: '#f43f5e', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600, transition: 'background 0.2s' }}
+              onClick={() => { setIsOpen(false); onCommit?.(); }}
+              onMouseOver={(e) => e.currentTarget.style.background = '#f43f5e'}
+              onMouseOut={(e) => e.currentTarget.style.background = '#f43f5e'}
+            >
+              Đóng
+            </button>
+          </div>
+        </div>,
+        document.body
+      )}
+    </div>
+  );
+}
+
+// ── FontField ──────────────────────────────────────────────
+export interface FontFieldProps {
+  label?: string;
+  fontFamily: string;
+  onChange: (font: string) => void;
+}
+export function FontField({ label = 'Font', fontFamily, onChange }: FontFieldProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="rp-field">
+      <span className="rp-label">{label}</span>
+      <button
+        className="rp-select"
+        style={{ fontFamily: fontFamily, textAlign: 'left', cursor: 'pointer', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+        onClick={() => setIsOpen(true)}
+        title={fontFamily}
+      >
+        {fontFamily || 'Mặc định'}
+      </button>
+      <FontPickerModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        onSelect={(font) => {
+          onChange(font);
+          // Auto close after selection if preferred, or keep open. The Modal doesn't auto-close by itself usually, but since it's a picker, we can auto-close.
+          // Note: TextRightPanel didn't auto close, but usually you don't need to stay in font picker. Let's not auto-close unless desired.
+        }}
+        currentFont={fontFamily}
+      />
     </div>
   );
 }

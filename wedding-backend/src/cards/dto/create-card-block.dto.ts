@@ -46,17 +46,23 @@ export class CreateCardBlockDto {
   @IsInt()
   zIndex?: number = 0;
 
-  @ApiPropertyOptional({ description: 'Nội dung block (JSON tự do theo blockType)' })
+  @ApiPropertyOptional({
+    description: 'Nội dung block (JSON tự do theo blockType)',
+  })
   @IsOptional()
   @IsObject()
   content?: object = {};
 
-  @ApiPropertyOptional({ description: 'Style block (JSON: màu, font, shadow...)' })
+  @ApiPropertyOptional({
+    description: 'Style block (JSON: màu, font, shadow...)',
+  })
   @IsOptional()
   @IsObject()
   style?: object = {};
 
-  @ApiPropertyOptional({ description: 'ID LibraryElement gốc (nếu kéo từ thư viện)' })
+  @ApiPropertyOptional({
+    description: 'ID LibraryElement gốc (nếu kéo từ thư viện)',
+  })
   @IsOptional()
   @IsUUID()
   sourceElementId?: string;

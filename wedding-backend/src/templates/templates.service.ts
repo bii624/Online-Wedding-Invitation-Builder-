@@ -3,15 +3,19 @@ import { CreateTemplateDto } from './dto/create-template.dto';
 import { UpdateTemplateDto } from './dto/update-template.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { QueryTemplatesDto } from './dto/query-template.dto';
-import { CreateAdminTemplateDto, UpdateAdminTemplateDto, TemplateStatus } from './dto/admin-template.dto';
+import {
+  CreateAdminTemplateDto,
+  UpdateAdminTemplateDto,
+  TemplateStatus,
+} from './dto/admin-template.dto';
 import { AssetsService } from '../assets/assets.service';
 
 @Injectable()
 export class TemplatesService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly assetsService: AssetsService
-  ) { }
+    private readonly assetsService: AssetsService,
+  ) {}
 
   // GET /api/templates/categories
   async getPublicCategories() {
@@ -21,7 +25,6 @@ export class TemplatesService {
       select: { id: true, name: true, slug: true },
     });
   }
-
 
   // GET /api/templates?category=...&page=...&limit=...
   async getPublicTemplates(dto: QueryTemplatesDto) {
@@ -132,10 +135,10 @@ export class TemplatesService {
         orderBy: { displayOrder: 'desc' },
         include: {
           category: { select: { name: true } },
-          creator: { select: { fullName: true, email: true } }
-        }
+          creator: { select: { fullName: true, email: true } },
+        },
       }),
-      this.prisma.template.count({ where })
+      this.prisma.template.count({ where }),
     ]);
 
     return {
@@ -151,7 +154,7 @@ export class TemplatesService {
       data: {
         ...dto,
         createdBy: userId,
-      }
+      },
     });
   }
 
@@ -161,7 +164,7 @@ export class TemplatesService {
 
     return this.prisma.template.update({
       where: { id },
-      data: dto
+      data: dto,
     });
   }
 
@@ -180,7 +183,7 @@ export class TemplatesService {
     const newStatus = template.status === 'published' ? 'draft' : 'published';
     return this.prisma.template.update({
       where: { id },
-      data: { status: newStatus }
+      data: { status: newStatus },
     });
   }
 
@@ -190,7 +193,7 @@ export class TemplatesService {
 
     return this.prisma.template.update({
       where: { id },
-      data: { status }
+      data: { status },
     });
   }
 
@@ -200,21 +203,32 @@ export class TemplatesService {
 
     return this.prisma.template.update({
       where: { id },
-      data: { displayOrder }
+      data: { displayOrder },
     });
   }
 
-  async uploadTemplateThumbnail(id: string, file: Express.Multer.File, userId: string) {
+  async uploadTemplateThumbnail(
+    id: string,
+    file: Express.Multer.File,
+    userId: string,
+  ) {
     const template = await this.prisma.template.findUnique({ where: { id } });
     if (!template) throw new NotFoundException('Template không tồn tại');
 
-    // Dùng AssetsService để upload lên Cloudinary
-    const asset = await this.assetsService.uploadAsset(file, userId);
+    if (template.thumbnailUrl) {
+      await this.assetsService.deleteAssetByUrlSafe(
+        template.thumbnailUrl,
+        userId,
+      );
+    }
+
+    // Dùng AssetsService để upload lên Cloudinary (không lưu vào bảng assets của user)
+    const asset = await this.assetsService.uploadSystemImage(file, userId);
 
     // Cập nhật URL vào template
     return this.prisma.template.update({
       where: { id },
-      data: { thumbnailUrl: asset.url }
+      data: { thumbnailUrl: asset.url },
     });
   }
 
@@ -239,34 +253,37 @@ export class TemplatesService {
     const template = await this.prisma.template.findUnique({ where: { id } });
     if (!template) throw new NotFoundException('Template không tồn tại');
 
-    // Xoá toàn bộ blocks cũ rồi upsert mới (giống logic saveCanvas của Card)
-    await this.prisma.templateBlock.deleteMany({ where: { templateId: id } });
+    await this.prisma.$transaction(async (tx) => {
+      // Chạy song song: xoá blocks cũ + cập nhật background
+      await Promise.all([
+        tx.templateBlock.deleteMany({ where: { templateId: id } }),
+        dto.background
+          ? tx.template.update({
+              where: { id },
+              data: { background: dto.background },
+            })
+          : Promise.resolve(),
+      ]);
 
-    if (dto.blocks && dto.blocks.length > 0) {
-      await this.prisma.templateBlock.createMany({
-        data: dto.blocks.map((b: any) => ({
-          templateId: id,
-          blockType: b.blockType,
-          posX: b.posX ?? 0,
-          posY: b.posY ?? 0,
-          width: b.width ?? 100,
-          height: b.height ?? 100,
-          rotation: b.rotation ?? 0,
-          zIndex: b.zIndex ?? 0,
-          content: b.content ?? {},
-          style: b.style ?? {},
-          isLocked: b.isLocked ?? false,
-        })),
-      });
-    }
-
-    // Cập nhật background nếu có
-    if (dto.background) {
-      await this.prisma.template.update({
-        where: { id },
-        data: { background: dto.background },
-      });
-    }
+      // Insert tất cả blocks mới (sau khi delete xong)
+      if (dto.blocks && dto.blocks.length > 0) {
+        await tx.templateBlock.createMany({
+          data: dto.blocks.map((b: any) => ({
+            templateId: id,
+            blockType: b.blockType,
+            posX: b.posX ?? 0,
+            posY: b.posY ?? 0,
+            width: b.width ?? 100,
+            height: b.height ?? 100,
+            rotation: b.rotation ?? 0,
+            zIndex: b.zIndex ?? 0,
+            content: b.content ?? {},
+            style: b.style ?? {},
+            isLocked: b.isLocked ?? false,
+          })),
+        });
+      }
+    });
 
     return { message: 'Đã lưu canvas template thành công' };
   }

@@ -12,6 +12,7 @@ import {
   PaddingSection,
   BorderSection,
   ShadowSection,
+  FontField,
 } from '../RightPanelShared';
 
 export function FormRightPanel({ id }: { id: string }) {
@@ -25,11 +26,7 @@ export function FormRightPanel({ id }: { id: string }) {
     updateFormProps(id, { [key]: value });
   };
 
-  const fonts = [
-    'Arial', 'Helvetica', 'Times New Roman', 'Courier New', 'Georgia',
-    'Verdana', 'Tahoma', 'Trebuchet MS', 'Playfair Display', 'Lora',
-    'Merriweather', 'Great Vibes', 'Dancing Script'
-  ];
+
 
   return (
     <div className="right-panel-scroll">
@@ -77,17 +74,10 @@ export function FormRightPanel({ id }: { id: string }) {
           </div>
 
           {/* Font */}
-          <div className="rp-field">
-            <span className="rp-label">Font</span>
-            <select
-              className="rp-input"
-              value={props.fontFamily}
-              onChange={(e) => handlePropChange('fontFamily', e.target.value)}
-              style={{ width: '120px' }}
-            >
-              {fonts.map(f => <option key={f} value={f} style={{ fontFamily: f }}>{f}</option>)}
-            </select>
-          </div>
+          <FontField 
+            fontFamily={props.fontFamily} 
+            onChange={(font) => handlePropChange('fontFamily', font)} 
+          />
 
           {/* Cỡ chữ */}
           <div className="rp-field">

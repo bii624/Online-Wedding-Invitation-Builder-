@@ -8,13 +8,16 @@ import { User } from '@/users/entities/user.entity';
 export class LoginResponseDto {
   @ApiProperty({
     description: 'JWT Access Token dùng để xác thực cho các yêu cầu tiếp theo',
-    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkM2IwNzM4NC1kMTEzLTRlYzUtYTU4Ny0zNTNkOThjMzg1YzciLCJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJyb2xlIjoidXNlciIsImZ1bGxOYW1lIjoiTmd1eWVuIFZhbiBBIn0.signature',
+    example:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkM2IwNzM4NC1kMTEzLTRlYzUtYTU4Ny0zNTNkOThjMzg1YzciLCJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJyb2xlIjoidXNlciIsImZ1bGxOYW1lIjoiTmd1eWVuIFZhbiBBIn0.signature',
   })
   accessToken!: string;
 
   @ApiProperty({
-    description: 'JWT Refresh Token dùng để lấy lại Access Token mới khi hết hạn',
-    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkM2IwNzM4NC1kMTEzLTRlYzUtYTU4Ny0zNTNkOThjMzg1YzciLCJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJyb2xlIjoidXNlciIsImZ1bGxOYW1lIjoiTmd1eWVuIFZhbiBBIn0.signature_refresh',
+    description:
+      'JWT Refresh Token dùng để lấy lại Access Token mới khi hết hạn',
+    example:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkM2IwNzM4NC1kMTEzLTRlYzUtYTU4Ny0zNTNkOThjMzg1YzciLCJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJyb2xlIjoidXNlciIsImZ1bGxOYW1lIjoiTmd1eWVuIFZhbiBBIn0.signature_refresh',
   })
   refreshToken!: string;
 

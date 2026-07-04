@@ -21,7 +21,9 @@ import { BlockType } from '@prisma/client';
 
 // Đại diện 1 block gửi từ frontend editor
 export class CanvasBlockDto {
-  @ApiPropertyOptional({ description: 'UUID block (có = update, không có = tạo mới)' })
+  @ApiPropertyOptional({
+    description: 'UUID block (có = update, không có = tạo mới)',
+  })
   @IsOptional()
   @IsString() // cho phép là string (không bắt UUID vì FE có thể dùng id tạm el-xxx)
   id?: string;
@@ -80,12 +82,16 @@ export class CanvasBlockDto {
   @IsBoolean()
   isVisible?: boolean;
 
-  @ApiPropertyOptional({ description: 'ID LibraryElement gốc nếu là element thư viện' })
+  @ApiPropertyOptional({
+    description: 'ID LibraryElement gốc nếu là element thư viện',
+  })
   @IsOptional()
   @IsUUID()
   sourceElementId?: string;
 
-  @ApiPropertyOptional({ description: 'ID TemplateBlock gốc nếu được clone từ template' })
+  @ApiPropertyOptional({
+    description: 'ID TemplateBlock gốc nếu được clone từ template',
+  })
   @IsOptional()
   @IsUUID()
   sourceTemplateBlockId?: string;
@@ -102,7 +108,10 @@ export class SaveCanvasDto {
   @IsObject()
   settings?: object;
 
-  @ApiProperty({ type: [CanvasBlockDto], description: 'Toàn bộ danh sách block hiện tại' })
+  @ApiProperty({
+    type: [CanvasBlockDto],
+    description: 'Toàn bộ danh sách block hiện tại',
+  })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CanvasBlockDto)

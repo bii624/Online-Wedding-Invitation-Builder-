@@ -26,14 +26,8 @@ import {
   PaddingSection,
   BorderSection,
   ShadowSection,
+  FontField,
 } from './RightPanelShared';
-
-// ── Font list ──────────────────────────────────────────────
-const FONTS = [
-  'Inter', 'Playfair Display', 'Roboto', 'Open Sans', 'Lato', 'Montserrat',
-  'Poppins', 'Raleway', 'Oswald', 'Merriweather', 'Georgia', 'Arial',
-  'Great Vibes', 'Dancing Script', 'Pacifico',
-];
 
 // ── Props ──────────────────────────────────────────────────
 interface TextRightPanelProps {
@@ -97,19 +91,10 @@ export function TextRightPanel({ id, props }: TextRightPanelProps) {
         </div>
 
         {/* Font */}
-        <div className="rp-field">
-          <span className="rp-label">Font</span>
-          <select
-            id="sel-font"
-            className="rp-select"
-            value={props.fontFamily}
-            onChange={(e) => upd('fontFamily', e.target.value)}
-          >
-            {FONTS.map((f) => (
-              <option key={f} value={f} style={{ fontFamily: f }}>{f}</option>
-            ))}
-          </select>
-        </div>
+        <FontField 
+          fontFamily={props.fontFamily} 
+          onChange={(font) => upd('fontFamily', font)} 
+        />
 
         {/* Cỡ chữ */}
         <div className="rp-field">

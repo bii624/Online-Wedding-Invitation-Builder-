@@ -70,7 +70,10 @@ export class BatchBlockItemDto {
 }
 
 export class BatchUpdateBlocksDto {
-  @ApiProperty({ type: [BatchBlockItemDto], description: 'Danh sách block cần cập nhật' })
+  @ApiProperty({
+    type: [BatchBlockItemDto],
+    description: 'Danh sách block cần cập nhật',
+  })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => BatchBlockItemDto)

@@ -36,7 +36,7 @@ import { User } from '@/users/entities/user.entity';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   // =====================================================================
   // ĐĂNG NHẬP LOCAL (EMAIL + PASSWORD)
@@ -48,17 +48,28 @@ export class AuthController {
     schema: {
       type: 'object',
       properties: {
-        email: { type: 'string', example: 'user@example.com', description: 'Địa chỉ email đăng nhập' },
-        password: { type: 'string', example: '123456', description: 'Mật khẩu tài khoản' },
+        email: {
+          type: 'string',
+          example: 'user@example.com',
+          description: 'Địa chỉ email đăng nhập',
+        },
+        password: {
+          type: 'string',
+          example: '123456',
+          description: 'Mật khẩu tài khoản',
+        },
       },
       required: ['email', 'password'],
     },
   })
   @ApiOkResponse({
-    description: 'Đăng nhập thành công, trả về access token, refresh token và thông tin user.',
+    description:
+      'Đăng nhập thành công, trả về access token, refresh token và thông tin user.',
     type: LoginResponseDto,
   })
-  @ApiUnauthorizedResponse({ description: 'Email hoặc mật khẩu không chính xác.' })
+  @ApiUnauthorizedResponse({
+    description: 'Email hoặc mật khẩu không chính xác.',
+  })
   handleLogin(@Req() req: any, @Res({ passthrough: true }) response: Response) {
     return this.authService.login(req.user, response);
   }
@@ -74,7 +85,9 @@ export class AuthController {
     description: 'Trả về thông tin người dùng được giải mã từ JWT token.',
     type: ProfileResponseDto,
   })
-  @ApiUnauthorizedResponse({ description: 'Không có quyền truy cập (Token thiếu hoặc không hợp lệ).' })
+  @ApiUnauthorizedResponse({
+    description: 'Không có quyền truy cập (Token thiếu hoặc không hợp lệ).',
+  })
   getProfile(@Req() req: Request) {
     return req.user;
   }
@@ -101,10 +114,14 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Đăng xuất khỏi hệ thống' })
   @ApiOkResponse({
-    description: 'Đăng xuất thành công, xóa refresh token ở DB và xóa các cookie liên quan.',
+    description:
+      'Đăng xuất thành công, xóa refresh token ở DB và xóa các cookie liên quan.',
     type: LogoutResponseDto,
   })
-  handleLogout(@Req() req: any, @Res({ passthrough: true }) response: Response) {
+  handleLogout(
+    @Req() req: any,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     return this.authService.logout(req.user, response);
   }
 
@@ -121,13 +138,16 @@ export class AuthController {
       },
     },
     required: false,
-    description: 'Có thể truyền refreshToken qua body, cookie (refresh_token), hoặc header x-refresh-token.',
+    description:
+      'Có thể truyền refreshToken qua body, cookie (refresh_token), hoặc header x-refresh-token.',
   })
   @ApiOkResponse({
     description: 'Cấp mới access token và refresh token thành công.',
     type: LoginResponseDto,
   })
-  @ApiBadRequestResponse({ description: 'Refresh token không hợp lệ hoặc đã hết hạn.' })
+  @ApiBadRequestResponse({
+    description: 'Refresh token không hợp lệ hoặc đã hết hạn.',
+  })
   async handleRefreshToken(
     @Req() req: Request,
     @Res({ passthrough: true }) response: Response,
@@ -165,7 +185,7 @@ export class AuthController {
     const user = await this.authService.findOrCreateOAuthUser(req.user);
     // Đăng nhập, set cookie (HttpOnly, Secure, SameSite)
     await this.authService.login(user, res);
-    
+
     // Redirect về frontend, FE sẽ tự động nhận cookie
     return res.redirect(process.env.FRONTEND_URL || 'http://localhost:5173/');
   }
@@ -188,7 +208,7 @@ export class AuthController {
     const user = await this.authService.findOrCreateOAuthUser(req.user);
     // Đăng nhập, set cookie (HttpOnly, Secure, SameSite)
     await this.authService.login(user, res);
-    
+
     // Redirect về frontend, FE sẽ tự động nhận cookie
     return res.redirect(process.env.FRONTEND_URL || 'http://localhost:5173/');
   }

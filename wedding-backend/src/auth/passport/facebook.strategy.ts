@@ -12,8 +12,11 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
   constructor(private readonly configService: ConfigService) {
     super({
       clientID: configService.get<string>('FACEBOOK_APP_ID') || 'dummy-app-id',
-      clientSecret: configService.get<string>('FACEBOOK_APP_SECRET') || 'dummy-app-secret',
-      callbackURL: configService.get<string>('FACEBOOK_CALLBACK_URL') || 'http://localhost:8000/auth/facebook/callback',
+      clientSecret:
+        configService.get<string>('FACEBOOK_APP_SECRET') || 'dummy-app-secret',
+      callbackURL:
+        configService.get<string>('FACEBOOK_CALLBACK_URL') ||
+        'http://localhost:8000/auth/facebook/callback',
       scope: ['email', 'public_profile'],
       profileFields: ['id', 'displayName', 'emails', 'name', 'photos'],
       graphAPIVersion: 'v18.0',
@@ -29,7 +32,9 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     const { name, emails, photos, id } = profile;
     const user = {
       email: emails && emails[0]?.value ? emails[0].value : null,
-      fullName: `${name?.familyName || ''} ${name?.givenName || ''}`.trim() || profile.displayName,
+      fullName:
+        `${name?.familyName || ''} ${name?.givenName || ''}`.trim() ||
+        profile.displayName,
       avatarUrl: photos && photos[0]?.value ? photos[0].value : null,
       providerId: id,
       authProvider: 'facebook',

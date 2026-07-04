@@ -10,10 +10,12 @@ import { RightPanel } from '../components/RightPanel';
 import { Filmstrip } from '../components/Filmstrip';
 import { ImageCropModal } from '../components/ImageCropModal';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { useEditorStore } from '../store/editorStore';
 import { useAuthStore } from '../../../store/authStore';
+import { assetsApi } from '../../../api/assetsApi';
+import type { Asset } from '../../../api/assetsApi';
 
 const AUTO_SAVE_INTERVAL_MS = 30_000; // 30 seconds
 
@@ -112,6 +114,40 @@ export function EditorPage() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedElement, deleteElement, duplicateElement, saveCanvasNow, saveTemplateNow, editorMode]);
+
+  // ── Inject Custom Fonts ────────────────────────────────────
+  const [fontsData, setFontsData] = useState<{ systemFonts: Asset[], myFonts: Asset[] }>({ systemFonts: [], myFonts: [] });
+
+  useEffect(() => {
+    if (isInitialized && user) {
+      assetsApi.getFonts().then(data => setFontsData(data)).catch(err => console.error("Failed to load fonts", err));
+    }
+  }, [isInitialized, user]);
+
+  useEffect(() => {
+    let styleEl = document.getElementById('custom-fonts');
+    if (!styleEl) {
+      styleEl = document.createElement('style');
+      styleEl.id = 'custom-fonts';
+      document.head.appendChild(styleEl);
+    }
+
+    let css = '';
+    const allFonts = [...fontsData.systemFonts, ...fontsData.myFonts];
+    allFonts.forEach(font => {
+      // thumbnailUrl lưu tên phông chữ gốc
+      if (font.thumbnailUrl) {
+        css += `
+          @font-face {
+            font-family: "${font.thumbnailUrl}";
+            src: url("${font.url}");
+            font-display: swap;
+          }
+        `;
+      }
+    });
+    styleEl.innerHTML = css;
+  }, [fontsData]);
 
   return (
     <div className={styles['editor-root']}>

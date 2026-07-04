@@ -239,7 +239,7 @@ export function TemplatesListPage() {
           {templates.map((t, i) => (
             <div key={t.id} className="adm-template-card">
               {/* Thumbnail */}
-              <div className="adm-template-thumb" style={{ background: t.thumbnailUrl ? '#f3f4f6' : thumbColors[i % thumbColors.length], backgroundImage: t.thumbnailUrl ? `url(${t.thumbnailUrl})` : 'none' }}>
+              <div className="adm-template-thumb" style={{ backgroundColor: t.thumbnailUrl ? '#f3f4f6' : thumbColors[i % thumbColors.length], backgroundImage: t.thumbnailUrl ? `url(${t.thumbnailUrl})` : 'none' }}>
                 {!t.thumbnailUrl && <div style={{ fontSize: 40 }}>💌</div>}
                 {/* Overlay actions */}
                 <div className="adm-template-thumb-overlay">

@@ -1,11 +1,17 @@
 // templates.controller.ts
-import { Controller, Get, Param, Query, NotFoundException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  NotFoundException,
+} from '@nestjs/common';
 import { TemplatesService } from './templates.service';
 import { QueryTemplatesDto } from './dto/query-template.dto';
 
 @Controller('templates')
 export class TemplatesController {
-  constructor(private readonly service: TemplatesService) { }
+  constructor(private readonly service: TemplatesService) {}
 
   @Get('categories')
   getCategories() {

@@ -8,9 +8,9 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { CloudinaryProvider } from '../assets/cloudinary.provider';
 
 @Module({
-    imports: [ConfigModule, PrismaModule],
-    controllers: [AdminLibraryElementsController, LibraryElementsController],
-    providers: [LibraryElementsService, CloudinaryProvider],
-    exports: [LibraryElementsService],
+  imports: [ConfigModule, PrismaModule],
+  controllers: [AdminLibraryElementsController, LibraryElementsController],
+  providers: [LibraryElementsService, CloudinaryProvider],
+  exports: [LibraryElementsService],
 })
-export class LibraryElementsModule { }
+export class LibraryElementsModule {}

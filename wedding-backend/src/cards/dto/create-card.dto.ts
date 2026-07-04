@@ -17,7 +17,9 @@ export class CreateCardDto {
   @MaxLength(255)
   title: string;
 
-  @ApiPropertyOptional({ description: 'ID template để clone (bỏ trống = thiệp trắng)' })
+  @ApiPropertyOptional({
+    description: 'ID template để clone (bỏ trống = thiệp trắng)',
+  })
   @IsOptional()
   @IsUUID()
   templateId?: string;

@@ -13,7 +13,7 @@ import { PrismaService } from '@/prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   private async validateCurrentPlanId(
     currentPlanId: string | null | undefined,
@@ -49,7 +49,9 @@ export class UsersService {
         where: { email },
       });
       if (existingUser) {
-        throw new ConflictException('Email đã tồn tại. Vui vòng nhập email khác!');
+        throw new ConflictException(
+          'Email đã tồn tại. Vui vòng nhập email khác!',
+        );
       }
     }
 
@@ -132,7 +134,9 @@ export class UsersService {
         where: { email, NOT: { id } },
       });
       if (existingUser) {
-        throw new ConflictException('Email đã tồn tại. Vui vòng nhập email khác!');
+        throw new ConflictException(
+          'Email đã tồn tại. Vui vòng nhập email khác!',
+        );
       }
     }
 
@@ -175,7 +179,10 @@ export class UsersService {
     return new User(deletedUser);
   }
 
-  async updateUserToken(refreshToken: string | null, userId: string): Promise<void> {
+  async updateUserToken(
+    refreshToken: string | null,
+    userId: string,
+  ): Promise<void> {
     await this.prisma.user.update({
       where: { id: userId },
       data: { refreshToken },
@@ -263,7 +270,7 @@ export class UsersService {
     if (search) {
       where.OR = [
         { fullName: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } }
+        { email: { contains: search, mode: 'insensitive' } },
       ];
     }
     if (role && role !== 'all') {
@@ -281,14 +288,14 @@ export class UsersService {
         orderBy: { createdAt: 'desc' },
         include: {
           _count: {
-            select: { cards: true }
-          }
-        }
+            select: { cards: true },
+          },
+        },
       }),
-      this.prisma.user.count({ where })
+      this.prisma.user.count({ where }),
     ]);
 
-    const formattedItems = items.map(user => ({
+    const formattedItems = items.map((user) => ({
       id: user.id,
       fullName: user.fullName || 'Người dùng ẩn danh',
       email: user.email || 'Không có email',
@@ -296,7 +303,7 @@ export class UsersService {
       status: user.status,
       cardCount: user._count.cards,
       createdAt: user.createdAt,
-      avatarUrl: user.avatarUrl
+      avatarUrl: user.avatarUrl,
     }));
 
     return {
@@ -306,7 +313,7 @@ export class UsersService {
         page: Number(page),
         limit: Number(limit),
         totalPages: Math.ceil(total / Number(limit)),
-      }
+      },
     };
   }
 
@@ -315,9 +322,9 @@ export class UsersService {
       where: { id },
       include: {
         _count: {
-          select: { cards: true, createdTemplates: true }
-        }
-      }
+          select: { cards: true, createdTemplates: true },
+        },
+      },
     });
 
     if (!user) {
@@ -334,7 +341,7 @@ export class UsersService {
       templateCount: user._count.createdTemplates,
       createdAt: user.createdAt,
       avatarUrl: user.avatarUrl,
-      authProvider: user.authProvider
+      authProvider: user.authProvider,
     };
   }
 
@@ -344,9 +351,9 @@ export class UsersService {
 
     const updatedUser = await this.prisma.user.update({
       where: { id },
-      data: { status }
+      data: { status },
     });
-    
+
     return { id: updatedUser.id, status: updatedUser.status };
   }
 
@@ -356,11 +363,9 @@ export class UsersService {
 
     const updatedUser = await this.prisma.user.update({
       where: { id },
-      data: { role }
+      data: { role },
     });
-    
+
     return { id: updatedUser.id, role: updatedUser.role };
   }
 }
-
-

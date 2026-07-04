@@ -10,7 +10,6 @@ import { GoogleStrategy } from './passport/google.strategy';
 import { FacebookStrategy } from './passport/facebook.strategy';
 import { AuthController } from './auth.controller';
 
-
 @Module({
   imports: [
     UsersModule,
@@ -19,11 +18,15 @@ import { AuthController } from './auth.controller';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
-        const expiresVal = configService.get<string>('JWT_ACCESS_EXPIRES') || '3600';
-        const expiresIn = /^\d+$/.test(expiresVal) ? Number(expiresVal) : expiresVal;
+        const expiresVal =
+          configService.get<string>('JWT_ACCESS_EXPIRES') || '3600';
+        const expiresIn = /^\d+$/.test(expiresVal)
+          ? Number(expiresVal)
+          : expiresVal;
         return {
           secret:
-            configService.get<string>('JWT_ACCESS_TOKEN_SECRET') || 'dev-secret',
+            configService.get<string>('JWT_ACCESS_TOKEN_SECRET') ||
+            'dev-secret',
           signOptions: {
             expiresIn: expiresIn as any,
           },
@@ -42,5 +45,4 @@ import { AuthController } from './auth.controller';
   exports: [AuthService],
   controllers: [AuthController],
 })
-export class AuthModule { }
-
+export class AuthModule {}

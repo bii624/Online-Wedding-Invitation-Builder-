@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useEditorStore } from '../store/editorStore';
+
 import { templatesApi, type TemplateItem } from '../../../api/templatesApi';
 import { cardsApi } from '../../../api/cardsApi';
 import { toast } from 'sonner';
@@ -36,7 +36,7 @@ interface TemplatePanelProps {
 
 export function TemplatePanel({ onClose }: TemplatePanelProps) {
   const navigate = useNavigate();
-  const { saveCanvasNow } = useEditorStore();
+
 
   const [templates, setTemplates] = useState<TemplateItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -120,10 +120,8 @@ export function TemplatePanel({ onClose }: TemplatePanelProps) {
   const handleApplyTemplate = async (template: TemplateItem) => {
     try {
       setIsApplying(true);
-      // Lưu thiệp hiện tại nếu cần thiết
-      await saveCanvasNow();
 
-      // Tạo thiệp mới từ template
+      // Tạo thiệp mới từ template (không cần save canvas hiện tại — đã auto-save mỗi 30s)
       const newCard = await cardsApi.createCard({
         title: `Thiệp từ mẫu ${template.name}`,
         templateId: template.id
@@ -132,10 +130,6 @@ export function TemplatePanel({ onClose }: TemplatePanelProps) {
       toast.success('Đã tạo thiệp mới từ mẫu!');
       onClose();
       
-      // Chuyển hướng tới editor của thiệp mới
-      // navigate thay vì window.location để không refresh toàn trang nếu có thể
-      // Tuy nhiên nếu đang ở /design thì navigate có thể chỉ đổi URL params. 
-      // Do EditorPage có lắng nghe searchParams nên nó sẽ tự reload data.
       navigate(`/design?id=${newCard.id}`);
       
     } catch (error) {

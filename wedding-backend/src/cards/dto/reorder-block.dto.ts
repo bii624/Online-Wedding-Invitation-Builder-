@@ -3,8 +3,8 @@ import { IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export enum ReorderAction {
-  FRONT = 'front',     // Đưa lên trên cùng
-  BACK = 'back',       // Đưa xuống dưới cùng
+  FRONT = 'front', // Đưa lên trên cùng
+  BACK = 'back', // Đưa xuống dưới cùng
   FORWARD = 'forward', // Lên 1 lớp
   BACKWARD = 'backward', // Xuống 1 lớp
 }

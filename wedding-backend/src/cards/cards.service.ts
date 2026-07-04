@@ -40,8 +40,8 @@ function randomSuffix(): string {
 export class CardsService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly assetsService: AssetsService
-  ) {}
+    private readonly assetsService: AssetsService,
+  ) { }
 
   // ============================================================
   // PRIVATE HELPERS
@@ -78,8 +78,14 @@ export class CardsService {
    * Kiểm tra block thuộc đúng cardId VÀ cardId thuộc đúng userId.
    * 2 lớp kiểm tra tránh IDOR (user A đoán blockId của user B).
    */
-  private async verifyBlockOwner(blockId: string, cardId: string, userId: string) {
-    const block = await this.prisma.cardBlock.findUnique({ where: { id: blockId } });
+  private async verifyBlockOwner(
+    blockId: string,
+    cardId: string,
+    userId: string,
+  ) {
+    const block = await this.prisma.cardBlock.findUnique({
+      where: { id: blockId },
+    });
     if (!block) throw new NotFoundException('Không tìm thấy block');
     if (block.cardId !== cardId)
       throw new ForbiddenException('Block không thuộc thiệp này');
@@ -146,17 +152,19 @@ export class CardsService {
           });
         }
 
-        // Tăng useCount của template
-        await tx.template.update({
-          where: { id: dto.templateId },
-          data: { useCount: { increment: 1 } },
-        });
+        // Tăng useCount + lấy card kèm blocks song song
+        const [, cardWithBlocks] = await Promise.all([
+          tx.template.update({
+            where: { id: dto.templateId },
+            data: { useCount: { increment: 1 } },
+          }),
+          tx.card.findUnique({
+            where: { id: card.id },
+            include: { blocks: { orderBy: { zIndex: 'asc' } } },
+          }),
+        ]);
 
-        // Trả về card kèm blocks đã tạo
-        return tx.card.findUnique({
-          where: { id: card.id },
-          include: { blocks: { orderBy: { zIndex: 'asc' } } },
-        });
+        return cardWithBlocks;
       });
     }
 
@@ -210,6 +218,7 @@ export class CardsService {
           id: true,
           slug: true,
           title: true,
+          thumbnailUrl: true,
           groomName: true,
           brideName: true,
           status: true,
@@ -274,8 +283,7 @@ export class CardsService {
 
     // Kiểm tra mật khẩu nếu thiệp có đặt mật khẩu
     if (card.accessPassword) {
-      if (!password)
-        throw new ForbiddenException('Thiệp này yêu cầu mật khẩu');
+      if (!password) throw new ForbiddenException('Thiệp này yêu cầu mật khẩu');
       const isMatch = await bcrypt.compare(password, card.accessPassword);
       if (!isMatch) throw new ForbiddenException('Mật khẩu không đúng');
     }
@@ -283,7 +291,7 @@ export class CardsService {
     // Ghi lượt xem bất đồng bộ (không block response)
     this.prisma.card
       .update({ where: { id: card.id }, data: { viewCount: { increment: 1 } } })
-      .catch(() => {});
+      .catch(() => { });
 
     // Trả về card nhưng ẩn accessPassword
     const { accessPassword: _, ...safeCard } = card;
@@ -301,12 +309,16 @@ export class CardsService {
     if (dto.accessPassword !== undefined) {
       // Nếu truyền chuỗi rỗng → xoá mật khẩu
       hashedPassword =
-        dto.accessPassword === '' ? undefined : await bcrypt.hash(dto.accessPassword, 10);
+        dto.accessPassword === ''
+          ? undefined
+          : await bcrypt.hash(dto.accessPassword, 10);
     }
 
     // Tự set publishedAt khi publish lần đầu
     const publishedAt =
-      dto.status === CardStatus.published && !card.publishedAt ? new Date() : undefined;
+      dto.status === CardStatus.published && !card.publishedAt
+        ? new Date()
+        : undefined;
 
     return this.prisma.card.update({
       where: { id: cardId },
@@ -315,17 +327,19 @@ export class CardsService {
         ...(dto.groomName !== undefined && { groomName: dto.groomName }),
         ...(dto.brideName !== undefined && { brideName: dto.brideName }),
         ...(dto.background !== undefined && {
-          background: dto.background as Prisma.InputJsonValue,
+          background: dto.background,
         }),
         ...(dto.settings !== undefined && {
-          settings: dto.settings as Prisma.InputJsonValue,
+          settings: dto.settings,
         }),
         ...(dto.status !== undefined && { status: dto.status }),
         ...(dto.isPublic !== undefined && { isPublic: dto.isPublic }),
         ...(dto.accessPassword !== undefined && {
           accessPassword: hashedPassword ?? null,
         }),
-        ...(dto.expiresAt !== undefined && { expiresAt: new Date(dto.expiresAt) }),
+        ...(dto.expiresAt !== undefined && {
+          expiresAt: new Date(dto.expiresAt),
+        }),
         ...(publishedAt && { publishedAt }),
       },
     });
@@ -386,8 +400,8 @@ export class CardsService {
         height: dto.height ?? 100,
         rotation: dto.rotation ?? 0,
         zIndex,
-        content: (dto.content ?? {}) as Prisma.InputJsonValue,
-        style: (dto.style ?? {}) as Prisma.InputJsonValue,
+        content: dto.content ?? {},
+        style: dto.style ?? {},
         sourceElementId: dto.sourceElementId,
       },
     });
@@ -414,9 +428,11 @@ export class CardsService {
         ...(dto.rotation !== undefined && { rotation: dto.rotation }),
         ...(dto.zIndex !== undefined && { zIndex: dto.zIndex }),
         ...(dto.content !== undefined && {
-          content: dto.content as Prisma.InputJsonValue,
+          content: dto.content,
         }),
-        ...(dto.style !== undefined && { style: dto.style as Prisma.InputJsonValue }),
+        ...(dto.style !== undefined && {
+          style: dto.style,
+        }),
         ...(dto.isLocked !== undefined && { isLocked: dto.isLocked }),
         ...(dto.isVisible !== undefined && { isVisible: dto.isVisible }),
       },
@@ -458,10 +474,10 @@ export class CardsService {
             ...(item.rotation !== undefined && { rotation: item.rotation }),
             ...(item.zIndex !== undefined && { zIndex: item.zIndex }),
             ...(item.content !== undefined && {
-              content: item.content as Prisma.InputJsonValue,
+              content: item.content,
             }),
             ...(item.style !== undefined && {
-              style: item.style as Prisma.InputJsonValue,
+              style: item.style,
             }),
             ...(item.isLocked !== undefined && { isLocked: item.isLocked }),
             ...(item.isVisible !== undefined && { isVisible: item.isVisible }),
@@ -557,96 +573,113 @@ export class CardsService {
   async saveCanvas(cardId: string, userId: string, dto: SaveCanvasDto) {
     await this.verifyCardOwner(cardId, userId);
 
-    return this.prisma.$transaction(async (tx) => {
-      // Lấy tất cả block hiện tại trong DB
-      const existingBlocks = await tx.cardBlock.findMany({
-        where: { cardId },
-        select: { id: true },
-      });
-      const existingIds = new Set(existingBlocks.map((b) => b.id));
+    const UUID_REGEX =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-      // Phân loại block từ FE:
-      //   - UUID hợp lệ có trong DB → update
-      //   - UUID hợp lệ không có trong DB → tạo mới với id đó
-      //   - id tạm (el-xxx, không phải UUID) → tạo mới
-      const UUID_REGEX =
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-      const payloadIds = new Set<string>(); // lưu id hợp lệ của payload để tính diff xóa
-
-      for (const block of dto.blocks) {
-        const isUUID = block.id && UUID_REGEX.test(block.id);
-
-        if (isUUID && existingIds.has(block.id!)) {
-          // UPDATE block đã có trong DB
-          payloadIds.add(block.id!);
-          await tx.cardBlock.update({
-            where: { id: block.id },
-            data: {
-              blockType: block.blockType,
-              posX: block.posX ?? 0,
-              posY: block.posY ?? 0,
-              width: block.width ?? 100,
-              height: block.height ?? 100,
-              rotation: block.rotation ?? 0,
-              zIndex: block.zIndex ?? 0,
-              content: (block.content ?? {}) as Prisma.InputJsonValue,
-              style: (block.style ?? {}) as Prisma.InputJsonValue,
-              isLocked: block.isLocked ?? false,
-              isVisible: block.isVisible ?? true,
-            },
-          });
-        } else {
-          // CREATE block mới (id tạm hoặc chưa tồn tại trong DB)
-          const created = await tx.cardBlock.create({
-            data: {
-              cardId,
-              blockType: block.blockType,
-              posX: block.posX ?? 0,
-              posY: block.posY ?? 0,
-              width: block.width ?? 100,
-              height: block.height ?? 100,
-              rotation: block.rotation ?? 0,
-              zIndex: block.zIndex ?? 0,
-              content: (block.content ?? {}) as Prisma.InputJsonValue,
-              style: (block.style ?? {}) as Prisma.InputJsonValue,
-              isLocked: block.isLocked ?? false,
-              isVisible: block.isVisible ?? true,
-              sourceElementId: block.sourceElementId,
-              sourceTemplateBlockId: block.sourceTemplateBlockId,
-            },
-          });
-          payloadIds.add(created.id);
-        }
-      }
-
-      // DELETE các block có trong DB nhưng không có trong payload (FE đã xóa)
-      const toDelete = [...existingIds].filter((id) => !payloadIds.has(id));
-      if (toDelete.length > 0) {
-        await tx.cardBlock.deleteMany({
-          where: { id: { in: toDelete }, cardId },
+    return this.prisma.$transaction(
+      async (tx) => {
+        // Query 1: lấy existing IDs
+        const existingBlocks = await tx.cardBlock.findMany({
+          where: { cardId },
+          select: { id: true },
         });
-      }
+        const existingIds = new Set(existingBlocks.map((b) => b.id));
 
-      // Cập nhật background và settings của card
-      await tx.card.update({
-        where: { id: cardId },
-        data: {
-          ...(dto.background !== undefined && {
-            background: dto.background as Prisma.InputJsonValue,
-          }),
-          ...(dto.settings !== undefined && {
-            settings: dto.settings as Prisma.InputJsonValue,
-          }),
-        },
-      });
+        // Phân loại
+        const toUpdate: typeof dto.blocks = [];
+        const toCreate: typeof dto.blocks = [];
+        const payloadIds = new Set<string>();
 
-      // Trả về trạng thái mới nhất của canvas
-      return tx.card.findUnique({
-        where: { id: cardId },
-        include: { blocks: { orderBy: { zIndex: 'asc' } } },
-      });
-    });
+        for (const block of dto.blocks) {
+          const isUUID = block.id && UUID_REGEX.test(block.id);
+          if (isUUID && existingIds.has(block.id!)) {
+            payloadIds.add(block.id!);
+            toUpdate.push(block);
+          } else {
+            toCreate.push(block);
+          }
+        }
+
+        const toDelete = [...existingIds].filter((id) => !payloadIds.has(id));
+
+        // Chạy song song: UPDATE bulk + CREATE bulk + DELETE + UPDATE card
+        await Promise.all([
+          // Query 2: UPDATE tất cả blocks bằng 1 raw SQL CASE WHEN
+          toUpdate.length > 0
+            ? tx.$executeRaw`
+            UPDATE "card_blocks" SET
+              "block_type"  = CASE "id" ${Prisma.join(toUpdate.map((b) => Prisma.sql`WHEN ${b.id}::uuid THEN ${b.blockType}::"BlockType"`), ' ')} END,
+              "pos_x"       = CASE "id" ${Prisma.join(toUpdate.map((b) => Prisma.sql`WHEN ${b.id}::uuid THEN ${b.posX ?? 0}::float`), ' ')} END,
+              "pos_y"       = CASE "id" ${Prisma.join(toUpdate.map((b) => Prisma.sql`WHEN ${b.id}::uuid THEN ${b.posY ?? 0}::float`), ' ')} END,
+              "width"      = CASE "id" ${Prisma.join(toUpdate.map((b) => Prisma.sql`WHEN ${b.id}::uuid THEN ${b.width ?? 100}::float`), ' ')} END,
+              "height"     = CASE "id" ${Prisma.join(toUpdate.map((b) => Prisma.sql`WHEN ${b.id}::uuid THEN ${b.height ?? 100}::float`), ' ')} END,
+              "rotation"   = CASE "id" ${Prisma.join(toUpdate.map((b) => Prisma.sql`WHEN ${b.id}::uuid THEN ${b.rotation ?? 0}::float`), ' ')} END,
+              "z_index"     = CASE "id" ${Prisma.join(toUpdate.map((b) => Prisma.sql`WHEN ${b.id}::uuid THEN ${b.zIndex ?? 0}::int`), ' ')} END,
+              "is_locked"   = CASE "id" ${Prisma.join(toUpdate.map((b) => Prisma.sql`WHEN ${b.id}::uuid THEN ${b.isLocked ?? false}::boolean`), ' ')} END,
+              "is_visible"  = CASE "id" ${Prisma.join(toUpdate.map((b) => Prisma.sql`WHEN ${b.id}::uuid THEN ${b.isVisible ?? true}::boolean`), ' ')} END,
+              "content"    = CASE "id" ${Prisma.join(toUpdate.map((b) => Prisma.sql`WHEN ${b.id}::uuid THEN ${JSON.stringify(b.content ?? {})}::jsonb`), ' ')} END,
+              "style"      = CASE "id" ${Prisma.join(toUpdate.map((b) => Prisma.sql`WHEN ${b.id}::uuid THEN ${JSON.stringify(b.style ?? {})}::jsonb`), ' ')} END,
+              "updated_at"  = now()
+            WHERE "id" IN (${Prisma.join(toUpdate.map((b) => Prisma.sql`${b.id}::uuid`))})
+              AND "card_id" = ${cardId}::uuid
+          `
+            : Promise.resolve(),
+
+          // Query 3: CREATE tất cả blocks mới bằng 1 createMany
+          toCreate.length > 0
+            ? tx.cardBlock.createMany({
+              data: toCreate.map((block) => ({
+                cardId,
+                blockType: block.blockType,
+                posX: block.posX ?? 0,
+                posY: block.posY ?? 0,
+                width: block.width ?? 100,
+                height: block.height ?? 100,
+                rotation: block.rotation ?? 0,
+                zIndex: block.zIndex ?? 0,
+                content: block.content ?? {},
+                style: block.style ?? {},
+                isLocked: block.isLocked ?? false,
+                isVisible: block.isVisible ?? true,
+                sourceElementId: block.sourceElementId,
+                sourceTemplateBlockId: block.sourceTemplateBlockId,
+              })),
+              skipDuplicates: true,
+            })
+            : Promise.resolve(),
+
+          // Query 4: DELETE blocks đã xóa ở FE
+          toDelete.length > 0
+            ? tx.cardBlock.deleteMany({
+              where: { id: { in: toDelete }, cardId },
+            })
+            : Promise.resolve(),
+
+          // Query 5: UPDATE card background + settings
+          tx.card.update({
+            where: { id: cardId },
+            data: {
+              ...(dto.background !== undefined && {
+                background: dto.background,
+              }),
+              ...(dto.settings !== undefined && {
+                settings: dto.settings,
+              }),
+            },
+          }),
+        ]);
+
+        // Query 6: trả về kết quả mới nhất
+        return tx.card.findUnique({
+          where: { id: cardId },
+          include: { blocks: { orderBy: { zIndex: 'asc' } } },
+        });
+      },
+      {
+        timeout: 10000, // tăng nhẹ cho an toàn, thực tế 6 queries xong rất nhanh
+        maxWait: 5000,
+      },
+    );
   }
 
   // ============================================================
@@ -656,11 +689,19 @@ export class CardsService {
   /**
    * Upload thumbnail cho thiệp
    */
-  async uploadCardThumbnail(cardId: string, file: Express.Multer.File, userId: string) {
-    await this.verifyCardOwner(cardId, userId);
+  async uploadCardThumbnail(
+    cardId: string,
+    file: Express.Multer.File,
+    userId: string,
+  ) {
+    const card = await this.verifyCardOwner(cardId, userId);
 
-    // Upload lên Cloudinary
-    const asset = await this.assetsService.uploadAsset(file, userId);
+    if (card.thumbnailUrl) {
+      await this.assetsService.deleteAssetByUrlSafe(card.thumbnailUrl, userId);
+    }
+
+    // Upload lên Cloudinary (không lưu vào bảng assets của user)
+    const asset = await this.assetsService.uploadSystemImage(file, userId);
 
     // Cập nhật thẻ
     return this.prisma.card.update({

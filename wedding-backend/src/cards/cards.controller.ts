@@ -16,7 +16,12 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { Request } from 'express';
 
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -48,7 +53,9 @@ export class CardsController {
   // ==========================================================================
 
   @Get('public/:slug')
-  @ApiOperation({ summary: 'Xem thiệp công khai theo slug (không cần đăng nhập)' })
+  @ApiOperation({
+    summary: 'Xem thiệp công khai theo slug (không cần đăng nhập)',
+  })
   getPublicCard(
     @Param('slug') slug: string,
     @Query() query: PublicCardQueryDto,
@@ -71,7 +78,9 @@ export class CardsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get()
-  @ApiOperation({ summary: 'Lấy danh sách thiệp của tôi (có phân trang, bộ lọc)' })
+  @ApiOperation({
+    summary: 'Lấy danh sách thiệp của tôi (có phân trang, bộ lọc)',
+  })
   getUserCards(@Query() query: QueryCardDto, @Req() req: AuthRequest) {
     return this.cardsService.getUserCards(req.user.id, query);
   }
@@ -80,10 +89,7 @@ export class CardsController {
   @ApiBearerAuth()
   @Get(':id')
   @ApiOperation({ summary: 'Lấy chi tiết thiệp kèm blocks (chỉ chủ sở hữu)' })
-  getCard(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Req() req: AuthRequest,
-  ) {
+  getCard(@Param('id', ParseUUIDPipe) id: string, @Req() req: AuthRequest) {
     return this.cardsService.getCardById(id, req.user.id);
   }
 
@@ -103,10 +109,7 @@ export class CardsController {
   @ApiBearerAuth()
   @Delete(':id')
   @ApiOperation({ summary: 'Xóa cứng thiệp (hard delete, cascade blocks)' })
-  deleteCard(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Req() req: AuthRequest,
-  ) {
+  deleteCard(@Param('id', ParseUUIDPipe) id: string, @Req() req: AuthRequest) {
     return this.cardsService.deleteCard(id, req.user.id);
   }
 
@@ -114,10 +117,7 @@ export class CardsController {
   @ApiBearerAuth()
   @Patch(':id/archive')
   @ApiOperation({ summary: 'Soft delete: đổi thiệp sang trạng thái archived' })
-  archiveCard(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Req() req: AuthRequest,
-  ) {
+  archiveCard(@Param('id', ParseUUIDPipe) id: string, @Req() req: AuthRequest) {
     return this.cardsService.archiveCard(id, req.user.id);
   }
 
@@ -129,7 +129,8 @@ export class CardsController {
   @ApiBearerAuth()
   @Post(':id/save')
   @ApiOperation({
-    summary: 'Lưu toàn bộ canvas (auto-save 30s). Sync blocks: add/update/delete.',
+    summary:
+      'Lưu toàn bộ canvas (auto-save 30s). Sync blocks: add/update/delete.',
   })
   saveCanvas(
     @Param('id', ParseUUIDPipe) id: string,

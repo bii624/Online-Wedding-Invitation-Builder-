@@ -37,7 +37,9 @@ export class UpdateCardDto {
   @IsObject()
   background?: object;
 
-  @ApiPropertyOptional({ description: 'Cài đặt thiệp (JSON: nhạc nền, theme, font...)' })
+  @ApiPropertyOptional({
+    description: 'Cài đặt thiệp (JSON: nhạc nền, theme, font...)',
+  })
   @IsOptional()
   @IsObject()
   settings?: object;
@@ -52,7 +54,9 @@ export class UpdateCardDto {
   @IsBoolean()
   isPublic?: boolean;
 
-  @ApiPropertyOptional({ description: 'Mật khẩu xem thiệp (để trống = không cần mật khẩu)' })
+  @ApiPropertyOptional({
+    description: 'Mật khẩu xem thiệp (để trống = không cần mật khẩu)',
+  })
   @IsOptional()
   @IsString()
   @MaxLength(100)

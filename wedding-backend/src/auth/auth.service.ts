@@ -14,14 +14,22 @@ function parseMs(duration: string | number): number {
   const value = parseInt(match[1], 10);
   const unit = match[2] || 'ms';
   switch (unit) {
-    case 'ms': return value;
-    case 's': return value * 1000;
-    case 'm': return value * 60000;
-    case 'h': return value * 3600000;
-    case 'd': return value * 86400000;
-    case 'w': return value * 604800000;
-    case 'y': return value * 31536000000;
-    default: return value;
+    case 'ms':
+      return value;
+    case 's':
+      return value * 1000;
+    case 'm':
+      return value * 60000;
+    case 'h':
+      return value * 3600000;
+    case 'd':
+      return value * 86400000;
+    case 'w':
+      return value * 604800000;
+    case 'y':
+      return value * 31536000000;
+    default:
+      return value;
   }
 }
 
@@ -31,7 +39,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-  ) { }
+  ) {}
 
   async validateUser(email: string, password: string) {
     const user = await this.usersService.findOneByEmail(email);
@@ -55,10 +63,10 @@ export class AuthService {
   createRefreshToken(payload: any) {
     return this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
-      expiresIn: (this.configService.get<string>('JWT_REFRESH_EXPIRES') || '7d') as any,
+      expiresIn: (this.configService.get<string>('JWT_REFRESH_EXPIRES') ||
+        '7d') as any,
     });
   }
-
 
   async login(user: any, response?: Response) {
     const payload = {
@@ -84,7 +92,9 @@ export class AuthService {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        maxAge: parseMs(this.configService.get<string>('JWT_REFRESH_EXPIRES') || '7d'),
+        maxAge: parseMs(
+          this.configService.get<string>('JWT_REFRESH_EXPIRES') || '7d',
+        ),
       });
     }
 
@@ -137,7 +147,9 @@ export class AuthService {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-          maxAge: parseMs(this.configService.get<string>('JWT_REFRESH_EXPIRES') || '7d'),
+          maxAge: parseMs(
+            this.configService.get<string>('JWT_REFRESH_EXPIRES') || '7d',
+          ),
         });
 
         return {
@@ -152,10 +164,14 @@ export class AuthService {
           },
         };
       } else {
-        throw new BadRequestException('Refresh token khong hop le. Vui long login');
+        throw new BadRequestException(
+          'Refresh token khong hop le. Vui long login',
+        );
       }
     } catch (e) {
-      throw new BadRequestException('Refresh token khong hop le. Vui long login');
+      throw new BadRequestException(
+        'Refresh token khong hop le. Vui long login',
+      );
     }
   };
 
@@ -167,4 +183,3 @@ export class AuthService {
     return this.usersService.findOrCreateOAuthUser(profile);
   }
 }
-
