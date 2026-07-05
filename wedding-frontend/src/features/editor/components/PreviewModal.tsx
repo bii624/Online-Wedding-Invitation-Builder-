@@ -8,10 +8,12 @@ interface PreviewModalProps {
 }
 
 export function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
-  const { elements, canvasBackground, canvasWidth, canvasHeight, cardId } = useEditorStore();
+  const { elements, canvasBackground, canvasWidth, canvasHeight, cardId, autoScroll, autoScrollSpeed } = useEditorStore();
   const [windowSize, setWindowSize] = useState({ w: window.innerWidth, h: window.innerHeight });
   const [containerWidth, setContainerWidth] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const innerContainerRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleResize = () => setWindowSize({ w: window.innerWidth, h: window.innerHeight });
@@ -37,6 +39,66 @@ export function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
     if (isOpen) window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
   }, [isOpen, onClose]);
+
+  // Auto-scroll logic (Super Smooth Implementation)
+  useEffect(() => {
+    if (!autoScroll || !containerRef.current || !isOpen || isHovered) {
+      if (innerContainerRef.current) {
+        innerContainerRef.current.style.transform = `translateY(0px)`;
+      }
+      return;
+    }
+    
+    const container = containerRef.current;
+    const innerContainer = innerContainerRef.current;
+    let animationFrameId: number;
+    let lastTime = performance.now();
+    let exactScrollTop = container.scrollTop;
+    
+    // Speed mapping: autoScrollSpeed is 10-100.
+    // Max speed (100) = ~120px/sec. Min speed (10) = ~12px/sec.
+    const pixelsPerSecond = (autoScrollSpeed / 100) * 120;
+    
+    const scrollStep = (currentTime: number) => {
+      // Prevent massive jumps if tab was inactive
+      let deltaTime = (currentTime - lastTime) / 1000;
+      if (deltaTime > 0.1) deltaTime = 0.016; 
+      lastTime = currentTime;
+      
+      exactScrollTop += pixelsPerSecond * deltaTime;
+      
+      const integerScroll = Math.floor(exactScrollTop);
+      const fractionalScroll = exactScrollTop - integerScroll;
+      
+      container.scrollTop = integerScroll;
+      
+      // Sub-pixel translation for buttery smooth animation
+      if (innerContainer) {
+        innerContainer.style.transform = `translateY(-${fractionalScroll}px)`;
+      }
+      
+      // Stop if reached bottom
+      if (container.scrollTop + container.clientHeight < container.scrollHeight - 1) {
+        animationFrameId = requestAnimationFrame(scrollStep);
+      } else if (innerContainer) {
+        innerContainer.style.transform = `translateY(0px)`;
+      }
+    };
+    
+    const timeoutId = setTimeout(() => {
+      lastTime = performance.now();
+      exactScrollTop = container.scrollTop;
+      animationFrameId = requestAnimationFrame(scrollStep);
+    }, 1500); // Wait 1.5s before starting scroll
+    
+    return () => {
+      clearTimeout(timeoutId);
+      cancelAnimationFrame(animationFrameId);
+      if (innerContainerRef.current) {
+        innerContainerRef.current.style.transform = `translateY(0px)`;
+      }
+    };
+  }, [isOpen, autoScroll, autoScrollSpeed, isHovered]);
 
   if (!isOpen) return null;
 
@@ -94,6 +156,12 @@ export function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
           <div
             ref={containerRef}
             className="preview-scroll-container"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onTouchStart={() => setIsHovered(true)}
+            onTouchEnd={() => {
+              setTimeout(() => setIsHovered(false), 2000); // Resume 2s after touch ends
+            }}
             style={{
               width: windowSize.w - 32,
               height: windowSize.h - 80,
@@ -105,7 +173,7 @@ export function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
               backgroundColor: '#fff',
             }}
           >
-            <div style={{
+            <div ref={innerContainerRef} style={{
               width: actualContainerWidth,
               height: canvasHeight * scale,
               position: 'relative',
@@ -158,6 +226,12 @@ export function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
             <div
               ref={containerRef}
               className="preview-scroll-container"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              onTouchStart={() => setIsHovered(true)}
+              onTouchEnd={() => {
+                setTimeout(() => setIsHovered(false), 2000);
+              }}
               style={{
                 width: PHONE_INNER_W,
                 height: PHONE_INNER_H,
@@ -168,7 +242,7 @@ export function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
                 position: 'relative',
               }}
             >
-              <div style={{
+              <div ref={innerContainerRef} style={{
                 width: actualContainerWidth,
                 height: canvasHeight * scale,
                 position: 'relative',

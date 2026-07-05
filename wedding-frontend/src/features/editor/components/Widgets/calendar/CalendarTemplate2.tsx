@@ -13,57 +13,56 @@ export const CalendarTemplate2 = React.memo(({ content, currentMonth }: Calendar
   const primaryDate = content.primaryDate ? parseDate(content.primaryDate) : null;
   const secondaryDate = content.showTwoDates && content.secondaryDate ? parseDate(content.secondaryDate) : null;
 
-  const bgColor = content.primaryColor || '#8B0000'; // Default to dark red if empty
+  const textColor = content.textColor || '#8B2929';
+  const frameColor = content.primaryColor || '#D4AF37'; 
+  const heartColor = content.textColor || '#8B2929'; 
+  const bgColor = content.backgroundColor || 'transparent';
+  
+  const borderWidth = content.border.width > 0 ? content.border.width : 1;
+  const paddingObj = content.padding || { top: 16, right: 16, bottom: 16, left: 16 };
 
   return (
     <div style={{
       width: '100%',
       height: '100%',
       backgroundColor: bgColor,
-      padding: `${content.padding.top}px ${content.padding.right}px ${content.padding.bottom}px ${content.padding.left}px`,
-      border: `${content.border.width}px double #D4AF37`, // Double gold border
-      borderRadius: content.border.radius,
+      padding: `${paddingObj.top}px ${paddingObj.right}px ${paddingObj.bottom}px ${paddingObj.left}px`,
+      border: `${borderWidth}px solid ${frameColor}`, 
+      borderRadius: content.border.radius || 8,
       boxShadow: `${content.shadow.x}px ${content.shadow.y}px ${content.shadow.blur}px ${content.shadow.spread}px ${content.shadow.color}`,
       fontFamily: content.font,
-      color: '#fff', // Default text is white/gold
+      color: textColor, 
       display: 'flex',
       flexDirection: 'column',
       opacity: content.opacity,
       boxSizing: 'border-box',
       position: 'relative'
     }}>
-      {/* Corner decorations */}
-      <div style={{ position: 'absolute', top: 4, left: 4, width: 24, height: 24, borderTop: '2px solid #D4AF37', borderLeft: '2px solid #D4AF37' }}></div>
-      <div style={{ position: 'absolute', top: 4, right: 4, width: 24, height: 24, borderTop: '2px solid #D4AF37', borderRight: '2px solid #D4AF37' }}></div>
-      <div style={{ position: 'absolute', bottom: 4, left: 4, width: 24, height: 24, borderBottom: '2px solid #D4AF37', borderLeft: '2px solid #D4AF37' }}></div>
-      <div style={{ position: 'absolute', bottom: 4, right: 4, width: 24, height: 24, borderBottom: '2px solid #D4AF37', borderRight: '2px solid #D4AF37' }}></div>
-
       {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: 12, marginTop: 8 }}>
-        <span style={{ fontSize: content.fontSize * 1.2, fontWeight: 'bold', color: '#D4AF37', letterSpacing: 1 }}>
+      <div style={{ textAlign: 'center', marginBottom: 8, marginTop: 4 }}>
+        <span style={{ fontSize: content.fontSize * 1.3, fontWeight: 500 }}>
           Tháng {currentMonth.getMonth() + 1} / {currentMonth.getFullYear()}
         </span>
       </div>
       
-      <div style={{ height: 1, backgroundColor: '#D4AF37', marginBottom: 16, opacity: 0.6 }} />
-
       {/* Weekdays */}
       <div style={{ 
         display: 'grid', 
         gridTemplateColumns: 'repeat(7, 1fr)', 
-        marginBottom: 16
+        borderTop: `${borderWidth}px solid ${frameColor}`,
+        borderBottom: `${borderWidth}px solid ${frameColor}`,
+        padding: '6px 0',
+        marginBottom: 12
       }}>
         {WEEKDAYS.map(day => (
-          <div key={day} style={{ textAlign: 'center', color: '#D4AF37', fontSize: content.fontSize * 0.9, fontWeight: 600 }}>
+          <div key={day} style={{ textAlign: 'center', fontSize: content.fontSize * 0.95, opacity: 0.8, fontWeight: 400 }}>
             {day}
           </div>
         ))}
       </div>
 
-      <div style={{ height: 1, backgroundColor: '#D4AF37', marginBottom: 16, opacity: 0.6 }} />
-
       {/* Days Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', rowGap: 16, zIndex: 1 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', rowGap: 12, zIndex: 1, paddingBottom: 8 }}>
         {Array.from({ length: firstDay }).map((_, i) => (
           <div key={`empty-${i}`} />
         ))}
@@ -72,36 +71,21 @@ export const CalendarTemplate2 = React.memo(({ content, currentMonth }: Calendar
           const isSecondary = secondaryDate && isSameDay(date, secondaryDate);
           
           return (
-            <div key={date.toISOString()} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 32 }}>
+            <div key={date.toISOString()} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 28 }}>
               {isPrimary && isSecondary ? (
-                <div style={{ 
-                  width: 32, height: 32, borderRadius: '50%',
-                  background: `linear-gradient(45deg, #D4AF37, ${content.secondaryColor})`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: bgColor, fontWeight: 'bold', fontSize: content.fontSize
-                }}>
-                  {date.getDate()}
+                <div style={{ filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.2))' }}>
+                  <HeartMarker color={heartColor} size={content.fontSize * 2.8} dayNumber={date.getDate()} showDayNumber={true} />
                 </div>
               ) : isPrimary ? (
-                <div style={{ 
-                  width: 32, height: 32, borderRadius: '50%',
-                  backgroundColor: '#D4AF37',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: bgColor, fontWeight: 'bold', fontSize: content.fontSize
-                }}>
-                  {date.getDate()}
+                <div style={{ filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.2))' }}>
+                  <HeartMarker color={heartColor} size={content.fontSize * 2.8} dayNumber={date.getDate()} showDayNumber={true} />
                 </div>
               ) : isSecondary ? (
-                <div style={{ 
-                  width: 32, height: 32, borderRadius: '50%',
-                  backgroundColor: content.secondaryColor,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: '#fff', fontWeight: 'bold', fontSize: content.fontSize
-                }}>
-                  {date.getDate()}
+                <div style={{ filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.2))' }}>
+                  <HeartMarker color={content.secondaryColor || '#D4AF37'} size={content.fontSize * 2.8} dayNumber={date.getDate()} showDayNumber={true} />
                 </div>
               ) : (
-                <span style={{ fontSize: content.fontSize, color: '#fff' }}>{date.getDate()}</span>
+                <span style={{ fontSize: content.fontSize * 1.1, fontWeight: 300, opacity: 0.9 }}>{date.getDate()}</span>
               )}
             </div>
           );

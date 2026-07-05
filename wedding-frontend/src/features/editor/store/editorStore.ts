@@ -170,6 +170,10 @@ const DEFAULT_QR_GIFT_BOX_PROPS: import('../types/editor.types').QrGiftBoxConten
   alignment: "center",
   backgroundColor: "transparent",
   opacity: 1,
+  popupHeaderBgColor: "#8B2929",
+  popupHeaderTextColor: "#FFFFFF",
+  popupBgColor: "#EAE0D5",
+  popupTextColor: "#4A4A4A",
   accounts: []
 };
 
@@ -354,6 +358,10 @@ interface EditorActions {
   loadCardData: (cardId: string) => Promise<void>;
   loadTemplateData: (templateId: string) => Promise<void>;
   saveTemplateNow: () => Promise<void>;
+  
+  // Settings
+  setAutoScroll: (enabled: boolean) => void;
+  setAutoScrollSpeed: (speed: number) => void;
 }
 
 
@@ -407,13 +415,40 @@ const INITIAL_STATE: EditorState = {
   activeGlobalAnimationPreset: null,
   cardId: null,
   autoSaveStatus: 'idle',
+  lastSavedData: null,
   editorMode: 'card' as const,
   templateId: null,
+  autoScroll: false,
+  autoScrollSpeed: 50,
 };
 
 // ── Store ─────────────────────────────────────────────────
+const getViewportCenterY = (zoom: number, canvasHeight: number): number => {
+  const workspace = document.querySelector('.canvas-workspace');
+  const canvasEl = document.getElementById('editor-canvas-frame');
+  if (workspace && canvasEl) {
+    const scale = zoom / 100;
+    const workspaceRect = workspace.getBoundingClientRect();
+    const canvasRect = canvasEl.getBoundingClientRect();
+    
+    const visibleCenterY = workspaceRect.top + workspaceRect.height / 2;
+    const offsetInCanvas = (visibleCenterY - canvasRect.top) / scale;
+    
+    return Math.max(50, Math.min(offsetInCanvas, canvasHeight - 50));
+  }
+  return 200;
+};
+
 export const useEditorStore = create<EditorState & EditorActions>((set, get) => ({
   ...INITIAL_STATE,
+
+  setAutoScroll: (enabled) => {
+    set({ autoScroll: enabled });
+    get().pushHistory(); // Optional: whether changing scroll state should push history
+  },
+  setAutoScrollSpeed: (speed) => {
+    set({ autoScrollSpeed: speed });
+  },
 
   setActiveTool: (tool) => set({ activeTool: tool }),
 
@@ -441,7 +476,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       id,
       type: 'text',
       x: 60 + Math.random() * 100,
-      y: 80 + Math.random() * 100,
+      y: getViewportCenterY(get().zoom, get().canvasHeight) - 30 + Math.random() * 60,
       width: 280,
       height: 60,
       zIndex: elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) + 1 : 1,
@@ -463,7 +498,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     const { elements } = get();
     const id = `el-img-${Date.now()}`;
     const defaultX = x !== undefined ? x : 50 + Math.random() * 80;
-    const defaultY = y !== undefined ? y : 50 + Math.random() * 80;
+    const defaultY = y !== undefined ? y : Math.max(50, getViewportCenterY(get().zoom, get().canvasHeight) - 150 + Math.random() * 80);
     const newEl: CanvasElement = {
       id,
       type: 'image',
@@ -490,7 +525,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     const { elements } = get();
     const id = `el-shape-${Date.now()}`;
     const x = 50 + Math.random() * 80;
-    const y = 50 + Math.random() * 80;
+    const y = Math.max(50, getViewportCenterY(get().zoom, get().canvasHeight) - 75 + Math.random() * 80);
 
     let width = 150;
     let height = 150;
@@ -532,7 +567,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     const { elements } = get();
     const id = `el-countdown-${Date.now()}`;
     const defaultX = x !== undefined ? x : 50;
-    const defaultY = y !== undefined ? y : 200;
+    const defaultY = y !== undefined ? y : getViewportCenterY(get().zoom, get().canvasHeight) - 50;
     const newEl: CanvasElement = {
       id,
       type: 'countdown',
@@ -559,7 +594,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     const { elements } = get();
     const id = `el-map-${Date.now()}`;
     const defaultX = x !== undefined ? x : 50;
-    const defaultY = y !== undefined ? y : 200;
+    const defaultY = y !== undefined ? y : getViewportCenterY(get().zoom, get().canvasHeight) - 150;
     const newEl: import('../types/editor.types').CanvasElement = {
       id,
       type: 'map',
@@ -588,7 +623,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     const { elements } = get();
     const id = `el-qrcode-${Date.now()}`;
     const defaultX = x !== undefined ? x : 50;
-    const defaultY = y !== undefined ? y : 200;
+    const defaultY = y !== undefined ? y : getViewportCenterY(get().zoom, get().canvasHeight) - 75;
     const newEl: import('../types/editor.types').CanvasElement = {
       id,
       type: 'qr_code',
@@ -615,7 +650,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     const { elements } = get();
     const id = `el-calendar-${Date.now()}`;
     const defaultX = x !== undefined ? x : 50;
-    const defaultY = y !== undefined ? y : 200;
+    const defaultY = y !== undefined ? y : getViewportCenterY(get().zoom, get().canvasHeight) - 160;
     const newEl: import('../types/editor.types').CanvasElement = {
       id,
       type: 'calendar',
@@ -642,7 +677,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     const { elements } = get();
     const id = `el-album-${Date.now()}`;
     const defaultX = x !== undefined ? x : 50;
-    const defaultY = y !== undefined ? y : 200;
+    const defaultY = y !== undefined ? y : getViewportCenterY(get().zoom, get().canvasHeight) - 150;
     const newEl: import('../types/editor.types').CanvasElement = {
       id,
       type: 'album',
@@ -669,7 +704,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     const { elements } = get();
     const id = `el-form-${Date.now()}`;
     const defaultX = x !== undefined ? x : 50;
-    const defaultY = y !== undefined ? y : 200;
+    const defaultY = y !== undefined ? y : getViewportCenterY(get().zoom, get().canvasHeight) - 175;
     const newEl: import('../types/editor.types').CanvasElement = {
       id,
       type: 'form',
@@ -907,7 +942,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     const { elements } = get();
     const id = `el-button-contact-${Date.now()}`;
     const defaultX = x !== undefined ? x : 100;
-    const defaultY = y !== undefined ? y : 200;
+    const defaultY = y !== undefined ? y : getViewportCenterY(get().zoom, get().canvasHeight) - 30;
     const newEl: import('../types/editor.types').CanvasElement = {
       id,
       type: 'button_contact',
@@ -1159,8 +1194,11 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
   setAutoSaveStatus: (status) => set({ autoSaveStatus: status }),
 
   saveCanvasNow: async () => {
-    const { cardId, elements, canvasBackground, music, canvasWidth } = get();
+    const { cardId, elements, canvasBackground, music, canvasWidth, lastSavedData } = get();
     if (!cardId) return;
+
+    const currentDataStr = JSON.stringify({ elements, canvasBackground, music, canvasWidth });
+    if (currentDataStr === lastSavedData) return;
 
     set({ autoSaveStatus: 'saving' });
     try {
@@ -1206,6 +1244,8 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       const settings = {
         ...(music ? { music } : {}),
         canvasHeight: get().canvasHeight,
+        autoScroll: get().autoScroll,
+        autoScrollSpeed: get().autoScrollSpeed,
       };
 
       await cardsApi.saveCanvas(cardId, {
@@ -1215,7 +1255,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       });
 
       // DB đã lưu xong → báo 'saved' ngay, không chờ thumbnail
-      set({ autoSaveStatus: 'saved' });
+      set({ autoSaveStatus: 'saved', lastSavedData: currentDataStr });
       setTimeout(() => {
         const currentStatus = get().autoSaveStatus;
         if (currentStatus === 'saved') set({ autoSaveStatus: 'idle' });
@@ -1288,6 +1328,8 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       const background = card.background ?? get().canvasBackground;
       const music = card.settings?.music ?? null;
       const height = card.settings?.canvasHeight ?? get().canvasHeight;
+      const autoScroll = card.settings?.autoScroll ?? false;
+      const autoScrollSpeed = card.settings?.autoScrollSpeed ?? 50;
 
       set({
         cardId,
@@ -1296,10 +1338,13 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         music,
         canvasWidth: card.canvasWidth ?? get().canvasWidth,
         canvasHeight: height,
+        autoScroll,
+        autoScrollSpeed,
         history: [{ elements, canvasBackground: background }],
         historyIndex: 0,
         selectedElement: null,
       });
+      set({ lastSavedData: JSON.stringify({ elements, canvasBackground: background, music, canvasWidth: card.canvasWidth ?? get().canvasWidth }) });
     } catch (err) {
       console.error('[loadCardData] Failed:', err);
     }
@@ -1348,6 +1393,8 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
 
       const background = template.background ?? get().canvasBackground;
       const height = template.background?.canvasHeight ?? get().canvasHeight;
+      const autoScroll = template.background?.autoScroll ?? false;
+      const autoScrollSpeed = template.background?.autoScrollSpeed ?? 50;
 
       set({
         templateId,
@@ -1356,19 +1403,26 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         canvasBackground: background,
         canvasWidth: template.canvasWidth ?? get().canvasWidth,
         canvasHeight: height,
+        autoScroll,
+        autoScrollSpeed,
         history: [{ elements, canvasBackground: background }],
         historyIndex: 0,
         selectedElement: null,
         autoSaveStatus: 'idle',
       });
+      const mappedElements = get().elements;
+      set({ lastSavedData: JSON.stringify({ elements: mappedElements, canvasBackground: background, music: null, canvasWidth: template.canvasWidth ?? get().canvasWidth }) });
     } catch (err) {
       console.error('[loadTemplateData] Failed:', err);
     }
   },
 
   saveTemplateNow: async () => {
-    const { templateId, elements, canvasBackground } = get();
+    const { templateId, elements, canvasBackground, canvasWidth, lastSavedData } = get();
     if (!templateId) return;
+
+    const currentDataStr = JSON.stringify({ elements, canvasBackground, music: null, canvasWidth });
+    if (currentDataStr === lastSavedData) return;
 
     set({ autoSaveStatus: 'saving' });
     try {
@@ -1413,11 +1467,13 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         background: {
           ...(canvasBackground as object),
           canvasHeight: get().canvasHeight,
+          autoScroll: get().autoScroll,
+          autoScrollSpeed: get().autoScrollSpeed,
         },
       });
 
       // DB đã lưu xong → báo 'saved' ngay, không chờ thumbnail
-      set({ autoSaveStatus: 'saved' });
+      set({ autoSaveStatus: 'saved', lastSavedData: currentDataStr });
       setTimeout(() => {
         if (get().autoSaveStatus === 'saved') set({ autoSaveStatus: 'idle' });
       }, 3000);

@@ -25,21 +25,41 @@ export function RedEnvelope({ scaleFactor = 1, color = 'rgb(185, 28, 28)' }: Red
             50% { transform: translateY(-10px); }
           }
           @keyframes redEnvShake {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-8deg); }
-            75% { transform: rotate(8deg); }
+            0%, 100% { transform: rotate(-8deg); }
+            50% { transform: rotate(8deg); }
+          }
+          @keyframes redEnvShakeHover {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
           }
           @keyframes redEnvGlow {
             0%, 100% { opacity: 0.4; transform: scale(0.9); }
             50% { opacity: 0.8; transform: scale(1.1); }
+          }
+          @keyframes redEnvGlowHover {
+            0%, 100% { opacity: 0.9; transform: scale(1.3); }
+            50% { opacity: 1; transform: scale(1.5); }
+          }
+          @keyframes redEnvFloatHover {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-25px); }
           }
           .coin-anim-1 { animation: redEnvFloat 3s ease-in-out infinite; }
           .coin-anim-2 { animation: redEnvFloat 3s ease-in-out infinite 0.5s; }
           .coin-anim-3 { animation: redEnvFloat 3s ease-in-out infinite 1s; }
           .coin-anim-4 { animation: redEnvFloat 3s ease-in-out infinite 1.5s; }
           .coin-anim-5 { animation: redEnvFloat 3s ease-in-out infinite 2s; }
-          .env-shake { animation: redEnvShake 2.5s ease-in-out infinite; transform-origin: bottom center; }
-          .env-glow { animation: redEnvGlow 3s ease-in-out infinite; }
+          
+          .group:hover .coin-anim-1, .group:hover .coin-anim-2, .group:hover .coin-anim-3, .group:hover .coin-anim-4, .group:hover .coin-anim-5 {
+            animation-name: redEnvFloatHover;
+            animation-duration: 0.8s;
+          }
+
+          .env-shake { animation: redEnvShake 2.5s ease-in-out infinite; transform-origin: bottom center; transition: transform 0.3s ease; }
+          .group:hover .env-shake { animation: redEnvShakeHover 0.8s ease-in-out infinite; }
+          
+          .env-glow { animation: redEnvGlow 3s ease-in-out infinite; transition: all 0.3s ease; }
+          .group:hover .env-glow { animation: redEnvGlowHover 0.6s ease-in-out infinite; opacity: 1 !important; transform: scale(1.4) !important; filter: blur(35px) brightness(1.8) !important; }
         `}
       </style>
       

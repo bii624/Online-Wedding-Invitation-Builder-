@@ -8,9 +8,10 @@ interface AssetPickerModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelect: (imageUrls: string[]) => void;
+  multiple?: boolean;
 }
 
-export function AssetPickerModal({ isOpen, onClose, onSelect }: AssetPickerModalProps) {
+export function AssetPickerModal({ isOpen, onClose, onSelect, multiple = true }: AssetPickerModalProps) {
   const { uploadedImages, fetchUploadedAssets, addUploadedImage } = useEditorStore();
   const [selectedUrls, setSelectedUrls] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -26,9 +27,15 @@ export function AssetPickerModal({ isOpen, onClose, onSelect }: AssetPickerModal
   if (!isOpen) return null;
 
   const toggleSelect = (url: string) => {
-    setSelectedUrls((prev) => 
-      prev.includes(url) ? prev.filter((u) => u !== url) : [...prev, url]
-    );
+    if (multiple) {
+      setSelectedUrls((prev) => 
+        prev.includes(url) ? prev.filter((u) => u !== url) : [...prev, url]
+      );
+    } else {
+      // In single select mode, immediately select and close
+      onSelect([url]);
+      onClose();
+    }
   };
 
   const handleConfirm = () => {

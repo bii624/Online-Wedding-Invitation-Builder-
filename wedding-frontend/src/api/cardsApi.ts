@@ -103,4 +103,11 @@ export const cardsApi = {
     const response = await axiosClient.post(`/cards/public/${cardId}/wishes`, data);
     return response.data;
   },
+
+  getPublicCard: async (slug: string, password?: string) => {
+    const response = await axiosClient.get(`/cards/public/${slug}`, {
+      params: password ? { password } : undefined,
+    });
+    return response.data;
+  },
 };

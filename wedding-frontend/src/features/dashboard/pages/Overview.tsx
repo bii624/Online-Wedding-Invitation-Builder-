@@ -443,21 +443,7 @@ export const Overview = () => {
             </div>
 
             <div className="hidden lg:flex items-center justify-center shrink-0 relative mr-4 select-none pointer-events-none">
-              <div className="absolute inset-0 bg-rose-100/35 rounded-2xl blur-xl" />
-              <div className="relative w-48 h-32 bg-[#fffdf9] rounded-2xl border border-amber-200/50 shadow-xl p-4 rotate-3 transform flex flex-col justify-between text-zinc-800">
-                <div className="absolute top-2 inset-x-2 border-t border-amber-200/40" />
-                <div className="flex flex-col items-center justify-center flex-1 space-y-1 mt-2">
-                  <span className="text-[9px] font-extrabold text-amber-600/80 tracking-widest font-serif uppercase">SAVE THE DATE</span>
-                  <div className="h-6 w-6 rounded-full border border-amber-200 flex items-center justify-center text-[10px] font-serif font-black text-amber-700 bg-amber-50/50">
-                    N
-                  </div>
-                  <span className="text-[8px] text-zinc-400 font-serif font-medium">Nguyen & Partner</span>
-                </div>
-                <div className="text-center text-[8px] font-inter font-semibold text-zinc-400 tracking-wider">
-                  DECEMBER 2026
-                </div>
-                <div className="absolute bottom-2 inset-x-2 border-b border-amber-200/40" />
-              </div>
+              <img src="" alt="Welcome banner" className="w-full h-auto rounded-2xl" />
             </div>
           </div>
         </div>

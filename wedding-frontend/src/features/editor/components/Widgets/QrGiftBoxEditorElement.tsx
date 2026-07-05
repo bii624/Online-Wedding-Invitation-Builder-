@@ -29,7 +29,7 @@ export function QrGiftBoxEditorElement({ element, zoom }: QrGiftBoxEditorElement
   };
 
   return (
-    <div style={style} title="Nhấn để xem thử">
+    <div className="group" style={style} title="Nhấn để xem thử">
       {props.iconUrl ? (
         <img 
           src={props.iconUrl} 
@@ -37,7 +37,7 @@ export function QrGiftBoxEditorElement({ element, zoom }: QrGiftBoxEditorElement
           style={{ width: '80%', height: 'auto', maxHeight: '70%', objectFit: 'contain', marginBottom: `${8 * scaleFactor}px`, pointerEvents: 'none' }} 
         />
       ) : (
-        <div style={{ marginBottom: `${8 * scaleFactor}px`, pointerEvents: 'none' }}>
+        <div style={{ marginBottom: `${8 * scaleFactor}px` }}>
           <RedEnvelope scaleFactor={scaleFactor * 0.45} color={props.envelopeColor} />
         </div>
       )}

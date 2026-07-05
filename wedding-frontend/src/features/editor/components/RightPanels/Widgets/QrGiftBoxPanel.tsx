@@ -19,6 +19,10 @@ export function QrGiftBoxPanel({ element }: QrGiftBoxPanelProps) {
   const { updateQrGiftBoxProps, activeRightTab } = useEditorStore();
   const [showBgColorPicker, setShowBgColorPicker] = useState(false);
   const [showEnvelopeColorPicker, setShowEnvelopeColorPicker] = useState(false);
+  const [showPopupHeaderBgPicker, setShowPopupHeaderBgPicker] = useState(false);
+  const [showPopupHeaderTextColorPicker, setShowPopupHeaderTextColorPicker] = useState(false);
+  const [showPopupBgPicker, setShowPopupBgPicker] = useState(false);
+  const [showPopupTextColorPicker, setShowPopupTextColorPicker] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
 
   // Local state for add/edit form
@@ -295,6 +299,58 @@ export function QrGiftBoxPanel({ element }: QrGiftBoxPanelProps) {
                 onClose={() => setShowBgColorPicker(false)}
                 alignRight={true}
               />
+            </div>
+          )}
+        </div>
+
+        <div className="rp-field" style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
+          <span className="rp-label">Màu nền Header (Popup)</span>
+          <div
+            onClick={() => setShowPopupHeaderBgPicker(!showPopupHeaderBgPicker)}
+            style={{ width: 24, height: 24, borderRadius: '50%', backgroundColor: props.popupHeaderBgColor || '#8B2929', border: '1px solid #ccc', cursor: 'pointer' }}
+          />
+          {showPopupHeaderBgPicker && (
+            <div style={{ position: 'absolute', right: 0, top: 32, zIndex: 10 }}>
+              <CustomColorPicker initialColor={props.popupHeaderBgColor || '#8B2929'} onChange={(c) => handlePropChange('popupHeaderBgColor', c.color)} onClose={() => setShowPopupHeaderBgPicker(false)} alignRight={true} />
+            </div>
+          )}
+        </div>
+
+        <div className="rp-field" style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
+          <span className="rp-label">Màu chữ Header (Popup)</span>
+          <div
+            onClick={() => setShowPopupHeaderTextColorPicker(!showPopupHeaderTextColorPicker)}
+            style={{ width: 24, height: 24, borderRadius: '50%', backgroundColor: props.popupHeaderTextColor || '#FFFFFF', border: '1px solid #ccc', cursor: 'pointer' }}
+          />
+          {showPopupHeaderTextColorPicker && (
+            <div style={{ position: 'absolute', right: 0, top: 32, zIndex: 10 }}>
+              <CustomColorPicker initialColor={props.popupHeaderTextColor || '#FFFFFF'} onChange={(c) => handlePropChange('popupHeaderTextColor', c.color)} onClose={() => setShowPopupHeaderTextColorPicker(false)} alignRight={true} />
+            </div>
+          )}
+        </div>
+
+        <div className="rp-field" style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
+          <span className="rp-label">Màu nền Popup</span>
+          <div
+            onClick={() => setShowPopupBgPicker(!showPopupBgPicker)}
+            style={{ width: 24, height: 24, borderRadius: '50%', backgroundColor: props.popupBgColor || '#EAE0D5', border: '1px solid #ccc', cursor: 'pointer' }}
+          />
+          {showPopupBgPicker && (
+            <div style={{ position: 'absolute', right: 0, top: 32, zIndex: 10 }}>
+              <CustomColorPicker initialColor={props.popupBgColor || '#EAE0D5'} onChange={(c) => handlePropChange('popupBgColor', c.color)} onClose={() => setShowPopupBgPicker(false)} alignRight={true} />
+            </div>
+          )}
+        </div>
+
+        <div className="rp-field" style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
+          <span className="rp-label">Màu chữ Popup</span>
+          <div
+            onClick={() => setShowPopupTextColorPicker(!showPopupTextColorPicker)}
+            style={{ width: 24, height: 24, borderRadius: '50%', backgroundColor: props.popupTextColor || '#4A4A4A', border: '1px solid #ccc', cursor: 'pointer' }}
+          />
+          {showPopupTextColorPicker && (
+            <div style={{ position: 'absolute', right: 0, top: 32, zIndex: 10 }}>
+              <CustomColorPicker initialColor={props.popupTextColor || '#4A4A4A'} onChange={(c) => handlePropChange('popupTextColor', c.color)} onClose={() => setShowPopupTextColorPicker(false)} alignRight={true} />
             </div>
           )}
         </div>

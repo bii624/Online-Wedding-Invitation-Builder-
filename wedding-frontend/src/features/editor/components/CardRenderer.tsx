@@ -22,6 +22,7 @@ function RenderedElement({ element }: { element: CanvasElement }) {
   const ap = element.animationProps ?? DEFAULT_ANIMATION_PROPS;
   const observerRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<HTMLDivElement>(null);
+  const [hasTriggered, setHasTriggered] = React.useState(false);
 
   // Loop animation CSS class
   const loopClass = useMemo(() => {
@@ -57,13 +58,23 @@ function RenderedElement({ element }: { element: CanvasElement }) {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            applyEntry();
+            // Chỉ thêm hiệu ứng nếu chưa có (để lướt lên không bị áp dụng lại)
+            if (!el.classList.contains(`animate__${ap.entryEffect}`)) {
+              setHasTriggered(true);
+              applyEntry();
+            }
           } else {
-            el.classList.remove('animate__animated', `animate__${ap.entryEffect}`);
+            // Chỉ reset hiệu ứng khi element đi ra khỏi màn hình ở cạnh dưới (lướt lên trên)
+            // entry.boundingClientRect.top > 0 thường có nghĩa là nó đang ở dưới màn hình
+            const rootTop = entry.rootBounds ? entry.rootBounds.top : 0;
+            if (entry.boundingClientRect.top > rootTop + window.innerHeight / 3) {
+              setHasTriggered(false);
+              el.classList.remove('animate__animated', `animate__${ap.entryEffect}`);
+            }
           }
         });
       },
-      { threshold: 0.1 }
+      { rootMargin: '0px 0px -40% 0px', threshold: 0 }
     );
 
     observer.observe(observerTarget);
@@ -87,7 +98,7 @@ function RenderedElement({ element }: { element: CanvasElement }) {
     width: '100%',
     height: '100%',
     transform: element.rotation ? `rotate(${element.rotation}deg)` : undefined,
-    opacity: (element as any)[`${element.type}Props`]?.opacity ?? 1,
+    opacity: (ap?.entryEnabled && ap.entryEffect !== 'none' && !hasTriggered) ? 0 : ((element as any)[`${element.type}Props`]?.opacity ?? 1),
   };
 
   return (

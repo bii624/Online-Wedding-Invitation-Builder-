@@ -38,7 +38,7 @@ import { ModerationPage } from './features/admin/pages/ModerationPage';
 import Templates from './pages/Templates/Templates';
 import { Reviews } from './pages/Reviews/Reviews';
 import { Contact } from './pages/Contact/Contact';
-
+import { PublicViewPage } from './pages/PublicViewPage/PublicViewPage';
 
 
 function App() {
@@ -92,6 +92,9 @@ function App() {
           <Route path="moderation" element={<ModerationPage />} />
         </Route>
 
+
+        {/* Public wedding card viewer - no auth required */}
+        <Route path="/view/:slug" element={<PublicViewPage />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

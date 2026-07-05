@@ -39,6 +39,7 @@ const SaveIcon = () => (
 
 import { useState } from 'react';
 import { PreviewModal } from './PreviewModal';
+import { PublishModal } from './PublishModal';
 
 const AUTO_SAVE_LABELS: Record<string, { label: string; color: string; pulse: boolean }> = {
   idle: { label: 'Sẵn sàng', color: '#9ca3af', pulse: false },
@@ -49,6 +50,7 @@ const AUTO_SAVE_LABELS: Record<string, { label: string; color: string; pulse: bo
 
 export function Header() {
   const [showPreview, setShowPreview] = useState(false);
+  const [showPublish, setShowPublish] = useState(false);
   const { undo, redo, historyIndex, history, autoSaveStatus, saveCanvasNow, saveTemplateNow, cardId, templateId, editorMode } = useEditorStore();
   const { user } = useAuthStore();
   const navigate = useNavigate();
@@ -157,7 +159,7 @@ export function Header() {
           Xem trước
         </button>
         <div className="header-divider" />
-        <button id="btn-publish" className="header-btn header-btn-publish">
+        <button id="btn-publish" className="header-btn header-btn-publish" onClick={() => setShowPublish(true)}>
           <PublishIcon />
           Xuất bản
         </button>
@@ -172,6 +174,7 @@ export function Header() {
       </div>
 
       <PreviewModal isOpen={showPreview} onClose={() => setShowPreview(false)} />
+      <PublishModal isOpen={showPublish} onClose={() => setShowPublish(false)} />
     </header>
   );
 }

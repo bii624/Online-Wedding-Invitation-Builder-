@@ -2,7 +2,7 @@
 // MAIN CANVAS COMPONENT
 // ============================================================
 
-import { useRef, useCallback, useEffect, useMemo } from 'react';
+import { useRef, useCallback, useEffect, useMemo, useState } from 'react';
 import '../styles/Canvas.css';
 import { useEditorStore } from '../store/editorStore';
 import { DEFAULT_ANIMATION_PROPS } from '../store/editorStore';
@@ -93,6 +93,7 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
   const dragRef = useRef({ isDragging: false, startX: 0, startY: 0, origX: 0, origY: 0 });
   const observerRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<HTMLDivElement>(null);
+  const [hasTriggered, setHasTriggered] = useState(false);
   const isSelected = selectedElement?.id === element.id;
   const ap = element.animationProps ?? DEFAULT_ANIMATION_PROPS;
 
@@ -131,14 +132,16 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
+            setHasTriggered(true);
             applyEntry();
           } else {
             // Remove so it re-triggers on next scroll in
+            setHasTriggered(false);
             el.classList.remove('animate__animated', `animate__${ap.entryEffect}`);
           }
         });
       },
-      { threshold: 0.1 }
+      { rootMargin: '0px 0px -40% 0px', threshold: 0 }
     );
 
     observer.observe(observerTarget);
@@ -348,7 +351,7 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
       <div
         ref={animRef}
         className={`canvas-element-entry`}
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: '100%', height: '100%', opacity: (ap?.entryEnabled && ap.entryEffect !== 'none' && !hasTriggered && !isSelected) ? 0 : undefined }}
       >
         <div
           className={`canvas-element ${isSelected ? 'selected' : ''} ${loopClass}`}

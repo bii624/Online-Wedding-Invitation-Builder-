@@ -248,6 +248,10 @@ export interface QrGiftBoxContent {
   backgroundColor: string;
   envelopeColor?: string;
   opacity: number;
+  popupHeaderBgColor?: string;
+  popupHeaderTextColor?: string;
+  popupBgColor?: string;
+  popupTextColor?: string;
   accounts: BankAccount[];     // tối đa 2 phần tử
 }
 
@@ -414,7 +418,12 @@ export interface EditorState {
   // Auto-save
   cardId: string | null;
   autoSaveStatus: 'idle' | 'saving' | 'saved' | 'error';
+  lastSavedData: string | null;
   // Editor mode: 'card' for user cards, 'template' for admin templates
   editorMode: 'card' | 'template';
   templateId: string | null;
+  
+  // Global settings
+  autoScroll: boolean;
+  autoScrollSpeed: number;
 }

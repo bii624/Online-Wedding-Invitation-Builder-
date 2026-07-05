@@ -88,11 +88,15 @@ export function FormEditorElement({ element, zoom }: FormEditorElementProps) {
               <span style={{ fontWeight: 600 }}>Bạn là:</span>
               <div style={{ display: 'flex', gap: '48px', alignItems: 'center' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                  <input type="radio" name={`guestType_${element.id}`} style={{ accentColor: '#f43f5e', width: '16px', height: '16px', cursor: 'pointer' }} />
+                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: `1.5px solid ${props.textColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }}>
+                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: props.textColor }} />
+                  </div>
+                  <input type="radio" name={`guestType_${element.id}`} style={{ display: 'none' }} />
                   Khách nhà trai
                 </label>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                  <input type="radio" name={`guestType_${element.id}`} style={{ accentColor: '#f43f5e', width: '16px', height: '16px', cursor: 'pointer' }} />
+                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: `1.5px solid ${props.textColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }} />
+                  <input type="radio" name={`guestType_${element.id}`} style={{ display: 'none' }} />
                   Khách nhà gái
                 </label>
               </div>
@@ -104,11 +108,15 @@ export function FormEditorElement({ element, zoom }: FormEditorElementProps) {
               <span style={{ fontWeight: 600 }}>Bạn có thể tham dự không?:</span>
               <div style={{ display: 'flex', gap: '48px', alignItems: 'center' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                  <input type="radio" name={`attendance_${element.id}`} style={{ accentColor: '#f43f5e', width: '16px', height: '16px', cursor: 'pointer' }} />
+                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: `1.5px solid ${props.textColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }}>
+                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: props.textColor }} />
+                  </div>
+                  <input type="radio" name={`attendance_${element.id}`} style={{ display: 'none' }} />
                   Sẽ tham dự
                 </label>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                  <input type="radio" name={`attendance_${element.id}`} style={{ accentColor: '#f43f5e', width: '16px', height: '16px', cursor: 'pointer' }} />
+                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: `1.5px solid ${props.textColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }} />
+                  <input type="radio" name={`attendance_${element.id}`} style={{ display: 'none' }} />
                   Rất tiếc không thể đến
                 </label>
               </div>

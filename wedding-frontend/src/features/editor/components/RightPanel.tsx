@@ -10,7 +10,7 @@ import '../styles/RightPanel.css';
 import 'animate.css';
 import '../styles/animations.css';
 import { useEditorStore } from '../store/editorStore';
-import { CursorIcon } from './RightPanels/RightPanelShared';
+import { CursorIcon, Slider } from './RightPanels/RightPanelShared';
 import { TextRightPanel } from './RightPanels/TextRightPanel';
 import { ImageRightPanel } from './RightPanels/ImageRightPanel';
 import { ShapeRightPanel } from './RightPanels/ShapeRightPanel';
@@ -40,12 +40,52 @@ function ToolPlaceholderPanel({ toolName, description, icon }: {
   );
 }
 
-// ── Empty state ────────────────────────────────────────────
+// ── Empty state (Global Settings) ────────────────────────────────────────────
 function EmptyState() {
   return (
-    <div className="right-panel-empty">
-      <CursorIcon />
-      <p>Chọn một đối tượng trên canvas để chỉnh sửa thuộc tính</p>
+    <div style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', gap: 24, textAlign: 'center', color: '#94a3b8' }}>
+      <div>
+        <CursorIcon />
+        <p style={{ fontSize: 13, marginTop: 12 }}>Chọn một đối tượng trên canvas để chỉnh sửa thuộc tính</p>
+      </div>
+    </div>
+  );
+}
+
+// ── Global Settings Panel ──────────────────────────────────────────
+function GlobalSettingsPanel() {
+  const { autoScroll, autoScrollSpeed, setAutoScroll, setAutoScrollSpeed, pushHistory } = useEditorStore();
+
+  return (
+    <div style={{ padding: '24px 20px', borderTop: '1px solid var(--ed-border)' }}>
+      <h3 style={{ fontSize: 15, fontWeight: 600, color: 'var(--ed-text-primary)', margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <Wand2 size={18} /> Cài đặt hiệu ứng chung
+      </h3>
+
+      <div className="prop-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span className="prop-label" style={{ margin: 0 }}>Tự động cuộn trang</span>
+        <label className="switch">
+          <input
+            type="checkbox"
+            checked={autoScroll}
+            onChange={(e) => setAutoScroll(e.target.checked)}
+          />
+          <span className="slider round" style={{ color: '#f43f5e' }}></span>
+        </label>
+      </div>
+
+      {autoScroll && (
+        <div className="prop-row" style={{ marginTop: 16 }}>
+          <Slider
+            label="Tốc độ cuộn"
+            value={autoScrollSpeed}
+            min={10} max={100} step={1}
+            onChange={(v) => setAutoScrollSpeed(v)}
+            onCommit={pushHistory}
+            displayVal={`${autoScrollSpeed}%`}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -155,6 +195,9 @@ export function RightPanel() {
             : <EmptyState />
         }
       </div>
+
+      {/* Always visible Global Settings at bottom (only in effects tab) */}
+      {activeRightTab === 'effects' && <GlobalSettingsPanel />}
     </aside>
   );
 }
