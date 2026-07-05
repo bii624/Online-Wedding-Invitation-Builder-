@@ -59,6 +59,8 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
     selectedElement,
     pushHistory,
     setCropElementId,
+    updateElementPosition,
+    canvasWidth,
   } = useEditorStore();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -92,8 +94,24 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
 
   // ── Page alignment ─────────────────────────────────────
   const handlePageAlign = (align: PageAlignType) => {
-    // TODO: calculate x based on canvasWidth and element width
-    console.log('Align to page:', align);
+    if (!selectedElement) return;
+    
+    let newX = selectedElement.x;
+    
+    switch (align) {
+      case 'left':
+        newX = 0;
+        break;
+      case 'center':
+        newX = (canvasWidth - elementWidth) / 2;
+        break;
+      case 'right':
+        newX = canvasWidth - elementWidth;
+        break;
+    }
+    
+    updateElementPosition(id, newX, selectedElement.y);
+    pushHistory();
   };
 
   // ── Aspect-ratio locked resize ─────────────────────────
@@ -245,18 +263,18 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
         />
       </Section>
 
-      <PaddingSection 
-        padding={{ top: props.paddingTop, right: props.paddingRight, bottom: props.paddingBottom, left: props.paddingLeft }} 
+      <PaddingSection
+        padding={{ top: props.paddingTop, right: props.paddingRight, bottom: props.paddingBottom, left: props.paddingLeft }}
         onChange={(p) => { upd('paddingTop', p.top, false); upd('paddingRight', p.right, false); upd('paddingBottom', p.bottom, false); upd('paddingLeft', p.left, false); }}
         onCommit={pushHistory}
       />
-      <BorderSection 
-        border={{ width: props.borderWidth, style: props.borderStyle, color: props.borderColor, radius: props.borderRadius }} 
+      <BorderSection
+        border={{ width: props.borderWidth, style: props.borderStyle, color: props.borderColor, radius: props.borderRadius }}
         onChange={(b) => { upd('borderWidth', b.width, false); upd('borderStyle', b.style as import('../../types/editor.types').BorderStyleType, false); upd('borderColor', b.color, false); upd('borderRadius', b.radius, false); }}
         onCommit={pushHistory}
       />
-      <ShadowSection 
-        shadow={{ x: props.shadowX, y: props.shadowY, blur: props.shadowBlur, spread: 0, color: props.shadowColor }} 
+      <ShadowSection
+        shadow={{ x: props.shadowX, y: props.shadowY, blur: props.shadowBlur, spread: 0, color: props.shadowColor }}
         onChange={(s) => { upd('shadowX', s.x, false); upd('shadowY', s.y, false); upd('shadowBlur', s.blur, false); upd('shadowColor', s.color, false); }}
         onCommit={pushHistory}
       />
@@ -264,11 +282,13 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
       {/* ── Nâng cao ─────────────────────────────────────── */}
       <Section title="Nâng cao" icon={<SettingsIcon />} defaultOpen={false}>
         <div className="rp-field">
-          <span className="rp-label">Fit</span>
+          <span className="rp-label" title={props.crop ? "Ảnh đã cắt bắt buộc dùng Fill để giữ toạ độ chuẩn" : undefined}>Fit</span>
           <select
             className="rp-select"
-            value={props.objectFit}
+            value={props.crop ? 'fill' : props.objectFit}
             onChange={(e) => upd('objectFit', e.target.value as ImageProperties['objectFit'])}
+            disabled={!!props.crop}
+            title={props.crop ? "Ảnh đã cắt bắt buộc dùng Fill để giữ toạ độ chuẩn" : undefined}
           >
             <option value="cover">Cover</option>
             <option value="contain">Contain</option>

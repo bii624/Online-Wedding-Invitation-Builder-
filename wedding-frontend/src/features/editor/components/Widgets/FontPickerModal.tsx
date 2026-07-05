@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuthStore } from '../../../../store/authStore';
 import { assetsApi } from '../../../../api/assetsApi';
 import type { Asset } from '../../../../api/assetsApi';
@@ -91,7 +92,7 @@ export function FontPickerModal({ isOpen, onClose, onSelect, currentFont }: Font
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  return (
+  return createPortal(
     <div style={overlayStyle}>
       <div style={modalStyle}>
         <div style={headerStyle}>
@@ -198,7 +199,8 @@ export function FontPickerModal({ isOpen, onClose, onSelect, currentFont }: Font
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

@@ -1,4 +1,5 @@
-// import React from "react";
+import React, { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { RevolvingHeartsIcon } from "../../components/icons/emojione-revolving-hearts";
 
 interface LoadingPageProps {
@@ -6,6 +7,20 @@ interface LoadingPageProps {
 }
 
 export default function LoadingPage({ message = "Đang tải dữ liệu ..." }: LoadingPageProps) {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const target = searchParams.get("next") || "/dashboard/overview";
+    const timer = window.setTimeout(() => {
+      navigate(target, { replace: true });
+    }, 1400);
+
+    return () => window.clearTimeout(timer);
+  }, [navigate, searchParams]);
+
+  const pageMessage = searchParams.get("message") || message;
+
   return (
     <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-6 select-none font-poppins">
 
@@ -18,11 +33,11 @@ export default function LoadingPage({ message = "Đang tải dữ liệu ..." }:
         </div>
 
         <div className="space-y-1 text-center pt-2 z-10">
-          <span className="text-xl font-handwritten font-black tracking-tighter text-zinc-950 block">
+          <span className="text-xl font-poppins font-black tracking-tighter text-zinc-950 block">
             Dear<span className="text-rose-500">Love</span>
           </span>
           <p className="text-xs font-bold text-zinc-400 tracking-wide animate-pulse">
-            {message}
+            {pageMessage}
           </p>
         </div>
       </div>

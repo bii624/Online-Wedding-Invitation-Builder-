@@ -290,7 +290,7 @@ export interface AlbumContent {
   alignment: 'left' | 'center' | 'right';
   backgroundColor: string;
   opacity: number;
-  
+
   padding: { top: number; right: number; bottom: number; left: number };
   border: { width: number; style: string; color: string; radius: number };
   shadow: { x: number; y: number; blur: number; spread: number; color: string };
@@ -300,7 +300,7 @@ export interface AlbumContent {
 export interface FormContent {
   showGuestType: boolean;
   showAttendance: boolean;
-  
+
   alignment: 'left' | 'center' | 'right';
   fontFamily: string;
   fontSize: number;
@@ -310,7 +310,7 @@ export interface FormContent {
   buttonBgColor: string;
   buttonTextColor: string;
   opacity: number;
-  
+
   padding: { top: number; right: number; bottom: number; left: number };
   border: { width: number; style: string; color: string; radius: number };
   shadow: { x: number; y: number; blur: number; spread: number; color: string };
@@ -321,13 +321,13 @@ export interface ButtonContactContent {
   phoneNumber: string;
   buttonText: string;
   showIcon: boolean;
-  
+
   fontFamily: string;
   fontSize: number;
   textColor: string;
   backgroundColor: string;
   opacity: number;
-  
+
   padding: { top: number; right: number; bottom: number; left: number };
   border: { width: number; style: string; color: string; radius: number };
   shadow: { x: number; y: number; blur: number; spread: number; color: string };

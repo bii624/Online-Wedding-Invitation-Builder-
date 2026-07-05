@@ -1,6 +1,7 @@
 import React from 'react';
 import { useEditorStore } from '../store/editorStore';
 import type { CanvasElementType } from '../types/editor.types';
+import { ChevronLeft } from 'lucide-react';
 import '../styles/LeftToolbar.css';
 
 const CloseIcon = () => (
@@ -57,8 +58,8 @@ export function WidgetsPanel({ onClose }: { onClose: () => void }) {
           </svg>
           Tiện ích
         </span>
-        <button className="lt-panel-close-btn" onClick={onClose} title="Đóng">
-          <CloseIcon />
+        <button className="panel-collapse-btn" onClick={onClose} title="Thu gọn">
+          <ChevronLeft size={16} />
         </button>
       </div>
 

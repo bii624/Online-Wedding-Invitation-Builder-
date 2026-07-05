@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Patch,
+  Post,
   Param,
   Body,
   Query,
@@ -16,11 +17,16 @@ import { Roles } from '../auth/roles.decorator';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('admin')
 export class AdminUsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Get()
   getUsers(@Query() query: any) {
     return this.usersService.getAdminUsers(query);
+  }
+
+  @Post()
+  createUser(@Body() createUserDto: any) {
+    return this.usersService.create(createUserDto);
   }
 
   @Get(':id')

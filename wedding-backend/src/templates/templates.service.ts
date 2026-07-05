@@ -15,7 +15,7 @@ export class TemplatesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly assetsService: AssetsService,
-  ) {}
+  ) { }
 
   // GET /api/templates/categories
   async getPublicCategories() {
@@ -259,9 +259,9 @@ export class TemplatesService {
         tx.templateBlock.deleteMany({ where: { templateId: id } }),
         dto.background
           ? tx.template.update({
-              where: { id },
-              data: { background: dto.background },
-            })
+            where: { id },
+            data: { background: dto.background },
+          })
           : Promise.resolve(),
       ]);
 

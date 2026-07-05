@@ -6,6 +6,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { useEditorStore } from '../store/editorStore';
 import { libraryElementsApi, type LibraryElement, type ElementCategory } from '../../../api/libraryElementsApi';
 import '../styles/LibraryPanel.css';
+import { ChevronLeft, Search } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { LibraryIcon } from '@hugeicons/core-free-icons';
 
 // ── Icons ─────────────────────────────────────────────────
 const CloseIcon = () => (
@@ -30,7 +33,7 @@ const TYPE_LABELS: Record<string, string> = {
   sticker: 'Sticker', frame: 'Khung', photo: 'Ảnh',
 };
 const TYPE_EMOJI: Record<string, string> = {
-  icon: '🎨', shape: '⬟', illustration: '🖼', sticker: '✨', frame: '🖼️', photo: '📷',
+  icon: '⭐', shape: '⬟', illustration: '🎨', sticker: '✨', frame: '🖼', photo: '🖼️',
 };
 const BG_COLORS = ['#fce7f3', '#fef3c7', '#d1fae5', '#ede9fe', '#dbeafe', '#fee2e2'];
 
@@ -80,7 +83,6 @@ interface LibraryPanelProps {
 export function LibraryPanel({ onClose }: LibraryPanelProps) {
   const { addImageElement } = useEditorStore();
 
-  const [categories, setCategories] = useState<ElementCategory[]>([]);
   const [elements, setElements] = useState<LibraryElement[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -88,15 +90,9 @@ export function LibraryPanel({ onClose }: LibraryPanelProps) {
   const [page, setPage] = useState(1);
 
   const [search, setSearch] = useState('');
-  const [categoryId, setCategoryId] = useState('');
   const [elementType, setElementType] = useState('');
 
   const LIMIT = 24;
-
-  // ── Fetch categories once ────────────────────────────────
-  useEffect(() => {
-    libraryElementsApi.getCategories().then(setCategories).catch(() => { });
-  }, []);
 
   // ── Fetch elements when filters change ───────────────────
   const fetchElements = useCallback(async (newPage = 1, reset = true) => {
@@ -106,7 +102,6 @@ export function LibraryPanel({ onClose }: LibraryPanelProps) {
     try {
       const params: any = { page: newPage, limit: LIMIT };
       if (search) params.search = search;
-      if (categoryId) params.categoryId = categoryId;
       if (elementType) params.elementType = elementType;
 
       const res = await libraryElementsApi.getElements(params);
@@ -123,12 +118,12 @@ export function LibraryPanel({ onClose }: LibraryPanelProps) {
       setLoading(false);
       setLoadingMore(false);
     }
-  }, [search, categoryId, elementType]);
+  }, [search, elementType]);
 
   useEffect(() => {
     const t = setTimeout(() => { fetchElements(1, true); }, search ? 400 : 0);
     return () => clearTimeout(t);
-  }, [search, categoryId, elementType, fetchElements]);
+  }, [search, elementType, fetchElements]);
 
   // ── Use element ──────────────────────────────────────────
   const handleUse = async (el: LibraryElement) => {
@@ -146,9 +141,12 @@ export function LibraryPanel({ onClose }: LibraryPanelProps) {
     <div className="lib-panel">
       {/* Header */}
       <div className="lib-panel-header">
-        <span className="lib-panel-title">✨ Thư viện Element</span>
-        <button className="lt-panel-close-btn" onClick={onClose} title="Đóng">
-          <CloseIcon />
+        <span className="lib-panel-title">
+          <HugeiconsIcon icon={LibraryIcon} size={15} color="#F95E5A" strokeWidth={1.5} />
+          Thư viện Element
+        </span>
+        <button className="panel-collapse-btn" onClick={onClose} title="Thu gọn">
+          <ChevronLeft size={16} />
         </button>
       </div>
 
@@ -162,29 +160,6 @@ export function LibraryPanel({ onClose }: LibraryPanelProps) {
           onChange={e => { setSearch(e.target.value); }}
         />
       </div>
-
-      {/* Category chips */}
-      {categories.length > 0 && (
-        <div className="lib-chips-wrap">
-          <button
-            className={`lib-chip ${!categoryId ? 'active' : ''}`}
-            onClick={() => setCategoryId('')}
-          >
-            Tất cả
-          </button>
-          {categories.map(c => (
-            <button
-              key={c.id}
-              className={`lib-chip ${categoryId === c.id ? 'active' : ''}`}
-              onClick={() => setCategoryId(categoryId === c.id ? '' : c.id)}
-            >
-              {c.name}
-              {c._count && <span className="lib-chip-count">{c._count.elements}</span>}
-            </button>
-          ))}
-        </div>
-      )}
-
       {/* Type filter tabs */}
       <div className="lib-type-tabs">
         <button className={`lib-type-tab ${!elementType ? 'active' : ''}`} onClick={() => setElementType('')}>
@@ -206,7 +181,7 @@ export function LibraryPanel({ onClose }: LibraryPanelProps) {
           </div>
         ) : elements.length === 0 ? (
           <div className="lib-empty">
-            <span style={{ fontSize: 32 }}>🔍</span>
+            <Search size={32} className="text-zinc-400 mb-2" />
             <span>Không tìm thấy element</span>
           </div>
         ) : (

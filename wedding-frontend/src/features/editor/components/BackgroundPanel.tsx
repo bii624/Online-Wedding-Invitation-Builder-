@@ -5,6 +5,9 @@ import { ImageIcon } from './RightPanels/RightPanelShared';
 import '../styles/BackgroundPanel.css';
 import { assetsApi } from '../../../api/assetsApi';
 import { toast } from 'sonner';
+import { ChevronLeft } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Image03Icon, PaintBucketIcon } from '@hugeicons/core-free-icons';
 
 const SOLID_SWATCHES = [
   'transparent', '#000000', '#4b5563', '#9ca3af', '#d1d5db', '#ffffff',
@@ -64,7 +67,7 @@ export function BackgroundPanel({ onClose }: BackgroundPanelProps) {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     setIsUploading(true);
     try {
       const asset = await assetsApi.uploadAsset(file);
@@ -122,17 +125,27 @@ export function BackgroundPanel({ onClose }: BackgroundPanelProps) {
   };
 
   return (
-    <div className="editor-slide-panel bg-panel">
+    <div className="editor-slide-panel bg-panel" style={{ overflow: 'visible' }}>
+      {/* Collapse button centered vertically on outer right border */}
+      <button className="panel-collapse-btn" onClick={onClose} title="Thu gọn">
+        <ChevronLeft size={16} />
+      </button>
+
       <div className="bgp-header">
         <div className="bgp-main-tabs">
           <button className={`bgp-main-tab ${activeTab === 'color' ? 'active' : ''}`} onClick={() => setActiveTab('color')}>
-            <span className="icon">▨</span> Màu nền
+            <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+              <HugeiconsIcon icon={PaintBucketIcon} size={15} color="currentColor" strokeWidth={1.5} />
+            </span>
+            Màu nền
           </button>
           <button className={`bgp-main-tab ${activeTab === 'image' ? 'active' : ''}`} onClick={() => setActiveTab('image')}>
-            <span className="icon">🖼</span> Hình nền
+            <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+              <HugeiconsIcon icon={Image03Icon} size={15} color="currentColor" strokeWidth={1.5} />
+            </span>
+            Hình nền
           </button>
         </div>
-        <button className="panel-close-btn" onClick={onClose} title="Đóng">&times;</button>
       </div>
 
       <div className="bgp-scroll-content">
@@ -157,7 +170,7 @@ export function BackgroundPanel({ onClose }: BackgroundPanelProps) {
               </div>
             </div>
 
-            <div className="bgp-swatch-section">
+            <div className="bgp-swatch-section" style={{ marginTop: 25 }}>
               <h4>Màu nền mặc định</h4>
               <div className="bgp-swatch-grid">
                 {SOLID_SWATCHES.map((color, i) => (
@@ -171,7 +184,7 @@ export function BackgroundPanel({ onClose }: BackgroundPanelProps) {
               </div>
             </div>
 
-            <div className="bgp-swatch-section">
+            <div className="bgp-swatch-section" style={{ marginTop: 25 }}>
               <h4>Màu nền gradient</h4>
               <div className="bgp-swatch-grid gradient">
                 {GRADIENT_SWATCHES.map((grad, i) => (
@@ -235,8 +248,8 @@ export function BackgroundPanel({ onClose }: BackgroundPanelProps) {
       </div>
 
       {showColorPicker && (
-        <CustomColorPicker 
-          onClose={() => setShowColorPicker(false)} 
+        <CustomColorPicker
+          onClose={() => setShowColorPicker(false)}
           initialType={canvasBackground.type}
           initialColor={canvasBackground.color}
           initialGradientFrom={canvasBackground.gradientFrom}

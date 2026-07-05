@@ -28,7 +28,7 @@ export class LibraryElementsService {
   constructor(
     @Inject('CLOUDINARY') private cloudinary: typeof Cloudinary,
     private prisma: PrismaService,
-  ) {}
+  ) { }
 
   // ─── Cloudinary helper ────────────────────────────────────────────────────
 
@@ -228,7 +228,7 @@ export class LibraryElementsService {
         await this.cloudinary.uploader.destroy(publicId, {
           resource_type: 'image',
         });
-      } catch (_) {}
+      } catch (_) { }
     }
 
     let result: UploadApiResponse;
@@ -288,7 +288,7 @@ export class LibraryElementsService {
         await this.cloudinary.uploader.destroy(publicId, {
           resource_type: 'image',
         });
-      } catch (_) {}
+      } catch (_) { }
     }
 
     await this.prisma.libraryElement.delete({ where: { id } });

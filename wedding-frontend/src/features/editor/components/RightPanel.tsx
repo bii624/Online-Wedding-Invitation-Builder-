@@ -59,6 +59,7 @@ export function RightPanel() {
     if (selectedElement?.type === 'text' && selectedElement.textProps) {
       return (
         <>
+          <div className="right-panel-hint">Nhấp vào văn bản để chỉnh sửa nội dung</div>
           <TextRightPanel id={selectedElement.id} props={selectedElement.textProps} />
         </>
       );

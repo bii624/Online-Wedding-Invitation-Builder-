@@ -6,6 +6,38 @@ import axiosClient from "../../../api/axiosClient";
 import { useAuthStore } from "../../../store/authStore";
 import FacebookIcon from "../../../components/icons/FacebookIcon";
 import { RevolvingHeartsIcon } from "../../../components/icons/emojione-revolving-hearts";
+import flowerBloom from "../../../assets/flower-bloom.png";
+
+// ─── Seeded pseudo-random (deterministic, no re-render jitter) ───────────────
+function seededRand(seed: number) {
+  let s = seed;
+  return () => {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    return (s >>> 0) / 0xffffffff;
+  };
+}
+
+const rand = seededRand(2868903935); // fixed seed → same layout every render
+const BLOOM_FLOWERS = Array.from({ length: 120 }, () => ({
+  left: rand() * 112 - 6,        // -6 … 106%
+  top: rand() * 112 - 6,
+  size: 55 + rand() * 170,       // 55–225 px
+  rotate: rand() * 360,
+  opacity: 0.15 + rand() * 0.52, // 0.15–0.67
+  delay: rand() * 3.0,        // 0–3 s stagger
+  duration: 1.3 + rand() * 2.2,  // 1.3–3.5 s
+}));
+
+const CARD_FLOWERS = Array.from({ length: 14 }, () => ({
+  left: rand() * 112 - 6,
+  top: rand() * 112 - 6,
+  size: 70 + rand() * 130,
+  rotate: rand() * 360,
+  opacity: 0.22 + rand() * 0.38,
+  delay: rand() * 1.6,
+  duration: 1.6 + rand() * 1.8,
+}));
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -26,19 +58,17 @@ export default function LoginPage() {
       setIsLoading(true);
       const response = await axiosClient.post("/auth/login", { email, password });
 
-      // Đẩy data vào store
       setUser(response.data.user);
-
       toast.success("Đăng nhập thành công!");
-      
+
       if (response.data.user.role === 'admin') {
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-          navigate("/admin");
+          navigate(`/loading?next=${encodeURIComponent('/admin')}&message=${encodeURIComponent('Đăng nhập thành công!')}`);
         } else {
           window.location.href = "https://admin.zenlove.vn";
         }
       } else {
-        navigate("/");
+        navigate(`/loading?next=${encodeURIComponent('/dashboard/overview')}&message=${encodeURIComponent('Đăng nhập thành công!')}`);
       }
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.");
@@ -48,10 +78,58 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 flex items-center justify-center p-0 md:p-6 font-sans">
-      <div className="bg-white w-full max-w-5xl h-[100dvh] md:h-auto lg:h-[90vh] lg:max-h-[800px] md:rounded-[2.5rem] shadow-[0_24px_60px_-10px_rgba(0,0,0,0.15)] ring-1 ring-zinc-300/50 overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+    <div className="relative isolate min-h-screen bg-white flex items-center justify-center p-0 md:p-6 font-sans overflow-hidden">
 
-        <div className="lg:col-span-6 p-10 md:p-16 lg:p-18 flex flex-col justify-center text-left overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      {/* ═══ 120 bông hoa nở rộ toàn trang ═══ */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        {BLOOM_FLOWERS.map((f, i) => (
+          <img
+            key={`bloom-${i}`}
+            src={flowerBloom}
+            alt=""
+            aria-hidden="true"
+            className="absolute select-none"
+            style={{
+              left: `${f.left}%`,
+              top: `${f.top}%`,
+              width: f.size,
+              height: f.size,
+              opacity: 0,
+              mixBlendMode: 'multiply',
+              transform: `scale(0.25) rotate(${f.rotate}deg)`,
+              animation: `loginFlowerBloom ${f.duration}s cubic-bezier(0.16,1,0.3,1) ${f.delay}s forwards`,
+              '--end-opacity': f.opacity,
+            } as React.CSSProperties}
+          />
+        ))}
+      </div>
+
+      {/* Keyframes */}
+      <style>{`
+        @keyframes loginFlowerBloom {
+          0%   { opacity: 0;                               transform: scale(0.22) rotate(var(--rot,0deg)); filter: blur(7px)   saturate(0.5); }
+          35%  { opacity: calc(var(--end-opacity,0.4)*1.4); transform: scale(1.10) rotate(var(--rot,0deg)); filter: blur(0.4px) saturate(1.5); }
+          65%  { opacity: calc(var(--end-opacity,0.4)*1.15); transform: scale(0.94) rotate(var(--rot,0deg)); filter: blur(0.7px) saturate(1.2); }
+          100% { opacity: var(--end-opacity,0.4);           transform: scale(1)    rotate(var(--rot,0deg)); filter: blur(1.5px) saturate(1.0); }
+        }
+        @keyframes cardFlowerBloom {
+          0%   { opacity: 0;                                transform: scale(0.28) rotate(var(--rot,0deg)); }
+          50%  { opacity: calc(var(--end-opacity,0.35)*1.2); transform: scale(1.06) rotate(var(--rot,0deg)); }
+          100% { opacity: var(--end-opacity,0.35);           transform: scale(1)    rotate(var(--rot,0deg)); }
+        }
+        @keyframes loginFadeUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .login-card {
+          animation: loginFadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+      `}</style>
+
+      {/* Card */}
+      <div className="login-card bg-white/80 backdrop-blur-sm relative z-30 w-full max-w-5xl h-dvh md:h-auto lg:h-[90vh] lg:max-h-200 md:rounded-[2.5rem] shadow-[0_24px_60px_-10px_rgba(0,0,0,0.12)] ring-1 ring-rose-100/60 overflow-hidden grid grid-cols-1 lg:grid-cols-12">
+        {/* ── Cột trái: Form ── */}
+        <div className="relative z-30 lg:col-span-6 p-10 md:p-16 lg:p-18 flex flex-col justify-center text-left overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
           <div className="mb-8 space-y-2">
             <div className="flex items-center gap-2">
@@ -70,9 +148,9 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
 
-            {/* Trường Email */}
+            {/* Email */}
             <div className="space-y-1.5 font-poppins">
-              <label className="text-xs font-semibold text-zinc-500  tracking-wider">
+              <label className="text-xs font-semibold text-zinc-500 tracking-wider">
                 Email của bạn
               </label>
               <div className="relative">
@@ -88,9 +166,9 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Trường Mật khẩu */}
+            {/* Mật khẩu */}
             <div className="space-y-1.5 font-poppins">
-              <label className="text-xs font-semibold text-zinc-500  tracking-wider block">
+              <label className="text-xs font-semibold text-zinc-500 tracking-wider block">
                 Mật khẩu
               </label>
               <div className="relative font-poppins">
@@ -131,13 +209,12 @@ export default function LoginPage() {
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-zinc-100" />
             </div>
-            <span className="relative bg-white px-3 text-[11px] font-medium text-zinc-400  tracking-widest">
+            <span className="relative bg-white px-3 text-[11px] font-medium text-zinc-400 tracking-widest">
               Hoặc đăng nhập bằng
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            {/* Nút Google */}
             <button
               type="button"
               onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/auth/google`}
@@ -150,7 +227,6 @@ export default function LoginPage() {
               </svg>
               Google
             </button>
-            {/* Nút Facebook */}
             <button
               type="button"
               onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/auth/facebook`}
@@ -169,6 +245,7 @@ export default function LoginPage() {
 
         </div>
 
+        {/* ── Cột phải: Ảnh cưới ── */}
         <div className="hidden lg:block lg:col-span-6 relative bg-zinc-100">
           <img
             src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1200"
@@ -181,7 +258,7 @@ export default function LoginPage() {
             <p className="text-lg font-serif italic text-white/90">
               "Love does not consist in gazing at each other, but in looking outward together in the same direction."
             </p>
-            <p className="text-[10px]  tracking-widest text-white/60 font-semibold">
+            <p className="text-[10px] tracking-widest text-white/60 font-semibold">
               DearLove Studio
             </p>
           </div>

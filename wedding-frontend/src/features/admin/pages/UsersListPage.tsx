@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Search, UserCheck, UserX, Shield, MoreHorizontal, Eye, Ban } from 'lucide-react';
+import { Search, UserCheck, UserX, Shield, MoreHorizontal, Eye, Ban, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ResponsiveContainer, LineChart, Line } from 'recharts';
 import { adminApi, type AdminUser } from '../api/adminApi';
 import { toast } from 'sonner';
 import { UserDetailModal } from '../components/UserDetailModal';
+import { CreateUserModal } from '../components/CreateUserModal';
 
 const MOCK_USERS = [
   { id: '1', fullName: 'Nguyễn Văn Nam', email: 'nguyenvannam@gmail.com', role: 'user', status: 'active', cardCount: 5, createdAt: '2025-01-15' },
@@ -44,6 +45,7 @@ export function UsersListPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   // Reset page khi đổi filter
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -100,6 +102,14 @@ export function UsersListPage() {
 
   return (
     <div>
+      {showCreateModal && (
+        <CreateUserModal
+          onClose={() => setShowCreateModal(false)}
+          onUserCreated={() => {
+            fetchUsers();
+          }}
+        />
+      )}
       {selectedUserId && (
         <UserDetailModal 
           userId={selectedUserId} 
@@ -173,8 +183,15 @@ export function UsersListPage() {
               <option value="active">Hoạt động</option>
               <option value="suspended">Đã khóa</option>
             </select>
-            <div style={{ marginLeft: 'auto' }}>
+            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
               <span style={{ fontSize: 12, color: 'var(--adm-text-muted)' }}>{total} kết quả</span>
+              <button 
+                onClick={() => setShowCreateModal(true)}
+                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', background: 'var(--adm-pink)', color: '#fff', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 600 }}
+              >
+                <Plus size={16} />
+                Thêm người dùng
+              </button>
             </div>
           </div>
         </div>

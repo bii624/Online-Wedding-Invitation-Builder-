@@ -3,14 +3,48 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import axios from "axios";
 import { Eye, EyeOff, Lock, Mail, User, ArrowRight, Check } from "lucide-react";
+import axiosClient from "../../../api/axiosClient";
+import { useAuthStore } from "../../../store/authStore";
 import FacebookIcon from "../../../components/icons/FacebookIcon";
 import { RevolvingHeartsIcon } from "../../../components/icons/emojione-revolving-hearts";
+import flowerBloom from "../../../assets/flower-bloom.png";
+
+// Seeded pseudo-random generator (deterministic, no re-render jitter)
+function seededRand(seed: number) {
+  let s = seed;
+  return () => {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    return (s >>> 0) / 0xffffffff;
+  };
+}
+
+const rand = seededRand(3735928559); // 0xDEADBEEF — fixed seed for deterministic layout
+const BLOOM_FLOWERS = Array.from({ length: 120 }, (_, i) => ({
+  left: rand() * 110 - 5,        // -5% … 105% so edges are also covered
+  top: rand() * 110 - 5,
+  size: 60 + rand() * 160,       // 60–220px
+  rotate: rand() * 360,
+  opacity: 0.18 + rand() * 0.50, // 0.18–0.68
+  delay: rand() * 2.8,           // 0–2.8s stagger
+  duration: 1.4 + rand() * 2.0,  // 1.4–3.4s bloom duration
+}));
+
+const CARD_FLOWERS = Array.from({ length: 28 }, (_, i) => ({
+  left: rand() * 110 - 5,
+  top: rand() * 110 - 5,
+  size: 80 + rand() * 120,
+  rotate: rand() * 360,
+  opacity: 0.25 + rand() * 0.35,
+  delay: rand() * 1.5,
+  duration: 1.8 + rand() * 1.5,
+})).filter(f => f.left >= 3 && f.left <= 97 && f.top >= 3 && f.top <= 97).slice(0, 18);
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const [agreeTerms, setAgreeTerms] = useState(false);
 
@@ -18,6 +52,7 @@ export default function SignupPage() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const navigate = useNavigate();
+  const { setUser } = useAuthStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,26 +80,57 @@ export default function SignupPage() {
     setErrors({});
 
     try {
+      setIsLoading(true);
       await axios.post(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/auth/register`, {
         fullName: name,
         email,
         password,
       });
-      toast.success('Đăng ký thành công! Vui lòng đăng nhập.');
-      navigate('/login');
+
+      const loginResponse = await axiosClient.post('/auth/login', { email, password });
+      setUser(loginResponse.data.user);
+
+      toast.success('Đăng ký thành công!');
+      navigate(`/loading?next=${encodeURIComponent('/dashboard/overview')}&message=${encodeURIComponent('Đăng ký thành công!')}`);
     } catch (error: any) {
       const message = error.response?.data?.message || 'Có lỗi xảy ra khi đăng ký';
       toast.error(typeof message === 'string' ? message : JSON.stringify(message));
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 flex items-center justify-center p-4 md:p-8 font-sans overflow-hidden">
+    <div className="relative isolate min-h-screen bg-white flex items-center justify-center p-4 md:p-8 font-sans overflow-hidden">
+      {/* ═══ 120 bông hoa nở rộ toàn trang ═══ */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        {BLOOM_FLOWERS.map((f, i) => (
+          <img
+            key={`bloom-${i}`}
+            src={flowerBloom}
+            alt=""
+            aria-hidden="true"
+            className="absolute select-none"
+            style={{
+              left: `${f.left}%`,
+              top: `${f.top}%`,
+              width: f.size,
+              height: f.size,
+              opacity: 0,
+              mixBlendMode: 'multiply',
+              transform: `scale(0.4) rotate(${f.rotate}deg)`,
+              animation: `flowerBloom ${f.duration}s cubic-bezier(0.16,1,0.3,1) ${f.delay}s forwards`,
+              '--end-opacity': f.opacity,
+            } as React.CSSProperties}
+          />
+        ))}
+      </div>
+
       {/* Khai báo keyframes animation trực tiếp */}
       <style>{`
         @keyframes formFadeUp {
           from { opacity: 0; transform: translateY(24px); }
-          to { opacity: 1; transform: translateY(0); }
+          to   { opacity: 1; transform: translateY(0); }
         }
         .animate-form-fade-up {
           animation: formFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -73,14 +139,25 @@ export default function SignupPage() {
           background-color: #f43f5e;
           border-color: #f43f5e;
         }
+        @keyframes flowerBloom {
+          0%   { opacity: 0;                      transform: scale(0.25) rotate(var(--rot,0deg)); filter: blur(6px)  saturate(0.6); }
+          35%  { opacity: calc(var(--end-opacity,0.4) * 1.35); transform: scale(1.08) rotate(var(--rot,0deg)); filter: blur(0.5px) saturate(1.4); }
+          65%  { opacity: calc(var(--end-opacity,0.4) * 1.15); transform: scale(0.95) rotate(var(--rot,0deg)); filter: blur(0.8px) saturate(1.2); }
+          100% { opacity: var(--end-opacity,0.4); transform: scale(1)    rotate(var(--rot,0deg)); filter: blur(1.5px) saturate(1.0); }
+        }
+        @keyframes cardFlowerBloom {
+          0%   { opacity: 0;                      transform: scale(0.3) rotate(var(--rot,0deg)); }
+          50%  { opacity: calc(var(--end-opacity,0.35) * 1.2); transform: scale(1.05) rotate(var(--rot,0deg)); }
+          100% { opacity: var(--end-opacity,0.35); transform: scale(1)   rotate(var(--rot,0deg)); }
+        }
       `}</style>
 
-      <div className="bg-white w-full max-w-6xl h-[100dvh] md:h-auto lg:h-[90vh] lg:max-h-[850px] rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-zinc-100 overflow-hidden grid grid-cols-1 lg:grid-cols-12 animate-form-fade-up">
 
+      <div className="bg-white relative z-10 w-full max-w-6xl h-dvh md:h-auto lg:h-[90vh] lg:max-h-212.5 rounded-4xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-rose-100/60 overflow-hidden grid grid-cols-1 lg:grid-cols-12 animate-form-fade-up">
         {/* Cột trái: Form */}
-        <div className="lg:col-span-6 px-8 py-8 md:px-14 md:py-10 lg:px-18 lg:py-12 flex flex-col text-left overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="relative z-30 lg:col-span-6 px-8 py-8 md:px-14 md:py-10 lg:px-18 lg:py-12 flex flex-col text-left overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] scrollbar-none">
 
-          <div className="max-w-[480px] mx-auto w-full my-auto">
+          <div className="max-w-120 mx-auto w-full my-auto">
             {/* Header */}
             <div className="mb-6 space-y-2">
               <div className="flex items-center gap-3">
@@ -173,7 +250,7 @@ export default function SignupPage() {
                     id="terms"
                     checked={agreeTerms}
                     onChange={(e) => setAgreeTerms(e.target.checked)}
-                    className="custom-checkbox appearance-none w-5 h-5 rounded-[6px] border border-zinc-300 bg-white checked:bg-rose-500 checked:border-rose-500 transition-all cursor-pointer flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-rose-500/20"
+                    className="custom-checkbox appearance-none w-5 h-5 rounded-md border border-zinc-300 bg-white checked:bg-rose-500 checked:border-rose-500 transition-all cursor-pointer shrink-0 focus:outline-none focus:ring-2 focus:ring-rose-500/20"
                   />
                   {agreeTerms && (
                     <Check size={14} className="absolute text-white pointer-events-none" strokeWidth={3} />
@@ -198,9 +275,10 @@ export default function SignupPage() {
               <div className="pt-2 pb-2">
                 <button
                   type="submit"
+                  disabled={isLoading}
                   className="w-full h-12 rounded-2xl bg-[#f43f5e] hover:bg-[#e11d48] text-white font-semibold text-[15px] shadow-[0_8px_20px_rgba(244,63,94,0.25)] hover:shadow-[0_12px_25px_rgba(225,29,72,0.35)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer font-poppins"
                 >
-                  Tạo tài khoản <ArrowRight size={18} />
+                  {isLoading ? 'Đang tạo tài khoản...' : <>Tạo tài khoản <ArrowRight size={18} /></>}
                 </button>
               </div>
             </form>
@@ -248,14 +326,14 @@ export default function SignupPage() {
         </div>
 
         {/* Cột phải: Hình ảnh */}
-        <div className="hidden lg:block lg:col-span-6 relative bg-zinc-100 overflow-hidden">
+        <div className="hidden lg:block lg:col-span-6 relative z-10 bg-zinc-100 overflow-hidden">
           <img
             src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=1200"
             alt="DearLove Wedding Journey"
             className="w-full h-full object-cover select-none pointer-events-none hover:scale-105 transition-transform duration-1000 ease-out"
           />
           {/* Overlay gradient theo yêu cầu: đỏ trắng mờ nhẹ */}
-          <div className="absolute inset-0 bg-gradient-to-t from-rose-950/80 via-rose-900/30 to-black/10" />
+          <div className="absolute inset-0 bg-linear-to-t from-rose-950/80 via-rose-900/30 to-black/10" />
 
           <div className="absolute bottom-12 left-12 text-left text-white max-w-md space-y-2">
             <p className="text-xl font-serif italic text-white/95 leading-relaxed drop-shadow-md">

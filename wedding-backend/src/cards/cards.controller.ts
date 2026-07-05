@@ -45,7 +45,7 @@ interface AuthRequest extends Request {
 @ApiTags('Cards')
 @Controller('cards')
 export class CardsController {
-  constructor(private readonly cardsService: CardsService) {}
+  constructor(private readonly cardsService: CardsService) { }
 
   // ==========================================================================
   // ROUTE PUBLIC — không cần JwtAuthGuard

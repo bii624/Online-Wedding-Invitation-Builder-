@@ -20,7 +20,7 @@ export class AssetsService {
   constructor(
     @Inject('CLOUDINARY') private cloudinary: typeof Cloudinary,
     private prisma: PrismaService,
-  ) {}
+  ) { }
 
   // Xác định loại asset dựa theo mimetype thực tế của file
   private resolveAssetType(mimetype: string, filename?: string): AssetType {
@@ -38,7 +38,7 @@ export class AssetsService {
     ) {
       return AssetType.FONT;
     }
-    
+
     // Fallback cho octet-stream (vì Windows/Browser đôi khi không nhận diện được mime type của font)
     if (filename) {
       const ext = filename.split('.').pop()?.toLowerCase();
@@ -46,7 +46,7 @@ export class AssetsService {
         return AssetType.FONT;
       }
     }
-    
+
     throw new BadRequestException('Định dạng file không được hỗ trợ');
   }
 
@@ -157,7 +157,7 @@ export class AssetsService {
     }
 
     const folder = userId ? `dearlove/user_${userId}/fonts` : `dearlove/system_fonts`;
-    
+
     // Tên gốc của font (VD: "Playfair Display.ttf" -> "Playfair Display")
     const originalNameWithoutExt = file.originalname.replace(/\.[^/.]+$/, '');
 

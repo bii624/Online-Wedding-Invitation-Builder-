@@ -41,10 +41,10 @@ import { useState } from 'react';
 import { PreviewModal } from './PreviewModal';
 
 const AUTO_SAVE_LABELS: Record<string, { label: string; color: string; pulse: boolean }> = {
-  idle:   { label: 'Sẵn sàng',   color: '#9ca3af', pulse: false },
-  saving: { label: 'Đang lưu...', color: '#f59e0b', pulse: true  },
-  saved:  { label: 'Đã lưu',     color: '#10b981', pulse: false },
-  error:  { label: 'Lỗi lưu!',   color: '#ef4444', pulse: false },
+  idle: { label: 'Sẵn sàng', color: '#9ca3af', pulse: false },
+  saving: { label: 'Đang lưu...', color: '#f59e0b', pulse: true },
+  saved: { label: 'Đã lưu', color: '#10b981', pulse: false },
+  error: { label: 'Lỗi lưu!', color: '#ef4444', pulse: false },
 };
 
 export function Header() {
@@ -57,14 +57,22 @@ export function Header() {
   const canRedo = historyIndex < history.length - 1;
 
   const statusInfo = AUTO_SAVE_LABELS[autoSaveStatus] ?? AUTO_SAVE_LABELS.idle;
+  const handleLogoClick = () => {
+    if (user?.role === 'admin') {
+      navigate('/admin');
+      return;
+    }
+
+    navigate('/dashboard/overview');
+  };
 
   return (
     <header className="editor-header">
       {/* Left: Logo + History */}
       <div className="header-left">
-        <div 
+        <div
           className="flex items-center gap-2.5 shrink-0 group cursor-pointer"
-          onClick={() => navigate('/')}
+          onClick={handleLogoClick}
         >
           <div className="bg-white/20 backdrop-blur-sm p-2 rounded-xl transition-transform group-hover:rotate-12 shadow-sm">
             <RevolvingHeartsIcon size={28} color="#fff" />

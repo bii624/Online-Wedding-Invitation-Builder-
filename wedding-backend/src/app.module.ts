@@ -9,6 +9,7 @@ import { AssetsModule } from './assets/assets.module';
 import { CardsModule } from './cards/cards.module';
 import { TemplatesModule } from './templates/templates.module';
 import { LibraryElementsModule } from './library-elements/library-elements.module';
+import { AdminStatsModule } from './admin-stats/admin-stats.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { LibraryElementsModule } from './library-elements/library-elements.modul
     CardsModule,
     TemplatesModule,
     LibraryElementsModule,
+    AdminStatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

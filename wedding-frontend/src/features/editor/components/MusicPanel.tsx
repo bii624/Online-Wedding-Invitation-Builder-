@@ -4,6 +4,7 @@ import type { MusicProperties } from '../types/editor.types';
 import '../styles/MusicPanel.css';
 import { assetsApi } from '../../../api/assetsApi';
 import { toast } from 'sonner';
+import { ChevronLeft } from 'lucide-react';
 
 // ── Icons ──────────────────────────────────────────────────
 const CloseIcon = () => (
@@ -53,10 +54,10 @@ function formatDuration(seconds: number) {
 // ============================================================
 export function MusicPanel({ onClose }: { onClose: () => void }) {
   const { music, setMusic, uploadedMusics, addUploadedMusic, removeUploadedMusic, fetchUploadedAssets } = useEditorStore();
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  
+
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
@@ -88,7 +89,7 @@ export function MusicPanel({ onClose }: { onClose: () => void }) {
 
   const handlePlayDemo = (item: MusicProperties) => {
     if (!audioRef.current) return;
-    
+
     if (playingId === item.id) {
       // Pause
       audioRef.current.pause();
@@ -157,14 +158,14 @@ export function MusicPanel({ onClose }: { onClose: () => void }) {
 
     return (
       <div key={item.id} className="mp-item">
-        <button 
-          className="mp-icon-btn" 
+        <button
+          className="mp-icon-btn"
           onClick={() => handlePlayDemo(item)}
           title={isPlaying ? "Dừng nghe thử" : "Nghe thử"}
         >
           {isPlaying ? <PauseIcon /> : <PlayIcon />}
         </button>
-        
+
         <div className="mp-item-info">
           <span className="mp-item-name" title={item.name}>{item.name}</span>
           <span className="mp-item-duration">{item.duration ? formatDuration(item.duration) : '--:--'}</span>
@@ -177,16 +178,16 @@ export function MusicPanel({ onClose }: { onClose: () => void }) {
 
         <div className="mp-item-actions">
           {item.source === 'uploaded' && (
-            <button 
-              className="mp-icon-btn danger" 
+            <button
+              className="mp-icon-btn danger"
               onClick={() => handleDelete(item.id)}
               title="Xoá bài này"
             >
               <TrashIcon />
             </button>
           )}
-          <button 
-            className="mp-use-btn" 
+          <button
+            className="mp-use-btn"
             disabled={isSelected}
             onClick={() => setMusic(item)}
           >
@@ -199,15 +200,17 @@ export function MusicPanel({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="music-panel">
+      {/* Collapse button centered vertically on outer right border */}
+      <button className="panel-collapse-btn" onClick={onClose} title="Thu gọn">
+        <ChevronLeft size={16} />
+      </button>
+
       <div className="mp-header">
         <h3>Nhạc nền</h3>
-        <button className="mp-close-btn" onClick={onClose} aria-label="Đóng">
-          <CloseIcon />
-        </button>
       </div>
 
       <div className="mp-scroll-content">
-        
+
         {/* Active Music Block */}
         {music && (
           <div className="mp-active-block">
@@ -217,8 +220,8 @@ export function MusicPanel({ onClose }: { onClose: () => void }) {
                 <MusicIcon />
               </div>
               <div className="mp-active-name" title={music.name}>{music.name}</div>
-              <button 
-                className="mp-icon-btn danger" 
+              <button
+                className="mp-icon-btn danger"
                 onClick={() => setMusic(null)}
                 title="Bỏ chọn"
               >
@@ -233,11 +236,11 @@ export function MusicPanel({ onClose }: { onClose: () => void }) {
           <UploadIcon />
           {isUploading ? 'Đang tải lên...' : 'Tải nhạc lên (Max 15MB)'}
         </button>
-        <input 
-          type="file" 
-          accept="audio/*" 
-          ref={fileInputRef} 
-          style={{ display: 'none' }} 
+        <input
+          type="file"
+          accept="audio/*"
+          ref={fileInputRef}
+          style={{ display: 'none' }}
           onChange={handleFileUpload}
         />
 

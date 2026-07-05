@@ -53,7 +53,9 @@ export function ImageEditorElement({ element }: ImageEditorElementProps) {
     left: crop ? `${- (crop.x / crop.width) * 100}%` : undefined,
     top: crop ? `${- (crop.y / crop.height) * 100}%` : undefined,
     position: crop ? 'absolute' : undefined,
-    objectFit: ip.objectFit,
+    objectFit: crop ? 'fill' : ip.objectFit,
+    maxWidth: crop ? 'none' : undefined,
+    maxHeight: crop ? 'none' : undefined,
     transform,
     display: 'block',
     // CRITICAL: Disable native browser image drag to prevent it from

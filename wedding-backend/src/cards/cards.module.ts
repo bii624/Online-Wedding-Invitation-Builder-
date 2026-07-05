@@ -11,4 +11,4 @@ import { AssetsModule } from '../assets/assets.module';
   providers: [CardsService],
   exports: [CardsService],
 })
-export class CardsModule {}
+export class CardsModule { }

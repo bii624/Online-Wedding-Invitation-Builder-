@@ -11,4 +11,4 @@ import { PrismaModule } from '@/prisma/prisma.module';
   providers: [AssetsService, CloudinaryProvider],
   exports: [AssetsService],
 })
-export class AssetsModule {}
+export class AssetsModule { }

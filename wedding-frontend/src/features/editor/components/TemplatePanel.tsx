@@ -4,6 +4,7 @@ import { templatesApi, type TemplateItem } from '../../../api/templatesApi';
 import { cardsApi } from '../../../api/cardsApi';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { ChevronLeft } from 'lucide-react';
 import { CardRenderer } from './CardRenderer';
 import '../styles/TemplatePanel.css';
 
@@ -148,8 +149,8 @@ export function TemplatePanel({ onClose }: TemplatePanelProps) {
           <div className="lt-template-title">
             <TemplatesIcon /> Mẫu thiết kế
           </div>
-          <button className="lt-template-close-btn" onClick={onClose} title="Đóng">
-            <CloseIcon />
+          <button className="panel-collapse-btn" onClick={onClose} title="Thu gọn">
+            <ChevronLeft size={16} />
           </button>
         </div>
 

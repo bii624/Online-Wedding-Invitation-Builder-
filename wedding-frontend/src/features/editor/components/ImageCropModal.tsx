@@ -40,14 +40,24 @@ export function ImageCropModal() {
   };
 
   const handleConfirm = () => {
-    // Calculate new width and height for the canvas element based on crop ratio change
     const oldCrop = element.imageProps?.crop || { x: 0, y: 0, width: 100, height: 100 };
     
+    let imgRatio = 1;
+    if (containerRef.current) {
+      const imgEl = containerRef.current.querySelector('img.crop-preview-img') as HTMLImageElement;
+      if (imgEl && imgEl.naturalWidth && imgEl.naturalHeight) {
+        imgRatio = imgEl.naturalWidth / imgEl.naturalHeight;
+      }
+    }
+    
+    // The aspect ratio of the cropped region relative to the natural image
+    const cropRatio = (crop.width / crop.height) * imgRatio;
+    
     const scaleX = crop.width / oldCrop.width;
-    const scaleY = crop.height / oldCrop.height;
     
     const newWidth = Math.max(20, Math.round(element.width * scaleX));
-    const newHeight = Math.max(20, Math.round(element.height * scaleY));
+    // Enforce that the new container perfectly matches the crop's aspect ratio
+    const newHeight = Math.max(20, Math.round(newWidth / cropRatio));
     
     updateElementCrop(cropElementId, crop, newWidth, newHeight);
     setCropElementId(null);
@@ -109,6 +119,54 @@ export function ImageCropModal() {
     window.addEventListener('mouseup', handleMouseUp);
   };
 
+  const handleResizeStart = (e: React.MouseEvent, handle: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!containerRef.current) return;
+    
+    const rect = containerRef.current.getBoundingClientRect();
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startCrop = { ...crop };
+
+    const handleMouseMove = (me: MouseEvent) => {
+      const dx = ((me.clientX - startX) / rect.width) * 100;
+      const dy = ((me.clientY - startY) / rect.height) * 100;
+      
+      let newCrop = { ...startCrop };
+      
+      if (handle.includes('e')) {
+        newCrop.width = Math.max(5, Math.min(startCrop.width + dx, 100 - startCrop.x));
+      }
+      if (handle.includes('s')) {
+        newCrop.height = Math.max(5, Math.min(startCrop.height + dy, 100 - startCrop.y));
+      }
+      if (handle.includes('w')) {
+        const dWidth = -dx;
+        const widthAllowed = Math.min(startCrop.width + dWidth, startCrop.width + startCrop.x);
+        newCrop.width = Math.max(5, widthAllowed);
+        newCrop.x = startCrop.x + startCrop.width - newCrop.width;
+      }
+      if (handle.includes('n')) {
+        const dHeight = -dy;
+        const heightAllowed = Math.min(startCrop.height + dHeight, startCrop.height + startCrop.y);
+        newCrop.height = Math.max(5, heightAllowed);
+        newCrop.y = startCrop.y + startCrop.height - newCrop.height;
+      }
+
+      setCrop(newCrop);
+      if (activeRatio !== 0) setActiveRatio(0);
+    };
+
+    const handleMouseUp = () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  };
+
   return (
     <div className="crop-modal-overlay">
       <div className="crop-modal-content">
@@ -119,38 +177,51 @@ export function ImageCropModal() {
         
         <div className="crop-modal-body">
           {/* Left: Image Preview */}
-          <div className="crop-preview-container" ref={containerRef}>
-            <img src={element.imageProps.src} alt="Crop preview" className="crop-preview-img" />
-            
-            {/* The crop overlay dark mask */}
-            <div className="crop-overlay-mask" style={{
-              clipPath: `polygon(
-                0% 0%, 0% 100%, 100% 100%, 100% 0%, 0% 0%, 
-                ${crop.x}% ${crop.y}%, 
-                ${crop.x + crop.width}% ${crop.y}%, 
-                ${crop.x + crop.width}% ${crop.y + crop.height}%, 
-                ${crop.x}% ${crop.y + crop.height}%, 
-                ${crop.x}% ${crop.y}%
-              )`
-            }}></div>
-            
-            {/* The draggable crop box */}
+          <div className="crop-preview-container">
             <div 
-              className="crop-box"
-              style={{
-                left: `${crop.x}%`,
-                top: `${crop.y}%`,
-                width: `${crop.width}%`,
-                height: `${crop.height}%`
-              }}
-              onMouseDown={handleDragStart}
+              ref={containerRef}
+              style={{ position: 'relative', display: 'flex', maxWidth: '100%', maxHeight: '100%' }}
             >
-              <div className="crop-box-grid">
-                <div></div><div></div><div></div>
-                <div></div><div></div><div></div>
-                <div></div><div></div><div></div>
+              <img src={element.imageProps.src} alt="Crop preview" className="crop-preview-img" />
+              
+              {/* The crop overlay dark mask */}
+              <div className="crop-overlay-mask" style={{
+                top: 0, left: 0, right: 0, bottom: 0,
+                clipPath: `polygon(
+                  0% 0%, 0% 100%, 100% 100%, 100% 0%, 0% 0%, 
+                  ${crop.x}% ${crop.y}%, 
+                  ${crop.x + crop.width}% ${crop.y}%, 
+                  ${crop.x + crop.width}% ${crop.y + crop.height}%, 
+                  ${crop.x}% ${crop.y + crop.height}%, 
+                  ${crop.x}% ${crop.y}%
+                )`
+              }}></div>
+              
+              {/* The draggable crop box */}
+              <div 
+                className="crop-box"
+                style={{
+                  left: `${crop.x}%`,
+                  top: `${crop.y}%`,
+                  width: `${crop.width}%`,
+                  height: `${crop.height}%`
+                }}
+                onMouseDown={handleDragStart}
+              >
+                <div className="crop-box-grid">
+                  <div></div><div></div><div></div>
+                  <div></div><div></div><div></div>
+                  <div></div><div></div><div></div>
+                </div>
+                <div className="crop-handle nw" onMouseDown={(e) => handleResizeStart(e, 'nw')}></div>
+                <div className="crop-handle n" onMouseDown={(e) => handleResizeStart(e, 'n')}></div>
+                <div className="crop-handle ne" onMouseDown={(e) => handleResizeStart(e, 'ne')}></div>
+                <div className="crop-handle e" onMouseDown={(e) => handleResizeStart(e, 'e')}></div>
+                <div className="crop-handle se" onMouseDown={(e) => handleResizeStart(e, 'se')}></div>
+                <div className="crop-handle s" onMouseDown={(e) => handleResizeStart(e, 's')}></div>
+                <div className="crop-handle sw" onMouseDown={(e) => handleResizeStart(e, 'sw')}></div>
+                <div className="crop-handle w" onMouseDown={(e) => handleResizeStart(e, 'w')}></div>
               </div>
-              {/* Note: In a full version, we'd add 8 resize handles here */}
             </div>
           </div>
           

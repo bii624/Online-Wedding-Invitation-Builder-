@@ -34,7 +34,7 @@ import {
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('admin')
 export class AdminLibraryElementsController {
-  constructor(private readonly service: LibraryElementsService) {}
+  constructor(private readonly service: LibraryElementsService) { }
 
   // ─── Categories ───────────────────────────────────────────────────────────
 

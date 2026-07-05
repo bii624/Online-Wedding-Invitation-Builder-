@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MessageSquare, UserCheck, Gift } from 'lucide-react';
+import { Bell, MessageSquare, UserCheck } from 'lucide-react';
 
 interface NotificationPopupProps {
   isOpen: boolean;
@@ -10,60 +10,59 @@ interface NotificationPopupProps {
 export const NotificationPopup: React.FC<NotificationPopupProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
+  const quickLinks = [
+    { label: 'Lời chúc mới', icon: MessageSquare, to: '/dashboard/wishes', color: 'text-rose-500 bg-rose-50 border-rose-100/40' },
+    { label: 'Xác nhận RSVP', icon: UserCheck, to: '/dashboard/rsvp', color: 'text-teal-500 bg-teal-50 border-teal-100/40' },
+  ];
+
   return (
     <>
       <div className="fixed inset-0 z-40" onClick={onClose} />
-      
+
       <div className="absolute bottom-20 left-4 w-72 bg-white rounded-2xl border border-rose-100/60 shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-3 duration-250 text-left">
         <div className="px-4 py-3 bg-linear-to-r from-rose-50/30 to-amber-50/20 border-b border-rose-100/30 flex items-center justify-between text-zinc-800">
-          <span className="text-xs font-black font-poppins">Thông báo mới</span>
-          <span className="text-[10px] font-black text-rose-500 bg-rose-50 border border-rose-100/60 px-2 py-0.5 rounded-full">3 mới</span>
+          <span className="text-xs font-black font-inter">Thông báo</span>
+          <Bell size={13} className="text-zinc-400" />
         </div>
-        
-        <div className="divide-y divide-zinc-50 max-h-64 overflow-y-auto">
-          <div className="p-3 hover:bg-rose-50/10 transition-colors flex items-start gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-rose-50 text-rose-500 flex items-center justify-center shrink-0 border border-rose-100/40">
-              <MessageSquare size={13} />
-            </div>
-            <div className="space-y-0.5 flex-1">
-              <p className="text-[11px] text-zinc-650 leading-relaxed font-poppins">
-                <span className="font-bold text-zinc-800">Trần Đức</span> đã gửi lời chúc mới tới thiệp cưới.
-              </p>
-              <span className="text-[9px] text-zinc-400 font-poppins font-medium">5 phút trước</span>
-            </div>
-          </div>
-          
-          <div className="p-3 hover:bg-rose-50/10 transition-colors flex items-start gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-rose-50 text-rose-500 flex items-center justify-center shrink-0 border border-rose-100/40">
-              <UserCheck size={13} />
-            </div>
-            <div className="space-y-0.5 flex-1">
-              <p className="text-[11px] text-zinc-650 leading-relaxed font-poppins">
-                <span className="font-bold text-zinc-800">Lê Mai Anh</span> xác nhận tham dự (đi cùng 2 người).
-              </p>
-              <span className="text-[9px] text-zinc-400 font-poppins font-medium">15 phút trước</span>
-            </div>
-          </div>
-          
-          <div className="p-3 hover:bg-rose-50/10 transition-colors flex items-start gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-rose-50 text-rose-500 flex items-center justify-center shrink-0 border border-rose-100/40">
-              <Gift size={13} />
-            </div>
-            <div className="space-y-0.5 flex-1">
-              <p className="text-[11px] text-zinc-650 leading-relaxed font-poppins">
-                Bạn nhận được quà mừng mới từ <span className="font-bold text-zinc-800">Gia đình Bác Hùng</span>.
-              </p>
-              <span className="text-[9px] text-zinc-400 font-poppins font-medium">1 giờ trước</span>
-            </div>
-          </div>
+
+        {/* Quick nav shortcuts */}
+        <div className="p-3 space-y-2">
+          <p className="text-[9px] font-black text-zinc-400 uppercase tracking-wider px-1 mb-1">Truy cập nhanh</p>
+          {quickLinks.map((link) => {
+            const Icon = link.icon;
+            return (
+              <Link
+                key={link.to}
+                to={link.to}
+                onClick={onClose}
+                className={`flex items-center gap-2.5 p-2.5 rounded-xl border ${link.color} hover:opacity-80 transition-opacity no-underline`}
+              >
+                <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border ${link.color}`}>
+                  <Icon size={13} />
+                </div>
+                <span className="text-[11px] font-bold text-zinc-700 font-inter">{link.label}</span>
+              </Link>
+            );
+          })}
         </div>
-        
-        <Link 
-          to="/dashboard/wishes" 
+
+        {/* Empty state */}
+        <div className="px-4 pb-4 flex flex-col items-center text-center gap-1.5">
+          <div className="w-10 h-10 rounded-full bg-zinc-50 border border-zinc-100 flex items-center justify-center text-zinc-300">
+            <Bell size={18} />
+          </div>
+          <p className="text-[11px] font-semibold text-zinc-500 font-inter">Chưa có thông báo mới</p>
+          <p className="text-[9px] text-zinc-400 font-inter leading-relaxed">
+            Khi có lời chúc hoặc RSVP mới, bạn sẽ thấy ở đây.
+          </p>
+        </div>
+
+        <Link
+          to="/dashboard/wishes"
           onClick={onClose}
-          className="text-[10px] font-black text-center block py-2.5 bg-zinc-50/40 hover:bg-rose-50/20 text-rose-500 border-t border-rose-100/20 transition-all font-poppins no-underline"
+          className="text-[10px] font-black text-center block py-2.5 bg-zinc-50/40 hover:bg-rose-50/20 text-rose-500 border-t border-rose-100/20 transition-all font-inter no-underline"
         >
-          Xem tất cả thông báo
+          Xem tất cả lời chúc →
         </Link>
       </div>
     </>

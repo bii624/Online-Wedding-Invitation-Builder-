@@ -29,7 +29,7 @@ import {
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('admin')
 export class AdminTemplatesController {
-  constructor(private readonly service: TemplatesService) {}
+  constructor(private readonly service: TemplatesService) { }
 
   // GET /api/admin/templates
   @Get()

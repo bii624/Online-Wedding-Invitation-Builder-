@@ -107,9 +107,9 @@ export const Header = () => {
                                     )}
                                 </div>
                                 <div className="ml-2">
-                                    <Button onClick={handleCreateCard} variant="default" className="rounded-full h-9 px-4 text-white shadow-none text-sm flex items-center gap-1.5 font-medium border-0">
+                                    <Button onClick={() => navigate('/dashboard/overview')} variant="default" className="rounded-full h-9 px-4 text-white shadow-none text-sm flex items-center gap-1.5 font-medium border-0">
                                         <Zap className="w-4 h-4" />
-                                        Tạo thiết kế
+                                        Tổng quan
                                     </Button>
                                 </div>
                             </div>

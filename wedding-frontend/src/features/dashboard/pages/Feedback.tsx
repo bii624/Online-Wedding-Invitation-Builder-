@@ -14,33 +14,34 @@ export const Feedback = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.message.trim()) return;
-    
-    // Simulate sending feedback
+
+    // Send via email client (no backend endpoint yet)
+    const subject = encodeURIComponent(`[DearLove Góp Ý] ${form.category}${form.title ? ' – ' + form.title : ''}`);
+    const body = encodeURIComponent(
+      `Chủ đề: ${form.category}\n\n${form.message}\n\n---\nThông tin liên hệ: ${form.contact || 'Không cung cấp'}`
+    );
+    window.open(`mailto:support@dearlove.vn?subject=${subject}&body=${body}`, '_blank');
+
     setSent(true);
     setTimeout(() => {
       setSent(false);
-      setForm({
-        category: 'Góp ý tính năng',
-        title: '',
-        message: '',
-        contact: ''
-      });
-    }, 2500);
+      setForm({ category: 'Góp ý tính năng', title: '', message: '', contact: '' });
+    }, 3000);
   };
 
   return (
     <DashboardLayout>
       <div className="bg-white rounded-4xl border border-rose-100/50 shadow-[0_15px_40px_rgba(244,63,94,0.015)] overflow-hidden min-h-[75vh] flex flex-col lg:flex-row animate-in fade-in duration-500">
-        
+
         <div className="flex-1 p-8 sm:p-10 space-y-6">
           <div>
-            <h1 className="text-2xl font-black text-zinc-800 font-poppins">Chia Sẻ & Góp Ý</h1>
-            <p className="mt-1.5 text-xs text-zinc-400 font-poppins font-medium">DearLove luôn trân trọng mọi ý kiến đóng góp từ bạn để cải tiến hệ thống tốt hơn</p>
+            <h1 className="text-2xl font-black text-zinc-800 font-inter">Chia Sẻ & Góp Ý</h1>
+            <p className="mt-1.5 text-xs text-zinc-400 font-inter font-medium">DearLove luôn trân trọng mọi ý kiến đóng góp từ bạn để cải tiến hệ thống tốt hơn</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5 pt-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              
+
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-wider">Chủ đề đóng góp <span className="text-rose-500">*</span></label>
                 <select
@@ -100,7 +101,7 @@ export const Feedback = () => {
               >
                 {sent ? <><Check size={14} /> Gửi thành công!</> : <><Send size={13} /> Gửi ý kiến đóng góp</>}
               </button>
-              <span className="text-[11px] text-zinc-400 font-poppins font-medium text-center sm:text-left">Đội ngũ DearLove sẽ đọc kỹ và cải tiến ngay lập tức</span>
+              <span className="text-[11px] text-zinc-400 font-inter font-medium text-center sm:text-left">Đội ngũ DearLove sẽ đọc kỹ và cải tiến ngay lập tức</span>
             </div>
           </form>
         </div>
@@ -114,20 +115,20 @@ export const Feedback = () => {
               <div className="absolute inset-0 bg-rose-50/60 rounded-full border border-rose-100/50 shadow-2xs scale-90" />
               <Mailbox size={48} className="text-rose-500 relative z-10" />
             </div>
-            
+
             <div className="space-y-1">
-              <h3 className="text-base font-extrabold text-zinc-800 font-poppins">Hòm Thư DearLove</h3>
-              <p className="text-[11px] text-zinc-400 font-poppins font-medium">Nơi lắng nghe mọi tâm tư của bạn</p>
+              <h3 className="text-base font-extrabold text-zinc-800 font-inter">Hòm Thư DearLove</h3>
+              <p className="text-[11px] text-zinc-400 font-inter font-medium">Nơi lắng nghe mọi tâm tư của bạn</p>
             </div>
           </div>
 
           <div className="space-y-4 z-10 pt-4 border-t border-rose-100/30">
             <div className="space-y-1">
-              <h4 className="text-xs font-black text-zinc-700 font-poppins uppercase tracking-wider">Cùng nhau hoàn thiện</h4>
-              <p className="text-[11px] text-zinc-500 font-poppins leading-relaxed">
+              <h4 className="text-xs font-black text-zinc-700 font-inter uppercase tracking-wider">Cùng nhau hoàn thiện</h4>
+              <p className="text-[11px] text-zinc-500 font-inter leading-relaxed">
                 Mọi ý kiến của bạn từ đề xuất tính năng hay sửa các lỗi giao diện nhỏ đều được đội ngũ kỹ thuật ghi nhận và cải tiến nhanh chóng.
               </p>
-            </div>  
+            </div>
           </div>
 
         </div>

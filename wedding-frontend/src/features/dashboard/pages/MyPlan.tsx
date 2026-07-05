@@ -2,78 +2,87 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { DashboardLayout } from './DashboardLayout'
 import { Check, X, Crown, Sparkles, Zap, ArrowRight, CreditCard, Star } from 'lucide-react'
+import { useAuthStore } from '../../../store/authStore'
 
 export const MyPlan: React.FC = () => {
   const navigate = useNavigate()
+  const { user } = useAuthStore()
   const [billing, setBilling] = useState<'monthly' | 'lifetime'>('lifetime')
+
+  const isFree = !user?.currentPlanId || user.currentPlanId === '00000000-0000-0000-0000-000000000001'
+  const isPro = user?.currentPlanId === '00000000-0000-0000-0000-000000000002'
 
   const plans = [
     {
       id: 'free',
+      dbId: '00000000-0000-0000-0000-000000000001',
       name: 'Khởi đầu',
       tag: 'FREE',
-      price: { monthly: '0', lifetime: '0' },
+      price: { monthly: '0đ', lifetime: '0đ' },
       period: 'Vĩnh viễn',
-      isCurrent: true,
-      color: 'text-slate-600',
-      tagBg: 'bg-slate-100 text-slate-600',
+      isCurrent: isFree,
+      color: 'text-zinc-600',
+      tagBg: 'bg-zinc-100 text-zinc-600',
       icon: <Zap size={20} />,
-      iconBg: 'bg-slate-100',
+      iconBg: 'bg-zinc-100',
       features: [
-        { text: '1 thiệp cưới', ok: true },
-        { text: '10 ảnh lưu trữ', ok: true },
+        { text: '1 thiệp cưới nghệ thuật', ok: true },
+        { text: '10 ảnh lưu trữ đám cưới', ok: true },
         { text: '300 lượt xem / tháng', ok: true },
-        { text: 'RSVP & Lời chúc', ok: true },
-        { text: 'Thư viện nhạc', ok: true },
-        { text: 'Nhạc nền cơ bản', ok: true },
-        { text: 'Xóa nền AI', ok: false },
-        { text: 'Tên miền riêng', ok: false },
-        { text: 'Hỗ trợ 24/7', ok: false },
+        { text: 'Quản lý RSVP & Lời chúc', ok: true },
+        { text: 'Thư viện nhạc nền cơ bản', ok: true },
+        { text: 'Xóa nền AI tự động', ok: false },
+        { text: 'Tên miền riêng tùy chỉnh', ok: false },
+        { text: 'Hỗ trợ kỹ thuật 24/7', ok: false },
       ],
     },
     {
       id: 'pro',
+      dbId: '00000000-0000-0000-0000-000000000002',
       name: 'Chuyên nghiệp',
       tag: 'PRO',
-      price: { monthly: '199K' },
-      period: billing === 'monthly' ? '/ tháng' : 'Dùng trọn đời',
+      price: { monthly: '199.000đ', lifetime: '499.000đ' },
+      period: billing === 'monthly' ? 'mỗi tháng' : 'thanh toán 1 lần',
+      isCurrent: isPro,
       isHot: true,
       color: 'text-rose-600',
       tagBg: 'bg-rose-100 text-rose-600',
       icon: <Crown size={20} />,
       iconBg: 'bg-rose-50',
       features: [
-        { text: '5 thiệp cưới', ok: true },
-        { text: '100 ảnh HD', ok: true },
+        { text: '5 thiệp cưới cao cấp', ok: true },
+        { text: '100 ảnh lưu trữ HD', ok: true },
         { text: '5.000 lượt xem / tháng', ok: true },
-        { text: 'RSVP & Lời chúc', ok: true },
-        { text: 'Chữ ký khách mời', ok: true },
-        { text: 'Nhạc nền HD', ok: true },
-        { text: 'Xóa nền AI', ok: true },
-        { text: 'Tên miền riêng', ok: false },
-        { text: 'Chat hỗ trợ ưu tiên', ok: true },
+        { text: 'Quản lý RSVP & Lời chúc', ok: true },
+        { text: 'Chữ ký số khách mời', ok: true },
+        { text: 'Nhạc nền chất lượng cao HD', ok: true },
+        { text: 'Xóa nền AI không giới hạn', ok: true },
+        { text: 'Tên miền riêng tùy chỉnh', ok: false },
+        { text: 'Chat hỗ trợ ưu tiên 24/7', ok: true },
       ],
     },
     {
       id: 'premium',
+      dbId: 'premium-mock-id',
       name: 'Cao cấp VIP',
       tag: 'PREMIUM',
-      price: { monthly: '499K' },
-      period: billing === 'monthly' ? '/ tháng' : 'Dùng trọn đời',
+      price: { monthly: '499.000đ', lifetime: '999.000đ' },
+      period: billing === 'monthly' ? 'mỗi tháng' : 'thanh toán 1 lần',
+      isCurrent: false,
       color: 'text-amber-600',
       tagBg: 'bg-amber-100 text-amber-700',
       icon: <Sparkles size={20} />,
       iconBg: 'bg-amber-50',
       features: [
-        { text: 'Không giới hạn thiệp', ok: true },
-        { text: 'Không giới hạn ảnh', ok: true },
+        { text: 'Không giới hạn số thiệp', ok: true },
+        { text: 'Không giới hạn ảnh lưu trữ', ok: true },
         { text: 'Không giới hạn lượt xem', ok: true },
-        { text: 'RSVP & Lời chúc', ok: true },
-        { text: 'Ẩn hoàn toàn thương hiệu', ok: true },
-        { text: 'Nhạc nền HD Lossless', ok: true },
+        { text: 'Quản lý RSVP & Lời chúc', ok: true },
+        { text: 'Ẩn hoàn toàn logo thương hiệu', ok: true },
+        { text: 'Nhạc nền lossless HD cao cấp', ok: true },
         { text: 'Xóa nền AI không giới hạn', ok: true },
-        { text: 'Tên miền riêng (.com)', ok: true },
-        { text: 'Thiết kế 1:1 qua Zalo', ok: true },
+        { text: 'Tên miền riêng miễn phí (.com)', ok: true },
+        { text: 'Thiết kế riêng 1:1 qua Zalo', ok: true },
       ],
     },
   ]
@@ -81,23 +90,41 @@ export const MyPlan: React.FC = () => {
   return (
     <DashboardLayout title="Gói dịch vụ" subtitle="Chọn gói phù hợp với nhu cầu của bạn">
       <div className="max-w-5xl mx-auto space-y-7 pb-8">
-        <div className="bg-amber-50 border border-amber-100 rounded-xl px-5 py-3.5 flex items-center gap-3">
-          <Crown size={18} className="text-amber-500 shrink-0" />
-          <div className="text-sm text-amber-700">
-            Bạn đang dùng <strong>Free Plan</strong>. Nâng cấp ngay để mở khóa AI xóa nền, HD music và thiệp không giới hạn.
+        <div className="bg-gradient-to-r from-rose-50 to-pink-50 border border-rose-100/60 rounded-3xl p-5 flex flex-col sm:flex-row items-center gap-4 shadow-2xs">
+          <div className="w-10 h-10 rounded-2xl bg-rose-500 flex items-center justify-center text-white shadow-sm shadow-rose-200">
+            <Crown size={20} />
           </div>
-          <div className="ml-auto shrink-0 text-xs text-amber-600 font-bold">Còn 300 lượt xem</div>
+          <div className="text-center sm:text-left space-y-0.5">
+            <div className="text-xs text-rose-400 font-black tracking-wider uppercase">Gói dịch vụ hiện tại</div>
+            <div className="text-sm font-bold text-zinc-800 leading-none">
+              Bạn đang sử dụng <span className="text-rose-600 font-extrabold">{isPro ? 'Chuyên nghiệp (PRO)' : 'Khởi đầu (FREE)'}</span>
+            </div>
+          </div>
+          <div className="sm:ml-auto shrink-0 text-xs text-rose-600 bg-rose-100/50 border border-rose-100 px-3 py-1.5 rounded-xl font-bold uppercase tracking-wider">
+            {isPro ? 'Không giới hạn tính năng' : 'Mở khóa bản Pro để dùng AI'}
+          </div>
         </div>
 
         <div className="flex justify-center">
-          <div className="flex bg-slate-100 rounded-xl p-1 gap-1">
+          <div className="inline-flex bg-zinc-100 p-1 rounded-2xl gap-1 shadow-inner border border-zinc-200/40">
             <button
               onClick={() => setBilling('monthly')}
-              className={`px-5 py-2 rounded-lg text-xs font-bold transition-all ${billing === 'monthly' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`px-6 py-2.5 rounded-xl text-xs font-black tracking-wider uppercase transition-all duration-200 cursor-pointer ${billing === 'monthly'
+                ? 'bg-white text-rose-500 shadow-md border border-rose-100/10'
+                : 'text-zinc-500 hover:text-zinc-800'
+                }`}
             >
-             
-              Gói dịch vụ 
-              <span className="text-[10px] bg-emerald-10"></span>
+              Theo tháng
+            </button>
+            <button
+              onClick={() => setBilling('lifetime')}
+              className={`px-6 py-2.5 rounded-xl text-xs font-black tracking-wider uppercase transition-all duration-200 cursor-pointer ${billing === 'lifetime'
+                ? 'bg-white text-rose-500 shadow-md border border-rose-100/10'
+                : 'text-zinc-500 hover:text-zinc-800'
+                }`}
+            >
+              Trọn đời
+              <span className="ml-1.5 px-1.5 py-0.5 text-[9px] bg-emerald-500 text-white rounded-md font-black uppercase tracking-normal">TIẾT KIỆM</span>
             </button>
           </div>
         </div>
@@ -112,8 +139,8 @@ export const MyPlan: React.FC = () => {
                 style={plan.isHot ? { background: 'linear-gradient(160deg, #fff, #fff5f7)' } : {}}
               >
                 {plan.isHot && (
-                  <div className="py-1.5 text-center text-[11px] font-black text-white tracking-wider" style={{ background: 'linear-gradient(135deg, #e8607a, #c4395a)' }}>
-                   <Star />ĐƯỢC CHỌN NHIỀU NHẤT
+                  <div className="py-2 text-center text-[10px] font-black text-white tracking-widest flex items-center justify-center gap-1 bg-gradient-to-r from-rose-500 to-pink-500">
+                    <Star size={11} className="fill-white" /> ĐƯỢC CHỌN NHIỀU NHẤT
                   </div>
                 )}
                 <div className="p-5">

@@ -73,4 +73,34 @@ export const cardsApi = {
     const response = await axiosClient.get(`/cards/${cardId}`);
     return response.data;
   },
+
+  getAllWishes: async () => {
+    const response = await axiosClient.get('/cards/wishes/all');
+    return response.data;
+  },
+
+  getAllRsvps: async () => {
+    const response = await axiosClient.get('/cards/rsvp/all');
+    return response.data;
+  },
+
+  approveWish: async (wishId: string, isApproved: boolean) => {
+    const response = await axiosClient.patch(`/cards/wishes/${wishId}/approve`, { isApproved });
+    return response.data;
+  },
+
+  deleteWish: async (wishId: string) => {
+    const response = await axiosClient.delete(`/cards/wishes/${wishId}`);
+    return response.data;
+  },
+
+  submitRsvp: async (cardId: string, data: { guestName: string; phone?: string; attending: 'yes' | 'no' | 'maybe'; numAttendees?: number; note?: string }) => {
+    const response = await axiosClient.post(`/cards/public/${cardId}/rsvp`, data);
+    return response.data;
+  },
+
+  submitWish: async (cardId: string, data: { displayName: string; message: string; avatarUrl?: string }) => {
+    const response = await axiosClient.post(`/cards/public/${cardId}/wishes`, data);
+    return response.data;
+  },
 };

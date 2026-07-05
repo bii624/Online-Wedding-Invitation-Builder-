@@ -96,8 +96,9 @@ export function MapPickerModal({ initialAddress, initialLat, initialLng, onClose
           {/* Header */}
           <div style={{
             padding: '24px',
-            background: 'linear-gradient(-45deg, rgb(244, 63, 94), rgb(251, 113, 133), rgb(244, 63, 94), rgb(252, 165, 165)) 0% 0% / 300% 300%',
-            animation: '6s ease 0s infinite normal none running admGradientAnimation',
+            background: 'linear-gradient(-45deg, #f43f5e, #fb7185, #f43f5e, #fca5a5)',
+            backgroundSize: '300% 300%',
+            animation: 'admGradientAnimation 6s ease infinite',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'flex-start',

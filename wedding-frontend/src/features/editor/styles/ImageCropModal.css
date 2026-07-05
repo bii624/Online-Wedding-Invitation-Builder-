@@ -177,3 +177,22 @@
   background: #ef4444;
   color: white;
 }
+
+/* Resize Handles */
+.crop-handle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #0056ff;
+  border: 2px solid white;
+  border-radius: 50%;
+  z-index: 10;
+}
+.crop-handle.nw { top: -6px; left: -6px; cursor: nwse-resize; }
+.crop-handle.n { top: -6px; left: calc(50% - 6px); cursor: ns-resize; }
+.crop-handle.ne { top: -6px; right: -6px; cursor: nesw-resize; }
+.crop-handle.e { top: calc(50% - 6px); right: -6px; cursor: ew-resize; }
+.crop-handle.se { bottom: -6px; right: -6px; cursor: nwse-resize; }
+.crop-handle.s { bottom: -6px; left: calc(50% - 6px); cursor: ns-resize; }
+.crop-handle.sw { bottom: -6px; left: -6px; cursor: nesw-resize; }
+.crop-handle.w { top: calc(50% - 6px); left: -6px; cursor: ew-resize; }

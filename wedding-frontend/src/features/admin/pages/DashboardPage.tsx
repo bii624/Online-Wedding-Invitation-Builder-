@@ -1,43 +1,10 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, FileText, LayoutTemplate, TrendingUp, TrendingDown, ArrowUpRight, Clock, UserPlus, CreditCard, Eye } from 'lucide-react';
+import { Users, FileText, LayoutTemplate, TrendingUp, TrendingDown, ArrowUpRight, Clock, UserPlus, CreditCard, Eye, Loader2 } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart, BarChart, Bar
 } from 'recharts';
-
-// Mock data — will be replaced by adminApi.getStats() once backend is ready
-const MOCK_STATS = [
-  { label: 'Tổng người dùng', value: '1,284', change: '+ 8.5%', up: true, color: '#f59e0b', data: [10, 20, 15, 30, 25, 35, 40] },
-  { label: 'Tổng thiệp đã tạo', value: '4,523', change: '- 12.3%', up: false, color: '#ef4444', data: [50, 45, 55, 40, 35, 20, 15] },
-  { label: 'Template đang dùng', value: '38', change: '+ 49%', up: true, color: '#22c55e', data: [5, 10, 8, 15, 12, 25, 30] },
-  { label: 'Thiệp xuất bản', value: '2,108', change: '+ 1.9%', up: true, color: '#f59e0b', data: [20, 18, 25, 22, 30, 28, 35] },
-];
-
-const MOCK_CHART = [
-  { date: 'T2', cards: 45, users: 12 },
-  { date: 'T3', cards: 72, users: 18 },
-  { date: 'T4', cards: 58, users: 9 },
-  { date: 'T5', cards: 95, users: 24 },
-  { date: 'T6', cards: 110, users: 31 },
-  { date: 'T7', cards: 88, users: 20 },
-  { date: 'CN', cards: 134, users: 42 },
-];
-
-const MOCK_TOP_TEMPLATES = [
-  { name: 'Hoa hồng vàng - Classic', uses: 342, status: 'published' },
-  { name: 'Mùa xuân pastel', uses: 287, status: 'published' },
-  { name: 'Rustic vintage', uses: 215, status: 'published' },
-  { name: 'Tối giản hiện đại', uses: 198, status: 'published' },
-  { name: 'Garden boho', uses: 156, status: 'published' },
-];
-
-const MOCK_ACTIVITY = [
-  { type: 'user', text: 'nguyenvannam@gmail.com đăng ký tài khoản mới', time: '5 phút trước' },
-  { type: 'card', text: 'Thiệp "Cưới Lan & Minh" vừa được xuất bản', time: '12 phút trước' },
-  { type: 'user', text: 'tranthihuong@gmail.com đăng ký tài khoản mới', time: '28 phút trước' },
-  { type: 'card', text: 'Thiệp "Ngày hạnh phúc - Nam & Hà" vừa được xuất bản', time: '45 phút trước' },
-  { type: 'user', text: 'levanson@gmail.com đăng ký tài khoản mới', time: '1 giờ trước' },
-];
+import { adminApi } from '../../../api/adminApi';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -57,12 +24,37 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export function DashboardPage() {
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+  const [statsData, setStatsData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  return (
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const data = await adminApi.getStats();
+        setStatsData(data);
+      } catch (error) {
+        console.error('Failed to load admin stats', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadStats();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column', gap: 12 }}>
+        <Loader2 className="animate-spin text-rose-500" size={32} />
+        <span className="text-zinc-500 font-medium">Đang tải dữ liệu thống kê...</span>
+      </div>
+    );
+  }
+
+  if (!statsData) return null;  return (
     <div>
       {/* Stat cards */}
       <div className="adm-stat-grid">
-        {MOCK_STATS.map((s) => (
+        {statsData.stats.map((s: any) => (
           <div key={s.label} className="adm-stat-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'stretch', gap: 0, padding: '20px 24px', background: '#fff', borderRadius: 16, boxShadow: '0 4px 20px rgba(0,0,0,0.03)', border: 'none', height: 110 }}>
             {/* Top row */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -115,7 +107,7 @@ export function DashboardPage() {
           </div>
           <div className="adm-card-body" style={{ paddingTop: 8, flex: 1, minHeight: 260 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={MOCK_CHART} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <AreaChart data={statsData.chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorCards" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.25}/>
@@ -148,8 +140,8 @@ export function DashboardPage() {
           </div>
           <div className="adm-card-body" style={{ paddingTop: 20, paddingBottom: 28, position: 'relative' }}>
             {(() => {
-              const maxUses = Math.max(...MOCK_TOP_TEMPLATES.map(t => t.uses));
-              const gridMax = Math.ceil(maxUses / 100) * 100;
+              const maxUses = statsData.topTemplates.length > 0 ? Math.max(...statsData.topTemplates.map((t: any) => t.uses)) : 0;
+              const gridMax = Math.ceil(maxUses / 100) * 100 || 100;
               return (
                 <div style={{ position: 'relative' }}>
                   {/* Dashed Grid Background */}
@@ -165,7 +157,7 @@ export function DashboardPage() {
 
                   {/* Bars */}
                   <div style={{ position: 'relative', zIndex: 1 }} onMouseLeave={() => setHoverIndex(null)}>
-                    {MOCK_TOP_TEMPLATES.map((t, i) => {
+                    {statsData.topTemplates.map((t: any, i: number) => {
                       const percent = (t.uses / gridMax) * 100;
                       // Mặc định highlight Top 1 (i === 0) nếu không hover ai, hoặc highlight chính phần tử đang được hover
                       const isHighlighted = hoverIndex === i || (hoverIndex === null && i === 0);
@@ -213,7 +205,7 @@ export function DashboardPage() {
                                       transform: 'translateX(50%)' // Center it on the tip of the bar
                                     }}
                                   >
-                                    Chiếm {(t.uses / MOCK_TOP_TEMPLATES.reduce((sum, curr) => sum + curr.uses, 0) * 100).toFixed(1)}% tổng
+                                    Chiếm {(t.uses / statsData.topTemplates.reduce((sum: number, curr: any) => sum + curr.uses, 0) * 100 || 0).toFixed(1)}% tổng
                                     <div style={{
                                       position: 'absolute',
                                       bottom: -4,
@@ -246,8 +238,8 @@ export function DashboardPage() {
           <span style={{ fontSize:12, color:'var(--adm-pink)', fontWeight:600, cursor:'pointer' }}>Xem tất cả →</span>
         </div>
         <div>
-          {MOCK_ACTIVITY.map((a, i) => (
-            <div key={i} style={{ display:'flex', alignItems:'center', gap:14, padding:'13px 22px', borderBottom: i < MOCK_ACTIVITY.length-1 ? '1px solid var(--adm-border)' : 'none' }}>
+          {statsData.activity.map((a: any, i: number) => (
+            <div key={i} style={{ display:'flex', alignItems:'center', gap:14, padding:'13px 22px', borderBottom: i < statsData.activity.length-1 ? '1px solid var(--adm-border)' : 'none' }}>
               <div style={{ width:36, height:36, borderRadius:'50%', background: a.type === 'user' ? '#eef2ff' : '#fff1f2', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                 {a.type === 'user' ? <UserPlus size={15} color="#6366f1" /> : <FileText size={15} color="#f43f5e" />}
               </div>

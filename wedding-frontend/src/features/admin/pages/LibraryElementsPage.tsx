@@ -19,7 +19,7 @@ const TYPE_COLORS: Record<string, string> = {
   frame: 'adm-badge-gray', photo: 'adm-badge-gray',
 };
 const TYPE_EMOJI: Record<string, string> = {
-  icon: '🎨', shape: '⬟', illustration: '🖼', sticker: '✨', frame: '🖼', photo: '📷',
+  icon: '⭐', shape: '⬟', illustration: '🎨', sticker: '✨', frame: '🖼', photo: '🖼️',
 };
 
 // Tạo slug từ tên
@@ -543,7 +543,7 @@ export function LibraryElementsPage() {
       {/* ── Page header ─────────────────────────────────── */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
         <div>
-          <div className="adm-page-title">🎨 Thư viện Element</div>
+          <div className="adm-page-title">Elements</div>
           <div className="adm-page-subtitle">
             Quản lý toàn bộ element — icon, hình khối, minh họa, sticker, khung và ảnh stock
           </div>

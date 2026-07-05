@@ -16,7 +16,7 @@ import { LibraryElementQueryDto } from './dto/library-element.dto';
 
 @Controller('library-elements')
 export class LibraryElementsController {
-  constructor(private readonly service: LibraryElementsService) {}
+  constructor(private readonly service: LibraryElementsService) { }
 
   // GET /api/library-elements/categories
   @Get('categories')

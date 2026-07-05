@@ -13,4 +13,4 @@ import { CloudinaryProvider } from '../assets/cloudinary.provider';
   providers: [LibraryElementsService, CloudinaryProvider],
   exports: [LibraryElementsService],
 })
-export class LibraryElementsModule {}
+export class LibraryElementsModule { }

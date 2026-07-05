@@ -21,7 +21,7 @@ import { AssetsService } from './assets.service';
 @Controller('assets')
 @UseGuards(JwtAuthGuard) // toàn bộ route trong controller này đều yêu cầu đăng nhập
 export class AssetsController {
-  constructor(private readonly assetsService: AssetsService) {}
+  constructor(private readonly assetsService: AssetsService) { }
 
   @Post('upload')
   @UseInterceptors(
@@ -75,7 +75,7 @@ export class AssetsController {
           'application/x-font-truetype',
           'application/octet-stream'
         ];
-        
+
         const ext = file.originalname.split('.').pop()?.toLowerCase();
         const allowedExts = ['ttf', 'otf', 'woff', 'woff2'];
 
@@ -97,7 +97,7 @@ export class AssetsController {
   ) {
     const isSystem = isSystemStr === 'true';
     const isAdmin = req.user.role === 'admin';
-    
+
     // Chỉ admin mới có quyền tạo font hệ thống (userId = null)
     const finalUserId = (isSystem && isAdmin) ? null : req.user.id;
 

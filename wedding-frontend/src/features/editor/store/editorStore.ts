@@ -994,7 +994,6 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
   fetchUploadedAssets: async () => {
     try {
       const assets = await assetsApi.getAssets();
-
       const images: UploadedImage[] = [];
       const musics: MusicProperties[] = [];
 
@@ -1179,7 +1178,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
                         : el.type === 'album' ? 'gallery'
                           : el.type === 'form' ? 'rsvp_form'
                             : el.type === 'button_contact' ? 'button'
-                      : 'text',
+                              : 'text',
         posX: el.x,
         posY: el.y,
         width: el.width,
@@ -1385,7 +1384,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
                         : el.type === 'album' ? 'gallery'
                           : el.type === 'form' ? 'rsvp_form'
                             : el.type === 'button_contact' ? 'button'
-                      : 'text',
+                              : 'text',
         posX: el.x,
         posY: el.y,
         width: el.width,

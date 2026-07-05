@@ -4,6 +4,7 @@
 // Imported by: RightPanel.tsx
 // ============================================================
 
+import { useState } from 'react';
 import { useEditorStore } from '../../store/editorStore';
 import type { TextProperties, AlignType } from '../../types/editor.types';
 import {
@@ -91,9 +92,9 @@ export function TextRightPanel({ id, props }: TextRightPanelProps) {
         </div>
 
         {/* Font */}
-        <FontField 
-          fontFamily={props.fontFamily} 
-          onChange={(font) => upd('fontFamily', font)} 
+        <FontField
+          fontFamily={props.fontFamily}
+          onChange={(font) => upd('fontFamily', font)}
         />
 
         {/* Cỡ chữ */}

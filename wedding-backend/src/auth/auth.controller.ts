@@ -36,7 +36,7 @@ import { User } from '@/users/entities/user.entity';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   // =====================================================================
   // ĐĂNG NHẬP LOCAL (EMAIL + PASSWORD)
@@ -209,7 +209,9 @@ export class AuthController {
     // Đăng nhập, set cookie (HttpOnly, Secure, SameSite)
     await this.authService.login(user, res);
 
-    // Redirect về frontend, FE sẽ tự động nhận cookie
-    return res.redirect(process.env.FRONTEND_URL || 'http://localhost:5173/');
+    // Redirect về frontend kèm loading page, FE sẽ tự động nhận cookie
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173/';
+    const redirectUrl = `${frontendUrl.replace(/\/$/, '')}/loading?next=${encodeURIComponent('/dashboard/overview')}&message=${encodeURIComponent('Đăng nhập thành công!')}`;
+    return res.redirect(redirectUrl);
   }
 }

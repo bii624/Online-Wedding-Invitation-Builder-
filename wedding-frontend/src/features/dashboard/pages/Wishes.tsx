@@ -1,18 +1,83 @@
-import { CalendarDays, Heart, MessageCircle, RefreshCw } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { CalendarDays, Heart, MessageCircle, RefreshCw, Check, EyeOff, Eye, Trash2 } from 'lucide-react';
 import { DashboardLayout } from './DashboardLayout';
+import { cardsApi } from '../../../api/cardsApi';
+import { toast } from 'sonner';
 
 export const Wishes = () => {
+  const [wishes, setWishes] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchWishes = async () => {
+    try {
+      setIsLoading(true);
+      const data = await cardsApi.getAllWishes();
+      setWishes(data || []);
+    } catch (err) {
+      console.error(err);
+      toast.error('Lỗi khi tải danh sách lời chúc!');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchWishes();
+  }, []);
+
+  const handleToggleApprove = async (wishId: string, currentStatus: boolean) => {
+    try {
+      await cardsApi.approveWish(wishId, !currentStatus);
+      toast.success(currentStatus ? 'Đã ẩn lời chúc!' : 'Đã duyệt hiển thị lời chúc!');
+      fetchWishes();
+    } catch (err) {
+      console.error(err);
+      toast.error('Không thể cập nhật trạng thái lời chúc!');
+    }
+  };
+
+  const handleDelete = async (wishId: string) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa lời chúc này?')) return;
+    try {
+      await cardsApi.deleteWish(wishId);
+      toast.success('Đã xóa lời chúc!');
+      fetchWishes();
+    } catch (err) {
+      console.error(err);
+      toast.error('Không thể xóa lời chúc!');
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Intl.DateTimeFormat('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(new Date(dateString));
+  };
+
+  // Compute live stats
+  const totalWishes = wishes.length;
+  const latestWish = wishes[0];
+  const uniqueCardsCount = new Set(wishes.map((w) => w.cardId)).size;
+
   return (
     <DashboardLayout>
       <div className="bg-white rounded-4xl border border-rose-100/50 shadow-[0_15px_40px_rgba(244,63,94,0.015)] p-8 min-h-[75vh]">
-        
+
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 pb-6 border-b border-rose-100/30">
           <div>
-            <h1 className="text-2xl font-black text-zinc-800 font-poppins">Lời Chúc Đã Nhận</h1>
-            <p className="mt-1.5 text-xs text-zinc-400 font-poppins font-medium">Lưu giữ những lời chúc yêu thương gửi đến vợ chồng bạn</p>
+            <h1 className="text-2xl font-black text-zinc-800 font-inter">Lời Chúc Đã Nhận</h1>
+            <p className="mt-1.5 text-xs text-zinc-400 font-inter font-medium">Lưu giữ những lời chúc yêu thương gửi đến vợ chồng bạn</p>
           </div>
-          <button className="inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-xs font-bold text-rose-500 hover:border-rose-100/85 hover:bg-rose-50/20 active:scale-95 transition-all cursor-pointer">
-            <RefreshCw size={13} /> Làm mới
+          <button
+            onClick={fetchWishes}
+            disabled={isLoading}
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-xs font-bold text-rose-500 hover:border-rose-100/85 hover:bg-rose-50/20 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+          >
+            <RefreshCw size={13} className={isLoading ? 'animate-spin' : ''} /> Làm mới
           </button>
         </div>
 
@@ -22,9 +87,9 @@ export const Wishes = () => {
               <MessageCircle size={18} />
             </div>
             <div>
-              <p className="text-xs font-bold text-zinc-400 font-poppins uppercase tracking-wider">Tổng số lời chúc</p>
-              <p className="mt-1 text-2xl font-black text-zinc-800 font-poppins">0</p>
-              <p className="text-[10px] text-rose-450 font-semibold font-poppins mt-0.5">Lời chúc được ghi nhận</p>
+              <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Tổng số lời chúc</p>
+              <p className="mt-1 text-2xl font-bold text-slate-800">{totalWishes}</p>
+              <p className="text-xs text-slate-500 font-medium mt-1">Lời chúc được ghi nhận</p>
             </div>
           </div>
           <div className="flex items-center gap-4 rounded-2xl border border-amber-100/40 bg-amber-50/10 p-5">
@@ -32,9 +97,13 @@ export const Wishes = () => {
               <CalendarDays size={18} />
             </div>
             <div>
-              <p className="text-xs font-bold text-zinc-400 font-poppins uppercase tracking-wider">Lời chúc mới nhất</p>
-              <p className="mt-1 text-sm font-extrabold text-zinc-700 font-poppins">Chưa có lời chúc</p>
-              <p className="text-[10px] text-zinc-400 font-medium font-poppins mt-0.5">Không tìm thấy người gửi</p>
+              <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Lời chúc mới nhất</p>
+              <p className="mt-1 text-sm font-bold text-slate-800 truncate max-w-[180px]">
+                {latestWish ? `${latestWish.displayName}` : 'Chưa có lời chúc'}
+              </p>
+              <p className="text-xs text-slate-500 font-medium mt-1">
+                {latestWish ? `Gửi ngày ${formatDate(latestWish.createdAt)}` : 'Không tìm thấy người gửi'}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-4 rounded-2xl border border-pink-100/40 bg-pink-50/10 p-5">
@@ -42,40 +111,91 @@ export const Wishes = () => {
               <Heart size={18} />
             </div>
             <div>
-              <p className="text-xs font-bold text-zinc-400 font-poppins uppercase tracking-wider">Thiệp nhận lời chúc</p>
-              <p className="mt-1 text-2xl font-black text-zinc-800 font-poppins">0</p>
-              <p className="text-[10px] text-pink-550 font-semibold font-poppins mt-0.5">Có thiệp được kết nối</p>
+              <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Thiệp nhận lời chúc</p>
+              <p className="mt-1 text-2xl font-bold text-slate-800">{uniqueCardsCount}</p>
+              <p className="text-xs text-slate-500 font-medium mt-1">Có thiệp được kết nối</p>
             </div>
           </div>
         </div>
 
         <div className="overflow-hidden rounded-2xl border border-rose-100/30 bg-white shadow-2xs">
-          <table className="min-w-full divide-y divide-zinc-100 text-left text-xs text-zinc-650">
-            <thead className="bg-zinc-50/60 text-[10px] font-black uppercase tracking-wider text-zinc-400">
-              <tr>
-                <th className="px-6 py-4">Người gửi</th>
-                <th className="px-6 py-4">Nội dung lời chúc</th>
-                <th className="px-6 py-4">Thiệp cưới</th>
-                <th className="px-6 py-4">Thời gian</th>
-                <th className="px-6 py-4">Hành động</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white">
-              <tr className="h-72">
-                <td colSpan={5} className="px-6 py-10">
-                  <div className="flex flex-col items-center justify-center gap-3 text-center">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-rose-50/50 text-rose-400 border border-rose-100/30">
-                      <Heart size={20} />
-                    </div>
-                    <p className="text-sm font-bold text-zinc-750 font-poppins">Không có lời chúc nào</p>
-                    <p className="max-w-xs text-xs text-zinc-400 font-poppins font-medium leading-relaxed">
-                      Mọi tin nhắn chúc mừng đáng yêu từ bạn bè gửi qua thiệp sẽ tụ họp đầy đủ ở đây.
-                    </p>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-500" />
+            </div>
+          ) : wishes.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-rose-50/50 text-rose-400 border border-rose-100/30 mb-3">
+                <Heart size={20} />
+              </div>
+              <p className="text-sm font-bold text-zinc-750 font-inter">Không có lời chúc nào</p>
+              <p className="max-w-xs text-xs text-zinc-400 font-inter font-medium leading-relaxed mt-1">
+                Mọi tin nhắn chúc mừng đáng yêu từ bạn bè gửi qua thiệp sẽ tụ họp đầy đủ ở đây.
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-zinc-100 text-left text-xs text-zinc-650">
+                <thead className="bg-zinc-50/60 text-[10px] font-black uppercase tracking-wider text-zinc-400">
+                  <tr>
+                    <th className="px-6 py-4">Người gửi</th>
+                    <th className="px-6 py-4">Nội dung lời chúc</th>
+                    <th className="px-6 py-4">Thiệp cưới</th>
+                    <th className="px-6 py-4">Thời gian</th>
+                    <th className="px-6 py-4 text-center">Hành động</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-zinc-100">
+                  {wishes.map((wish) => (
+                    <tr key={wish.id} className="hover:bg-zinc-50/30 transition-colors">
+                      <td className="px-6 py-4 font-bold text-zinc-800 font-inter">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-7 h-7 rounded-full bg-rose-500/10 text-rose-600 flex items-center justify-center text-xs font-black shadow-2xs overflow-hidden shrink-0">
+                            {wish.avatarUrl ? (
+                              <img src={wish.avatarUrl} alt={wish.displayName} className="w-full h-full object-cover" />
+                            ) : (
+                              wish.displayName?.charAt(0).toUpperCase() || 'K'
+                            )}
+                          </div>
+                          <span>{wish.displayName}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-zinc-600 max-w-xs truncate" title={wish.message}>
+                        {wish.message}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="text-rose-500 font-semibold">{wish.card?.title || 'Không tên'}</span>
+                      </td>
+                      <td className="px-6 py-4 text-zinc-400">
+                        {formatDate(wish.createdAt)}
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            onClick={() => handleToggleApprove(wish.id, wish.isApproved)}
+                            className={`p-1.5 rounded-lg border transition-all cursor-pointer active:scale-95 ${wish.isApproved
+                              ? 'bg-emerald-50 border-emerald-100 text-emerald-600 hover:bg-emerald-100'
+                              : 'bg-zinc-50 border-zinc-200 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600'
+                              }`}
+                            title={wish.isApproved ? 'Ẩn lời chúc' : 'Duyệt lời chúc'}
+                          >
+                            {wish.isApproved ? <Eye size={13} /> : <EyeOff size={13} />}
+                          </button>
+                          <button
+                            onClick={() => handleDelete(wish.id)}
+                            className="p-1.5 rounded-lg border border-red-100 text-red-500 bg-red-50/50 hover:bg-red-50 hover:border-red-200 transition-all cursor-pointer active:scale-95"
+                            title="Xóa lời chúc"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </DashboardLayout>

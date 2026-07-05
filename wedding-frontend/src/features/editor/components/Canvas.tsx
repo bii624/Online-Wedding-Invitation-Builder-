@@ -356,100 +356,100 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
           onMouseDown={handleMouseDown}
           data-element-id={element.id}
         >
-        {/* Selection border overlay */}
-        <div className="canvas-el-border" />
+          {/* Selection border overlay */}
+          <div className="canvas-el-border" />
 
-        {/* ── Delegate content rendering by type ── */}
-        {element.type === 'text' && (
-          <TextEditorElement element={element} zoom={zoom} />
-        )}
-        {element.type === 'image' && (
-          <ImageEditorElement element={element} zoom={zoom} />
-        )}
-        {element.type === 'shape' && (
-          <ShapeEditorElement element={element} zoom={zoom} />
-        )}
-        {element.type === 'countdown' && (
-          <CountdownEditorElement element={element} zoom={zoom} />
-        )}
-        {element.type === 'map' && (
-          <MapEditorElement element={element} zoom={zoom} />
-        )}
-        {element.type === 'qr_code' && (
-          <QrGiftBoxEditorElement element={element} zoom={zoom} />
-        )}
-        {element.type === 'calendar' && (
-          <CalendarEditorElement element={element} zoom={zoom} />
-        )}
-        {element.type === 'album' && (
-          <AlbumEditorElement element={element} zoom={zoom} />
-        )}
-        {element.type === 'form' && (
-          <FormEditorElement element={element} zoom={zoom} />
-        )}
-        {element.type === 'button_contact' && (
-          <ButtonEditorElement element={element} zoom={zoom} />
-        )}
+          {/* ── Delegate content rendering by type ── */}
+          {element.type === 'text' && (
+            <TextEditorElement element={element} zoom={zoom} />
+          )}
+          {element.type === 'image' && (
+            <ImageEditorElement element={element} zoom={zoom} />
+          )}
+          {element.type === 'shape' && (
+            <ShapeEditorElement element={element} zoom={zoom} />
+          )}
+          {element.type === 'countdown' && (
+            <CountdownEditorElement element={element} zoom={zoom} />
+          )}
+          {element.type === 'map' && (
+            <MapEditorElement element={element} zoom={zoom} />
+          )}
+          {element.type === 'qr_code' && (
+            <QrGiftBoxEditorElement element={element} zoom={zoom} />
+          )}
+          {element.type === 'calendar' && (
+            <CalendarEditorElement element={element} zoom={zoom} />
+          )}
+          {element.type === 'album' && (
+            <AlbumEditorElement element={element} zoom={zoom} />
+          )}
+          {element.type === 'form' && (
+            <FormEditorElement element={element} zoom={zoom} />
+          )}
+          {element.type === 'button_contact' && (
+            <ButtonEditorElement element={element} zoom={zoom} />
+          )}
 
-        {/* Controls – visible only when selected */}
-        {isSelected && (
-          <>
-            {/* Top controls bar */}
-            <div
-              className="canvas-el-controls"
-              onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
-            >
-              <button
-                className="canvas-el-ctrl-btn"
-                title="Đưa lên trên"
-                onClick={(e) => { e.stopPropagation(); console.log("hihih"); bringElementForward(element.id); }}
+          {/* Controls – visible only when selected */}
+          {isSelected && (
+            <>
+              {/* Top controls bar */}
+              <div
+                className="canvas-el-controls"
+                onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
               >
-                <LayerUpIcon />
-              </button>
-              <button
-                className="canvas-el-ctrl-btn"
-                title="Đưa xuống dưới"
-                onClick={(e) => { e.stopPropagation(); sendElementBackward(element.id); }}
-              >
-                <LayerDownIcon />
-              </button>
+                <button
+                  className="canvas-el-ctrl-btn"
+                  title="Đưa lên trên"
+                  onClick={(e) => { e.stopPropagation(); console.log("hihih"); bringElementForward(element.id); }}
+                >
+                  <LayerUpIcon />
+                </button>
+                <button
+                  className="canvas-el-ctrl-btn"
+                  title="Đưa xuống dưới"
+                  onClick={(e) => { e.stopPropagation(); sendElementBackward(element.id); }}
+                >
+                  <LayerDownIcon />
+                </button>
 
-              <button
-                className="canvas-el-ctrl-btn"
-                title="Khóa"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <LockIcon />
-              </button>
-              <button
-                className="canvas-el-ctrl-btn"
-                title="Nhân bản"
-                onClick={(e) => { e.stopPropagation(); duplicateElement(element.id); }}
-              >
-                <CopyIcon />
-              </button>
-              <button
-                className="canvas-el-ctrl-btn danger"
-                title="Xóa"
-                onClick={(e) => { e.stopPropagation(); deleteElement(element.id); }}
-              >
-                <TrashIcon />
-              </button>
-            </div>
+                <button
+                  className="canvas-el-ctrl-btn"
+                  title="Khóa"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <LockIcon />
+                </button>
+                <button
+                  className="canvas-el-ctrl-btn"
+                  title="Nhân bản"
+                  onClick={(e) => { e.stopPropagation(); duplicateElement(element.id); }}
+                >
+                  <CopyIcon />
+                </button>
+                <button
+                  className="canvas-el-ctrl-btn danger"
+                  title="Xóa"
+                  onClick={(e) => { e.stopPropagation(); deleteElement(element.id); }}
+                >
+                  <TrashIcon />
+                </button>
+              </div>
 
 
-            {/* Resize handles */}
-            <div className="canvas-handle tl" onMouseDown={(e) => handleResizeMouseDown(e, 'tl')} />
-            <div className="canvas-handle tr" onMouseDown={(e) => handleResizeMouseDown(e, 'tr')} />
-            <div className="canvas-handle bl" onMouseDown={(e) => handleResizeMouseDown(e, 'bl')} />
-            <div className="canvas-handle br" onMouseDown={(e) => handleResizeMouseDown(e, 'br')} />
-            <div className="canvas-handle tm" onMouseDown={(e) => handleResizeMouseDown(e, 'tm')} />
-            <div className="canvas-handle bm" onMouseDown={(e) => handleResizeMouseDown(e, 'bm')} />
-            <div className="canvas-handle ml" onMouseDown={(e) => handleResizeMouseDown(e, 'ml')} />
-            <div className="canvas-handle mr" onMouseDown={(e) => handleResizeMouseDown(e, 'mr')} />
-            <div className="canvas-handle rotate" onMouseDown={handleRotateMouseDown} />
-          </>
-        )}
+              {/* Resize handles */}
+              <div className="canvas-handle tl" onMouseDown={(e) => handleResizeMouseDown(e, 'tl')} />
+              <div className="canvas-handle tr" onMouseDown={(e) => handleResizeMouseDown(e, 'tr')} />
+              <div className="canvas-handle bl" onMouseDown={(e) => handleResizeMouseDown(e, 'bl')} />
+              <div className="canvas-handle br" onMouseDown={(e) => handleResizeMouseDown(e, 'br')} />
+              <div className="canvas-handle tm" onMouseDown={(e) => handleResizeMouseDown(e, 'tm')} />
+              <div className="canvas-handle bm" onMouseDown={(e) => handleResizeMouseDown(e, 'bm')} />
+              <div className="canvas-handle ml" onMouseDown={(e) => handleResizeMouseDown(e, 'ml')} />
+              <div className="canvas-handle mr" onMouseDown={(e) => handleResizeMouseDown(e, 'mr')} />
+              <div className="canvas-handle rotate" onMouseDown={handleRotateMouseDown} />
+            </>
+          )}
 
         </div>
       </div>
@@ -508,7 +508,6 @@ export function MainCanvas() {
   const handleHeightDrag = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
     const startY = e.clientY;
     const startHeight = canvasHeight;
 

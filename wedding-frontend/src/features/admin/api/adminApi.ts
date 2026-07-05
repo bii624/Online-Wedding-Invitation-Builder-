@@ -138,6 +138,11 @@ export const adminApi = {
     return r.data;
   },
 
+  createUser: async (data: any) => {
+    const r = await axiosClient.post('/admin/users', data);
+    return r.data;
+  },
+
   // Cards
   getCards: async (params?: object): Promise<PaginatedResponse<AdminCard>> => {
     const r = await axiosClient.get('/admin/cards', { params });

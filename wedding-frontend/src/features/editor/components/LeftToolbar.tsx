@@ -15,6 +15,9 @@ import type { ToolType, UploadedImage } from '../types/editor.types';
 import type { JSX } from 'react';
 import { assetsApi } from '../../../api/assetsApi';
 import { toast } from 'sonner';
+import { ChevronLeft } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { BackgroundIcon as HugeBackgroundIcon, BounceLeftIcon, TextIcon as HugeTextIcon, LibraryIcon as HugeLibraryIcon } from '@hugeicons/core-free-icons';
 
 // ── SVG Icons ─────────────────────────────────────────────
 const TextIcon = () => (
@@ -108,7 +111,7 @@ function ImageUploadPanel({ onClose }: { onClose: () => void }) {
     if (!files) return;
     setIsUploading(true);
     let successCount = 0;
-    
+
     for (const file of Array.from(files)) {
       if (!file.type.startsWith('image/')) continue;
       try {
@@ -163,8 +166,8 @@ function ImageUploadPanel({ onClose }: { onClose: () => void }) {
         <span className="lt-image-panel-title">
           <ImageIcon /> Hình ảnh
         </span>
-        <button className="lt-panel-close-btn" onClick={onClose} title="Đóng">
-          <CloseIcon />
+        <button className="panel-collapse-btn" onClick={onClose} title="Thu gọn">
+          <ChevronLeft size={16} />
         </button>
       </div>
 
@@ -256,16 +259,52 @@ interface ToolConfig {
 }
 
 const TOOLS: ToolConfig[] = [
-  { id: 'text', label: 'Văn bản', icon: TextIcon, tooltip: 'Thêm văn bản' },
+  {
+    id: 'text', label: 'Văn bản', icon: () => (
+      <HugeiconsIcon
+        icon={HugeTextIcon}
+        size={24}
+        color="currentColor"
+        strokeWidth={1.5}
+      />
+    ), tooltip: 'Thêm văn bản'
+  },
   { id: 'image', label: 'Hình ảnh', icon: ImageIcon, tooltip: 'Tải ảnh lên' },
-  { id: 'library', label: 'Thư viện', icon: LibraryIcon, tooltip: 'Thư viện Element' },
-  { id: 'background', label: 'Nền', icon: BackgroundIcon, tooltip: 'Cài đặt nền' },
-  { id: 'stock', label: 'Stock', icon: StockIcon, tooltip: 'Tài nguyên Stock' },
+  {
+    id: 'library', label: 'Thư viện', icon: () => (
+      <HugeiconsIcon
+        icon={HugeLibraryIcon}
+        size={24}
+        color="currentColor"
+        strokeWidth={1.5}
+      />
+    ), tooltip: 'Thư viện Element'
+  },
+  {
+    id: 'background', label: 'Nền', icon: () => (
+      <HugeiconsIcon
+        icon={HugeBackgroundIcon}
+        size={24}
+        color="currentColor"
+        strokeWidth={1.5}
+      />
+    ), tooltip: 'Cài đặt nền'
+  },
+
   { id: 'tools', label: 'Công cụ', icon: ToolsIcon, tooltip: 'Công cụ hình dạng' },
   { id: 'music', label: 'Nhạc nền', icon: MusicIcon, tooltip: 'Thêm nhạc' },
   { id: 'widgets', label: 'Tiện ích', icon: WidgetsIcon, tooltip: 'Tiện ích mở rộng' },
   { id: 'templates', label: 'Mẫu', icon: TemplatesIcon, tooltip: 'Bộ mẫu thiết kế' },
-  { id: 'effects', label: 'Hiệu ứng', icon: EffectsIcon, tooltip: 'Hiệu ứng đặc biệt' },
+  {
+    id: 'effects', label: 'Hiệu ứng', icon: () => (
+      <HugeiconsIcon
+        icon={BounceLeftIcon}
+        size={24}
+        color="currentColor"
+        strokeWidth={1.5}
+      />
+    ), tooltip: 'Hiệu ứng đặc biệt'
+  },
   { id: 'presets', label: 'Bộ cài', icon: PresetsIcon, tooltip: 'Thiết lập sẵn' },
 ];
 
