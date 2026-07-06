@@ -32,7 +32,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode; title
         { name: 'Tổng quan', path: '/dashboard/overview', icon: LayoutDashboard },
         { name: 'Thiệp của tôi', path: '/dashboard/my-cards', icon: Mails },
         { name: 'Kho mẫu thiệp', path: '/dashboard/templates', icon: LayoutTemplate },
-        { name: 'Trình thiết kế', path: '/design', icon: Palette },
+        { name: 'Tạo thiệp mới', path: '/dashboard/create', icon: Palette },
       ]
     },
     {

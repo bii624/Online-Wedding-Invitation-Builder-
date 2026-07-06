@@ -18,6 +18,7 @@ import CardDetailPage from './pages/Dashboard/CardDetailPage/CardDetailPage';
 // Dashboard
 import { Overview } from './features/dashboard/pages/Overview';
 import { MyCards as MyCardsDashboard } from './features/dashboard/pages/MyCards';
+import { CreateCard } from './features/dashboard/pages/CreateCard';
 import { Wishes } from './features/dashboard/pages/Wishes';
 import { RSVP } from './features/dashboard/pages/RSVP';
 import { ReceivedGifts } from './features/dashboard/pages/ReceivedGifts';
@@ -72,6 +73,7 @@ function App() {
         <Route path="/dashboard" element={<Navigate to="/dashboard/overview" replace />} />
         <Route path="/dashboard/overview" element={<Overview />} />
         <Route path="/dashboard/my-cards" element={<MyCardsDashboard />} />
+        <Route path="/dashboard/create" element={<CreateCard />} />
         <Route path="/dashboard/cards/:id" element={<CardDetailPage />} />
         <Route path="/dashboard/templates" element={<Templates />} />
         <Route path="/dashboard/wishes" element={<Wishes />} />
