@@ -214,4 +214,39 @@ export class AuthController {
     const redirectUrl = `${frontendUrl.replace(/\/$/, '')}/loading?next=${encodeURIComponent('/dashboard/overview')}&message=${encodeURIComponent('Đăng nhập thành công!')}`;
     return res.redirect(redirectUrl);
   }
+
+  // =====================================================================
+  // FORGOT / RESET PASSWORD
+  // =====================================================================
+  @Post('forgot-password')
+  @ApiOperation({ summary: 'Yêu cầu đặt lại mật khẩu (gửi email)' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: { email: { type: 'string', example: 'user@example.com' } },
+    },
+  })
+  async forgotPassword(@Body('email') email: string) {
+    if (!email) throw new BadRequestException('Vui lòng cung cấp email');
+    return this.authService.forgotPassword(email);
+  }
+
+  @Post('reset-password')
+  @ApiOperation({ summary: 'Đặt lại mật khẩu mới bằng token' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        token: { type: 'string' },
+        newPassword: { type: 'string' },
+      },
+    },
+  })
+  async resetPassword(@Body() body: any) {
+    const { token, newPassword } = body;
+    if (!token || !newPassword) {
+      throw new BadRequestException('Vui lòng cung cấp token và mật khẩu mới');
+    }
+    return this.authService.resetPassword(token, newPassword);
+  }
 }

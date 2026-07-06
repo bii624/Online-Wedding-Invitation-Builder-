@@ -1,21 +1,54 @@
-import React, { useState } from "react";
-import { Eye, EyeOff, Lock, ArrowRight, CheckCircle2 } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Eye, EyeOff, Lock, Mail, ArrowRight, CheckCircle2 } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import { RevolvingHeartsIcon } from "../../../components/icons/emojione-revolving-hearts";
+import { authApi } from "../../../api/authApi";
 
 export default function ResetPasswordPage() {
-  const [showPassword, setShowPassword] = useState(false);
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+
+  // State
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Xử lý gửi email (Forgot Password)
+  const handleForgotSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setErrorMsg("");
+    try {
+      await authApi.forgotPassword(email);
+      setIsSuccess(true);
+    } catch (err: any) {
+      setErrorMsg(err.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Xử lý đổi mật khẩu (Reset Password)
+  const handleResetSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      alert("Mật khẩu xác nhận không trùng khớp!");
+      setErrorMsg("Mật khẩu xác nhận không trùng khớp!");
       return;
     }
-    console.log("Cập nhật mật khẩu mới thành công");
-    setIsSuccess(true);
+    setIsLoading(true);
+    setErrorMsg("");
+    try {
+      await authApi.resetPassword({ token, newPassword: password });
+      setIsSuccess(true);
+    } catch (err: any) {
+      setErrorMsg(err.response?.data?.message || "Mã xác nhận không hợp lệ hoặc đã hết hạn.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -37,62 +70,101 @@ export default function ResetPasswordPage() {
             <>
               <div className="mb-6 space-y-1">
                 <h2 className="text-2xl md:text-3xl font-poppins font-extrabold text-zinc-900 tracking-tight">
-                  Đặt lại mật khẩu
+                  {token ? "Đặt lại mật khẩu" : "Quên mật khẩu?"}
                 </h2>
                 <p className="text-xs font-medium text-zinc-400">
-                  Vui lòng nhập mật khẩu mới bảo mật hơn cho tài khoản của bạn
+                  {token 
+                    ? "Vui lòng nhập mật khẩu mới bảo mật hơn cho tài khoản của bạn"
+                    : "Đừng lo, hãy nhập email của bạn và chúng tôi sẽ gửi liên kết để lấy lại mật khẩu."}
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-1.5 font-poppins">
-                  <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
-                    Mật khẩu mới
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      required
-                      placeholder="Tối thiểu 8 ký tự"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full h-11 pl-11 pr-11 rounded-xl bg-zinc-50 border border-zinc-100 focus:border-rose-400 focus:bg-white text-sm font-medium text-zinc-800 outline-none transition-all"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 cursor-pointer"
-                    >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
+              {errorMsg && (
+                <div className="mb-4 p-3 bg-rose-50 border border-rose-100 text-rose-600 text-sm rounded-xl font-medium">
+                  {errorMsg}
                 </div>
+              )}
 
-                <div className="space-y-1.5 font-poppins">
-                  <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
-                    Xác nhận mật khẩu mới
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      required
-                      placeholder="••••••••"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full h-11 pl-11 pr-4 rounded-xl bg-zinc-50 border border-zinc-100 focus:border-rose-400 focus:bg-white text-sm font-medium text-zinc-800 outline-none transition-all"
-                    />
+              {!token ? (
+                // FORM: FORGOT PASSWORD
+                <form onSubmit={handleForgotSubmit} className="space-y-4">
+                  <div className="space-y-1.5 font-poppins">
+                    <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
+                      Địa chỉ Email
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
+                      <input
+                        type="email"
+                        required
+                        placeholder="you@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full h-11 pl-11 pr-4 rounded-xl bg-zinc-50 border border-zinc-100 focus:border-rose-400 focus:bg-white text-sm font-medium text-zinc-800 outline-none transition-all"
+                      />
+                    </div>
                   </div>
-                </div>
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full h-11 mt-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm shadow-[0_8px_20px_rgba(225,29,72,0.15)] hover:shadow-[0_12px_25px_rgba(225,29,72,0.25)] active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 cursor-pointer font-poppins disabled:opacity-70 disabled:cursor-not-allowed"
+                  >
+                    {isLoading ? "Đang xử lý..." : "Gửi liên kết khôi phục"} <ArrowRight size={16} />
+                  </button>
+                </form>
+              ) : (
+                // FORM: RESET PASSWORD
+                <form onSubmit={handleResetSubmit} className="space-y-4">
+                  <div className="space-y-1.5 font-poppins">
+                    <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
+                      Mật khẩu mới
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        required
+                        placeholder="Tối thiểu 8 ký tự"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full h-11 pl-11 pr-11 rounded-xl bg-zinc-50 border border-zinc-100 focus:border-rose-400 focus:bg-white text-sm font-medium text-zinc-800 outline-none transition-all"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 cursor-pointer"
+                      >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
+                  </div>
 
-                <button
-                  type="submit"
-                  className="w-full h-11 mt-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm shadow-[0_8px_20px_rgba(225,29,72,0.15)] hover:shadow-[0_12px_25px_rgba(225,29,72,0.25)] active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 cursor-pointer font-poppins"
-                >
-                  Cập nhật mật khẩu <ArrowRight size={16} />
-                </button>
-              </form>
+                  <div className="space-y-1.5 font-poppins">
+                    <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider">
+                      Xác nhận mật khẩu mới
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        required
+                        placeholder="••••••••"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="w-full h-11 pl-11 pr-4 rounded-xl bg-zinc-50 border border-zinc-100 focus:border-rose-400 focus:bg-white text-sm font-medium text-zinc-800 outline-none transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full h-11 mt-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm shadow-[0_8px_20px_rgba(225,29,72,0.15)] hover:shadow-[0_12px_25px_rgba(225,29,72,0.25)] active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 cursor-pointer font-poppins disabled:opacity-70 disabled:cursor-not-allowed"
+                  >
+                    {isLoading ? "Đang xử lý..." : "Cập nhật mật khẩu"} <ArrowRight size={16} />
+                  </button>
+                </form>
+              )}
             </>
           ) : (
             <div className="py-8 space-y-6 text-center lg:text-left font-poppins">
@@ -101,10 +173,12 @@ export default function ResetPasswordPage() {
               </div>
               <div className="space-y-2">
                 <h3 className="text-xl font-extrabold text-zinc-900 tracking-tight">
-                  Đổi mật khẩu thành công!
+                  {token ? "Đổi mật khẩu thành công!" : "Đã gửi liên kết khôi phục!"}
                 </h3>
                 <p className="text-xs font-medium text-zinc-400 leading-relaxed">
-                  Mật khẩu của bạn đã được cập nhật trên hệ thống. Bây giờ bạn có thể quay lại đăng nhập bằng mật khẩu mới.
+                  {token 
+                    ? "Mật khẩu của bạn đã được cập nhật trên hệ thống. Bây giờ bạn có thể quay lại đăng nhập bằng mật khẩu mới."
+                    : `Chúng tôi đã gửi một email có chứa liên kết đặt lại mật khẩu. Vui lòng kiểm tra hộp thư đến (và mục spam).`}
                 </p>
               </div>
               <a 
@@ -117,7 +191,7 @@ export default function ResetPasswordPage() {
           )}
 
           <p className="mt-8 text-center text-xs text-zinc-400 font-medium font-poppins">
-            Nhớ ra mật khẩu cũ?{" "}
+            Nhớ ra mật khẩu?{" "}
             <a href="/login" className="text-rose-500 font-bold hover:underline">
               Đăng nhập ngay
             </a>

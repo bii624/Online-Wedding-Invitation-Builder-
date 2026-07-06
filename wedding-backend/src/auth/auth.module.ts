@@ -9,12 +9,14 @@ import { JwtStrategy } from './passport/jwt.strategy';
 import { GoogleStrategy } from './passport/google.strategy';
 import { FacebookStrategy } from './passport/facebook.strategy';
 import { AuthController } from './auth.controller';
+import { MailModule } from '@/mail/mail.module';
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
     ConfigModule,
+    MailModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {

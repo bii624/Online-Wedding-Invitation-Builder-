@@ -128,20 +128,22 @@ model Plan {
 }
 
 model User {
-  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email         String?      @unique
-  phone         String?      @unique
-  passwordHash  String?      @map("password_hash") // NULL nếu đăng nhập qua social
-  fullName      String?      @map("full_name")
-  avatarUrl     String?      @map("avatar_url")
-  authProvider  AuthProvider @default(email) @map("auth_provider")
-  providerId    String?      @map("provider_id") // id từ Google/Facebook
-  role          UserRole     @default(user)
-  status        UserStatus   @default(unverified)
-  currentPlanId String?      @map("current_plan_id") @db.Uuid
-  refreshToken  String?      @map("refresh_token")
-  createdAt     DateTime     @default(now()) @map("created_at")
-  updatedAt     DateTime     @updatedAt @map("updated_at")
+  id                   String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email                String?      @unique
+  phone                String?      @unique
+  passwordHash         String?      @map("password_hash") // NULL nếu đăng nhập qua social
+  fullName             String?      @map("full_name")
+  avatarUrl            String?      @map("avatar_url")
+  authProvider         AuthProvider @default(email) @map("auth_provider")
+  providerId           String?      @map("provider_id") // id từ Google/Facebook
+  role                 UserRole     @default(user)
+  status               UserStatus   @default(unverified)
+  currentPlanId        String?      @map("current_plan_id") @db.Uuid
+  refreshToken         String?      @map("refresh_token")
+  resetPasswordToken   String?      @map("reset_password_token")
+  resetPasswordExpires DateTime?    @map("reset_password_expires")
+  createdAt            DateTime     @default(now()) @map("created_at")
+  updatedAt            DateTime     @updatedAt @map("updated_at")
 
   currentPlan      Plan?            @relation(fields: [currentPlanId], references: [id], onDelete: SetNull)
   cards            Card[]
