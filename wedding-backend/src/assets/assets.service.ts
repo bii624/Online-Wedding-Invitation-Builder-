@@ -284,10 +284,13 @@ export class AssetsService {
     try {
       // Xoá trên Cloudinary trực tiếp dựa vào URL
       const publicId = this.extractPublicId(url);
+      console.log('[deleteAssetByUrlSafe] Extracted publicId:', publicId, 'from url:', url);
       if (publicId) {
-        await this.cloudinary.uploader.destroy(publicId, {
+        const result = await this.cloudinary.uploader.destroy(publicId, {
           resource_type: 'image',
+          invalidate: true,
         });
+        console.log('[deleteAssetByUrlSafe] Cloudinary destroy result:', result);
       }
 
       // Xoá trong DB (chỉ dành cho những thumbnail cũ đã bị lỡ lưu vào bảng assets)
@@ -314,6 +317,11 @@ export class AssetsService {
     if (/^v\d+\//.test(path)) {
       path = path.replace(/^v\d+\//, '');
     }
-    return path.replace(/\.[^/.]+$/, ''); // bỏ đuôi file (.jpg, .mp4...)
+    path = path.replace(/\.[^/.]+$/, ''); // bỏ đuôi file (.jpg, .mp4...)
+    try {
+      return decodeURIComponent(path);
+    } catch (e) {
+      return path;
+    }
   }
 }

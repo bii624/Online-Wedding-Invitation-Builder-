@@ -20,6 +20,13 @@ export class UpdateCardDto {
   @MaxLength(255)
   title?: string;
 
+  @ApiPropertyOptional({ description: 'Đường dẫn tĩnh (slug)' })
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  @MaxLength(255)
+  slug?: string;
+
   @ApiPropertyOptional({ description: 'Tên chú rể' })
   @IsOptional()
   @IsString()

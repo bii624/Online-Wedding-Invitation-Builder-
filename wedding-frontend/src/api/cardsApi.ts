@@ -74,6 +74,23 @@ export const cardsApi = {
     return response.data;
   },
 
+  getCardStats: async (cardId: string) => {
+    const response = await axiosClient.get(`/cards/${cardId}/stats`);
+    return response.data;
+  },
+
+  updateCard: async (cardId: string, data: { title?: string; slug?: string; isPublic?: boolean; status?: string }) => {
+    const response = await axiosClient.patch(`/cards/${cardId}`, data);
+    return response.data;
+  },
+
+  checkSlug: async (slug: string, excludeCardId?: string) => {
+    const response = await axiosClient.get(`/cards/check-slug`, {
+      params: { slug, excludeCardId },
+    });
+    return response.data;
+  },
+
   getAllWishes: async () => {
     const response = await axiosClient.get('/cards/wishes/all');
     return response.data;

@@ -93,12 +93,22 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
   const dragRef = useRef({ isDragging: false, startX: 0, startY: 0, origX: 0, origY: 0 });
   const observerRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<HTMLDivElement>(null);
-  const [hasTriggered, setHasTriggered] = useState(false);
+  const [isPreviewing, setIsPreviewing] = useState(false);
   const isSelected = selectedElement?.id === element.id;
   const ap = element.animationProps ?? DEFAULT_ANIMATION_PROPS;
 
+  // ── Preview Trigger ──────────────────────────────────────
+  useEffect(() => {
+    if (animationPreviewTick > 0) {
+      setIsPreviewing(true);
+      const timer = setTimeout(() => setIsPreviewing(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [animationPreviewTick]);
+
   // ── Loop animation CSS class ─────────────────────────────
   const loopClass = useMemo(() => {
+    if (!isPreviewing) return ''; // Only play loop in editor when previewing
     if (!ap.loopEnabled || ap.loopEffect === 'none') return '';
     switch (ap.loopEffect) {
       case 'bay-lo-lung': return 'animate-bay-lo-lung';
@@ -110,46 +120,24 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
       case 'lac-lu-nhun-nhay': return 'animate-lac-lu-nhun-nhay';
       default: return '';
     }
-  }, [ap.loopEnabled, ap.loopEffect]);
+  }, [ap.loopEnabled, ap.loopEffect, isPreviewing]);
 
-  // ── Entry animation via IntersectionObserver ─────────────
+  // ── Entry animation ──────────────────────────────────────
   useEffect(() => {
-    const observerTarget = observerRef.current;
     const el = animRef.current;
-    if (!observerTarget || !el || !ap.entryEnabled || ap.entryEffect === 'none') return;
+    if (!el || !ap.entryEnabled || ap.entryEffect === 'none') return;
 
-    const applyEntry = () => {
+    if (isPreviewing) {
       el.style.animationDuration = `${ap.entryDuration}s`;
-      el.style.animationDelay = `${ap.entryDelay}s`;
+      el.style.animationDelay = `0s`; // Instant preview without delay
       el.style.animationTimingFunction = ap.entryEasing;
-      // Remove first to re-trigger
       el.classList.remove('animate__animated', `animate__${ap.entryEffect}`);
       void el.offsetHeight; // reflow
       el.classList.add('animate__animated', `animate__${ap.entryEffect}`);
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setHasTriggered(true);
-            applyEntry();
-          } else {
-            // Remove so it re-triggers on next scroll in
-            setHasTriggered(false);
-            el.classList.remove('animate__animated', `animate__${ap.entryEffect}`);
-          }
-        });
-      },
-      { rootMargin: '0px 0px -40% 0px', threshold: 0 }
-    );
-
-    observer.observe(observerTarget);
-    return () => {
-      observer.disconnect();
+    } else {
       el.classList.remove('animate__animated', `animate__${ap.entryEffect}`);
-    };
-  }, [ap.entryEnabled, ap.entryEffect, ap.entryDuration, ap.entryDelay, ap.entryEasing, animationPreviewTick]);
+    }
+  }, [ap.entryEnabled, ap.entryEffect, ap.entryDuration, ap.entryEasing, isPreviewing]);
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -351,7 +339,7 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
       <div
         ref={animRef}
         className={`canvas-element-entry`}
-        style={{ width: '100%', height: '100%', opacity: (ap?.entryEnabled && ap.entryEffect !== 'none' && !hasTriggered && !isSelected) ? 0 : undefined }}
+        style={{ width: '100%', height: '100%', opacity: undefined }}
       >
         <div
           className={`canvas-element ${isSelected ? 'selected' : ''} ${loopClass}`}

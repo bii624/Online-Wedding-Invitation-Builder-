@@ -13,6 +13,7 @@ import { Toaster } from 'sonner';
 import { useEffect } from 'react';
 import { useAuthStore } from './store/authStore';
 import { MyCardsPage } from './pages/MyCardsPage/MyCardsPage';
+import CardDetailPage from './pages/Dashboard/CardDetailPage/CardDetailPage';
 
 // Dashboard
 import { Overview } from './features/dashboard/pages/Overview';
@@ -71,6 +72,7 @@ function App() {
         <Route path="/dashboard" element={<Navigate to="/dashboard/overview" replace />} />
         <Route path="/dashboard/overview" element={<Overview />} />
         <Route path="/dashboard/my-cards" element={<MyCardsDashboard />} />
+        <Route path="/dashboard/cards/:id" element={<CardDetailPage />} />
         <Route path="/dashboard/templates" element={<Templates />} />
         <Route path="/dashboard/wishes" element={<Wishes />} />
         <Route path="/dashboard/rsvp" element={<RSVP />} />

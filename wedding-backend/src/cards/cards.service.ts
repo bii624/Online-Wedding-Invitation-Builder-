@@ -94,6 +94,76 @@ export class CardsService {
   }
 
   // ============================================================
+  // PUBLIC & STATS
+  // ============================================================
+
+  /**
+   * Kiểm tra slug hợp lệ và chưa tồn tại
+   */
+  async checkSlug(slug: string, excludeCardId?: string) {
+    if (!slug || typeof slug !== 'string') return { isAvailable: false };
+    const query: Prisma.CardWhereInput = { slug };
+    if (excludeCardId) {
+      query.id = { not: excludeCardId };
+    }
+    const existing = await this.prisma.card.findFirst({ where: query });
+    return { isAvailable: !existing };
+  }
+
+  /**
+   * Lấy thống kê của một thiệp (Chỉ chủ thiệp)
+   */
+  async getCardStats(cardId: string, userId: string) {
+    const card = await this.verifyCardOwner(cardId, userId);
+
+    const [
+      totalWishes,
+      totalRsvps,
+      totalGuestsInvited,
+      attendingGroom,
+      attendingBride,
+      notAttending,
+    ] = await Promise.all([
+      this.prisma.wish.count({ where: { cardId } }),
+      this.prisma.rsvpResponse.count({ where: { cardId } }),
+      this.prisma.guest.count({ where: { cardId } }),
+      this.prisma.rsvpResponse.count({
+        where: {
+          cardId,
+          attending: 'yes',
+          OR: [
+            { guest: { side: 'groom' } },
+            { note: { startsWith: 'Khách nhà trai' } }
+          ]
+        }
+      }),
+      this.prisma.rsvpResponse.count({
+        where: {
+          cardId,
+          attending: 'yes',
+          OR: [
+            { guest: { side: 'bride' } },
+            { note: { startsWith: 'Khách nhà gái' } }
+          ]
+        }
+      }),
+      this.prisma.rsvpResponse.count({
+        where: { cardId, attending: 'no' }
+      }),
+    ]);
+
+    return {
+      viewCount: card.viewCount,
+      totalWishes,
+      totalRsvps,
+      totalGuestsInvited,
+      attendingGroom,
+      attendingBride,
+      notAttending,
+    };
+  }
+
+  // ============================================================
   // 1. CARDS CRUD
   // ============================================================
 
@@ -324,6 +394,7 @@ export class CardsService {
       where: { id: cardId },
       data: {
         ...(dto.title !== undefined && { title: dto.title }),
+        ...(dto.slug !== undefined && { slug: dto.slug }),
         ...(dto.groomName !== undefined && { groomName: dto.groomName }),
         ...(dto.brideName !== undefined && { brideName: dto.brideName }),
         ...(dto.background !== undefined && {

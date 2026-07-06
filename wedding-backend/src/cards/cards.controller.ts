@@ -87,10 +87,29 @@ export class CardsController {
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @Get('check-slug')
+  @ApiOperation({ summary: 'Kiểm tra xem slug có hợp lệ và khả dụng không' })
+  checkSlug(
+    @Query('slug') slug: string,
+    @Query('excludeCardId') excludeCardId?: string,
+  ) {
+    return this.cardsService.checkSlug(slug, excludeCardId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get(':id')
   @ApiOperation({ summary: 'Lấy chi tiết thiệp kèm blocks (chỉ chủ sở hữu)' })
   getCard(@Param('id', ParseUUIDPipe) id: string, @Req() req: AuthRequest) {
     return this.cardsService.getCardById(id, req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @Get(':id/stats')
+  @ApiOperation({ summary: 'Lấy thống kê của thiệp (view, wish, rsvp...)' })
+  getCardStats(@Param('id', ParseUUIDPipe) id: string, @Req() req: AuthRequest) {
+    return this.cardsService.getCardStats(id, req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)

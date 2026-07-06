@@ -1159,6 +1159,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         : selectedElement;
     set({ elements: updated, selectedElement: updatedSelected, activeGlobalAnimationPreset: null });
     get().pushHistory();
+    get().triggerAnimationPreview();
   },
 
   applyGlobalAnimation: (presetId, preset) => {
