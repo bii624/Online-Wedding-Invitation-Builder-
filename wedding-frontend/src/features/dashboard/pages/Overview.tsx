@@ -6,7 +6,7 @@ import { useAuthStore } from '../../../store/authStore';
 import { useState, useEffect } from 'react';
 import { cardsApi } from '../../../api/cardsApi';
 import { assetsApi } from '../../../api/assetsApi';
-
+import mockupImage from '../../../assets/images/mockup-thiep-cuoi-online-1.webp';
 // --- Custom Icon Components ---
 
 interface CustomIconProps {
@@ -400,18 +400,22 @@ export const Overview = () => {
       <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
 
         {/* Welcome Banner Card */}
-        <div className="relative overflow-hidden rounded-[2.5rem] moving-gradient-card border border-rose-100/70 p-8 md:p-10 text-zinc-800 shadow-[0_15px_40px_rgba(244,63,94,0.02)]">
-          {/* Shimmer sweep layer */}
-          <div className="shimmer-bar" aria-hidden="true" />
-          {/* Floating background elements */}
-          <div className="absolute inset-0 -z-10 pointer-events-none opacity-15">
-            <FloatingBackgroundHearts />
+        <div className="relative rounded-[2.5rem] moving-gradient-card border border-rose-100/70 p-8 md:p-10 text-zinc-800 shadow-[0_15px_40px_rgba(244,63,94,0.02)] mt-8">
+
+          {/* Background layer clipped to border radius */}
+          <div className="absolute inset-0 rounded-[2.5rem] overflow-hidden pointer-events-none">
+            {/* Shimmer sweep layer */}
+            <div className="shimmer-bar" aria-hidden="true" />
+            {/* Floating background elements */}
+            <div className="absolute inset-0 -z-10 opacity-15">
+              <FloatingBackgroundHearts />
+            </div>
+            <div className="absolute -right-16 -top-16 h-72 w-72 rounded-full bg-rose-100/30 blur-3xl pointer-events-none" />
+            <div className="absolute -left-16 -bottom-16 h-72 w-72 rounded-full bg-amber-100/20 blur-3xl pointer-events-none" />
           </div>
-          <div className="absolute -right-16 -top-16 h-72 w-72 rounded-full bg-rose-100/30 blur-3xl pointer-events-none" />
-          <div className="absolute -left-16 -bottom-16 h-72 w-72 rounded-full bg-amber-100/20 blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-8">
-            <div className="space-y-6 flex-1">
+            <div className="space-y-6 flex-1 lg:max-w-[60%] xl:max-w-[65%]">
               <div className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 border border-rose-100/60 px-3.5 py-1.5 text-[10px] font-black tracking-wider uppercase text-rose-500 shadow-2xs">
                 <Sparkles size={11} className="text-amber-500 animate-pulse" /> KHÔNG GIAN THIẾT KẾ CỦA BẠN
               </div>
@@ -441,10 +445,24 @@ export const Overview = () => {
                 </Link>
               </div>
             </div>
+          </div>
 
-            <div className="hidden lg:flex items-center justify-center shrink-0 relative mr-4 select-none pointer-events-none">
-              <img src="" alt="Welcome banner" className="w-full h-auto rounded-2xl" />
-            </div>
+          {/* MOCKUP IMAGE CONTAINER */}
+          <div className="hidden lg:block absolute right-0 bottom-0 top-[-200px] w-1/2 overflow-hidden rounded-br-[2.5rem] pointer-events-none z-20">
+            <style>{`
+              @keyframes float-mockup {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-15px); }
+              }
+              .animate-float-mockup {
+                animation: float-mockup 4s ease-in-out infinite;
+              }
+            `}</style>
+            <img
+              src={mockupImage}
+              alt="Welcome banner"
+              className="absolute right-4 xl:right-15 -bottom-33 w-[260px] xl:w-[320px] object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.2)] animate-float-mockup"
+            />
           </div>
         </div>
 

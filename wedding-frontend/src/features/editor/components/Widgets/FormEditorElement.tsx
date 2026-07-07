@@ -22,6 +22,7 @@ export function FormEditorElement({ element, zoom }: FormEditorElementProps) {
   const alignStyles = {
     left: 'flex-start',
     center: 'center',
+
     right: 'flex-end',
   };
 
@@ -40,14 +41,8 @@ export function FormEditorElement({ element, zoom }: FormEditorElementProps) {
         opacity: props.opacity,
       }}
     >
-      <h2 style={{ 
-        fontSize: `${props.fontSize + 10}px`, 
-        fontWeight: 'bold', 
-        marginBottom: '16px', 
-        textTransform: 'uppercase', 
-        textAlign 
-      }}>
-        SỔ LƯU BÚT
+      <h2 style={{ fontSize: `${props.fontSize + 8}px`, fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
+        Gửi lời chúc đến cô dâu và chú rể
       </h2>
       
       <div 
@@ -60,105 +55,105 @@ export function FormEditorElement({ element, zoom }: FormEditorElementProps) {
           boxShadow: `${props.shadow.x}px ${props.shadow.y}px ${props.shadow.blur}px ${props.shadow.spread}px ${props.shadow.color}`,
           display: 'flex',
           flexDirection: 'column',
-          gap: '12px',
-          alignItems: 'stretch',
-          overflow: 'hidden'
+          gap: '20px',
+          alignItems: 'stretch'
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', pointerEvents: isEditor ? 'none' : 'auto' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', pointerEvents: isEditor ? 'none' : 'auto' }}>
           
-          <input 
-            type="text" 
-            placeholder="Nhập tên của bạn*" 
-            style={{ 
-              width: '100%', 
-              padding: '10px 12px', 
-              borderRadius: '6px', 
-              border: `1px solid ${props.inputBorderColor}`,
-              backgroundColor: 'transparent',
-              outline: 'none',
-              fontFamily: props.fontFamily,
-              color: props.textColor,
-              fontSize: `${props.fontSize}px`
-            }} 
-          />
+          <div className="flex flex-col gap-1.5">
+            <input 
+              type="text" 
+              placeholder="Họ tên của bạn *" 
+              className="w-full px-4 py-3 rounded-xl bg-transparent outline-none transition-all duration-200 focus:shadow-[0_0_0_1px_currentColor] focus:ring-0"
+              style={{ 
+                border: `1px solid ${props.inputBorderColor}`,
+                fontFamily: props.fontFamily,
+                color: props.textColor,
+                fontSize: `${props.fontSize}px`
+              }} 
+            />
+          </div>
 
           {props.showGuestType && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: `${props.fontSize}px`, marginTop: '12px' }}>
-              <span style={{ fontWeight: 600 }}>Bạn là:</span>
-              <div style={{ display: 'flex', gap: '48px', alignItems: 'center' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: `1.5px solid ${props.textColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }}>
-                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: props.textColor }} />
-                  </div>
-                  <input type="radio" name={`guestType_${element.id}`} style={{ display: 'none' }} />
-                  Khách nhà trai
-                </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: `1.5px solid ${props.textColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }} />
-                  <input type="radio" name={`guestType_${element.id}`} style={{ display: 'none' }} />
-                  Khách nhà gái
-                </label>
+            <div className="flex flex-col gap-2" style={{ fontSize: `${props.fontSize}px` }}>
+              <span className="font-bold tracking-wide mb-1">Bạn là khách của <span className="font-normal opacity-70 text-[0.9em] lowercase">(chọn 1 hoặc cả 2)</span></span>
+              
+              <div className="grid grid-cols-2 gap-3">
+                {/* Nhà trai (Demo UI in editor always checked for display) */}
+                <div className="border rounded-xl p-3 flex flex-col gap-2 transition-all duration-300 shadow-sm" style={{ borderColor: props.textColor, backgroundColor: 'rgba(0,0,0,0.02)' }}>
+                  <label className="flex items-center cursor-pointer select-none gap-2">
+                    <input type="checkbox" checked={true} readOnly style={{ accentColor: props.textColor, width: 18, height: 18, cursor: 'pointer' }} />
+                    <span className="font-bold">Nhà trai</span>
+                  </label>
+                  
+                  {props.showAttendance && (
+                    <div className="flex flex-col gap-2 mt-1">
+                      <label className="flex items-center gap-2 cursor-pointer group">
+                        <input type="radio" checked={true} readOnly className="w-4 h-4 accent-rose-500 cursor-pointer" />
+                        <span className="text-[0.9em] transition-all duration-200 font-bold">Sẽ tham dự</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer group">
+                        <input type="radio" checked={false} readOnly className="w-4 h-4 accent-rose-500 cursor-pointer" />
+                        <span className="text-[0.9em] transition-all duration-200 font-medium opacity-75 group-hover:opacity-100">Không thể đến</span>
+                      </label>
+                    </div>
+                  )}
+                </div>
+
+                {/* Nhà gái (Demo UI in editor - unchecked for variety) */}
+                <div className="border rounded-xl p-3 flex flex-col gap-2 transition-all duration-300 hover:shadow-sm hover:-translate-y-px" style={{ borderColor: props.inputBorderColor, backgroundColor: 'transparent', opacity: 0.65 }}>
+                  <label className="flex items-center cursor-pointer select-none gap-2">
+                    <input type="checkbox" checked={false} readOnly style={{ accentColor: props.textColor, width: 18, height: 18, cursor: 'pointer' }} />
+                    <span className="font-bold">Nhà gái</span>
+                  </label>
+                  
+                  {props.showAttendance && (
+                    <div className="flex flex-col gap-2 mt-1">
+                      <label className="flex items-center gap-2 cursor-pointer group">
+                        <input type="radio" disabled className="w-4 h-4 accent-rose-500 cursor-pointer" />
+                        <span className="text-[0.9em] transition-all duration-200 font-medium">Sẽ tham dự</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer group">
+                        <input type="radio" disabled className="w-4 h-4 accent-rose-500 cursor-pointer" />
+                        <span className="text-[0.9em] transition-all duration-200 font-medium">Không thể đến</span>
+                      </label>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}
 
-          {props.showAttendance && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: `${props.fontSize}px`, marginTop: '12px' }}>
-              <span style={{ fontWeight: 600 }}>Bạn có thể tham dự không?:</span>
-              <div style={{ display: 'flex', gap: '48px', alignItems: 'center' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: `1.5px solid ${props.textColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }}>
-                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: props.textColor }} />
-                  </div>
-                  <input type="radio" name={`attendance_${element.id}`} style={{ display: 'none' }} />
-                  Sẽ tham dự
-                </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: `1.5px solid ${props.textColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }} />
-                  <input type="radio" name={`attendance_${element.id}`} style={{ display: 'none' }} />
-                  Rất tiếc không thể đến
-                </label>
-              </div>
-            </div>
-          )}
+          <div className="flex flex-col gap-1.5">
+            <textarea 
+              placeholder="Lời chúc của bạn *" 
+              rows={3}
+              className="w-full px-4 py-3 rounded-xl bg-transparent outline-none transition-all duration-200 focus:shadow-[0_0_0_1px_currentColor] focus:ring-0"
+              style={{ 
+                border: `1px solid ${props.inputBorderColor}`,
+                fontFamily: props.fontFamily,
+                color: props.textColor,
+                fontSize: `${props.fontSize}px`,
+                resize: 'none'
+              }} 
+            />
+          </div>
 
-          <textarea 
-            placeholder="Nhập lời chúc của bạn*" 
-            rows={3}
-            style={{ 
-              width: '100%', 
-              padding: '10px 12px', 
-              borderRadius: '6px', 
-              border: `1px solid ${props.inputBorderColor}`,
-              backgroundColor: 'transparent',
-              outline: 'none',
-              fontFamily: props.fontFamily,
-              color: props.textColor,
-              fontSize: `${props.fontSize}px`,
-              resize: 'none'
-            }} 
-          />
-          
-          <div style={{ display: 'flex', justifyContent: alignItems, marginTop: '8px' }}>
+          <div className="flex justify-center mt-2 pb-2">
             <button 
+              className="w-full py-3.5 px-6 rounded-xl border-none font-bold tracking-wider uppercase transition-all duration-200 cursor-pointer hover:opacity-90 shadow-lg hover:shadow-xl"
               style={{
                 backgroundColor: props.buttonBgColor,
                 color: props.buttonTextColor,
-                padding: '10px 24px',
-                borderRadius: '8px',
-                border: 'none',
-                fontWeight: 'bold',
-                textTransform: 'uppercase',
-                cursor: 'pointer',
                 fontFamily: props.fontFamily,
-                fontSize: `${props.fontSize}px`
+                fontSize: `${props.fontSize}px`,
+                boxShadow: `0 4px 14px 0 ${props.buttonBgColor}40`
               }}
             >
               GỬI LỜI CHÚC
             </button>
           </div>
-          
         </div>
       </div>
     </div>

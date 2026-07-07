@@ -148,8 +148,7 @@ export class CardsController {
   @ApiBearerAuth()
   @Post(':id/save')
   @ApiOperation({
-    summary:
-      'Lưu toàn bộ canvas (auto-save 30s). Sync blocks: add/update/delete.',
+    summary: 'Lưu toàn bộ canvas (auto-save 30s). Sync blocks: add/update/delete.',
   })
   saveCanvas(
     @Param('id', ParseUUIDPipe) id: string,

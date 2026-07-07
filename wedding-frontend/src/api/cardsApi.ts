@@ -92,32 +92,32 @@ export const cardsApi = {
   },
 
   getAllWishes: async () => {
-    const response = await axiosClient.get('/cards/wishes/all');
+    const response = await axiosClient.get('/wishes');
     return response.data;
   },
 
   getAllRsvps: async () => {
-    const response = await axiosClient.get('/cards/rsvp/all');
+    const response = await axiosClient.get('/rsvps');
     return response.data;
   },
 
   approveWish: async (wishId: string, isApproved: boolean) => {
-    const response = await axiosClient.patch(`/cards/wishes/${wishId}/approve`, { isApproved });
+    const response = await axiosClient.patch(`/wishes/${wishId}/approve`, { isApproved });
     return response.data;
   },
 
   deleteWish: async (wishId: string) => {
-    const response = await axiosClient.delete(`/cards/wishes/${wishId}`);
+    const response = await axiosClient.delete(`/wishes/${wishId}`);
     return response.data;
   },
 
-  submitRsvp: async (cardId: string, data: { guestName: string; phone?: string; attending: 'yes' | 'no' | 'maybe'; numAttendees?: number; note?: string }) => {
-    const response = await axiosClient.post(`/cards/public/${cardId}/rsvp`, data);
+  submitRsvp: async (cardId: string, data: { guestName: string; phone?: string; attending: 'yes' | 'no' | 'maybe'; numAttendees?: number; note?: string; side?: string; entries?: any[] }) => {
+    const response = await axiosClient.post(`/rsvps/public/${cardId}`, data);
     return response.data;
   },
 
-  submitWish: async (cardId: string, data: { displayName: string; message: string; avatarUrl?: string }) => {
-    const response = await axiosClient.post(`/cards/public/${cardId}/wishes`, data);
+  submitWish: async (cardId: string, data: { displayName: string; message: string; avatarUrl?: string; side?: string }) => {
+    const response = await axiosClient.post(`/wishes/public/${cardId}`, data);
     return response.data;
   },
 

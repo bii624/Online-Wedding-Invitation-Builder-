@@ -456,7 +456,7 @@ export default function CardDetailPage() {
           <div className="flex-1 flex flex-col justify-center">
             <div className="flex justify-between items-center mb-3">
               <h2 className="text-lg font-bold text-slate-800">Thống kê tổng quan</h2>
-              <Link to={`/dashboard/cards/${id}/wishes`} className="text-sm font-medium text-rose-500 hover:text-rose-600 hover:underline">Chi tiết</Link>
+              <Link to={`/dashboard/wishes?cardId=${id}`} className="text-sm font-medium text-rose-500 hover:text-rose-600 hover:underline">Chi tiết</Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
@@ -508,7 +508,7 @@ export default function CardDetailPage() {
           <div className="flex-1 flex flex-col justify-center">
             <div className="flex justify-between items-center mb-3">
               <h2 className="text-lg font-bold text-slate-800">Phản hồi tham dự (RSVP)</h2>
-              <Link to={`/dashboard/cards/${id}/wishes?tab=rsvp`} className="text-sm font-medium text-rose-500 hover:text-rose-600 hover:underline">Chi tiết</Link>
+              <Link to={`/dashboard/rsvp?cardId=${id}`} className="text-sm font-medium text-rose-500 hover:text-rose-600 hover:underline">Chi tiết</Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
