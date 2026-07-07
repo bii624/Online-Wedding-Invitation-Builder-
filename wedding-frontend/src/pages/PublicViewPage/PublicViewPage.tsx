@@ -7,7 +7,7 @@ import 'animate.css';
 import { RedEnvelope } from '../../features/editor/components/Widgets/RedEnvelope';
 import { X, Music, VolumeX } from 'lucide-react';
 import { CalendarEditorElement } from '../../features/editor/components/Widgets/CalendarEditorElement';
-
+import { ThreeDSlider, FlatSlider, GridCollage, MixedCollage } from '../../features/editor/components/ImageEditorElement';
 
 // ─── Loop animation CSS classes (same as editor) ─────────
 function getLoopClass(ap: AnimationProperties): string {
@@ -328,6 +328,38 @@ function PublicAlbumElement({ element }: { element: CanvasElement }) {
   if (!ap || ap.images.length === 0) return null;
   const [current, setCurrent] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  if (ap.sliderStyle && ap.sliderStyle !== 'slideshow') {
+    const is3d = ap.sliderStyle === '3d';
+    const isFlat = ap.sliderStyle === 'flat';
+    const isGrid = ap.sliderStyle === 'grid';
+    const isCollage = ap.sliderStyle === 'collage';
+
+    const containerStyle: React.CSSProperties = {
+      width: '100%',
+      height: '100%',
+      backgroundColor: ap.backgroundColor,
+      opacity: ap.opacity,
+      padding: `${ap.padding.top}px ${ap.padding.right}px ${ap.padding.bottom}px ${ap.padding.left}px`,
+      borderWidth: `${ap.border.width}px`,
+      borderStyle: ap.border.style as any,
+      borderColor: ap.border.color,
+      borderRadius: `${ap.border.radius}px`,
+      boxShadow: ap.shadow.color !== 'transparent' ? `${ap.shadow.x}px ${ap.shadow.y}px ${ap.shadow.blur}px ${ap.shadow.spread}px ${ap.shadow.color}` : 'none',
+      position: 'relative',
+      overflow: is3d ? 'visible' : 'hidden'
+    };
+
+    return (
+      <div style={containerStyle}>
+        {is3d && <ThreeDSlider images={ap.images} />}
+        {isFlat && <FlatSlider images={ap.images} />}
+        {isGrid && <GridCollage images={ap.images} />}
+        {isCollage && <MixedCollage images={ap.images} />}
+      </div>
+    );
+  }
+
   useEffect(() => {
     if (ap.delay > 0) {
       const t = setInterval(() => setCurrent(c => (c + 1) % ap.images.length), ap.delay * 1000);

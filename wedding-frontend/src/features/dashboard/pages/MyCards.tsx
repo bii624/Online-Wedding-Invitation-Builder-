@@ -1,26 +1,26 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from './DashboardLayout';
-import { Edit3, X, Sparkles, LayoutTemplate, Mails, ChevronLeft, ChevronRight } from 'lucide-react';
+import DashboardPanel from '../components/DashboardPanel';
+import { Edit3, Mails, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cardsApi } from '../../../api/cardsApi';
 import { toast } from 'sonner';
 import { CardItem, CardItemSkeleton } from '../components/CardItem';
-
-
 
 export const MyCards = () => {
   const navigate = useNavigate();
   const [cards, setCards] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
-  
+
   const totalPages = Math.ceil(cards.length / itemsPerPage);
   const currentCards = cards.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const fetchCards = async () => {
+    setIsLoading(true);
     try {
       const res = await cardsApi.getUserCards();
       setCards(res.data || res || []);
@@ -48,9 +48,8 @@ export const MyCards = () => {
 
   return (
     <DashboardLayout>
-      <div className="bg-white rounded-4xl border border-rose-100/50 shadow-[0_15px_40px_rgba(244,63,94,0.015)] p-8 min-h-[75vh]">
-
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 pb-6 border-b border-rose-100/30">
+      <DashboardPanel className="p-8 min-h-[75vh]">
+        <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-black text-zinc-800 font-inter">Thiệp Của Tôi</h1>
             <p className="mt-1.5 text-xs text-zinc-400 font-inter font-medium">Quản lý và phát triển thiết kế thiệp cưới di động của bạn</p>
@@ -115,7 +114,7 @@ export const MyCards = () => {
                 >
                   <ChevronLeft size={18} />
                 </button>
-                
+
                 <div className="flex items-center gap-2">
                   {Array.from({ length: totalPages }).map((_, idx) => {
                     const page = idx + 1;
@@ -147,7 +146,7 @@ export const MyCards = () => {
             )}
           </div>
         )}
-      </div>
+      </DashboardPanel>
     </DashboardLayout>
   );
 };

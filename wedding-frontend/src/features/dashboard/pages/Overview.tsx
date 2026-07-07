@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { DashboardLayout } from './DashboardLayout';
+// DashboardPanel removed for Overview to use full-width layout
 import { Crown, Sparkles, ArrowRight, Sparkle, ArrowUpRight } from 'lucide-react';
 import FloatingBackgroundHearts from '../../../components/FloatingBackgroundHearts';
 import { useAuthStore } from '../../../store/authStore';
@@ -397,7 +398,7 @@ export const Overview = () => {
           z-index: 1;
         }
       `}} />
-      <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
+      <div className="w-full space-y-8 animate-in fade-in duration-500 flex flex-col flex-1">
 
         {/* Welcome Banner Card */}
         <div className="relative rounded-[2.5rem] moving-gradient-card border border-rose-100/70 p-8 md:p-10 text-zinc-800 shadow-[0_15px_40px_rgba(244,63,94,0.02)] mt-8">
@@ -430,7 +431,8 @@ export const Overview = () => {
 
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <Link
-                  to="/design"
+                  to={`/loading?next=${encodeURIComponent('/design')}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`}
+
                   className="flex items-center gap-2 rounded-full bg-rose-600 hover:bg-rose-700 px-6 py-3.5 font-bold text-white shadow-md shadow-rose-500/10 hover:shadow-lg hover:shadow-rose-500/20 active:scale-95 transition-all duration-300 font-inter text-xs group"
                 >
                   <span>Tạo thiệp mới ngay</span>
@@ -468,7 +470,8 @@ export const Overview = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-          <Link to="/design" className="rounded-4xl bg-white border border-rose-100/60 p-6 flex items-center justify-between shadow-xs transition-all duration-300 hover:shadow-md hover:border-rose-200 cursor-pointer block hover:no-underline">
+          <Link to={`/loading?next=${encodeURIComponent('/design')}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`} className="rounded-4xl bg-white/80 backdrop-blur-sm border border-rose-100/60 p-6 flex items-center justify-between shadow-sm shadow-rose-50/20 shadow-inner transition-all duration-300 hover:shadow-md hover:border-rose-200 cursor-pointer block hover:no-underline">
+
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-lg bg-rose-50 flex items-center justify-center text-rose-500">
@@ -493,7 +496,7 @@ export const Overview = () => {
             </div>
           </Link>
 
-          <Link to="/dashboard/my-cards" className="rounded-4xl bg-white border border-rose-100/60 p-6 flex items-center justify-between shadow-xs transition-all duration-300 hover:shadow-md hover:border-rose-200 cursor-pointer block hover:no-underline">
+          <Link to="/dashboard/my-cards" className="rounded-4xl bg-white/80 backdrop-blur-sm border border-rose-100/60 p-6 flex items-center justify-between shadow-sm shadow-rose-50/20 shadow-inner transition-all duration-300 hover:shadow-md hover:border-rose-200 cursor-pointer block hover:no-underline">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-lg bg-pink-50 flex items-center justify-center text-pink-500">
@@ -518,7 +521,7 @@ export const Overview = () => {
             </div>
           </Link>
 
-          <Link to="/dashboard/my-cards" className="rounded-4xl bg-white border border-rose-100/60 p-6 flex items-center justify-between shadow-xs transition-all duration-300 hover:shadow-md hover:border-rose-200 cursor-pointer block hover:no-underline">
+          <Link to="/dashboard/my-cards" className="rounded-4xl bg-white/80 backdrop-blur-sm border border-rose-100/60 p-6 flex items-center justify-between shadow-sm shadow-rose-50/20 shadow-inner transition-all duration-300 hover:shadow-md hover:border-rose-200 cursor-pointer block hover:no-underline">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
@@ -547,7 +550,7 @@ export const Overview = () => {
         </div>
 
         {/* Quick Nav area */}
-        <div className="rounded-[2.5rem] bg-white border border-rose-100/50 p-8 shadow-xs">
+        <div className="rounded-[2.5rem] bg-white/85 backdrop-blur-sm border border-rose-100/50 p-6 shadow-sm shadow-rose-50/20 shadow-inner">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-base font-bold text-zinc-800 font-inter">Khu vực điều hướng nhanh</h3>
             <span className="text-xs font-bold text-rose-400 bg-rose-50 px-3 py-1 rounded-full border border-rose-100/50">LỐI TẮT TIỆN ÍCH</span>
@@ -575,7 +578,7 @@ export const Overview = () => {
           </div>
         </div>
 
-        <div className="rounded-4xl bg-rose-50/30 border border-rose-100/40 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="rounded-4xl bg-rose-50/40 backdrop-blur-sm border border-rose-100/40 p-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm shadow-rose-50/20 shadow-inner">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0">
               <Sparkle size={20} className="animate-pulse" />

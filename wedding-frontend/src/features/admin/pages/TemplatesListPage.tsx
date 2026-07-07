@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Plus, Edit3, Trash2, CheckCircle, Archive, Crown, Loader2, X, Check } from 'lucide-react';
 import { adminApi, type AdminTemplate } from '../api/adminApi';
 import { useNavigate } from 'react-router-dom';
@@ -32,6 +32,9 @@ export function TemplatesListPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newTemplateName, setNewTemplateName] = useState('');
   const [newTemplatePremium, setNewTemplatePremium] = useState(false);
+  const [previewTemplateId, setPreviewTemplateId] = useState<string | null>(null);
+  const [PreviewComponent, setPreviewComponent] = useState<React.ComponentType<any> | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
 
   // Debounce search
   const [debouncedSearch, setDebouncedSearch] = useState(search);
@@ -68,6 +71,33 @@ export function TemplatesListPage() {
   useEffect(() => {
     fetchTemplates();
   }, [debouncedSearch, statusFilter, premiumFilter, page]);
+
+  // dynamic import preview modal when requested (avoids `require` in browser TS)
+  useEffect(() => {
+    let mounted = true;
+    if (!previewTemplateId) {
+      setPreviewComponent(null);
+      setPreviewLoading(false);
+      return;
+    }
+    setPreviewLoading(true);
+    void import('../components/TemplatePreviewModal')
+      .then((mod) => {
+        if (!mounted) return;
+        setPreviewComponent(() => mod.default ?? mod.TemplatePreviewModal ?? null);
+      })
+      .catch((err) => {
+        console.error('Failed to load TemplatePreviewModal', err);
+        setPreviewComponent(null);
+      })
+      .finally(() => {
+        if (mounted) setPreviewLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [previewTemplateId]);
 
   const handleUpdateStatus = async (id: string, newStatus: string) => {
     if (!window.confirm(`Bạn có chắc muốn đổi trạng thái thành ${STATUS_LABELS[newStatus]}?`)) return;
@@ -227,6 +257,18 @@ export function TemplatesListPage() {
         </div>
       )}
 
+        {previewTemplateId && (
+          previewLoading ? (
+            <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1200 }}>
+              <div style={{ background: '#fff', padding: 20, borderRadius: 12, boxShadow: '0 8px 30px rgba(0,0,0,0.12)' }}>
+                <Loader2 className="animate-spin" /> Đang tải xem trước...
+              </div>
+            </div>
+          ) : PreviewComponent ? (
+            <PreviewComponent templateId={previewTemplateId} onClose={() => { setPreviewTemplateId(null); setPreviewComponent(null); }} />
+          ) : null
+        )}
+
       {error && <div style={{ padding: 12, backgroundColor: '#fef2f2', color: '#ef4444', borderRadius: 6, marginBottom: 16 }}>{error}</div>}
 
       {/* Grid */}
@@ -239,13 +281,14 @@ export function TemplatesListPage() {
           {templates.map((t, i) => (
             <div key={t.id} className="adm-template-card">
               {/* Thumbnail */}
-              <div className="adm-template-thumb" style={{ background: t.thumbnailUrl ? '#f3f4f6' : thumbColors[i % thumbColors.length], backgroundImage: t.thumbnailUrl ? `url(${t.thumbnailUrl})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+              <div className="adm-template-thumb" style={{ background: t.thumbnailUrl ? '#f3f4f6' : thumbColors[i % thumbColors.length], backgroundImage: t.thumbnailUrl ? `url(${t.thumbnailUrl})` : 'none', backgroundSize: 'cover', backgroundPosition: 'top' }}>
                 {!t.thumbnailUrl && <div style={{ fontSize: 40 }}>💌</div>}
                 {/* Overlay actions */}
                 <div className="adm-template-thumb-overlay">
                   <button className="adm-btn adm-btn-primary adm-btn-sm" onClick={() => navigate(`/design/template?templateId=${t.id}`)}>
                     <Edit3 size={13} /> Sửa
                   </button>
+                 
                   <button className="adm-btn adm-btn-danger-ghost adm-btn-sm" style={{ background: 'rgba(255,255,255,0.9)', color: '#ef4444' }} onClick={() => handleDelete(t.id)}>
                     <Trash2 size={13} />
                   </button>

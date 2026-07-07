@@ -109,12 +109,13 @@ export function ShapeEditorElement({ element }: ShapeEditorElementProps) {
             y1="50%"
             x2="100%"
             y2="50%"
-            stroke={svgFill}
-            strokeWidth={element.height} // Line width equals element height
+            stroke={borderWidth > 0 ? borderColor : svgFill}
+            strokeWidth={borderWidth > 0 ? borderWidth : element.height} // prefer explicit borderWidth when set
             strokeDasharray={
               borderStyle === 'dashed' ? '8,8' :
-                borderStyle === 'dotted' ? '2,4' : 'none'
+                borderStyle === 'dotted' ? '2,4' : undefined
             }
+            vectorEffect="non-scaling-stroke"
           />
         </svg>
       </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { DashboardLayout } from './DashboardLayout'
+import DashboardPanel from '../components/DashboardPanel'
 import { Check, X, Crown, Sparkles, Zap, ArrowRight, CreditCard, Star } from 'lucide-react'
 import { useAuthStore } from '../../../store/authStore'
 
@@ -89,6 +90,7 @@ export const MyPlan: React.FC = () => {
 
   return (
     <DashboardLayout title="Gói dịch vụ" subtitle="Chọn gói phù hợp với nhu cầu của bạn">
+      <DashboardPanel className="p-6">
       <div className="max-w-5xl mx-auto space-y-7 pb-8">
         <div className="bg-gradient-to-r from-rose-50 to-pink-50 border border-rose-100/60 rounded-3xl p-5 flex flex-col sm:flex-row items-center gap-4 shadow-2xs">
           <div className="w-10 h-10 rounded-2xl bg-rose-500 flex items-center justify-center text-white shadow-sm shadow-rose-200">
@@ -214,6 +216,7 @@ export const MyPlan: React.FC = () => {
           </div>
         </div>
       </div>
+      </DashboardPanel>
     </DashboardLayout>
   )
 }

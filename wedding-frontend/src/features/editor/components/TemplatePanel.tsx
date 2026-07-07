@@ -131,7 +131,7 @@ export function TemplatePanel({ onClose }: TemplatePanelProps) {
       toast.success('Đã tạo thiệp mới từ mẫu!');
       onClose();
       
-      navigate(`/design?id=${newCard.id}`);
+      navigate(`/loading?next=${encodeURIComponent(`/design?id=${newCard.id}`)}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`);
       
     } catch (error) {
       console.error('Failed to apply template', error);

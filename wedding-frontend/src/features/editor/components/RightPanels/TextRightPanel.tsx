@@ -2,9 +2,9 @@
 // TEXT RIGHT PANEL
 // Standalone panel for editing Text element properties.
 // Imported by: RightPanel.tsx
+// Note: Arrange & Align section is handled globally by RightPanel.tsx
 // ============================================================
 
-import { useState } from 'react';
 import { useEditorStore } from '../../store/editorStore';
 import type { TextProperties, AlignType } from '../../types/editor.types';
 import {
@@ -22,7 +22,6 @@ import {
   AlignJustifyIcon,
   TypeIcon,
   PaletteIcon,
-  LayoutIcon,
   SettingsIcon,
   PaddingSection,
   BorderSection,
@@ -38,7 +37,10 @@ interface TextRightPanelProps {
 
 // ── Component ──────────────────────────────────────────────
 export function TextRightPanel({ id, props }: TextRightPanelProps) {
-  const { updateTextProp, pushHistory } = useEditorStore();
+  const {
+    updateTextProp,
+    pushHistory,
+  } = useEditorStore();
 
   /** Generic updater: set a text prop, optionally push undo history */
   const upd = <K extends keyof TextProperties>(
@@ -70,9 +72,9 @@ export function TextRightPanel({ id, props }: TextRightPanelProps) {
           </div>
         </div>
 
-        {/* Căn lề */}
+        {/* Căn lề chữ (text alignment within box) */}
         <div className="rp-field">
-          <span className="rp-label">Căn lề</span>
+          <span className="rp-label">Căn lề chữ</span>
           <div className="rp-align-group" style={{ flex: 1 }}>
             {(['left', 'center', 'right', 'justify'] as AlignType[]).map((a) => (
               <button
@@ -121,6 +123,20 @@ export function TextRightPanel({ id, props }: TextRightPanelProps) {
         <Slider label="Độ mờ" value={props.opacity} min={0} max={1} step={0.01}
           onChange={(v) => upd('opacity', v, false)} onCommit={pushHistory}
           displayVal={props.opacity.toFixed(2)} />
+           
+      </Section>
+      {/* ── Uốn cong chữ ────────────────────────────────── */}
+      <Section title="Uốn cong chữ" icon={<SettingsIcon />} defaultOpen={true}>
+        <Slider
+          label="Độ uốn cong"
+          value={props.textCurve ?? 0}
+          min={-200}
+          max={200}
+          step={1}
+          onChange={(v) => upd('textCurve', v, false)}
+          onCommit={pushHistory}
+          displayVal={`${props.textCurve ?? 0}`}
+        />
       </Section>
 
       {/* ── Bố cục & Căn chỉnh (Padding) ─────────────────── */}

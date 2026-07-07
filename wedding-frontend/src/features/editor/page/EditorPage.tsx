@@ -12,6 +12,7 @@ import { ImageCropModal } from '../components/ImageCropModal';
 import { AIRemoveBgModal } from '../components/AIModals/AIRemoveBgModal';
 import { AIExpandModal } from '../components/AIModals/AIExpandModal';
 import { AIRemoveObjectModal } from '../components/AIModals/AIRemoveObjectModal';
+import LoadingPage from '../../../pages/Loading/Loadingpage';
 
 import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
@@ -37,6 +38,7 @@ export function EditorPage() {
     cardId,
     templateId,
     editorMode,
+    isLoadingTemplate,
   } = useEditorStore();
 
   const [searchParams] = useSearchParams();
@@ -159,17 +161,25 @@ export function EditorPage() {
 
       {/* ── Main Body ───────────────────── */}
       <div className={styles['editor-body']}>
-        {/* Left Toolbar */}
-        <LeftToolbar />
+        {isLoadingTemplate ? (
+          <div style={{ flex: 1 }}>
+            <LoadingPage message="Đang tải mẫu..." />
+          </div>
+        ) : (
+          <>
+            {/* Left Toolbar */}
+            <LeftToolbar />
 
-        {/* Center: Canvas + Filmstrip */}
-        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
-          <MainCanvas />
-          <Filmstrip />
-        </div>
+            {/* Center: Canvas + Filmstrip */}
+            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+              <MainCanvas />
+              <Filmstrip />
+            </div>
 
-        {/* Right Properties Panel */}
-        <RightPanel />
+            {/* Right Properties Panel */}
+            <RightPanel />
+          </>
+        )}
       </div>
 
       {/* ── Modals ───────────────────────── */}

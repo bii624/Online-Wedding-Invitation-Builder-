@@ -774,11 +774,87 @@ export class CardsService {
     // Upload l├¬n Cloudinary (kh├┤ng l╞░u v├áo bß║úng assets cß╗ºa user)
     const asset = await this.assetsService.uploadSystemImage(file, userId);
 
-    // Cß║¡p nhß║¡t thß║╗
+    // Cập nhật URL vào template
     return this.prisma.card.update({
       where: { id: cardId },
       data: { thumbnailUrl: asset.url },
     });
   }
 
+  // ==========================================
+  // ADMIN METHODS
+  // ==========================================
+
+  async getAdminCards(query: any) {
+    const { search, status, page = 1, limit = 20 } = query;
+    const skip = (page - 1) * limit;
+
+    const where: any = {
+      user: { role: { not: 'admin' } }
+    };
+    if (search) {
+      where.AND = [
+        {
+          OR: [
+            { title: { contains: search, mode: 'insensitive' } },
+            { user: { email: { contains: search, mode: 'insensitive' } } },
+            { user: { fullName: { contains: search, mode: 'insensitive' } } }
+          ]
+        }
+      ];
+    }
+    if (status && status !== 'all') {
+      where.status = status;
+    }
+
+    const [items, total] = await this.prisma.$transaction([
+      this.prisma.card.findMany({
+        where,
+        skip: Number(skip),
+        take: Number(limit),
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: { select: { email: true, fullName: true } },
+        },
+      }),
+      this.prisma.card.count({ where }),
+    ]);
+
+    return {
+      data: items.map((c: any) => ({
+        id: c.id,
+        title: c.title,
+        slug: c.slug,
+        status: c.status,
+        isPublic: c.isPublic,
+        viewCount: c.viewCount,
+        createdAt: c.createdAt,
+        user: c.user,
+      })),
+      pagination: {
+        total,
+        page: Number(page),
+        limit: Number(limit),
+        totalPages: Math.ceil(total / Number(limit)),
+      },
+    };
+  }
+
+  async updateCardVisibility(id: string, isPublic: boolean) {
+    const card = await this.prisma.card.findUnique({ where: { id } });
+    if (!card) throw new NotFoundException('Card not found');
+
+    return this.prisma.card.update({
+      where: { id },
+      data: { isPublic: (isPublic === true || String(isPublic) === 'true') },
+    });
+  }
+
+  async deleteAdminCard(id: string) {
+    const card = await this.prisma.card.findUnique({ where: { id } });
+    if (!card) throw new NotFoundException('Card not found');
+
+    await this.prisma.card.delete({ where: { id } });
+    return { message: 'Xóa thiệp thành công' };
+  }
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { RefreshCw, CheckSquare, Calendar, Users, Heart, Phone, ChevronDown, Search, ChevronLeft, ChevronRight, Filter, ArrowUpDown } from 'lucide-react';
 import { DashboardLayout } from './DashboardLayout';
+import DashboardPanel from '../components/DashboardPanel';
 import { cardsApi } from '../../../api/cardsApi';
 import { toast } from 'sonner';
 import { useSearchParams } from 'react-router-dom';
@@ -30,7 +31,7 @@ export const RSVP = () => {
       ]);
       setCards(cardsData?.data || cardsData || []);
       setRsvps(rsvpsData || []);
-      
+
       // Auto-select first card if 'all' is selected and we have cards
       if (initialCardId === 'all' && (cardsData?.data?.length || cardsData?.length)) {
         const firstCardId = (cardsData?.data || cardsData)[0].id;
@@ -82,7 +83,7 @@ export const RSVP = () => {
       if (r.attending === 'yes') {
         const count = r.numAttendees || 1;
         totalAttendees += count;
-        
+
         // Tính phe nhà trai/gái (từ khách được gán (guest.side) hoặc khách vãng lai tự điền (side))
         const side = r.guest?.side || r.side || 'both';
         if (side === 'groom') groomAttendees += count;
@@ -101,7 +102,7 @@ export const RSVP = () => {
 
     if (searchTerm) {
       const lower = searchTerm.toLowerCase();
-      result = result.filter(r => 
+      result = result.filter(r =>
         (r.guestName && r.guestName.toLowerCase().includes(lower)) ||
         (r.phone && r.phone.includes(lower)) ||
         (r.note && r.note.toLowerCase().includes(lower))
@@ -138,7 +139,7 @@ export const RSVP = () => {
 
   return (
     <DashboardLayout>
-      <div className="bg-white rounded-4xl border border-rose-100/50 shadow-[0_15px_40px_rgba(244,63,94,0.015)] p-8 min-h-[75vh]">
+      <DashboardPanel className="p-8 min-h-[75vh]">
 
         {/* HEADER & FILTER */}
         <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 mb-8 pb-6 border-b border-rose-100/30">
@@ -146,17 +147,17 @@ export const RSVP = () => {
             <h1 className="text-2xl font-bold text-slate-800">Quản lý Khách mời (RSVP)</h1>
             <p className="mt-1.5 text-xs text-slate-500 font-medium">Kiểm soát lượng khách xác nhận tham dự theo từng thiệp cưới</p>
           </div>
-          
+
           <div className="flex items-center gap-3 w-full xl:w-auto">
             {/* CARD SELECTOR */}
             <div className="relative flex-1 sm:min-w-[280px] group z-10">
               {/* Premium Glow Effect */}
               <div className="absolute -inset-0.5 bg-gradient-to-r from-rose-200 to-pink-200 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
-              
+
               <label className="absolute -top-2.5 left-4 px-2 bg-white text-[10px] font-bold text-rose-500 uppercase tracking-wider z-20">
                 Thiệp đang xem
               </label>
-              
+
               <select
                 value={selectedCardId}
                 onChange={(e) => setSelectedCardId(e.target.value)}
@@ -244,7 +245,7 @@ export const RSVP = () => {
         <div className="flex flex-col xl:flex-row gap-2.5 mb-6 bg-zinc-50/70 p-2 rounded-xl border border-zinc-100/80">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
-            <input 
+            <input
               type="text"
               placeholder="Tìm theo tên khách, sđt, ghi chú..."
               value={searchTerm}
@@ -321,8 +322,8 @@ export const RSVP = () => {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-zinc-100 text-left text-sm text-slate-600">
-                <thead className="bg-slate-50/80 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              <table className="min-w-full divide-y divide-zinc-100 text-left font-inter">
+                <thead className="bg-zinc-50/80 border-b border-zinc-100 text-[11px] font-black uppercase tracking-wider text-zinc-500">
                   <tr>
                     <th className="px-6 py-4 whitespace-nowrap">Khách mời</th>
                     <th className="px-6 py-4 whitespace-nowrap">Phân loại</th>
@@ -333,54 +334,53 @@ export const RSVP = () => {
                     <th className="px-6 py-4 whitespace-nowrap">Thời gian</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-zinc-50">
+                <tbody className="bg-white divide-y divide-zinc-50/80">
                   {paginatedRsvps.map((rsvp) => {
                     const rsvpSide = rsvp.guest?.side || rsvp.side || 'both';
                     return (
-                      <tr key={rsvp.id} className="hover:bg-rose-50/10 transition-colors group">
-                        <td className="px-6 py-4">
-                          <div className="font-bold text-slate-800 text-xs">{rsvp.guestName}</div>
+                      <tr key={rsvp.id} className="hover:bg-rose-50/30 transition-colors group">
+                        <td className="px-6 py-5">
+                          <div className="font-semibold text-zinc-800 text-[14px] tracking-tight">{rsvp.guestName}</div>
                           {rsvp.phone && (
-                            <div className="flex items-center gap-1.5 text-[11px] text-slate-500 mt-1">
-                              <Phone size={10} className="text-slate-400" /> {rsvp.phone}
+                            <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 mt-1">
+                              <Phone size={12} className="text-zinc-400" /> {rsvp.phone}
                             </div>
                           )}
                         </td>
-                        <td className="px-6 py-4">
-                          {rsvpSide === 'groom' && <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-1 text-[10px] font-bold text-sky-700 ring-1 ring-inset ring-sky-600/20">Nhà trai</span>}
-                          {rsvpSide === 'bride' && <span className="inline-flex items-center rounded-md bg-pink-50 px-2 py-1 text-[10px] font-bold text-pink-700 ring-1 ring-inset ring-pink-600/20">Nhà gái</span>}
-                          {rsvpSide === 'both' && <span className="inline-flex items-center rounded-md bg-zinc-100 px-2 py-1 text-[10px] font-bold text-zinc-600 ring-1 ring-inset ring-zinc-500/20">Chung</span>}
+                        <td className="px-6 py-5">
+                          {rsvpSide === 'groom' && <span className="inline-flex items-center rounded-lg bg-sky-50 px-2.5 py-1 text-[11px] font-medium text-sky-700 ring-1 ring-inset ring-sky-600/20 shadow-2xs">Nhà trai</span>}
+                          {rsvpSide === 'bride' && <span className="inline-flex items-center rounded-lg bg-pink-50 px-2.5 py-1 text-[11px] font-medium text-pink-700 ring-1 ring-inset ring-pink-600/20 shadow-2xs">Nhà gái</span>}
+                          {rsvpSide === 'both' && <span className="inline-flex items-center rounded-lg bg-zinc-100 px-2.5 py-1 text-[11px] font-medium text-zinc-600 ring-1 ring-inset ring-zinc-500/20 shadow-2xs">Chung</span>}
                         </td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold ${
-                            rsvp.attending === 'yes'
-                              ? 'bg-emerald-50 text-emerald-600 border border-emerald-100/50 shadow-sm'
-                              : rsvp.attending === 'no'
-                                ? 'bg-rose-50 text-rose-600 border border-rose-100/50 shadow-sm'
-                                : 'bg-amber-50 text-amber-600 border border-amber-100/50 shadow-sm'
-                          }`}>
+                        <td className="px-6 py-5">
+                          <span className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] font-medium ${rsvp.attending === 'yes'
+                            ? 'bg-emerald-50 text-emerald-600 border border-emerald-200/60 shadow-sm'
+                            : rsvp.attending === 'no'
+                              ? 'bg-rose-50 text-rose-600 border border-rose-200/60 shadow-sm'
+                              : 'bg-amber-50 text-amber-600 border border-amber-200/60 shadow-sm'
+                            }`}>
                             {rsvp.attending === 'yes' ? 'Tham gia' : rsvp.attending === 'no' ? 'Không tham gia' : 'Có thể'}
                           </span>
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="font-semibold text-slate-700 text-xs">{rsvp.numAttendees} <span className="text-[10px] text-slate-400 font-medium">khách</span></div>
+                        <td className="px-6 py-5">
+                          <div className="font-medium text-zinc-700 text-sm">{rsvp.numAttendees} <span className="text-[11px] text-zinc-400 font-normal">khách</span></div>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-5">
                           {rsvp.note ? (
-                            <p className="text-xs text-slate-600 max-w-[200px] truncate" title={rsvp.note}>
+                            <p className="text-[13px] font-medium text-zinc-600 max-w-[240px] truncate" title={rsvp.note}>
                               {rsvp.note}
                             </p>
                           ) : (
-                            <span className="text-[11px] text-slate-300 italic">...</span>
+                            <span className="text-xs text-zinc-300 italic">...</span>
                           )}
                         </td>
                         {selectedCardId === 'all' && (
-                          <td className="px-6 py-4">
-                            <span className="text-[11px] font-semibold text-rose-500 bg-rose-50/50 px-2 py-1 rounded-md border border-rose-100/50">{rsvp.card?.title || 'Không tên'}</span>
+                          <td className="px-6 py-5">
+                            <span className="text-[11px] font-medium text-rose-600 bg-rose-50 px-2.5 py-1.5 rounded-lg border border-rose-100/50 shadow-2xs">{rsvp.card?.title || 'Không tên'}</span>
                           </td>
                         )}
-                        <td className="px-6 py-4">
-                          <span className="text-[11px] font-medium text-slate-400">
+                        <td className="px-6 py-5">
+                          <span className="text-xs font-medium text-zinc-400">
                             {formatDate(rsvp.createdAt)}
                           </span>
                         </td>
@@ -407,30 +407,29 @@ export const RSVP = () => {
               >
                 <ChevronLeft size={16} />
               </button>
-              
+
               <div className="flex gap-1">
                 {Array.from({ length: totalPages }).map((_, i) => {
                   // Hiển thị tối đa 5 trang gần nhất
                   if (
-                    i === 0 || 
-                    i === totalPages - 1 || 
+                    i === 0 ||
+                    i === totalPages - 1 ||
                     (i >= currentPage - 2 && i <= currentPage)
                   ) {
                     return (
                       <button
                         key={i}
                         onClick={() => setCurrentPage(i + 1)}
-                        className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold transition-all ${
-                          currentPage === i + 1 
-                            ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20 border-rose-500' 
-                            : 'border border-zinc-200 bg-white text-slate-600 hover:bg-zinc-50 shadow-sm'
-                        }`}
+                        className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold transition-all ${currentPage === i + 1
+                          ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20 border-rose-500'
+                          : 'border border-zinc-200 bg-white text-slate-600 hover:bg-zinc-50 shadow-sm'
+                          }`}
                       >
                         {i + 1}
                       </button>
                     );
                   } else if (
-                    i === currentPage - 3 || 
+                    i === currentPage - 3 ||
                     i === currentPage + 1
                   ) {
                     return <span key={i} className="flex h-9 w-4 items-center justify-center text-slate-400">...</span>;
@@ -449,7 +448,7 @@ export const RSVP = () => {
             </div>
           </div>
         )}
-      </div>
+      </DashboardPanel>
     </DashboardLayout>
   );
 };

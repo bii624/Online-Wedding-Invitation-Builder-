@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import type { CanvasElement } from '../../types/editor.types';
 import { DEFAULT_ALBUM_PROPS } from '../../store/editorStore';
 import { ImageIcon, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
+import { ThreeDSlider, FlatSlider, GridCollage, MixedCollage } from '../ImageEditorElement';
 
 interface AlbumEditorElementProps {
   element: CanvasElement;
@@ -117,6 +118,22 @@ export function AlbumEditorElement({ element, zoom }: AlbumEditorElementProps) {
 
     return baseStyle;
   };
+
+  if (props.sliderStyle && props.sliderStyle !== 'slideshow') {
+    const is3d = props.sliderStyle === '3d';
+    const isFlat = props.sliderStyle === 'flat';
+    const isGrid = props.sliderStyle === 'grid';
+    const isCollage = props.sliderStyle === 'collage';
+
+    return (
+      <div style={{ ...containerStyle, overflow: is3d ? 'visible' : 'hidden' }}>
+        {is3d && <ThreeDSlider images={props.images} />}
+        {isFlat && <FlatSlider images={props.images} />}
+        {isGrid && <GridCollage images={props.images} />}
+        {isCollage && <MixedCollage images={props.images} />}
+      </div>
+    );
+  }
 
   return (
     <div style={containerStyle}>

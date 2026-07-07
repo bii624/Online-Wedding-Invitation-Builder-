@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEditorStore } from '../store/editorStore';
 import type { CanvasElementType } from '../types/editor.types';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Calendar, Clock, MapPin, Mail, Gift, Image, ClipboardList, Phone } from 'lucide-react';
 import '../styles/LeftToolbar.css';
 
 const CloseIcon = () => (
@@ -11,14 +11,14 @@ const CloseIcon = () => (
 );
 
 const WIDGETS = [
-  { id: 'calendar', name: 'Lịch', icon: '📅', implemented: true },
-  { id: 'countdown', name: 'Đếm ngược', icon: '⏰', implemented: true },
-  { id: 'map', name: 'Bản đồ', icon: '📍', implemented: true },
-  { id: 'guest_name', name: 'Tên khách mời', icon: '💌', implemented: false },
-  { id: 'qr_code', name: 'Hộp quà QR', icon: '🎁', implemented: true },
-  { id: 'gallery', name: 'Album Ảnh', icon: '🖼️', implemented: true },
-  { id: 'rsvp_form', name: 'Form tham dự', icon: '📋', implemented: true },
-  { id: 'contact_button', name: 'Nút liên hệ', icon: '📞', implemented: true },
+  { id: 'calendar', name: 'Lịch', icon: Calendar, implemented: true },
+  { id: 'countdown', name: 'Đếm ngược', icon: Clock, implemented: true },
+  { id: 'map', name: 'Bản đồ', icon: MapPin, implemented: true },
+  { id: 'guest_name', name: 'Tên khách mời', icon: Mail, implemented: false },
+  { id: 'qr_code', name: 'Hộp quà QR', icon: Gift, implemented: true },
+  { id: 'gallery', name: 'Album Ảnh', icon: Image, implemented: true },
+  { id: 'rsvp_form', name: 'Form tham dự', icon: ClipboardList, implemented: true },
+  { id: 'contact_button', name: 'Nút liên hệ', icon: Phone, implemented: true },
 ];
 
 export function WidgetsPanel({ onClose }: { onClose: () => void }) {
@@ -76,35 +76,66 @@ export function WidgetsPanel({ onClose }: { onClose: () => void }) {
               style={{
                 backgroundColor: '#ffffff',
                 border: '1px solid #e2e8f0',
-                borderRadius: '8px',
-                padding: '16px 8px',
+                borderRadius: '12px',
+                padding: '20px 8px',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: widget.implemented ? 'pointer' : 'not-allowed',
-                transition: 'all 0.2s',
-                opacity: widget.implemented ? 1 : 0.5,
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                opacity: widget.implemented ? 1 : 0.6,
                 position: 'relative',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.02)',
               }}
               onMouseEnter={(e) => {
                 if (widget.implemented) {
-                  e.currentTarget.style.transform = 'scale(1.02)';
+                  e.currentTarget.style.transform = 'translateY(-4px)';
                   e.currentTarget.style.borderColor = '#fda4af'; // rose-300
-                  e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.1)';
+                  e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(244, 63, 94, 0.1), 0 4px 6px -2px rgba(244, 63, 94, 0.05)';
+                  const iconWrap = e.currentTarget.querySelector('.widget-panel-icon-wrap') as HTMLElement;
+                  if (iconWrap) {
+                    iconWrap.style.background = 'linear-gradient(135deg, #f43f5e, #fb7185)';
+                    iconWrap.style.color = '#ffffff';
+                    iconWrap.style.transform = 'scale(1.1) rotate(5deg)';
+                    iconWrap.style.boxShadow = '0 8px 16px -3px rgba(244, 63, 94, 0.3)';
+                  }
                 }
               }}
               onMouseLeave={(e) => {
                 if (widget.implemented) {
-                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.borderColor = '#e2e8f0';
-                  e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
+                  e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.02)';
+                  const iconWrap = e.currentTarget.querySelector('.widget-panel-icon-wrap') as HTMLElement;
+                  if (iconWrap) {
+                    iconWrap.style.background = 'linear-gradient(135deg, #fff1f2, #ffe4e6)';
+                    iconWrap.style.color = '#e11d48';
+                    iconWrap.style.transform = 'scale(1) rotate(0deg)';
+                    iconWrap.style.boxShadow = '0 4px 6px -1px rgba(225, 29, 72, 0.05)';
+                  }
                 }
               }}
             >
-              <div style={{ fontSize: '28px', marginBottom: '8px' }}>{widget.icon}</div>
-              <div style={{ fontSize: '13px', fontWeight: 500, color: '#334155', textAlign: 'center', fontFamily: 'Poppins, sans-serif' }}>
+              <div 
+                className="widget-panel-icon-wrap" 
+                style={{ 
+                  width: '56px',
+                  height: '56px',
+                  borderRadius: '14px',
+                  background: 'linear-gradient(135deg, #fff1f2, #ffe4e6)',
+                  color: '#e11d48',
+                  boxShadow: '0 4px 6px -1px rgba(225, 29, 72, 0.05)',
+                  marginBottom: '12px', 
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <widget.icon size={26} strokeWidth={1.75} />
+              </div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#334155', textAlign: 'center', fontFamily: 'Poppins, sans-serif' }}>
                 {widget.name}
               </div>
 

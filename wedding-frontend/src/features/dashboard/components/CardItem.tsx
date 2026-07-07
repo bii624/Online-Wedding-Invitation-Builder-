@@ -140,7 +140,7 @@ export function CardItem({ card, onDelete }: CardItemProps) {
           {card.isPublished ? 'Xem thực tế' : 'Xem demo'}
         </button>
         <button
-          onClick={() => navigate(`/design?id=${card.id}`)}
+          onClick={() => navigate(`/loading?next=${encodeURIComponent(`/design?id=${card.id}`)}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`)}
           className="px-3.5 py-2 border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-indigo-600 rounded-lg transition-colors flex items-center justify-center"
           title="Chỉnh sửa"
         >

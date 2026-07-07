@@ -59,6 +59,7 @@ export interface TextProperties {
   // Typography
   letterSpacing: number;
   lineHeight: number;
+  textCurve?: number;
 }
 
 export interface ImageCropData {
@@ -96,6 +97,11 @@ export interface ImageProperties {
   shadowColor: string;
   // Fit
   objectFit: 'contain' | 'cover' | 'fill';
+  // Custom Frame Properties
+  backgroundColor?: string;
+  frameType?: 'none' | 'polaroid' | 'circle' | 'arch' | 'rounded' | 'classic' | 'heart' | 'star';
+  galleryImages?: string[];
+  sliderStyle?: '3d' | 'flat' | 'grid' | 'collage' | 'slideshow';
 }
 
 // ── Shape Properties ──────────────────────────────────────
@@ -300,6 +306,7 @@ export interface AlbumContent {
   alignment: 'left' | 'center' | 'right';
   backgroundColor: string;
   opacity: number;
+  sliderStyle?: '3d' | 'flat' | 'grid' | 'collage' | 'slideshow';
 
   padding: { top: number; right: number; bottom: number; left: number };
   border: { width: number; style: string; color: string; radius: number };
@@ -429,6 +436,8 @@ export interface EditorState {
   // Editor mode: 'card' for user cards, 'template' for admin templates
   editorMode: 'card' | 'template';
   templateId: string | null;
+  // Loading state when fetching template data from server
+  isLoadingTemplate: boolean;
   
   // Global settings
   autoScroll: boolean;

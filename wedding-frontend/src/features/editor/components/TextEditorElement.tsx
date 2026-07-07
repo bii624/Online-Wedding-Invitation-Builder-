@@ -129,6 +129,91 @@ export function TextEditorElement({ element }: TextEditorElementProps) {
       </div>
     );
   }
+  
+  const isCurved = tp.textCurve !== undefined && tp.textCurve !== 0;
+
+  if (!isEditing && isCurved) {
+    const w = element.width;
+    const h = element.height;
+    const curve = tp.textCurve || 0;
+    
+    // Path calculation
+    const yMid = h / 2;
+    const startY = yMid + curve;
+    const endY = yMid + curve;
+    const controlY = yMid - curve;
+    const pathData = `M 0,${startY} Q ${w / 2},${controlY} ${w},${endY}`;
+    const pathId = `text-path-${element.id}`;
+
+    // Text align properties mapping
+    let textAnchor: 'inherit' | 'end' | 'start' | 'middle' = 'middle';
+    let startOffset = '50%';
+    if (tp.textAlign === 'left') {
+      textAnchor = 'start';
+      startOffset = '0%';
+    } else if (tp.textAlign === 'right') {
+      textAnchor = 'end';
+      startOffset = '100%';
+    }
+
+    const lines = tp.content.split('\n');
+    const svgTextStyle: React.CSSProperties = {
+      fontFamily: tp.fontFamily,
+      fontSize: `${tp.fontSize}px`,
+      fontWeight: tp.fontWeight,
+      fontStyle: tp.fontStyle,
+      textDecoration: tp.textDecoration,
+      letterSpacing: tp.letterSpacing ? `${tp.letterSpacing}px` : undefined,
+    };
+
+    return (
+      <div
+        className="canvas-text-el"
+        style={{
+          ...style,
+          display: 'block',
+          padding: 0,
+          overflow: 'visible',
+        }}
+        onDoubleClick={(e) => {
+          e.stopPropagation();
+          setIsEditing(true);
+        }}
+      >
+        <svg
+          width="100%"
+          height="100%"
+          viewBox={`0 0 ${w} ${h}`}
+          overflow="visible"
+          style={{ display: 'block', overflow: 'visible' }}
+        >
+          <defs>
+            <path id={pathId} d={pathData} fill="none" stroke="none" />
+          </defs>
+          {lines.map((line, index) => {
+            const dy = (index - (lines.length - 1) / 2) * tp.fontSize * (tp.lineHeight || 1.5);
+            return (
+              <text
+                key={index}
+                fill={tp.color}
+                style={svgTextStyle}
+                transform={`translate(0, ${dy})`}
+              >
+                <textPath
+                  href={`#${pathId}`}
+                  startOffset={startOffset}
+                  textAnchor={textAnchor}
+                  dominantBaseline="middle"
+                >
+                  {line}
+                </textPath>
+              </text>
+            );
+          })}
+        </svg>
+      </div>
+    );
+  }
 
   return (
     <div

@@ -9,10 +9,10 @@ import { adminApi } from '../../../api/adminApi';
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div style={{ background:'#fff', border:'1px solid #f1f5f9', borderRadius:8, padding:'10px 14px', boxShadow:'0 4px 12px rgba(0,0,0,0.08)' }}>
-        <p style={{ fontSize:12, fontWeight:600, color:'#64748b', marginBottom:6 }}>{label}</p>
+      <div style={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: 8, padding: '10px 14px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+        <p style={{ fontSize: 12, fontWeight: 600, color: '#64748b', marginBottom: 6 }}>{label}</p>
         {payload.map((p: any) => (
-          <p key={p.dataKey} style={{ fontSize:13, fontWeight:600, color: p.color, margin:'2px 0' }}>
+          <p key={p.dataKey} style={{ fontSize: 13, fontWeight: 600, color: p.color, margin: '2px 0' }}>
             {p.dataKey === 'cards' ? '🎴 Thiệp: ' : p.dataKey === 'users' ? '👤 Users: ' : '🔥 Lượt dùng: '}{p.value}
           </p>
         ))}
@@ -50,7 +50,7 @@ export function DashboardPage() {
     );
   }
 
-  if (!statsData) return null;  return (
+  if (!statsData) return null; return (
     <div>
       {/* Stat cards */}
       <div className="adm-stat-grid">
@@ -61,26 +61,26 @@ export function DashboardPage() {
               <span style={{ fontSize: 13, color: '#94a3b8', fontWeight: 600 }}>{s.label}</span>
               <span style={{ fontSize: 13, fontWeight: 700, color: s.color }}>{s.change}</span>
             </div>
-            
+
             {/* Bottom row */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
               <span style={{ fontSize: 24, fontWeight: 800, color: '#1e293b', lineHeight: 1 }}>{s.value}</span>
               <div style={{ width: 80, height: 35, filter: `drop-shadow(0px 4px 6px ${s.color}50)` }}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={s.data.map(val => ({ val }))} margin={{ top: 5, bottom: 5, left: 5, right: 5 }}>
-                    <Line 
-                      type="monotone" 
-                      dataKey="val" 
-                      stroke={s.color} 
-                      strokeWidth={2.5} 
+                  <LineChart data={s.data.map((val: number) => ({ val }))} margin={{ top: 5, bottom: 5, left: 5, right: 5 }}>
+                    <Line
+                      type="monotone"
+                      dataKey="val"
+                      stroke={s.color}
+                      strokeWidth={2.5}
                       dot={(props: any) => {
                         const { cx, cy, index } = props;
                         if (index === s.data.length - 1) {
                           return <circle key={index} cx={cx} cy={cy} r={3.5} fill={s.color} stroke="#fff" strokeWidth={1.5} />;
                         }
                         return null;
-                      }} 
-                      activeDot={false} 
+                      }}
+                      activeDot={false}
                       isAnimationActive={true}
                     />
                   </LineChart>
@@ -97,11 +97,11 @@ export function DashboardPage() {
           <div className="adm-card-header">
             <span className="adm-card-title">Tăng trưởng thiệp & users (7 ngày)</span>
             <div style={{ display: 'flex', gap: 16, fontSize: 13, fontWeight: 500, color: '#64748b' }}>
-              <span style={{ display:'flex', alignItems:'center', gap:5 }}>
-                <span style={{ width:10, height:10, borderRadius:2, background:'#f43f5e', display:'inline-block' }} /> Thiệp
+              <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <span style={{ width: 10, height: 10, borderRadius: 2, background: '#f43f5e', display: 'inline-block' }} /> Thiệp
               </span>
-              <span style={{ display:'flex', alignItems:'center', gap:5 }}>
-                <span style={{ width:10, height:10, borderRadius:2, background:'#6366f1', display:'inline-block' }} /> Users
+              <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <span style={{ width: 10, height: 10, borderRadius: 2, background: '#6366f1', display: 'inline-block' }} /> Users
               </span>
             </div>
           </div>
@@ -110,20 +110,20 @@ export function DashboardPage() {
               <AreaChart data={statsData.chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorCards" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.25}/>
-                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0.02}/>
+                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0.02} />
                   </linearGradient>
                   <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.22}/>
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0.02}/>
+                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.22} />
+                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0.02} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="date" tick={{ fontSize:12, fill:'#94a3b8' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize:12, fill:'#94a3b8' }} axisLine={false} tickLine={false} />
+                <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} />
-                <Area type="monotone" dataKey="cards" stroke="#f43f5e" strokeWidth={2.5} fill="url(#colorCards)" dot={{ fill:'#f43f5e', r:3 }} activeDot={{ r:5 }} />
-                <Area type="monotone" dataKey="users" stroke="#6366f1" strokeWidth={2.5} fill="url(#colorUsers)" dot={{ fill:'#6366f1', r:3 }} activeDot={{ r:5 }} />
+                <Area type="monotone" dataKey="cards" stroke="#f43f5e" strokeWidth={2.5} fill="url(#colorCards)" dot={{ fill: '#f43f5e', r: 3 }} activeDot={{ r: 5 }} />
+                <Area type="monotone" dataKey="users" stroke="#6366f1" strokeWidth={2.5} fill="url(#colorUsers)" dot={{ fill: '#6366f1', r: 3 }} activeDot={{ r: 5 }} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -161,10 +161,10 @@ export function DashboardPage() {
                       const percent = (t.uses / gridMax) * 100;
                       // Mặc định highlight Top 1 (i === 0) nếu không hover ai, hoặc highlight chính phần tử đang được hover
                       const isHighlighted = hoverIndex === i || (hoverIndex === null && i === 0);
-                      
+
                       return (
-                        <div 
-                          key={t.name} 
+                        <div
+                          key={t.name}
                           style={{ marginBottom: 20, cursor: 'pointer' }}
                           onMouseEnter={() => setHoverIndex(i)}
                         >
@@ -174,11 +174,11 @@ export function DashboardPage() {
                           </div>
                           <div style={{ height: 12, background: 'transparent', borderRadius: 99, overflow: 'visible', position: 'relative' }}>
                             <div style={{ position: 'absolute', inset: 0, background: '#f1f5f9', borderRadius: 99, opacity: 0.8 }} />
-                            <motion.div 
+                            <motion.div
                               initial={{ width: 0 }}
                               animate={{ width: `${percent}%` }}
                               transition={{ duration: 1, ease: "easeOut" }}
-                              style={{ height: '100%', background: isHighlighted ? 'var(--adm-pink)' : '#94a3b8', borderRadius: 99, position: 'relative', transition: 'background 0.2s ease' }} 
+                              style={{ height: '100%', background: isHighlighted ? 'var(--adm-pink)' : '#94a3b8', borderRadius: 99, position: 'relative', transition: 'background 0.2s ease' }}
                             >
                               {/* Tooltip */}
                               <AnimatePresence>
@@ -190,7 +190,7 @@ export function DashboardPage() {
                                     transition={{ duration: 0.15 }}
                                     style={{
                                       position: 'absolute',
-                                      right: 0, 
+                                      right: 0,
                                       top: -38,
                                       background: '#1e293b',
                                       color: '#fff',
@@ -235,18 +235,18 @@ export function DashboardPage() {
       <div className="adm-card">
         <div className="adm-card-header">
           <span className="adm-card-title">Hoạt động gần đây</span>
-          <span style={{ fontSize:12, color:'var(--adm-pink)', fontWeight:600, cursor:'pointer' }}>Xem tất cả →</span>
+          <span style={{ fontSize: 12, color: 'var(--adm-pink)', fontWeight: 600, cursor: 'pointer' }}>Xem tất cả →</span>
         </div>
         <div>
           {statsData.activity.map((a: any, i: number) => (
-            <div key={i} style={{ display:'flex', alignItems:'center', gap:14, padding:'13px 22px', borderBottom: i < statsData.activity.length-1 ? '1px solid var(--adm-border)' : 'none' }}>
-              <div style={{ width:36, height:36, borderRadius:'50%', background: a.type === 'user' ? '#eef2ff' : '#fff1f2', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '13px 22px', borderBottom: i < statsData.activity.length - 1 ? '1px solid var(--adm-border)' : 'none' }}>
+              <div style={{ width: 36, height: 36, borderRadius: '50%', background: a.type === 'user' ? '#eef2ff' : '#fff1f2', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 {a.type === 'user' ? <UserPlus size={15} color="#6366f1" /> : <FileText size={15} color="#f43f5e" />}
               </div>
-              <div style={{ flex:1 }}>
-                <p style={{ fontSize:13, color:'var(--adm-text)', margin:0 }}>{a.text}</p>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 13, color: 'var(--adm-text)', margin: 0 }}>{a.text}</p>
               </div>
-              <div style={{ display:'flex', alignItems:'center', gap:4, fontSize:11, color:'var(--adm-text-muted)', flexShrink:0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--adm-text-muted)', flexShrink: 0 }}>
                 <Clock size={11} />{a.time}
               </div>
             </div>

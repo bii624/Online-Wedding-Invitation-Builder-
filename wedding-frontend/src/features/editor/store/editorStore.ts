@@ -60,6 +60,7 @@ const DEFAULT_TEXT_PROPS: TextProperties = {
   shadowColor: 'rgba(0,0,0,0.3)',
   letterSpacing: 0,
   lineHeight: 1.5,
+  textCurve: 0,
 };
 
 const DEFAULT_IMAGE_PROPS: ImageProperties = {
@@ -82,6 +83,7 @@ const DEFAULT_IMAGE_PROPS: ImageProperties = {
   shadowBlur: 12,
   shadowColor: 'rgba(0,0,0,0.0)',
   objectFit: 'cover',
+  frameType: 'none',
 };
 
 const DEFAULT_SHAPE_PROPS: ShapeProperties = {
@@ -207,6 +209,7 @@ export const DEFAULT_ALBUM_PROPS: import('../types/editor.types').AlbumContent =
   alignment: 'center',
   backgroundColor: '#ffffff',
   opacity: 1,
+  sliderStyle: '3d',
   padding: { top: 0, right: 0, bottom: 0, left: 0 },
   border: { width: 0, style: "none", color: "#e4e4e7", radius: 12 },
   shadow: { x: 0, y: 2, blur: 8, spread: 0, color: "rgba(0,0,0,0.08)" }
@@ -279,6 +282,10 @@ interface EditorActions {
     key: K,
     value: ImageProperties[K]
   ) => void;
+  updateImageProps: (
+    id: string,
+    props: Partial<ImageProperties>
+  ) => void;
   addShapeElement: (shapeType: ShapeType) => void;
   updateShapeProp: <K extends keyof ShapeProperties>(
     id: string,
@@ -347,6 +354,10 @@ interface EditorActions {
   pushHistory: () => void;
   bringElementForward: (id: string) => void;
   sendElementBackward: (id: string) => void;
+  bringElementToFront: (id: string) => void;
+  sendElementToBack: (id: string) => void;
+  alignElementToPage: (id: string, align: 'top' | 'bottom' | 'left' | 'right' | 'center' | 'middle') => void;
+  addImageElementWithFrame: (frameType: string) => void;
   setCropElementId: (id: string | null) => void;
   setAiModalState: (state: import('../types/editor.types').AIModalState | null) => void;
   updateElementCrop: (id: string, cropData: ImageCropData, newWidth: number, newHeight: number) => void;
@@ -420,6 +431,7 @@ const INITIAL_STATE: EditorState = {
   lastSavedData: null,
   editorMode: 'card' as const,
   templateId: null,
+  isLoadingTemplate: false,
   autoScroll: false,
   autoScrollSpeed: 50,
 };
@@ -513,6 +525,84 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       isSelected: true,
       imageProps: { ...DEFAULT_IMAGE_PROPS, src, alt: name },
     };
+    const updated = elements.map((el) => ({ ...el, isSelected: false }));
+    set({
+      elements: [...updated, newEl],
+      selectedElement: newEl,
+      activeTool: 'image',
+    });
+    get().pushHistory();
+  },
+
+  addImageElementWithFrame: (frameType) => {
+    const { elements } = get();
+    const id = `el-img-${Date.now()}`;
+    const x = 50 + Math.random() * 80;
+    const y = Math.max(50, getViewportCenterY(get().zoom, get().canvasHeight) - 150 + Math.random() * 80);
+    
+    let frameProps: Partial<ImageProperties> = {
+      frameType: frameType as any,
+    };
+    
+    // Apply specific frame presets
+    if (frameType === 'circle') {
+      frameProps.borderRadius = 999;
+    } else if (frameType === 'rounded') {
+      frameProps.borderRadius = 24;
+    } else if (frameType === 'polaroid') {
+      frameProps = {
+        frameType: 'polaroid',
+        borderRadius: 0,
+        paddingTop: 12,
+        paddingRight: 12,
+        paddingBottom: 48,
+        paddingLeft: 12,
+        backgroundColor: '#ffffff',
+        borderWidth: 1,
+        borderColor: '#e2e8f0',
+        borderStyle: 'solid',
+        shadowX: 0,
+        shadowY: 8,
+        shadowBlur: 16,
+        shadowColor: 'rgba(0, 0, 0, 0.1)',
+      };
+    } else if (frameType === 'classic') {
+      frameProps = {
+        frameType: 'classic',
+        borderRadius: 4,
+        paddingTop: 12,
+        paddingRight: 12,
+        paddingBottom: 12,
+        paddingLeft: 12,
+        backgroundColor: '#ffffff',
+        borderWidth: 2,
+        borderColor: '#e0c4a8',
+        borderStyle: 'solid',
+        shadowX: 0,
+        shadowY: 4,
+        shadowBlur: 8,
+        shadowColor: 'rgba(0, 0, 0, 0.08)',
+      };
+    }
+    
+    const newEl: CanvasElement = {
+      id,
+      type: 'image',
+      x,
+      y,
+      width: 240,
+      height: frameType === 'polaroid' ? 280 : 240,
+      zIndex: elements.length > 0 ? Math.max(...elements.map(el => el.zIndex)) + 1 : 1,
+      rotation: 0,
+      isSelected: true,
+      imageProps: {
+        ...DEFAULT_IMAGE_PROPS,
+        src: '',
+        alt: 'Khung ảnh',
+        ...frameProps
+      },
+    };
+    
     const updated = elements.map((el) => ({ ...el, isSelected: false }));
     set({
       elements: [...updated, newEl],
@@ -756,6 +846,19 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     set({ elements: updated, selectedElement: updatedSelected });
   },
 
+  updateImageProps: (id, props) => {
+    const { elements, selectedElement } = get();
+    const updated = elements.map((el) => {
+      if (el.id !== id || !el.imageProps) return el;
+      return { ...el, imageProps: { ...el.imageProps, ...props } };
+    });
+    const updatedSelected =
+      (selectedElement && selectedElement.id === id)
+        ? updated.find((el) => el.id === id) ?? null
+        : selectedElement;
+    set({ elements: updated, selectedElement: updatedSelected });
+  },
+
   // ── Update shape prop ─────────────────────────────────
   updateShapeProp: (id, key, value) => {
     const { elements, selectedElement } = get();
@@ -871,6 +974,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
 
   updateElementSize: (id, width, height) => {
     const { elements, selectedElement } = get();
+    console.log('[editorStore] updateElementSize ->', { id, width, height });
     const updated = elements.map((el) =>
       el.id === id ? { ...el, width, height } : el
     );
@@ -1089,6 +1193,33 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     get().pushHistory();
   },
 
+  bringElementToFront: (id: string) => {
+    const { elements, selectedElement } = get();
+    let sorted = [...elements].sort((a, b) => a.zIndex - b.zIndex);
+    const index = sorted.findIndex((el) => el.id === id);
+    if (index === -1 || index === sorted.length - 1) return;
+    const target = sorted[index];
+    sorted.splice(index, 1);
+    sorted.push(target);
+    const updatedElements = sorted.map((el, i) => ({ ...el, zIndex: i + 1 }));
+    const updatedSelected = updatedElements.find(el => el.id === selectedElement?.id) ?? null;
+    set({ elements: updatedElements, selectedElement: updatedSelected });
+    get().pushHistory();
+  },
+  sendElementToBack: (id: string) => {
+    const { elements, selectedElement } = get();
+    let sorted = [...elements].sort((a, b) => a.zIndex - b.zIndex);
+    const index = sorted.findIndex((el) => el.id === id);
+    if (index === -1 || index === 0) return;
+    const target = sorted[index];
+    sorted.splice(index, 1);
+    sorted.unshift(target);
+    const updatedElements = sorted.map((el, i) => ({ ...el, zIndex: i + 1 }));
+    const updatedSelected = updatedElements.find(el => el.id === selectedElement?.id) ?? null;
+    set({ elements: updatedElements, selectedElement: updatedSelected });
+    get().pushHistory();
+  },
+
   sendElementBackward: (id) => {
     const { elements, selectedElement } = get();
 
@@ -1107,6 +1238,49 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     const updatedSelected = updatedElements.find(el => el.id === selectedElement?.id) ?? null;
 
     set({ elements: updatedElements, selectedElement: updatedSelected });
+    get().pushHistory();
+  },
+    
+  alignElementToPage: (id: string, align: 'top' | 'bottom' | 'left' | 'right' | 'center' | 'middle') => {
+    const { elements, canvasWidth, canvasHeight, selectedElement } = get();
+    const element = elements.find((el) => el.id === id);
+    if (!element) return;
+    const w = element.width;
+    const h = element.height;
+    // current element center
+    const curCenterX = element.x + w / 2;
+    const curCenterY = element.y + h / 2;
+
+    let targetCenterX = curCenterX;
+    let targetCenterY = curCenterY;
+
+    switch (align) {
+      case 'left':
+        targetCenterX = w / 2;
+        break;
+      case 'right':
+        targetCenterX = canvasWidth - w / 2;
+        break;
+      case 'center':
+        targetCenterX = canvasWidth / 2;
+        break;
+      case 'top':
+        targetCenterY = h / 2;
+        break;
+      case 'bottom':
+        targetCenterY = canvasHeight - h / 2;
+        break;
+      case 'middle':
+        targetCenterY = canvasHeight / 2;
+        break;
+    }
+
+    const newX = Math.round(targetCenterX - w / 2);
+    const newY = Math.round(targetCenterY - h / 2);
+
+    const updated = elements.map((el) => (el.id === id ? { ...el, x: newX, y: newY } : el));
+    const updatedSelected = (selectedElement && selectedElement.id === id) ? { ...selectedElement, x: newX, y: newY } as CanvasElement : selectedElement;
+    set({ elements: updated, selectedElement: updatedSelected });
     get().pushHistory();
   },
 
@@ -1271,7 +1445,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         try {
           const node = document.getElementById('editor-canvas-frame');
           if (node) {
-            const canvas = await toCanvas(node, { cacheBust: true, useCORS: true, allowTaint: true });
+            const canvas = await toCanvas(node, { cacheBust: true, useCORS: true, allowTaint: true } as any);
             const blob = await new Promise<Blob | null>((resolve) => {
               canvas.toBlob((b) => resolve(b), 'image/webp', 0.8);
             });
@@ -1357,7 +1531,8 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
 
   // ── Template Editor ────────────────────────────────────
   loadTemplateData: async (templateId: string) => {
-    set({ templateId, editorMode: 'template' });
+    // mark loading state so UI can show a loading screen
+    set({ templateId, editorMode: 'template', isLoadingTemplate: true });
     try {
       const template = await templatesEditorApi.getTemplateCanvas(templateId);
       const elements = (template.blocks ?? []).map((block: any) => {
@@ -1414,11 +1589,14 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         historyIndex: 0,
         selectedElement: null,
         autoSaveStatus: 'idle',
+        isLoadingTemplate: false,
       });
       const mappedElements = get().elements;
       set({ lastSavedData: JSON.stringify({ elements: mappedElements, canvasBackground: background, music: null, canvasWidth: template.canvasWidth ?? get().canvasWidth }) });
     } catch (err) {
       console.error('[loadTemplateData] Failed:', err);
+      // ensure loading flag cleared on error
+      set({ isLoadingTemplate: false });
     }
   },
 
@@ -1488,7 +1666,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         try {
           const node = document.getElementById('editor-canvas-frame');
           if (node) {
-            const canvas = await toCanvas(node, { cacheBust: true, useCORS: true, allowTaint: true });
+            const canvas = await toCanvas(node, { cacheBust: true, useCORS: true, allowTaint: true } as any);
             const blob = await new Promise<Blob | null>((resolve) => {
               canvas.toBlob((b) => resolve(b), 'image/webp', 0.8);
             });

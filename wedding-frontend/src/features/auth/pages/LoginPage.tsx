@@ -23,7 +23,7 @@ const BLOOM_FLOWERS = Array.from({ length: 120 }, () => ({
   top: rand() * 112 - 6,
   size: 55 + rand() * 170,       // 55–225 px
   rotate: rand() * 360,
-  opacity: 0.15 + rand() * 0.52, // 0.15–0.67
+  opacity: 0.08 + rand() * 0.25, // Lighter opacity for hearts
   delay: rand() * 3.0,        // 0–3 s stagger
   duration: 1.3 + rand() * 2.2,  // 1.3–3.5 s
 }));

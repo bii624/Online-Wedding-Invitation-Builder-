@@ -135,7 +135,6 @@ export function LibraryPanel({ onClose }: LibraryPanelProps) {
     libraryElementsApi.recordUsage(el.id).catch(() => { });
   };
 
-  const uniqueTypes = [...new Set(elements.map(e => e.elementType))];
 
   return (
     <div className="lib-panel">
