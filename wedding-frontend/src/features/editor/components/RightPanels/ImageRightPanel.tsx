@@ -6,6 +6,7 @@
 
 import { useRef } from 'react';
 import { useEditorStore } from '../../store/editorStore';
+import { Expand, Paintbrush, Wand2 } from 'lucide-react';
 import type { ImageProperties, BorderStyleType, PageAlignType } from '../../types/editor.types';
 import {
   Section,
@@ -61,6 +62,7 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
     setCropElementId,
     updateElementPosition,
     canvasWidth,
+    setAiModalState,
   } = useEditorStore();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -95,9 +97,9 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
   // ── Page alignment ─────────────────────────────────────
   const handlePageAlign = (align: PageAlignType) => {
     if (!selectedElement) return;
-    
+
     let newX = selectedElement.x;
-    
+
     switch (align) {
       case 'left':
         newX = 0;
@@ -109,7 +111,7 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
         newX = canvasWidth - elementWidth;
         break;
     }
-    
+
     updateElementPosition(id, newX, selectedElement.y);
     pushHistory();
   };
@@ -172,10 +174,6 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
           </button>
         </div>
 
-        <button className="rp-remove-bg-btn" title="Xóa nền bằng AI">
-          <EraserIcon />
-          Xóa nền
-        </button>
         <div className="rp-field" style={{ marginBlock: 25 }}>
           <span className="rp-label">Theo trang</span>
           <div className="rp-align-page-group">
@@ -194,6 +192,26 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
 
         />
       </Section>
+
+      {/* ── AI ──────────────────────── */}
+      <div className="rp-ai-section-wrapper">
+        <Section title="Xử lý hình ảnh AI" icon={<Wand2 size={16} />} defaultOpen>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="rp-image-action-btn rp-ai-btn" title="Xóa nền" onClick={() => setAiModalState({ type: 'remove-bg', elementId: id })}>
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 20 }}><EraserIcon /></span>
+              <span style={{ fontSize: '11px', marginTop: 4 }}>Xóa nền</span>
+            </button>
+            <button className="rp-image-action-btn rp-ai-btn" title="Mở rộng" onClick={() => setAiModalState({ type: 'expand', elementId: id })}>
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 20 }}><Expand size={18} /></span>
+              <span style={{ fontSize: '11px', marginTop: 4 }}>Mở rộng</span>
+            </button>
+            <button className="rp-image-action-btn rp-ai-btn" title="Xóa vật thể" onClick={() => setAiModalState({ type: 'remove-object', elementId: id })}>
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 20 }}><Paintbrush size={18} /></span>
+              <span style={{ fontSize: '11px', marginTop: 4 }}>Xóa vật</span>
+            </button>
+          </div>
+        </Section>
+      </div>
 
       {/* ── Lật ảnh ──────────────────────────────────────── */}
       <Section title="Lật ảnh" icon={<FlipHIcon />} defaultOpen>
@@ -221,16 +239,7 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
 
       {/* ── Biến đổi (W / H / Rotation / Lock) ──────────── */}
       <Section title="Biến đổi" icon={<RotateIcon />} defaultOpen>
-        <div className="rp-field">
-          <span className="rp-label">Kích thước</span>
-          <button
-            className={`rp-lock-btn ${props.lockAspectRatio ? 'active' : ''}`}
-            onClick={() => upd('lockAspectRatio', !props.lockAspectRatio)}
-            title={props.lockAspectRatio ? 'Mở khóa tỉ lệ' : 'Khóa tỉ lệ'}
-          >
-            {props.lockAspectRatio ? <LockIcon /> : <UnlockIcon />}
-          </button>
-        </div>
+
         <div className="rp-grid-2">
           <div className="rp-grid-input-wrap">
             <span className="rp-grid-input-label">W</span>

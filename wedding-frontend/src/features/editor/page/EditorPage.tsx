@@ -9,6 +9,9 @@ import { MainCanvas } from '../components/Canvas';
 import { RightPanel } from '../components/RightPanel';
 import { Filmstrip } from '../components/Filmstrip';
 import { ImageCropModal } from '../components/ImageCropModal';
+import { AIRemoveBgModal } from '../components/AIModals/AIRemoveBgModal';
+import { AIExpandModal } from '../components/AIModals/AIExpandModal';
+import { AIRemoveObjectModal } from '../components/AIModals/AIRemoveObjectModal';
 
 import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
@@ -171,6 +174,9 @@ export function EditorPage() {
 
       {/* ── Modals ───────────────────────── */}
       <ImageCropModal />
+      <AIRemoveBgModal />
+      <AIExpandModal />
+      <AIRemoveObjectModal />
     </div>
   );
 }

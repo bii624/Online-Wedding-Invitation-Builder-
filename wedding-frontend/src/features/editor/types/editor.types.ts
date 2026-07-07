@@ -22,6 +22,12 @@ export type FontStyleType = 'normal' | 'italic';
 export type TextDecorationLine = 'none' | 'underline' | 'line-through';
 export type BorderStyleType = 'none' | 'solid' | 'dashed' | 'dotted';
 export type PageAlignType = 'left' | 'center' | 'right';
+export type AIModalType = 'remove-bg' | 'expand' | 'remove-object';
+
+export interface AIModalState {
+  type: AIModalType;
+  elementId: string;
+}
 
 // ── Text Properties ───────────────────────────────────────
 export interface TextProperties {
@@ -404,6 +410,7 @@ export interface EditorState {
   canvasWidth: number;
   canvasHeight: number;
   cropElementId: string | null;
+  aiModalState: AIModalState | null;
   filmstripItems: FilmstripItem[];
   aiColors: AIColor[];
   activeRightTab: 'settings' | 'effects';

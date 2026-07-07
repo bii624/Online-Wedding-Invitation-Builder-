@@ -348,6 +348,7 @@ interface EditorActions {
   bringElementForward: (id: string) => void;
   sendElementBackward: (id: string) => void;
   setCropElementId: (id: string | null) => void;
+  setAiModalState: (state: import('../types/editor.types').AIModalState | null) => void;
   updateElementCrop: (id: string, cropData: ImageCropData, newWidth: number, newHeight: number) => void;
   updateCanvasBackground: (props: Partial<BackgroundProperties>) => void;
   addRecentColor: (color: string) => void;
@@ -388,6 +389,7 @@ const INITIAL_STATE: EditorState = {
   canvasWidth: 500, // desktop-first, user can switch
   canvasHeight: 2000,
   cropElementId: null,
+  aiModalState: null,
   filmstripItems: Array.from({ length: 14 }, (_, i) => ({
     id: `page-${i + 1}`,
     thumbnail: '',
@@ -892,6 +894,8 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
   },
 
   setCropElementId: (id) => set({ cropElementId: id }),
+  
+  setAiModalState: (state) => set({ aiModalState: state }),
 
   updateElementCrop: (id, cropData, newWidth, newHeight) => {
     const { elements, selectedElement } = get();
