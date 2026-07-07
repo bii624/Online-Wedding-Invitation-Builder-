@@ -591,6 +591,16 @@ export function MainCanvas() {
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
+        <svg width="0" height="0" style={{ position: 'absolute', width: 0, height: 0, pointerEvents: 'none' }}>
+          <defs>
+            <clipPath id="clip-heart" clipPathUnits="objectBoundingBox">
+              <path d="M 0.5, 0.9 C 0.4, 0.8 0.0, 0.6 0.0, 0.35 C 0.0, 0.15 0.15, 0.0 0.35, 0.0 C 0.45, 0.0 0.5, 0.05 0.5, 0.1 C 0.5, 0.05 0.55, 0.0 0.65, 0.0 C 0.85, 0.0 1.0, 0.15 1.0, 0.35 C 1.0, 0.6 0.6, 0.8 0.5, 0.9 Z" />
+            </clipPath>
+            <clipPath id="clip-star" clipPathUnits="objectBoundingBox">
+              <path d="M 0.5,0.0 L 0.64,0.36 L 1.0,0.36 L 0.71,0.58 L 0.82,0.95 L 0.5,0.73 L 0.18,0.95 L 0.29,0.58 L 0.0,0.36 L 0.36,0.36 Z" />
+            </clipPath>
+          </defs>
+        </svg>
 
         <div
           className="canvas-scale-wrapper"

@@ -92,7 +92,8 @@ export const MyCardsPage = () => {
     try {
       const card = await cardsApi.createCard({ title: 'Thiệp mới của tôi' });
       toast.success('Đã tạo thiệp!');
-      navigate(`/design?id=${card.id}`);
+      navigate(`/loading?next=${encodeURIComponent(`/design?id=${card.id}`)}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`);
+
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Có lỗi xảy ra');
     }
@@ -262,7 +263,8 @@ export const MyCardsPage = () => {
                     "group bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 relative",
                     viewMode === 'list' ? "flex items-center h-24" : "flex flex-col"
                   )}
-                  onClick={() => navigate(`/design?id=${card.id}`)}
+                  onClick={() => navigate(`/loading?next=${encodeURIComponent(`/design?id=${card.id}`)}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`)}
+
                 >
                   {/* Thumbnail Placeholder */}
                   <div className={cn(
@@ -313,7 +315,8 @@ export const MyCardsPage = () => {
                         <div className="absolute right-0 top-8 w-40 bg-white border border-slate-100 shadow-xl rounded-xl overflow-hidden z-20 animate-in fade-in zoom-in-95 duration-100">
                           <button
                             className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-rose-600 flex items-center gap-2 transition-colors"
-                            onClick={() => navigate(`/design?id=${card.id}`)}
+                            onClick={() => navigate(`/loading?next=${encodeURIComponent(`/design?id=${card.id}`)}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`)}
+
                           >
                             <Edit2 size={14} /> Chỉnh sửa
                           </button>

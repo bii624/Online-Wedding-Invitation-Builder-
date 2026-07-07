@@ -124,32 +124,74 @@ export function AlbumRightPanel({ id, props }: AlbumRightPanelProps) {
             </div>
           </div>
 
-          <hr className="border-gray-200" />
-
-          {/* Hiệu ứng & Delay */}
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-700">Hiệu ứng chuyển</span>
-            <select 
-              className="border border-gray-300 rounded-md text-sm px-2 py-1 outline-none focus:border-rose-400"
-              value={props.effectType}
-              onChange={(e) => upd('effectType', e.target.value as any)}
-            >
-              <option value="fade">Fade</option>
-              <option value="slide">Slide</option>
-              <option value="zoom">Zoom</option>
-            </select>
+          {/* Kiểu hiển thị */}
+          <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '10px', marginTop: '4px' }}>
+            <span className="text-sm font-semibold text-gray-800" style={{ display: 'block', marginBottom: '8px' }}>Kiểu hiển thị</span>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginBottom: '8px' }}>
+              {[
+                { id: '3d', name: '3D Flow' },
+                { id: 'flat', name: 'Trượt phẳng' },
+                { id: 'grid', name: 'Lưới ảnh' },
+                { id: 'collage', name: 'Collage' },
+                { id: 'slideshow', name: 'Trình chiếu' }
+              ].map((s) => {
+                const isActive = props.sliderStyle === s.id || (!props.sliderStyle && s.id === '3d');
+                return (
+                  <button
+                    key={s.id}
+                    className={`rp-border-style-btn ${isActive ? 'active' : ''}`}
+                    onClick={() => {
+                      upd('sliderStyle', s.id as any);
+                    }}
+                    style={{
+                      padding: '6px 2px',
+                      fontSize: '11px',
+                      borderRadius: '6px',
+                      border: isActive ? '1.5px solid var(--ed-primary, #F95E5A)' : '1px solid var(--ed-border, #e2e8f0)',
+                      background: isActive ? 'var(--ed-primary-light, #fee2e2)' : 'transparent',
+                      cursor: 'pointer',
+                      fontWeight: 'bold',
+                      color: isActive ? 'var(--ed-primary, #F95E5A)' : '#475569',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    {s.name}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          <div className="rp-field">
-            <Slider 
-              label="Độ trễ (s)" 
-              value={props.delay} 
-              min={1} max={10} step={0.5} 
-              onChange={(v) => upd('delay', v)} 
-            />
-          </div>
-
           <hr className="border-gray-200" />
+
+          {/* Hiệu ứng & Delay (chỉ hiện khi là Trình chiếu) */}
+          {props.sliderStyle === 'slideshow' && (
+            <>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">Hiệu ứng chuyển</span>
+                <select 
+                  className="border border-gray-300 rounded-md text-sm px-2 py-1 outline-none focus:border-rose-400"
+                  value={props.effectType}
+                  onChange={(e) => upd('effectType', e.target.value as any)}
+                >
+                  <option value="fade">Fade</option>
+                  <option value="slide">Slide</option>
+                  <option value="zoom">Zoom</option>
+                </select>
+              </div>
+
+              <div className="rp-field">
+                <Slider 
+                  label="Độ trễ (s)" 
+                  value={props.delay} 
+                  min={1} max={10} step={0.5} 
+                  onChange={(v) => upd('delay', v)} 
+                />
+              </div>
+
+              <hr className="border-gray-200" />
+            </>
+          )}
 
           <div className="rp-field">
             <span className="rp-label">Căn chỉnh</span>

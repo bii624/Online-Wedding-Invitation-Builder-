@@ -4,6 +4,7 @@
 
 import { EditorPage } from './features/editor/page/EditorPage';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
 import LandingPage from "./pages/LandingPage/LandingPage";
 import LoginPage from "./features/auth/pages/LoginPage";
 import SignupPage from "./features/auth/pages/SignupPage";
@@ -14,6 +15,9 @@ import { useEffect } from 'react';
 import { useAuthStore } from './store/authStore';
 import { MyCardsPage } from './pages/MyCardsPage/MyCardsPage';
 import CardDetailPage from './pages/Dashboard/CardDetailPage/CardDetailPage';
+import { PageTransition } from './components/PageTransition';
+import { RouteProgressBar } from './components/RouteProgressBar';
+
 
 // Dashboard
 import { Overview } from './features/dashboard/pages/Overview';
@@ -53,56 +57,59 @@ function App() {
   return (
     <BrowserRouter>
       <Toaster richColors position="top-center" />
-      <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/my-cards" element={<MyCardsPage />} />
-        <Route path="/design" element={<EditorPage />} />
-        <Route path="/design/template" element={<EditorPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/loading" element={<LoadingPage />} />
-        
-        {/* Static Pages */}
-        <Route path="/templates" element={<Templates />} />
-        <Route path="/reviews" element={<Reviews />} />
-        <Route path="/contact" element={<Contact />} />
+      <RouteProgressBar />
+      <PageTransition>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/my-cards" element={<MyCardsPage />} />
+          <Route path="/design" element={<EditorPage />} />
+          <Route path="/design/template" element={<EditorPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/loading" element={<LoadingPage />} />
 
-        {/* Dashboard routes - using feature components */}
-        <Route path="/dashboard" element={<Navigate to="/dashboard/overview" replace />} />
-        <Route path="/dashboard/overview" element={<Overview />} />
-        <Route path="/dashboard/my-cards" element={<MyCardsDashboard />} />
-        <Route path="/dashboard/create" element={<CreateCard />} />
-        <Route path="/dashboard/cards/:id" element={<CardDetailPage />} />
-        <Route path="/dashboard/templates" element={<Templates />} />
-        <Route path="/dashboard/wishes" element={<Wishes />} />
-        <Route path="/dashboard/rsvp" element={<RSVP />} />
-        <Route path="/dashboard/gifts" element={<ReceivedGifts />} />
-        <Route path="/dashboard/account" element={<AccountProfile />} />
-        <Route path="/dashboard/plan" element={<MyPlan />} />
-        <Route path="/dashboard/payment-qr" element={<PaymentQR />} />
-        <Route path="/dashboard/feedback" element={<Feedback />} />
+          {/* Static Pages */}
+          <Route path="/templates" element={<Templates />} />
+          <Route path="/reviews" element={<Reviews />} />
+          <Route path="/contact" element={<Contact />} />
 
-        {/* Admin routes — protected by AdminLayout guard */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<DashboardPage />} />
-          <Route path="users" element={<UsersListPage />} />
-          <Route path="cards" element={<CardsListPage />} />
-          <Route path="templates" element={<TemplatesListPage />} />
-          <Route path="plans" element={<PlansPage />} />
-          <Route path="elements" element={<LibraryElementsPage />} />
-          <Route path="categories" element={<TemplateCategoriesPage />} />
-          <Route path="moderation" element={<ModerationPage />} />
-        </Route>
+          {/* Dashboard routes - using feature components */}
+          <Route path="/dashboard" element={<Navigate to="/dashboard/overview" replace />} />
+          <Route path="/dashboard/overview" element={<Overview />} />
+          <Route path="/dashboard/my-cards" element={<MyCardsDashboard />} />
+          <Route path="/dashboard/create" element={<CreateCard />} />
+          <Route path="/dashboard/cards/:id" element={<CardDetailPage />} />
+          <Route path="/dashboard/templates" element={<Templates />} />
+          <Route path="/dashboard/wishes" element={<Wishes />} />
+          <Route path="/dashboard/rsvp" element={<RSVP />} />
+          <Route path="/dashboard/gifts" element={<ReceivedGifts />} />
+          <Route path="/dashboard/account" element={<AccountProfile />} />
+          <Route path="/dashboard/plan" element={<MyPlan />} />
+          <Route path="/dashboard/payment-qr" element={<PaymentQR />} />
+          <Route path="/dashboard/feedback" element={<Feedback />} />
+
+          {/* Admin routes — protected by AdminLayout guard */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<DashboardPage />} />
+            <Route path="users" element={<UsersListPage />} />
+            <Route path="cards" element={<CardsListPage />} />
+            <Route path="templates" element={<TemplatesListPage />} />
+            <Route path="plans" element={<PlansPage />} />
+            <Route path="elements" element={<LibraryElementsPage />} />
+            <Route path="categories" element={<TemplateCategoriesPage />} />
+            <Route path="moderation" element={<ModerationPage />} />
+          </Route>
 
 
-        {/* Public wedding card viewer - no auth required */}
-        <Route path="/view/:slug" element={<PublicViewPage />} />
+          {/* Public wedding card viewer - no auth required */}
+          <Route path="/view/:slug" element={<PublicViewPage />} />
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </PageTransition>
     </BrowserRouter>
   );
 }

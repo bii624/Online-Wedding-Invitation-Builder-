@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Gift, RefreshCw, DollarSign } from 'lucide-react';
 import { DashboardLayout } from './DashboardLayout';
+import DashboardPanel from '../components/DashboardPanel';
 import { cardsApi } from '../../../api/cardsApi';
 import { toast } from 'sonner';
 
@@ -72,7 +73,7 @@ export const ReceivedGifts = () => {
 
   return (
     <DashboardLayout>
-      <div className="bg-white rounded-4xl border border-rose-100/50 shadow-[0_15px_40px_rgba(244,63,94,0.015)] p-8 min-h-[75vh]">
+      <DashboardPanel className="p-8 min-h-[75vh]">
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 pb-6 border-b border-rose-100/30">
           <div>
@@ -163,7 +164,7 @@ export const ReceivedGifts = () => {
             </div>
           )}
         </div>
-      </div>
+      </DashboardPanel>
     </DashboardLayout>
   );
 };

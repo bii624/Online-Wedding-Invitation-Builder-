@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { DashboardLayout } from './DashboardLayout'
+import DashboardPanel from '../components/DashboardPanel'
 import { User, Lock, Camera, Crown, Check, Eye, EyeOff, Shield, Globe, Smartphone, Loader2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '../../../store/authStore'
@@ -117,6 +118,7 @@ export const AccountProfile: React.FC = () => {
 
   return (
     <DashboardLayout>
+      <DashboardPanel className="p-6">
       <div className="max-w-3xl mx-auto space-y-6 animate-in fade-in duration-500">
 
         <div className="bg-white rounded-4xl border border-rose-100/50 shadow-[0_15px_40px_rgba(244,63,94,0.01)] p-6">
@@ -344,6 +346,7 @@ export const AccountProfile: React.FC = () => {
         </div>
 
       </div>
+      </DashboardPanel>
     </DashboardLayout>
   )
 }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { DashboardLayout } from './DashboardLayout';
+import DashboardPanel from '../components/DashboardPanel';
 import { Check, Send, Mailbox } from 'lucide-react';
 
 export const Feedback = () => {
@@ -31,7 +32,7 @@ export const Feedback = () => {
 
   return (
     <DashboardLayout>
-      <div className="bg-white rounded-4xl border border-rose-100/50 shadow-[0_15px_40px_rgba(244,63,94,0.015)] overflow-hidden min-h-[75vh] flex flex-col lg:flex-row animate-in fade-in duration-500">
+      <DashboardPanel className="min-h-[75vh] flex flex-col lg:flex-row animate-in fade-in duration-500">
 
         <div className="flex-1 p-8 sm:p-10 space-y-6">
           <div>
@@ -133,7 +134,7 @@ export const Feedback = () => {
 
         </div>
 
-      </div>
+      </DashboardPanel>
     </DashboardLayout>
   );
 };

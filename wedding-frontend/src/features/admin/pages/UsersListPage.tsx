@@ -7,15 +7,7 @@ import { toast } from 'sonner';
 import { UserDetailModal } from '../components/UserDetailModal';
 import { CreateUserModal } from '../components/CreateUserModal';
 
-const MOCK_USERS = [
-  { id: '1', fullName: 'Nguyễn Văn Nam', email: 'nguyenvannam@gmail.com', role: 'user', status: 'active', cardCount: 5, createdAt: '2025-01-15' },
-  { id: '2', fullName: 'Trần Thị Hương', email: 'tranthihuong@gmail.com', role: 'user', status: 'active', cardCount: 3, createdAt: '2025-02-20' },
-  { id: '3', fullName: 'Lê Văn Sơn', email: 'levanson@gmail.com', role: 'admin', status: 'active', cardCount: 12, createdAt: '2024-11-03' },
-  { id: '4', fullName: 'Phạm Thị Lan', email: 'phamthilan@gmail.com', role: 'user', status: 'suspended', cardCount: 0, createdAt: '2025-03-08' },
-  { id: '5', fullName: 'Hoàng Minh Tuấn', email: 'hoangminhtuan@gmail.com', role: 'user', status: 'active', cardCount: 7, createdAt: '2025-01-28' },
-  { id: '6', fullName: 'Đỗ Thị Minh', email: 'dothiminh@gmail.com', role: 'user', status: 'active', cardCount: 2, createdAt: '2025-04-11' },
-  { id: '7', fullName: 'Vũ Quang Huy', email: 'vuquanghuy@gmail.com', role: 'user', status: 'suspended', cardCount: 1, createdAt: '2025-03-22' },
-];
+// Summary counts will be fetched from adminApi
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { cls: string; label: string }> = {
@@ -42,6 +34,7 @@ export function UsersListPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
+  const [summary, setSummary] = useState({ totalUsers: 0, active: 0, suspended: 0, admins: 0 });
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
@@ -81,9 +74,50 @@ export function UsersListPage() {
     }
   };
 
+  const fetchSummary = async () => {
+    try {
+      const [allResRaw, activeResRaw, suspendedResRaw, adminResRaw] = await Promise.all([
+        adminApi.getUsers({ page: 1, limit: 1 }),
+        adminApi.getUsers({ status: 'active', page: 1, limit: 1 }),
+        adminApi.getUsers({ status: 'suspended', page: 1, limit: 1 }),
+        adminApi.getUsers({ role: 'admin', page: 1, limit: 1 }),
+      ]);
+
+      const extractTotal = (r: any) => {
+        if (!r) return 0;
+        if (typeof r.pagination?.total === 'number') return r.pagination.total;
+        if (typeof r.data?.pagination?.total === 'number') return r.data.pagination.total;
+        if (typeof r.total === 'number') return r.total;
+        return 0;
+      };
+
+      const all = extractTotal(allResRaw);
+      const act = extractTotal(activeResRaw);
+      const susp = extractTotal(suspendedResRaw);
+      const admins = extractTotal(adminResRaw);
+
+      console.debug('fetchSummary results', { allResRaw, activeResRaw, suspendedResRaw, adminResRaw, all, act, susp, admins });
+
+      setSummary({
+        totalUsers: all,
+        active: act,
+        suspended: susp,
+        admins: admins,
+      });
+      if (!isFinite(total) || total === 0) setTotal(all);
+    } catch (err) {
+      console.error('Error fetching user summary', err);
+      toast.error('Không thể tải thống kê người dùng (xem console)');
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
   }, [page, debouncedSearch, roleFilter, statusFilter]);
+
+  useEffect(() => {
+    fetchSummary();
+  }, []);
 
   const handleToggleStatus = async (id: string, currentStatus: string) => {
     try {
@@ -91,6 +125,7 @@ export function UsersListPage() {
       await adminApi.updateUserStatus(id, newStatus);
       toast.success(`Đã ${newStatus === 'active' ? 'mở khóa' : 'khóa'} tài khoản`);
       setUsers(prev => prev.map(u => u.id === id ? { ...u, status: newStatus } : u));
+      fetchSummary();
     } catch (error) {
       toast.error('Lỗi khi đổi trạng thái người dùng');
     }
@@ -98,6 +133,7 @@ export function UsersListPage() {
 
   const handleUserUpdate = (updatedUser: AdminUser) => {
     setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
+    fetchSummary();
   };
 
   return (
@@ -107,6 +143,7 @@ export function UsersListPage() {
           onClose={() => setShowCreateModal(false)}
           onUserCreated={() => {
             fetchUsers();
+            fetchSummary();
           }}
         />
       )}
@@ -120,10 +157,10 @@ export function UsersListPage() {
       {/* Summary numbers */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
         {[
-          { label: 'Tổng người dùng', value: MOCK_USERS.length, change: '+ 12.5%', color: '#6366f1', data: [10, 15, 8, 20, 25, 18, 30] },
-          { label: 'Hoạt động', value: MOCK_USERS.filter(u => u.status === 'active').length, change: '+ 8.2%', color: '#10b981', data: [5, 12, 10, 15, 20, 22, 28] },
-          { label: 'Đã khóa', value: MOCK_USERS.filter(u => u.status === 'suspended').length, change: '- 2.1%', color: '#ef4444', data: [8, 5, 4, 6, 2, 3, 1] },
-          { label: 'Quản trị viên', value: MOCK_USERS.filter(u => u.role === 'admin').length, change: 'Cố định', color: '#f59e0b', data: [1, 1, 1, 1, 1, 1, 1] },
+          { label: 'Tổng người dùng', value: summary.totalUsers || total, change: '+ 12.5%', color: '#6366f1', data: [10, 15, 8, 20, 25, 18, 30] },
+          { label: 'Hoạt động', value: summary.active, change: '+ 8.2%', color: '#10b981', data: [5, 12, 10, 15, 20, 22, 28] },
+          { label: 'Đã khóa', value: summary.suspended, change: '- 2.1%', color: '#ef4444', data: [8, 5, 4, 6, 2, 3, 1] },
+          { label: 'Quản trị viên', value: summary.admins, change: 'Cố định', color: '#f59e0b', data: [1, 1, 1, 1, 1, 1, 1] },
         ].map(s => (
           <div key={s.label} className="adm-stat-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'stretch', gap: 0, padding: '20px 24px', background: '#fff', borderRadius: 16, boxShadow: '0 4px 20px rgba(0,0,0,0.03)', border: 'none', height: 110 }}>
             {/* Top row */}

@@ -320,7 +320,7 @@ export default function CardDetailPage() {
 
             <div className="flex gap-2">
               <button
-                onClick={() => navigate(`/design?id=${card.id}`)}
+                onClick={() => navigate(`/loading?next=${encodeURIComponent(`/design?id=${card.id}`)}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`)}
                 className="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium transition-colors flex items-center justify-center gap-2 text-sm"
               >
                 <Edit2 size={16} /> Chỉnh sửa

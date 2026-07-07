@@ -67,7 +67,7 @@ export function DashboardPage() {
               <span style={{ fontSize: 24, fontWeight: 800, color: '#1e293b', lineHeight: 1 }}>{s.value}</span>
               <div style={{ width: 80, height: 35, filter: `drop-shadow(0px 4px 6px ${s.color}50)` }}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={s.data.map(val => ({ val }))} margin={{ top: 5, bottom: 5, left: 5, right: 5 }}>
+                  <LineChart data={s.data.map((val: number) => ({ val }))} margin={{ top: 5, bottom: 5, left: 5, right: 5 }}>
                     <Line 
                       type="monotone" 
                       dataKey="val" 

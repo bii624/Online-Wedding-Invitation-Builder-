@@ -35,7 +35,8 @@ import {
 
 import { Button } from '../../components/button';
 import "./style.css";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+
 
 import { motion } from 'framer-motion';
 
@@ -133,7 +134,13 @@ const TestimonialsColumn = ({ className, testimonials, duration }: any) => {
 
 const TestimonialsSection = () => {
   return (
-    <div className="container px-40 mx-auto">
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="container px-40 mx-auto"
+    >
       <div className="flex flex-col items-center justify-center max-w-3xl mx-auto mb-20 text-center">
         <div className="inline-block px-6 py-2 rounded-full bg-white border border-rose-100 text-[11px] font-bold uppercase tracking-[0.5em] text-rose-400 shadow-sm mb-8">
           FEEDBACK
@@ -147,7 +154,7 @@ const TestimonialsSection = () => {
         <TestimonialsColumn testimonials={secondColumn} className="hidden md:block" duration={35} />
         <TestimonialsColumn testimonials={thirdColumn} className="hidden lg:block" duration={30} />
       </div>
-    </div>
+    </motion.div>
   );
 };
 function FAQSection() {
@@ -172,21 +179,19 @@ function FAQSection() {
     },
     {
       q: "Tạo Nhiều Mẫu Thiệp Cưới Trên Một Tài Khoản Có Được Không?",
-      a: "Được. Bạn có thể tạo nhiều mẫu thiệp khác nhau trên cùng một tài khoản để gửi riêng cho bạn bè, đồng nghiệp hoặc người thân tùy theo ý muốn."
+      a: "Được. Bạn có thể tạo nhiều mẫu thiệp cưới khác nhau trên cùng một tài khoản DearLove, mỗi mẫu sẽ có đường link riêng biệt để chia sẻ với khách mời."
     },
-    {
-      q: "Thông Tin Của Người Dùng Và Khách Mời Được Quản Lý Như Thế Nào?",
-      a: "Mọi thông tin về danh sách khách mời, phản hồi tham dự và lời chúc đều được mã hóa an toàn và gom gọn vào trang quản lý riêng tư dành riêng cho tài khoản của bạn."
-    },
-    {
-      q: "Khách mời có thể tặng quà trực tiếp trên thiệp không?",
-      a: "Có, bạn có thể tích hợp số tài khoản hoặc mã QR mừng cưới trực tiếp lên giao diện thiệp để khách mời ở xa dễ dàng gửi quà mừng chúc phúc."
-    }
   ];
-
   return (
     <section className="py-20 bg-white" id="faq">
-      <div className="max-w-4xl mx-auto px-6">
+
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="max-w-4xl mx-auto px-6"
+      >
         <div className="text-center mb-12 space-y-3">
           <h2 className="text-3xl md:text-4xl font-bold text-zinc-950 tracking-tight uppercase">
             Câu hỏi thường gặp
@@ -220,14 +225,19 @@ function FAQSection() {
             );
           })}
         </div>
-
-      </div>
+      </motion.div>
     </section>
   );
 }
 function FinalCTA() {
   return (
-    <div className="max-w-6xl mx-auto px-6 mb-20">
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="max-w-6xl mx-auto px-6 mb-20"
+    >
       <div className="bg-rose-100/20 rounded-[2.5rem] py-16 px-6 md:px-12 text-center border border-rose-100/40 relative overflow-hidden">
         <div className="max-w-2xl mx-auto space-y-6 relative z-10">
 
@@ -251,7 +261,7 @@ function FinalCTA() {
 
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -287,7 +297,46 @@ const templatesRow4 = [
   { src: WeddingImg10, alt: "Mẫu thiệp 10" },
 ];
 
+// ─── Count-up hook ──────────────────────────────────────────────
+function useCountUp(target: number, duration = 1800) {
+  const [count, setCount] = useState(0);
+  const [hasStarted, setHasStarted] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasStarted) {
+          setHasStarted(true);
+        }
+      },
+      { threshold: 0.5 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasStarted]);
+
+  useEffect(() => {
+    if (!hasStarted) return;
+    const startTime = performance.now();
+    const tick = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // easeOutExpo
+      const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      setCount(Math.floor(eased * target));
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [hasStarted, target, duration]);
+
+  return { count, ref };
+}
+
 const LandingPage: React.FC = () => {
+
   // const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateItem | null>(null);
@@ -313,6 +362,10 @@ const LandingPage: React.FC = () => {
   // Mouse tracking for hero section
   const heroRef = React.useRef<HTMLDivElement>(null);
   const [mousePos, setMousePos] = React.useState({ x: 0, y: 0 });
+
+  // Count-up for stats
+  const { count: invitationCount, ref: invitationCountRef } = useCountUp(999, 2000);
+
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -364,7 +417,8 @@ const LandingPage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
 
             <div className="lg:col-span-6 text-left space-y-6 z-10">
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-900 leading-[1.15]">
+              <h1 className="hero-animate hero-animate-1 text-4xl md:text-5xl font-bold tracking-tight text-zinc-900 leading-[1.15]">
+
                 Đổi mới cách gửi lời mời
                 <br />{" "}
                 <span className="inline-block min-w-120px md:min-w-180px text-center">
@@ -385,10 +439,12 @@ const LandingPage: React.FC = () => {
                   {"DearLove.".split("").map((char, index) => (
                     <span
                       key={index}
+                      className="inline-block bg-gradient-to-r from-rose-400 via-pink-200 via-40% to-rose-500 bg-clip-text text-transparent overflow-hidden"
                       style={{
+                        backgroundSize: '300% auto',
+                        animation: `textShine 3s linear infinite`,
                         animationDelay: `${index * 0.1}s`,
                       }}
-                      className="relative inline-block bg-linear-to-r from-rose-500 via-pink-600 to-rose-600 bg-clip-text text-transparent overflow-hidden animate-[textShine_3s_infinite_linear]"
                     >
                       {char === " " ? "\u00A0" : char}
                     </span>
@@ -396,15 +452,16 @@ const LandingPage: React.FC = () => {
                 </span>
               </h1>
 
-              <p className="text-base  md:text-lg text-black-500 max-w-xl leading-relaxed">
+              <p className="hero-animate hero-animate-2 text-base  md:text-lg text-black-500 max-w-xl leading-relaxed">
                 Giải pháp tạo thiệp online đột phá giúp bạn gửi lời mời chuyên nghiệp chỉ qua một đường link, tiết kiệm tối đa chi phí in ấn và thời gian chuẩn bị.
               </p>
 
-              <p className="text-sm font-poppinsfont-medium text-zinc-500">
+              <p className="hero-animate hero-animate-3 text-sm font-poppinsfont-medium text-zinc-500">
                 Tạo miễn phí • Mẫu đa dạng • Giao diện thân thiện • Bảo mật tuyệt đối
               </p>
 
-              <div className="flex flex-wrap gap-4 pt-2">
+              <div className="hero-animate hero-animate-4 flex flex-wrap gap-4 pt-2">
+
                 <Link to="/signup">
                   <Button size="lg" className="bg-rose-600/80 hover:bg-rose-700/80 text-white text-base font-bold px-8 py-6 rounded-full shadow-lg shadow-rose-600/20 active:scale-95 transition-all">
                     Tạo thiệp ngay
@@ -503,7 +560,13 @@ const LandingPage: React.FC = () => {
       {/* Planning & Features Section */}
       <section className="py-20 bg-white" id="document">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16 ">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="text-center mb-16 "
+          >
             <h2 className="text-2xl md:text-4xl font-black tracking-tighter text-zinc-900 uppercase leading-tight">
               Bạn đang có kế hoạch {""}
               <span className="inline-block mx-1 md:mx-2 align-text-top">
@@ -530,7 +593,7 @@ const LandingPage: React.FC = () => {
               khách
             </h2>
             <div className="text-rose-400 text-2xl mt-2 animate-bounce"></div>
-          </div>
+          </motion.div>
 
           {/* Pain points */}
           <div className="grid md:grid-cols-3 gap-8 mb-24">
@@ -551,7 +614,14 @@ const LandingPage: React.FC = () => {
                 desc: "một cách chính xác"
               }
             ].map((item, idx) => (
-              <div key={idx} className="bg-white border border-rose-50 rounded-4xl p-10 md:p-10 shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_50px_rgba(244,63,94,0.08)] transition-all duration-500 text-center flex flex-col items-center group hover:-translate-y-1">
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{ duration: 0.6, delay: idx * 0.15, ease: "easeOut" }}
+                className="bg-white border border-rose-50 rounded-4xl p-10 md:p-10 shadow-[0_15px_40px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_50px_rgba(244,63,94,0.08)] transition-all duration-500 text-center flex flex-col items-center group hover:-translate-y-1"
+              >
                 <div className="w-24 h-24 bg-linear-to-br flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform duration-500">
                   {item.imgSrc && <img src={item.imgSrc} alt={item.title} className="w-35 h-35 object-contain" />}
                 </div>
@@ -561,10 +631,16 @@ const LandingPage: React.FC = () => {
                 <p className="text-md text-zinc-500 font-medium leading-relaxed">
                   {item.desc}
                 </p>
-              </div>
+              </motion.div>
             ))}
           </div>
-          <div className="relative overflow-hidden bg-linear-to-b from-rose-50/30 to-transparent border border-rose-100 rounded-[4rem] p-12 md:p-20 text-center shadow-sm">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="relative overflow-hidden bg-linear-to-b from-rose-50/30 to-transparent border border-rose-100 rounded-[4rem] p-12 md:p-20 text-center shadow-sm"
+          >
             <div className="relative z-10 max-w-3xl mx-auto space-y-6">
               <h3 className="text-xl md:text-3xl font-bold tracking-tight text-zinc-900 uppercase">
                 Tự tạo thiệp online với <span className="bg-linear-to-r from-rose-400 to-pink-500 bg-clip-text text-transparent font-black">vô vàn tính năng hay</span>
@@ -583,7 +659,7 @@ const LandingPage: React.FC = () => {
                 <span className="absolute right-1/4 top-1/2 -translate-y-1/2 text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity animate-pulse">✨</span>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto px-6 mt-12 mb-32">
@@ -617,8 +693,12 @@ const LandingPage: React.FC = () => {
             bgDeco: "bg-orange-50 border-orange-100",
           },
         ].map((feat, idx) => (
-          <div
+          <motion.div
             key={idx}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.1 }}
+            transition={{ duration: 0.6, delay: idx * 0.1, ease: "easeOut" }}
             className="relative overflow-hidden bg-white border border-zinc-100 rounded-4xl p-8 min-h-80 flex flex-col justify-between text-left shadow-[0_10px_30px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-500 group cursor-default"
           >
             <div className="space-y-4 relative z-10">
@@ -635,13 +715,19 @@ const LandingPage: React.FC = () => {
                 {feat.icon}
               </span>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
 
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-left mb-12 max-w-3xl">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="text-left mb-12 max-w-3xl"
+          >
             <div className="flex items-center gap-2 text-rose-500 font-bold mb-2">
               <LayoutTemplate size={18} className="animate-bounce" />
               <span className="text-xs uppercase tracking-widest font-bold font-poppins">Bộ sưu tập ấn tượng</span>
@@ -652,10 +738,16 @@ const LandingPage: React.FC = () => {
             <p className="text-zinc-700 font-medium text-sm md:text-base leading-relaxed">
               Bắt đầu trải nghiệm tự tạo thiệp Online của bạn ngay với nhiều lựa chọn phong phú — chọn mẫu, xem trước và tùy chỉnh chỉ trong vài bước.
             </p>
-          </div>
+          </motion.div>
 
           {/* DANH SÁCH MẪU THIỆP */}
-          <div className="relative group/carousel">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="relative group/carousel"
+          >
             <div className="flex gap-6 overflow-x-auto pb-8 pt-4 snap-x no-scrollbar scroll-smooth">
               {templatesData.map((item) => (
                 <div
@@ -704,7 +796,7 @@ const LandingPage: React.FC = () => {
             >
               <ArrowRight size={20} />
             </button>
-          </div>
+          </motion.div>
 
           <div className="flex justify-center pt-10">
             <Button className="h-12 px-8 rounded-full bg-rose-600/90 hover:bg-rose-600 text-white font-bold text-base shadow-[0_10px_25px_rgba(225,29,72,0.12)] hover:shadow-[0_15px_30px_rgba(225,29,72,0.22)] transition-all flex items-center gap-2">
@@ -720,7 +812,13 @@ const LandingPage: React.FC = () => {
       />
       <section className="py-24 bg-white">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16 space-y-3">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="text-center mb-16 space-y-3"
+          >
             <h2 className="text-3xl md:text-5xl font-bold text-zinc-900 tracking-tight">
               Tạo thiệp cưới online trong{" "}
               <span className="text-rose-500 font-handwritten italic text-4xl md:text-6xl px-1 relative inline-block animate-pulse">
@@ -730,7 +828,7 @@ const LandingPage: React.FC = () => {
             <p className="text-zinc-500 text-sm md:text-base font-semibold tracking-wide">
               Dễ dàng thao tác • Kho mẫu đa dạng, cập nhật liên tục
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-16">
             <div className="lg:col-span-7 relative pl-8 md:pl-10 text-left space-y-16">
@@ -756,7 +854,14 @@ const LandingPage: React.FC = () => {
                   icon: <Send size={25} className="text-white -translate-x-0.5 translate-y-0.5" />,
                 },
               ].map((item, idx) => (
-                <div key={idx} className="relative flex gap-6 group">
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.6, delay: idx * 0.15, ease: "easeOut" }}
+                  className="relative flex gap-6 group"
+                >
 
                   <div className="absolute -left-8 w-12 h-12 rounded-full bg-rose-600/50 flex items-center justify-center shadow-[0_0_0_6px_rgba(244,63,94,0.1)] group-hover:scale-110 group-hover:bg-rose-600 transition-all duration-300 z-10">
                     {item.icon}
@@ -774,16 +879,22 @@ const LandingPage: React.FC = () => {
                     </p>
                   </div>
 
-                </div>
+                </motion.div>
               ))}
             </div>
 
-            <div className="lg:col-span-5 flex justify-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="lg:col-span-5 flex justify-center"
+            >
               <div className="relative w-full max-w-85 aspect-9/16 rounded-[2.5rem] p-3 bg-zinc-900 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.2)] border border-zinc-800 group/mockup overflow-hidden">
                 <div className="relative w-full h-full rounded-4xl overflow-hidden bg-zinc-100 flex items-center justify-center">
                   <img
-                    src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600" //video demo thay thê sau
-                    alt="Preview "
+                    src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600"
+                    alt="Preview"
                     className="w-full h-full object-cover group-hover/mockup:scale-105 transition-transform duration-700"
                   />
                   <button className="absolute w-16 h-16 rounded-full bg-white text-rose-500 flex items-center justify-center shadow-2xl active:scale-90 group-hover/mockup:scale-110 transition-all duration-500 z-20 cursor-pointer pl-1">
@@ -792,7 +903,7 @@ const LandingPage: React.FC = () => {
                   <div className="absolute inset-0 bg-zinc-900/10 group-hover/mockup:bg-zinc-900/0 transition-colors duration-500" />
                 </div>
               </div>
-            </div>
+            </motion.div>
 
           </div>
 
@@ -814,20 +925,36 @@ const LandingPage: React.FC = () => {
       <section className="py-24 bg-white" id="thong-ke">
         <div className="w-full">
 
-          <div className="text-center mb-16 font-sans space-y-3 max-w-7xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="text-center mb-16 font-sans space-y-3 max-w-7xl mx-auto px-6"
+          >
             <h2 className="text-3xl md:text-5xl font-poppins font-bold tracking-tight text-zinc-950 leading-tight">
-              <span className="text-rose-500 font-handwritten italic text-5xl md:text-7xl mr-1 relative inline-block animate-pulse">
-                999<span className="font-sans not-italic font-boldtext-3xl md:text-5xl top-3.75 relative">+</span>
+              <span
+                ref={invitationCountRef}
+                className="count-up-animate text-rose-500 font-handwritten italic text-5xl md:text-7xl mr-1 relative inline-block"
+              >
+                {invitationCount}<span className="font-sans not-italic font-bold text-3xl md:text-5xl top-3.75 relative">+</span>
               </span>{" "}
+
               chiếc thiệp online <br className="md:hidden" /> đã chia sẻ thành công
             </h2>
             <p className="text-zinc-500 font-poppins text-md md:text-base font-medium max-w-xl mx-auto leading-relaxed">
               Lời mời tham dự sự kiện bằng thiệp Online <br className="hidden sm:inline" />
               phù hợp với mọi mạng xã hội và nền tảng trò chuyện trực tuyến
             </p>
-          </div>
+          </motion.div>
 
-          <div className="flex overflow-hidden w-full relative group/gallery mb-16 mask-image-linear">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="flex overflow-hidden w-full relative group/gallery mb-16 mask-image-linear"
+          >
 
             <div className="flex gap-5 w-max animate-marquee hover:[animation-play-state:paused]">
               {doubleImages.map((img, idx) => {
@@ -853,7 +980,7 @@ const LandingPage: React.FC = () => {
                 );
               })}
             </div>
-          </div>
+          </motion.div>
 
           <div className="flex justify-center">
             <Button className="h-13 px-10 rounded-full font-poppins bg-rose-600/90 hover:bg-rose-600 text-white font-bold text-base shadow-[0_12px_30px_rgba(225,29,72,0.15)] hover:shadow-[0_18px_40px_rgba(225,29,72,0.25)] active:scale-95 transition-all flex items-center gap-2">

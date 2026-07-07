@@ -84,10 +84,10 @@ export function ShapeRightPanel({ element, activeTab }: ShapeRightPanelProps) {
         {/* Type */}
         <div className="rp-field" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span className="rp-label">Loại</span>
-          <select 
-            className="rp-select" 
-            value={sp.shapeType} 
-            onChange={(e) => handlePropChange('shapeType', e.target.value as any)}
+            <select 
+              className="rp-select" 
+              value={sp.shapeType} 
+              onChange={(e) => handlePropChange('shapeType', e.target.value as ShapeType)}
             style={{ width: 140, padding: 4, borderRadius: 4, border: '1px solid var(--ed-border)' }}
           >
             <option value="line">Đường kẻ</option>
@@ -136,6 +136,19 @@ export function ShapeRightPanel({ element, activeTab }: ShapeRightPanelProps) {
           min={0} max={1} step={0.01}
           onChange={(v) => handlePropChange('opacity', v)}
         />
+        {sp.shapeType === 'line' && (
+          <Slider
+            label="Độ dày nét"
+            value={element.height}
+            min={0} max={100} step={0.5}
+            onChange={(v) => {
+                updateElementSize(element.id, Number(element.width), v);
+                console.log('updateElementSize called', element.id, Number(element.width), v);
+            }}
+            displayVal={`${element.height.toFixed(1)}px`}
+          />
+        )}  
+
       </Section>
 
       <Section title="Đường viền" icon={<BorderIcon />}>

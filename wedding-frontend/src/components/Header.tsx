@@ -27,18 +27,19 @@ import { cn } from '../lib/utils';
 import { motion } from 'framer-motion';
 import { cardsApi } from '../api/cardsApi';
 import { toast } from 'sonner';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 export const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const { user, logout } = useAuthStore();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleCreateCard = async () => {
         try {
             const card = await cardsApi.createCard({ title: 'Thiệp cưới của tôi' });
             toast.success('Tạo thiệp thành công!');
-            navigate(`/design?id=${card.id}`);
+            navigate(`/loading?next=${encodeURIComponent(`/design?id=${card.id}`)}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`);
         } catch (error: any) {
             toast.error(error.response?.data?.message || 'Có lỗi xảy ra khi tạo thiệp');
         }
@@ -83,7 +84,7 @@ export const Header = () => {
                                 to={link.href}
                                 className={cn(
                                     "px-4 py-2 text-[15px] font-medium rounded-full transition-all flex items-center gap-1",
-                                    link.href === "/" || link.name === "Trang chủ"
+                                    location.pathname === link.href
                                         ? "text-rose-600 font-bold bg-rose-50/50"
                                         : "text-gray-600 hover:text-gray-950 hover:bg-gray-50/50"
                                 )}
@@ -147,7 +148,7 @@ export const Header = () => {
                                     to={link.href}
                                     className={cn(
                                         "flex items-center justify-between w-full px-4 py-3 text-base font-medium rounded-xl transition-colors",
-                                        link.href === "/" || link.name === "Trang chủ"
+                                        location.pathname === link.href
                                             ? "bg-rose-50 text-rose-600 font-bold"
                                             : "text-gray-700 hover:bg-zinc-50"
                                     )}

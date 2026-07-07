@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { RevolvingHeartsIcon } from '../../../components/icons/emojione-revolving-hearts';
 import { useAuthStore } from '../../../store/authStore';
 
@@ -18,6 +18,9 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode; title
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
+   if (user && user.role === 'admin') {
+    return <Navigate to="/admin" replace />;
+  }
   const handleLogout = async () => {
     await logout();
     navigate('/');
@@ -59,13 +62,13 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode; title
   ];
 
   return (
-    <div className="flex h-screen bg-slate-50/50 font-inter text-zinc-800 select-none">
+    <div className="flex h-screen bg-gradient-to-br from-rose-100/60 via-white/60 to-amber-100/60 font-inter text-zinc-800 select-none">
       <aside
-        className={`bg-white border-r border-slate-100 flex flex-col h-full transition-all duration-350 ease-in-out shrink-0 z-30 ${isSidebarOpen ? 'w-64' : 'w-0 opacity-0 -translate-x-full overflow-hidden pointer-events-none'}`}
+        className={`bg-white border-r border-slate-100 flex flex-col h-full transition-all duration-350 ease-in-out shrink-0 z-30 rounded-3xl overflow-hidden ${isSidebarOpen ? 'w-64' : 'w-0 opacity-0 -translate-x-full pointer-events-none'}`}
         style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
       >
 
-        <div className="flex items-center justify-between px-5 h-20 shrink-0 border-b border-slate-200">
+        <div className="flex items-center justify-between px-5 h-16 shrink-0 border-b border-slate-200">
           <Link to="/dashboard/overview" className="flex items-center gap-2.5 group cursor-pointer no-underline">
             <div className="bg-rose-100 rounded-2xl w-10 h-10 flex items-center justify-center transition-transform group-hover:rotate-12">
               <RevolvingHeartsIcon size={28} color="#f43f5e" />
@@ -150,10 +153,10 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode; title
           </button>
 
         </div>
-      </aside>
+        </aside>
 
-      <main className="flex-1 flex flex-col h-full overflow-hidden relative">
-        <header className="h-16 bg-white/90 backdrop-blur-md border-b border-rose-100/40 flex items-center justify-between px-6 shrink-0 z-10 shadow-2xs">
+        <main className="flex-1 flex flex-col h-full overflow-hidden relative">
+        <header className="h-16 bg-transparent backdrop-blur-md border-b border-white/5 flex items-center justify-between px-6 shrink-0 z-10 shadow-none">
           <div className="flex items-center gap-3">
             {!isSidebarOpen && (
               <button
@@ -194,7 +197,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode; title
         <div className="flex-1 overflow-y-auto p-6 relative">
           {children}
         </div>
-      </main>
+        </main>
     </div>
   );
 };
