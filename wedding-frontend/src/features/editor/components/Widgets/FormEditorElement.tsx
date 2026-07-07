@@ -47,7 +47,6 @@ export function FormEditorElement({ element, zoom }: FormEditorElementProps) {
         textTransform: 'uppercase', 
         textAlign 
       }}>
-        SỔ LƯU BÚT
       </h2>
       
       <div 

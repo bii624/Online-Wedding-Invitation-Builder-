@@ -429,6 +429,7 @@ const INITIAL_STATE: EditorState = {
   lastSavedData: null,
   editorMode: 'card' as const,
   templateId: null,
+  isLoadingTemplate: false,
   autoScroll: false,
   autoScrollSpeed: 50,
 };
@@ -1240,32 +1241,41 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     const { elements, canvasWidth, canvasHeight, selectedElement } = get();
     const element = elements.find((el) => el.id === id);
     if (!element) return;
-    let x = element.x;
-    let y = element.y;
     const w = element.width;
     const h = element.height;
+    // current element center
+    const curCenterX = element.x + w / 2;
+    const curCenterY = element.y + h / 2;
+
+    let targetCenterX = curCenterX;
+    let targetCenterY = curCenterY;
+
     switch (align) {
       case 'left':
-        x = 0;
+        targetCenterX = w / 2;
         break;
       case 'right':
-        x = canvasWidth - w;
+        targetCenterX = canvasWidth - w / 2;
         break;
       case 'center':
-        x = (canvasWidth - w) / 2;
+        targetCenterX = canvasWidth / 2;
         break;
       case 'top':
-        y = 0;
+        targetCenterY = h / 2;
         break;
       case 'bottom':
-        y = canvasHeight - h;
+        targetCenterY = canvasHeight - h / 2;
         break;
       case 'middle':
-        y = (canvasHeight - h) / 2;
+        targetCenterY = canvasHeight / 2;
         break;
     }
-    const updated = elements.map((el) => (el.id === id ? { ...el, x: Math.round(x), y: Math.round(y) } : el));
-    const updatedSelected = (selectedElement && selectedElement.id === id) ? { ...selectedElement, x: Math.round(x), y: Math.round(y) } as CanvasElement : selectedElement;
+
+    const newX = Math.round(targetCenterX - w / 2);
+    const newY = Math.round(targetCenterY - h / 2);
+
+    const updated = elements.map((el) => (el.id === id ? { ...el, x: newX, y: newY } : el));
+    const updatedSelected = (selectedElement && selectedElement.id === id) ? { ...selectedElement, x: newX, y: newY } as CanvasElement : selectedElement;
     set({ elements: updated, selectedElement: updatedSelected });
     get().pushHistory();
   },
@@ -1517,7 +1527,8 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
 
   // ── Template Editor ────────────────────────────────────
   loadTemplateData: async (templateId: string) => {
-    set({ templateId, editorMode: 'template' });
+    // mark loading state so UI can show a loading screen
+    set({ templateId, editorMode: 'template', isLoadingTemplate: true });
     try {
       const template = await templatesEditorApi.getTemplateCanvas(templateId);
       const elements = (template.blocks ?? []).map((block: any) => {
@@ -1574,11 +1585,14 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         historyIndex: 0,
         selectedElement: null,
         autoSaveStatus: 'idle',
+        isLoadingTemplate: false,
       });
       const mappedElements = get().elements;
       set({ lastSavedData: JSON.stringify({ elements: mappedElements, canvasBackground: background, music: null, canvasWidth: template.canvasWidth ?? get().canvasWidth }) });
     } catch (err) {
       console.error('[loadTemplateData] Failed:', err);
+      // ensure loading flag cleared on error
+      set({ isLoadingTemplate: false });
     }
   },
 

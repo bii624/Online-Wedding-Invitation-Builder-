@@ -241,13 +241,13 @@ function ArrangeSection({ element }: { element: CanvasElement }) {
               </button>
               <button 
                 className="flex items-center justify-center gap-1.5 py-2 px-3 border border-zinc-200 rounded-lg text-xs font-semibold text-zinc-700 bg-white hover:bg-zinc-50 active:scale-95 transition-all cursor-pointer"
-                onClick={() => alignElementToPage(id, 'middle')}
+                onClick={() => alignElementToPage(id, 'center')}
               >
                 <AlignCenterVertical size={14} /> Giữa dọc
               </button>
               <button 
                 className="flex items-center justify-center gap-1.5 py-2 px-3 border border-zinc-200 rounded-lg text-xs font-semibold text-zinc-700 bg-white hover:bg-zinc-50 active:scale-95 transition-all cursor-pointer"
-                onClick={() => alignElementToPage(id, 'center')}
+                onClick={() => alignElementToPage(id, 'middle')}
               >
                 <AlignCenterHorizontal size={14} /> Giữa ngang
               </button>

@@ -429,6 +429,8 @@ export interface EditorState {
   // Editor mode: 'card' for user cards, 'template' for admin templates
   editorMode: 'card' | 'template';
   templateId: string | null;
+  // Loading state when fetching template data from server
+  isLoadingTemplate: boolean;
   
   // Global settings
   autoScroll: boolean;
