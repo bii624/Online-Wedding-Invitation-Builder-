@@ -9,15 +9,41 @@ import { EffectsPanel } from './EffectsPanel';
 import { LibraryPanel } from './LibraryPanel';
 import { WidgetsPanel } from './WidgetsPanel';
 import { TemplatePanel } from './TemplatePanel';
+import { MobileBottomSheet } from './MobileBottomSheet';
+import { TextRightPanel } from './RightPanels/TextRightPanel';
+import { ImageRightPanel } from './RightPanels/ImageRightPanel';
+import { ShapeRightPanel } from './RightPanels/ShapeRightPanel';
+import {
+  TypeIcon,
+  PaletteIcon,
+  SettingsIcon,
+  LayoutIcon,
+  BorderIcon,
+  ShadowIcon,
+  RotateIcon,
+  FlipHIcon
+} from './RightPanels/RightPanelShared';
 import '../styles/LeftToolbar.css';
 import { useEditorStore } from '../store/editorStore';
 import type { ToolType, UploadedImage } from '../types/editor.types';
 import type { JSX } from 'react';
 import { assetsApi } from '../../../api/assetsApi';
 import { toast } from 'sonner';
-import { ChevronLeft, Circle, Square, Heart, Star, Image } from 'lucide-react';
+import { ChevronLeft, Circle, Square, Heart, Star, Image, Pencil, Wand2 } from 'lucide-react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { BackgroundIcon as HugeBackgroundIcon, BounceLeftIcon, TextIcon as HugeTextIcon, LibraryIcon as HugeLibraryIcon } from '@hugeicons/core-free-icons';
+
+// ── Mobile detection hook ─────────────────────────────────
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+  return isMobile;
+}
+
 
 // ── SVG Icons ─────────────────────────────────────────────
 const TextIcon = () => (
@@ -310,7 +336,8 @@ const TOOLS: ToolConfig[] = [
 
 // ── Left Toolbar ───────────────────────────────────────────
 export function LeftToolbar() {
-  const { activeTool, setActiveTool, addTextElement, addShapeElement, addImageElementWithFrame } = useEditorStore();
+  const { activeTool, setActiveTool, addTextElement, addShapeElement, addImageElementWithFrame, selectedElement, selectElement, activeRightTab, setActiveRightTab } = useEditorStore();
+  const isMobile = useIsMobile();
   const [showImagePanel, setShowImagePanel] = useState(false);
   const [showShapePopup, setShowShapePopup] = useState(false);
   const [showMusicPanel, setShowMusicPanel] = useState(false);
@@ -318,6 +345,8 @@ export function LeftToolbar() {
   const [showLibraryPanel, setShowLibraryPanel] = useState(false);
   const [showWidgetsPanel, setShowWidgetsPanel] = useState(false);
   const [showTemplatesPanel, setShowTemplatesPanel] = useState(false);
+  // Mobile element props bottom sheet
+  const [mobilePropSheet, setMobilePropSheet] = useState<string | null>(null);
 
   const closeAllPanels = () => {
     setShowImagePanel(false);
@@ -389,10 +418,11 @@ export function LeftToolbar() {
 
   return (
     <div className="editor-toolbar-wrapper">
-      <aside className="editor-toolbar" aria-label="Công cụ">
+      {/* On mobile: hide the tool icon bar when an element is selected (shows props bar instead) */}
+      <aside className={`editor-toolbar ${isMobile && selectedElement ? 'mobile-hidden' : ''}`} aria-label="Công cụ">
         <div className="toolbar-tools">
           {TOOLS.map((tool, index) => (
-            <div key={tool.id ?? index}>
+            <div key={tool.id ?? index} className="toolbar-item-wrapper">
               {index === 5 && <div className="toolbar-divider" />}
               <button
                 id={`tool-${tool.id}`}
@@ -518,6 +548,200 @@ export function LeftToolbar() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ── Mobile Element Props Bar (hình 2 & 3) ─────────────── */}
+      {isMobile && selectedElement && (
+        <>
+          {/* Bottom bar showing property icons */}
+          <div className="mobile-props-bar">
+            {selectedElement.type === 'text' && (
+              <>
+                <button className={`mobile-prop-btn ${mobilePropSheet === 'style' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'style' ? null : 'style')}>
+                  <TypeIcon />
+                  Kiểu chữ
+                </button>
+                <button className={`mobile-prop-btn ${mobilePropSheet === 'color' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'color' ? null : 'color')}>
+                  <PaletteIcon />
+                  Màu sắc
+                </button>
+                <button className={`mobile-prop-btn ${mobilePropSheet === 'curve' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'curve' ? null : 'curve')}>
+                  <SettingsIcon />
+                  Uốn cong chữ
+                </button>
+                <button className={`mobile-prop-btn ${mobilePropSheet === 'spacing' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'spacing' ? null : 'spacing')}>
+                  <LayoutIcon />
+                  Khoảng đệm
+                </button>
+                <button className={`mobile-prop-btn ${mobilePropSheet === 'border' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'border' ? null : 'border')}>
+                  <BorderIcon />
+                  Đường viền
+                </button>
+                <button className={`mobile-prop-btn ${mobilePropSheet === 'shadow' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'shadow' ? null : 'shadow')}>
+                  <ShadowIcon />
+                  Đổ bóng
+                </button>
+                <button className={`mobile-prop-btn ${mobilePropSheet === 'advanced' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'advanced' ? null : 'advanced')}>
+                  <SettingsIcon />
+                  Nâng cao
+                </button>
+              </>
+            )}
+            {selectedElement.type === 'image' && (
+              <>
+                <button className={`mobile-prop-btn ${mobilePropSheet === 'image-props' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'image-props' ? null : 'image-props')}>
+                  <ImageIcon />
+                  Hình ảnh
+                </button>
+                <button className={`mobile-prop-btn ${mobilePropSheet === 'image-ai' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'image-ai' ? null : 'image-ai')}>
+                  <Wand2 size={20} />
+                  AI
+                </button>
+                <button className={`mobile-prop-btn ${mobilePropSheet === 'image-flip' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'image-flip' ? null : 'image-flip')}>
+                  <FlipHIcon />
+                  Lật ảnh
+                </button>
+                <button className={`mobile-prop-btn ${mobilePropSheet === 'image-frame' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'image-frame' ? null : 'image-frame')}>
+                  <LayoutIcon />
+                  Khung ảnh
+                </button>
+                <button className={`mobile-prop-btn ${mobilePropSheet === 'image-gallery' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'image-gallery' ? null : 'image-gallery')}>
+                  <PaletteIcon />
+                  Bố cục
+                </button>
+                <button className={`mobile-prop-btn ${mobilePropSheet === 'image-transform' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'image-transform' ? null : 'image-transform')}>
+                  <RotateIcon />
+                  Biến đổi
+                </button>
+                <button className={`mobile-prop-btn ${mobilePropSheet === 'image-border' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'image-border' ? null : 'image-border')}>
+                  <BorderIcon />
+                  Viền
+                </button>
+                <button className={`mobile-prop-btn ${mobilePropSheet === 'image-shadow' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'image-shadow' ? null : 'image-shadow')}>
+                  <ShadowIcon />
+                  Đổ bóng
+                </button>
+              </>
+            )}
+            {selectedElement.type === 'shape' && (
+              <>
+                <button className={`mobile-prop-btn ${mobilePropSheet === 'shape-props' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'shape-props' ? null : 'shape-props')}>
+                  <LayoutIcon />
+                  Tùy chỉnh
+                </button>
+                <button className={`mobile-prop-btn ${mobilePropSheet === 'shape-border' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'shape-border' ? null : 'shape-border')}>
+                  <BorderIcon />
+                  Đường viền
+                </button>
+                <button className={`mobile-prop-btn ${mobilePropSheet === 'shape-shadow' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'shape-shadow' ? null : 'shape-shadow')}>
+                  <ShadowIcon />
+                  Đổ bóng
+                </button>
+              </>
+            )}
+            {/* Position / size — always visible */}
+            <button className={`mobile-prop-btn ${mobilePropSheet === 'arrange' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'arrange' ? null : 'arrange')}>
+              <LayoutIcon />
+              Vị trí
+            </button>
+
+            {/* Deselect / close */}
+            <button className="mobile-close-btn" onClick={() => { selectElement(null); setMobilePropSheet(null); }}>×</button>
+          </div>
+
+          {/* Bottom sheets for Text */}
+          <MobileBottomSheet
+            isOpen={['style', 'color', 'curve', 'spacing', 'border', 'shadow', 'advanced'].includes(mobilePropSheet ?? '')}
+            onClose={() => setMobilePropSheet(null)}
+            title={{
+              'style': 'Kiểu chữ',
+              'color': 'Màu sắc',
+              'curve': 'Uốn cong chữ',
+              'spacing': 'Khoảng đệm',
+              'border': 'Đường viền',
+              'shadow': 'Đổ bóng',
+              'advanced': 'Nâng cao'
+            }[mobilePropSheet ?? ''] ?? 'Thuộc tính văn bản'}
+          >
+            {selectedElement.type === 'text' && selectedElement.textProps && (
+              <TextRightPanel id={selectedElement.id} props={selectedElement.textProps} activeSection={mobilePropSheet} />
+            )}
+          </MobileBottomSheet>
+
+          {/* Bottom sheets for Image */}
+          <MobileBottomSheet
+            isOpen={['image-props', 'image-ai', 'image-flip', 'image-frame', 'image-gallery', 'image-transform', 'image-border', 'image-shadow'].includes(mobilePropSheet ?? '')}
+            onClose={() => setMobilePropSheet(null)}
+            title={{
+              'image-props': 'Hình ảnh',
+              'image-ai': 'Xử lý AI',
+              'image-flip': 'Lật ảnh',
+              'image-frame': 'Khung ảnh',
+              'image-gallery': 'Bố cục',
+              'image-transform': 'Biến đổi',
+              'image-border': 'Đường viền',
+              'image-shadow': 'Đổ bóng'
+            }[mobilePropSheet ?? ''] ?? 'Thuộc tính hình ảnh'}
+          >
+            {selectedElement.type === 'image' && selectedElement.imageProps && (
+              <ImageRightPanel
+                id={selectedElement.id}
+                props={selectedElement.imageProps}
+                elementWidth={selectedElement.width}
+                elementHeight={selectedElement.height}
+                activeSection={mobilePropSheet}
+              />
+            )}
+          </MobileBottomSheet>
+
+          {/* Bottom sheets for Shape */}
+          <MobileBottomSheet
+            isOpen={['shape-props', 'shape-border', 'shape-shadow'].includes(mobilePropSheet ?? '')}
+            onClose={() => setMobilePropSheet(null)}
+            title={{
+              'shape-props': 'Tùy chỉnh',
+              'shape-border': 'Đường viền',
+              'shape-shadow': 'Đổ bóng'
+            }[mobilePropSheet ?? ''] ?? 'Thuộc tính hình dạng'}
+          >
+            {selectedElement.type === 'shape' && (
+              <ShapeRightPanel element={selectedElement} activeTab={activeRightTab} activeSection={mobilePropSheet} />
+            )}
+          </MobileBottomSheet>
+
+          <MobileBottomSheet
+            isOpen={mobilePropSheet === 'arrange'}
+            onClose={() => setMobilePropSheet(null)}
+            title="Vị trí & Kích thước"
+          >
+            <div style={{ padding: '0 0 24px 0' }}>
+              <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    <label style={{ fontSize: 11, fontWeight: 600, color: '#64748b' }}>X (px)</label>
+                    <div style={{ padding: '8px 12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, fontSize: 13 }}>{Math.round(selectedElement.x)}</div>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    <label style={{ fontSize: 11, fontWeight: 600, color: '#64748b' }}>Y (px)</label>
+                    <div style={{ padding: '8px 12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, fontSize: 13 }}>{Math.round(selectedElement.y)}</div>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    <label style={{ fontSize: 11, fontWeight: 600, color: '#64748b' }}>Rộng (px)</label>
+                    <div style={{ padding: '8px 12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, fontSize: 13 }}>{Math.round(selectedElement.width)}</div>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    <label style={{ fontSize: 11, fontWeight: 600, color: '#64748b' }}>Cao (px)</label>
+                    <div style={{ padding: '8px 12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, fontSize: 13 }}>{Math.round(selectedElement.height)}</div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <label style={{ fontSize: 11, fontWeight: 600, color: '#64748b' }}>Xoay (\u00b0)</label>
+                  <div style={{ padding: '8px 12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, fontSize: 13 }}>{Math.round(selectedElement.rotation ?? 0)}\u00b0</div>
+                </div>
+              </div>
+            </div>
+          </MobileBottomSheet>
+        </>
       )}
     </div>
   );

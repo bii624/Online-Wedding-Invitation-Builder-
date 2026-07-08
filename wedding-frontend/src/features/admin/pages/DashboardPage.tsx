@@ -91,7 +91,7 @@ export function DashboardPage() {
         ))}
       </div>
 
-      <div className="adm-chart-row" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 20, marginBottom: 24, alignItems: 'stretch' }}>
+      <div className="adm-grid-2">
         {/* Main Chart */}
         <div className="adm-card" style={{ display: 'flex', flexDirection: 'column' }}>
           <div className="adm-card-header">

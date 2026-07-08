@@ -52,7 +52,7 @@ export const MyCards = () => {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-black text-zinc-800 font-inter">Thiệp Của Tôi</h1>
-            <p className="mt-1.5 text-xs text-zinc-400 font-inter font-medium">Quản lý và phát triển thiết kế thiệp cưới di động của bạn</p>
+            <p className="mt-1.5 text-xs text-slate-500 font-inter font-medium">Quản lý và phát triển thiết kế thiệp cưới di động của bạn</p>
           </div>
           <button
             onClick={() => navigate('/dashboard/create')}
@@ -74,7 +74,7 @@ export const MyCards = () => {
               <Mails size={26} />
             </div>
             <h3 className="text-base font-bold text-zinc-750 font-inter mb-1">Chưa có thiệp cưới nào</h3>
-            <p className="text-xs text-zinc-400 font-inter font-medium mb-6 text-center max-w-xs leading-relaxed">
+            <p className="text-xs text-slate-500 font-inter font-medium mb-6 text-center max-w-xs leading-relaxed">
               Thiết kế thiệp đầu tiên để gửi gắm thông điệp lãng mạn tới mọi khách mời của bạn.
             </p>
             <button

@@ -50,10 +50,11 @@ interface ImageRightPanelProps {
   props: ImageProperties;
   elementWidth: number;
   elementHeight: number;
+  activeSection?: string | null;
 }
 
 // ── Component ──────────────────────────────────────────────
-export function ImageRightPanel({ id, props, elementWidth, elementHeight }: ImageRightPanelProps) {
+export function ImageRightPanel({ id, props, elementWidth, elementHeight, activeSection }: ImageRightPanelProps) {
   const {
     updateImageProp,
     updateImageProps,
@@ -283,6 +284,7 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
   return (
     <>
       {/* ── Hình ảnh – Preview & Actions ──────────────────── */}
+      {(!activeSection || activeSection === 'image-props') && (
       <Section title="Hình ảnh" icon={<ImageIcon />} defaultOpen>
         {/* Thumbnail preview */}
         <div className="rp-image-preview-box">
@@ -335,8 +337,10 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
 
         />
       </Section>
+      )}
 
       {/* ── AI ──────────────────────── */}
+      {(!activeSection || activeSection === 'image-ai') && (
       <div className="rp-ai-section-wrapper">
         <Section title="Xử lý hình ảnh AI" icon={<Wand2 size={16} />} defaultOpen>
           <div style={{ display: 'flex', gap: 8 }}>
@@ -355,8 +359,10 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
           </div>
         </Section>
       </div>
+      )}
 
       {/* ── Lật ảnh ──────────────────────────────────────── */}
+      {(!activeSection || activeSection === 'image-flip') && (
       <Section title="Lật ảnh" icon={<FlipHIcon />} defaultOpen>
         <div className="rp-flip-group">
           <button
@@ -379,8 +385,10 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
           </button>
         </div>
       </Section>
+      )}
 
       {/* ── Khung ảnh – Preset Frames ─────────────────────── */}
+      {(!activeSection || activeSection === 'image-frame') && (
       <Section title="Khung ảnh & Hình dạng" icon={<LayoutIcon />} defaultOpen>
         <div className="rp-frame-grid" style={{
           display: 'grid',
@@ -440,7 +448,9 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
           />
         )}
       </Section>
+      )}
 
+      {(!activeSection || activeSection === 'image-gallery') && (
       <Section title="Bố cục ảnh" icon={<PaletteIcon />} defaultOpen={true}>
         {props.galleryImages === undefined ? (
           <div>
@@ -566,8 +576,10 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
           </div>
         )}
       </Section>
+      )}
 
       {/* ── Biến đổi (W / H / Rotation / Lock) ──────────── */}
+      {(!activeSection || activeSection === 'image-transform') && (
       <Section title="Biến đổi" icon={<RotateIcon />} defaultOpen>
 
         <div className="rp-grid-2">
@@ -601,24 +613,34 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
           displayVal={`${Math.round(rotation)}°`}
         />
       </Section>
+      )}
 
+      {(!activeSection || activeSection === 'image-padding') && (
       <PaddingSection
         padding={{ top: props.paddingTop, right: props.paddingRight, bottom: props.paddingBottom, left: props.paddingLeft }}
         onChange={(p) => { upd('paddingTop', p.top, false); upd('paddingRight', p.right, false); upd('paddingBottom', p.bottom, false); upd('paddingLeft', p.left, false); }}
         onCommit={pushHistory}
       />
+      )}
+      
+      {(!activeSection || activeSection === 'image-border') && (
       <BorderSection
         border={{ width: props.borderWidth, style: props.borderStyle, color: props.borderColor, radius: props.borderRadius }}
         onChange={(b) => { upd('borderWidth', b.width, false); upd('borderStyle', b.style as import('../../types/editor.types').BorderStyleType, false); upd('borderColor', b.color, false); upd('borderRadius', b.radius, false); }}
         onCommit={pushHistory}
       />
+      )}
+      
+      {(!activeSection || activeSection === 'image-shadow') && (
       <ShadowSection
         shadow={{ x: props.shadowX, y: props.shadowY, blur: props.shadowBlur, spread: 0, color: props.shadowColor }}
         onChange={(s) => { upd('shadowX', s.x, false); upd('shadowY', s.y, false); upd('shadowBlur', s.blur, false); upd('shadowColor', s.color, false); }}
         onCommit={pushHistory}
       />
+      )}
 
       {/* ── Nâng cao ─────────────────────────────────────── */}
+      {(!activeSection || activeSection === 'image-advanced') && (
       <Section title="Nâng cao" icon={<SettingsIcon />} defaultOpen={false}>
         <div className="rp-field">
           <span className="rp-label" title={props.crop ? "Ảnh đã cắt bắt buộc dùng Fill để giữ toạ độ chuẩn" : undefined}>Fit</span>
@@ -645,6 +667,7 @@ export function ImageRightPanel({ id, props, elementWidth, elementHeight }: Imag
           />
         </div>
       </Section>
+      )}
     </>
   );
 }

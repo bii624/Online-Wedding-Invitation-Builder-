@@ -229,12 +229,17 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode; title
         </header>
 
         {/* Header Mobile App-like */}
-        <header className="md:hidden flex h-14 bg-white items-center justify-between px-4 shrink-0 z-10 shadow-sm">
-          <div className="flex items-center gap-2">
-            <div className="bg-rose-50 p-1.5 rounded-lg flex items-center justify-center border border-rose-100/50 shadow-sm">
-              <RevolvingHeartsIcon size={20} color="#f43f5e" />
+        <header className="md:hidden flex h-14 bg-white items-center justify-between px-4 shrink-0 z-10 shadow-sm relative">
+          <div className="flex items-center gap-3">
+            <button onClick={() => setIsSidebarOpen(true)} className="text-slate-800 hover:text-rose-600 cursor-pointer">
+              <Menu size={24} strokeWidth={2.5} />
+            </button>
+            <div className="flex items-center gap-2">
+              <div className="bg-rose-50 p-1.5 rounded-lg flex items-center justify-center border border-rose-100/50 shadow-sm">
+                <RevolvingHeartsIcon size={20} color="#f43f5e" />
+              </div>
+              <span className="text-base font-serif font-black text-zinc-800 tracking-tight">DearLove</span>
             </div>
-            <span className="text-base font-serif font-black text-zinc-800 tracking-tight">DearLove</span>
           </div>
           <div className="flex items-center gap-4 text-slate-600">
             <Link to="/dashboard/plan" className="cursor-pointer hover:text-rose-500 transition-colors">
@@ -250,19 +255,21 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode; title
         </header>
 
         {/* Page content */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-24 md:pb-6 relative flex flex-col">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 relative flex flex-col">
           {children}
+          {/* Spacer for mobile bottom nav to prevent overlap */}
+          <div className="h-[90px] shrink-0 md:hidden" aria-hidden="true" />
         </div>
         
         {/* Mobile Bottom Navigation */}
         <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-[0_-8px_30px_rgba(0,0,0,0.06)] z-40 flex justify-between px-2 h-[68px] pb-safe items-center">
-          <Link to="/dashboard/overview" className={`flex-1 flex flex-col items-center justify-center gap-1 ${location.pathname.includes('overview') ? 'text-rose-600' : 'text-black'}`}>
-            <LayoutDashboard size={24} strokeWidth={location.pathname.includes('overview') ? 2.5 : 2} />
-            <span className={`text-[11px] text-black ${location.pathname.includes('overview') ? 'font-bold' : 'font-medium'}`}>Tổng quan</span>
+          <Link to="/dashboard/overview" className={`flex-1 flex flex-col items-center justify-center gap-1 ${location.pathname.includes('overview') ? 'text-rose-600' : 'text-slate-600'}`}>
+            <LayoutDashboard size={24} strokeWidth={location.pathname.includes('overview') ? 2 : 1.5} />
+            <span className={`text-[11px] ${location.pathname.includes('overview') ? 'font-semibold' : 'font-medium'}`}>Tổng quan</span>
           </Link>
-          <Link to="/dashboard/my-cards" className={`flex-1 flex flex-col items-center justify-center gap-1 ${location.pathname.includes('my-cards') ? 'text-rose-600' : 'text-black'}`}>
-            <Mails size={24} strokeWidth={location.pathname.includes('my-cards') ? 2.5 : 2} />
-            <span className={`text-[11px] text-black ${location.pathname.includes('my-cards') ? 'font-bold' : 'font-medium'}`}>Thiệp của tôi</span>
+          <Link to="/dashboard/my-cards" className={`flex-1 flex flex-col items-center justify-center gap-1 ${location.pathname.includes('my-cards') ? 'text-rose-600' : 'text-slate-600'}`}>
+            <Mails size={24} strokeWidth={location.pathname.includes('my-cards') ? 2 : 1.5} />
+            <span className={`text-[11px] ${location.pathname.includes('my-cards') ? 'font-semibold' : 'font-medium'}`}>Thiệp của tôi</span>
           </Link>
 
           {/* Center FAB */}
@@ -271,20 +278,20 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode; title
               <div className="w-14 h-14 rounded-full bg-rose-600 text-white flex items-center justify-center shadow-lg shadow-rose-200 group-active:scale-95 transition-transform border-[3px] border-white ring-1 ring-slate-100">
                 <span className="text-3xl font-light mb-1">+</span>
               </div>
-              <span className="text-[11px] font-bold text-black mt-1 uppercase tracking-tight">Tạo thiệp</span>
+              <span className="text-[11px] font-semibold text-slate-700 mt-1 uppercase tracking-tight">Tạo thiệp</span>
             </Link>
           </div>
 
-          <button onClick={() => setIsNotificationsOpen(true)} className="flex-1 flex flex-col items-center justify-center gap-1 text-black cursor-pointer">
+          <button onClick={() => setIsNotificationsOpen(true)} className="flex-1 flex flex-col items-center justify-center gap-1 text-slate-600 cursor-pointer">
             <div className="relative">
-              <Bell size={24} strokeWidth={2} />
+              <Bell size={24} strokeWidth={1.5} />
             </div>
-            <span className="text-[11px] text-black font-medium">Thông báo</span>
+            <span className="text-[11px] font-medium">Thông báo</span>
           </button>
-          <button onClick={() => setIsSidebarOpen(true)} className={`flex-1 flex flex-col items-center justify-center gap-1 ${isSidebarOpen ? 'text-rose-600' : 'text-black'} cursor-pointer`}>
-            <Menu size={24} strokeWidth={isSidebarOpen ? 2.5 : 2} />
-            <span className={`text-[11px] text-black ${isSidebarOpen ? 'font-bold' : 'font-medium'}`}>Menu</span>
-          </button>
+          <Link to="/dashboard/account" className={`flex-1 flex flex-col items-center justify-center gap-1 ${location.pathname.includes('account') ? 'text-rose-600' : 'text-slate-600'} cursor-pointer no-underline`}>
+            <User size={24} strokeWidth={location.pathname.includes('account') ? 2 : 1.5} />
+            <span className={`text-[11px] ${location.pathname.includes('account') ? 'font-semibold' : 'font-medium'}`}>Cá nhân</span>
+          </Link>
         </nav>
 
         {/* Mobile Notification Popup wrapper */}

@@ -17,7 +17,7 @@ export const NotificationPopup: React.FC<NotificationPopupProps> = ({ isOpen, on
 
   return (
     <>
-      <div className="fixed inset-0 z-40" onClick={onClose} />
+      <div className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:bg-transparent md:backdrop-blur-none transition-opacity animate-in fade-in duration-200" onClick={onClose} />
 
       <div className="fixed md:absolute bottom-[84px] md:bottom-20 left-4 right-4 md:right-auto md:w-72 bg-white rounded-2xl border border-rose-100/60 shadow-2xl md:shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-3 duration-250 text-left">
         <div className="px-4 py-3 bg-linear-to-r from-rose-50/30 to-amber-50/20 border-b border-rose-100/30 flex items-center justify-between text-zinc-800">

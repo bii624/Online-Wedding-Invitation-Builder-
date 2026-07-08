@@ -85,7 +85,7 @@ export const ReceivedGifts = () => {
           <button
             onClick={fetchGifts}
             disabled={isLoading}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-xs font-bold text-zinc-650 hover:text-rose-500 hover:border-rose-100/80 hover:bg-rose-50/20 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-500 hover:text-rose-500 hover:border-rose-100/80 hover:bg-rose-50/20 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
           >
             <RefreshCw size={13} className={isLoading ? 'animate-spin' : ''} /> Làm mới
           </button>

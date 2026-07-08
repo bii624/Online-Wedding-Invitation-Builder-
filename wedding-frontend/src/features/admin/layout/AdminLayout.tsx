@@ -3,6 +3,7 @@ import { AdminSidebar } from './AdminSidebar';
 import { AdminHeader } from './AdminHeader';
 import { useAuthStore } from '../../../store/authStore';
 import { useLocation } from 'react-router-dom';
+import { useState } from 'react';
 import '../styles/admin.css';
 
 const PAGE_META: Record<string, { title: string; subtitle: string }> = {
@@ -19,6 +20,7 @@ const PAGE_META: Record<string, { title: string; subtitle: string }> = {
 export function AdminLayout() {
   const { user, isLoading, isInitialized } = useAuthStore();
   const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Wait until auth is initialized
   if (!isInitialized || isLoading) {
@@ -38,9 +40,18 @@ export function AdminLayout() {
 
   return (
     <div className="adm-root">
-      <AdminSidebar />
+      <AdminSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      {/* Overlay for mobile */}
+      <div 
+        className={`adm-overlay ${isSidebarOpen ? 'open' : ''}`} 
+        onClick={() => setIsSidebarOpen(false)} 
+      />
       <div className="adm-main">
-        <AdminHeader title={meta.title} subtitle={meta.subtitle} />
+        <AdminHeader 
+          title={meta.title} 
+          subtitle={meta.subtitle} 
+          onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} 
+        />
         <main className="adm-content">
           <Outlet />
         </main>

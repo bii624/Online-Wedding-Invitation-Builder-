@@ -36,9 +36,9 @@ export function TemplateCategoriesPage() {
           {roots.map(cat => (
             <div key={cat.id}>
               {/* Root */}
-              <div style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 22px', borderBottom:'1px solid var(--adm-border)', background:'var(--adm-bg)' }}>
+              <div style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 22px', borderBottom:'1px solid var(--adm-border)', background:'var(--adm-bg)', flexWrap: 'wrap' }}>
                 <GripVertical size={16} color="var(--adm-text-light)" style={{ cursor:'grab', flexShrink:0 }} />
-                <div style={{ fontSize:14, fontWeight:700, flex:1 }}>{cat.name}</div>
+                <div style={{ fontSize:14, fontWeight:700, flex: '1 1 auto', minWidth: '150px' }}>{cat.name}</div>
                 <span style={{ fontSize:11, color:'var(--adm-text-muted)', marginRight:8 }}>{cat.templateCount} template</span>
                 <code style={{ fontSize:11, background:'var(--adm-border)', padding:'2px 8px', borderRadius:4, color:'var(--adm-text-muted)' }}>{cat.slug}</code>
                 <div style={{ display:'flex', gap:4 }}>
@@ -49,10 +49,10 @@ export function TemplateCategoriesPage() {
 
               {/* Children */}
               {children(cat.id).map(child => (
-                <div key={child.id} style={{ display:'flex', alignItems:'center', gap:12, padding:'12px 22px 12px 46px', borderBottom:'1px solid var(--adm-border)' }}>
+                <div key={child.id} style={{ display:'flex', alignItems:'center', gap:12, padding:'12px 22px 12px 46px', borderBottom:'1px solid var(--adm-border)', flexWrap: 'wrap' }}>
                   <ChevronRight size={14} color="var(--adm-text-muted)" style={{ flexShrink:0 }} />
                   <GripVertical size={14} color="var(--adm-text-light)" style={{ cursor:'grab', flexShrink:0 }} />
-                  <div style={{ fontSize:13, fontWeight:500, flex:1, color:'var(--adm-text)' }}>{child.name}</div>
+                  <div style={{ fontSize:13, fontWeight:500, flex: '1 1 auto', minWidth: '100px', color:'var(--adm-text)' }}>{child.name}</div>
                   <span style={{ fontSize:11, color:'var(--adm-text-muted)', marginRight:8 }}>{child.templateCount} template</span>
                   <code style={{ fontSize:11, background:'var(--adm-border)', padding:'2px 8px', borderRadius:4, color:'var(--adm-text-muted)' }}>{child.slug}</code>
                   <div style={{ display:'flex', gap:4 }}>

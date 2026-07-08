@@ -113,7 +113,7 @@ export const MyPlan: React.FC = () => {
               onClick={() => setBilling('monthly')}
               className={`px-6 py-2.5 rounded-xl text-xs font-black tracking-wider uppercase transition-all duration-200 cursor-pointer ${billing === 'monthly'
                 ? 'bg-white text-rose-500 shadow-md border border-rose-100/10'
-                : 'text-zinc-500 hover:text-zinc-800'
+                : 'text-slate-600 hover:text-zinc-800'
                 }`}
             >
               Theo tháng
@@ -122,7 +122,7 @@ export const MyPlan: React.FC = () => {
               onClick={() => setBilling('lifetime')}
               className={`px-6 py-2.5 rounded-xl text-xs font-black tracking-wider uppercase transition-all duration-200 cursor-pointer ${billing === 'lifetime'
                 ? 'bg-white text-rose-500 shadow-md border border-rose-100/10'
-                : 'text-zinc-500 hover:text-zinc-800'
+                : 'text-slate-600 hover:text-zinc-800'
                 }`}
             >
               Trọn đời

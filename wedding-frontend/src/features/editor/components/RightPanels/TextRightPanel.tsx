@@ -33,10 +33,11 @@ import {
 interface TextRightPanelProps {
   id: string;
   props: TextProperties;
+  activeSection?: string | null;
 }
 
 // ── Component ──────────────────────────────────────────────
-export function TextRightPanel({ id, props }: TextRightPanelProps) {
+export function TextRightPanel({ id, props, activeSection }: TextRightPanelProps) {
   const {
     updateTextProp,
     pushHistory,
@@ -60,7 +61,8 @@ export function TextRightPanel({ id, props }: TextRightPanelProps) {
   return (
     <>
       {/* ── Kiểu chữ ────────────────────────────────────── */}
-      <Section title="Kiểu chữ" icon={<TypeIcon />} defaultOpen>
+      {(!activeSection || activeSection === 'style') && (
+        <Section title="Kiểu chữ" icon={<TypeIcon />} defaultOpen>
         {/* Format buttons */}
         <div className="rp-field" >
           <span className="rp-label">Kiểu</span>
@@ -113,9 +115,11 @@ export function TextRightPanel({ id, props }: TextRightPanelProps) {
           onChange={(v) => upd('lineHeight', v, false)} onCommit={pushHistory}
           displayVal={props.lineHeight.toFixed(2)} />
       </Section>
+      )}
 
       {/* ── Màu sắc ─────────────────────────────────────── */}
-      <Section title="Màu sắc" icon={<PaletteIcon />} defaultOpen>
+      {(!activeSection || activeSection === 'color') && (
+        <Section title="Màu sắc" icon={<PaletteIcon />} defaultOpen>
         <ColorField label="Màu chữ" color={props.color}
           onChange={(c) => upd('color', c, false)} onCommit={pushHistory} />
         <ColorField label="Màu nền" color={props.backgroundColor}
@@ -125,8 +129,11 @@ export function TextRightPanel({ id, props }: TextRightPanelProps) {
           displayVal={props.opacity.toFixed(2)} />
            
       </Section>
+      )}
+
       {/* ── Uốn cong chữ ────────────────────────────────── */}
-      <Section title="Uốn cong chữ" icon={<SettingsIcon />} defaultOpen={true}>
+      {(!activeSection || activeSection === 'curve') && (
+        <Section title="Uốn cong chữ" icon={<SettingsIcon />} defaultOpen={true}>
         <Slider
           label="Độ uốn cong"
           value={props.textCurve ?? 0}
@@ -138,16 +145,20 @@ export function TextRightPanel({ id, props }: TextRightPanelProps) {
           displayVal={`${props.textCurve ?? 0}`}
         />
       </Section>
+      )}
 
       {/* ── Bố cục & Căn chỉnh (Padding) ─────────────────── */}
-      <PaddingSection
+      {(!activeSection || activeSection === 'spacing') && (
+        <PaddingSection
         padding={{ top: props.paddingTop, right: props.paddingRight, bottom: props.paddingBottom, left: props.paddingLeft }}
         onChange={(p) => { upd('paddingTop', p.top, false); upd('paddingRight', p.right, false); upd('paddingBottom', p.bottom, false); upd('paddingLeft', p.left, false); }}
         onCommit={pushHistory}
         defaultOpen={true}
       />
+      )}
 
-      <BorderSection
+      {(!activeSection || activeSection === 'border') && (
+        <BorderSection
         border={{ width: props.borderWidth, style: props.borderWidth > 0 ? 'solid' : 'none', color: props.borderColor, radius: props.borderRadius }}
         onChange={(b) => {
           const newWidth = b.style === 'none' ? 0 : (b.width === 0 ? 1 : b.width);
@@ -157,15 +168,19 @@ export function TextRightPanel({ id, props }: TextRightPanelProps) {
         }}
         onCommit={pushHistory}
       />
+      )}
 
-      <ShadowSection
+      {(!activeSection || activeSection === 'shadow') && (
+        <ShadowSection
         shadow={{ x: props.shadowX, y: props.shadowY, blur: props.shadowBlur, spread: 0, color: props.shadowColor }}
         onChange={(s) => { upd('shadowX', s.x, false); upd('shadowY', s.y, false); upd('shadowBlur', s.blur, false); upd('shadowColor', s.color, false); }}
         onCommit={pushHistory}
       />
+      )}
 
       {/* ── Nâng cao ─────────────────────────────────────── */}
-      <Section title="Nâng cao" icon={<SettingsIcon />} defaultOpen={false}>
+      {(!activeSection || activeSection === 'advanced') && (
+        <Section title="Nâng cao" icon={<SettingsIcon />} defaultOpen={false}>
         <div className="rp-field">
           <span className="rp-label">Nội dung</span>
           <input
@@ -177,6 +192,7 @@ export function TextRightPanel({ id, props }: TextRightPanelProps) {
           />
         </div>
       </Section>
+      )}
     </>
   );
 }

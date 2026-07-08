@@ -158,12 +158,22 @@ export function TemplatesListPage() {
   return (
     <div>
       {/* Toolbar */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, gap: 12, flexWrap: 'wrap' }}>
-        <div className="adm-toolbar" style={{ margin: 0, flex: 1 }}>
-          <div className="adm-search">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
+        {/* Row 1: Search + Button */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div className="adm-search" style={{ flex: 1, margin: 0 }}>
             <Search className="adm-search-icon" />
             <input placeholder="Tìm theo tên template..." value={search} onChange={e => setSearch(e.target.value)} />
           </div>
+          <button className="adm-btn adm-btn-primary" onClick={() => setShowCreateModal(true)} style={{ flexShrink: 0, whiteSpace: 'nowrap' }}>
+            <Plus size={15} /> 
+            <span className="adm-desktop-only">Tạo template mới</span>
+            <span className="adm-mobile-only">Tạo mới</span>
+          </button>
+        </div>
+
+        {/* Row 2: Filters */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
           <select className="adm-select" value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}>
             <option value="all">Tất cả trạng thái</option>
             <option value="published">Đã xuất bản</option>
@@ -176,9 +186,6 @@ export function TemplatesListPage() {
             <option value="premium">Premium</option>
           </select>
         </div>
-        <button className="adm-btn adm-btn-primary" onClick={() => setShowCreateModal(true)}>
-          <Plus size={15} /> Tạo template mới
-        </button>
       </div>
 
       {/* Create Modal */}

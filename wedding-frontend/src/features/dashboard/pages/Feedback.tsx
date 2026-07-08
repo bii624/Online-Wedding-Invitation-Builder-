@@ -37,14 +37,14 @@ export const Feedback = () => {
         <div className="flex-1 p-5 sm:p-8 md:p-10 space-y-5 md:space-y-6">
           <div>
             <h1 className="text-2xl font-black text-zinc-800 font-inter">Chia Sẻ & Góp Ý</h1>
-            <p className="mt-1.5 text-xs text-zinc-400 font-inter font-medium">DearLove luôn trân trọng mọi ý kiến đóng góp từ bạn để cải tiến hệ thống tốt hơn</p>
+            <p className="mt-1.5 text-xs text-slate-500 font-inter font-medium">DearLove luôn trân trọng mọi ý kiến đóng góp từ bạn để cải tiến hệ thống tốt hơn</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5 pt-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
 
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-wider">Chủ đề đóng góp <span className="text-rose-500">*</span></label>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">Chủ đề đóng góp <span className="text-rose-500">*</span></label>
                 <select
                   value={form.category}
                   onChange={e => setForm({ ...form, category: e.target.value })}
@@ -59,7 +59,7 @@ export const Feedback = () => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-wider">Tiêu đề ngắn gọn</label>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">Tiêu đề ngắn gọn</label>
                 <input
                   type="text"
                   value={form.title}
@@ -72,7 +72,7 @@ export const Feedback = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-wider">Chi tiết nội dung góp ý <span className="text-rose-500">*</span></label>
+              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">Chi tiết nội dung góp ý <span className="text-rose-500">*</span></label>
               <textarea
                 rows={5}
                 required
@@ -84,7 +84,7 @@ export const Feedback = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-wider">Thông tin liên hệ (Không bắt buộc)</label>
+              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">Thông tin liên hệ (Không bắt buộc)</label>
               <input
                 type="text"
                 value={form.contact}
@@ -102,7 +102,7 @@ export const Feedback = () => {
               >
                 {sent ? <><Check size={14} /> Gửi thành công!</> : <><Send size={13} /> Gửi ý kiến đóng góp</>}
               </button>
-              <span className="text-[11px] text-zinc-400 font-inter font-medium text-center sm:text-left">Đội ngũ DearLove sẽ đọc kỹ và cải tiến ngay lập tức</span>
+              <span className="text-[11px] text-slate-500 font-inter font-medium text-center sm:text-left">Đội ngũ DearLove sẽ đọc kỹ và cải tiến ngay lập tức</span>
             </div>
           </form>
         </div>
@@ -119,14 +119,14 @@ export const Feedback = () => {
 
             <div className="space-y-1">
               <h3 className="text-base font-extrabold text-zinc-800 font-inter">Hòm Thư DearLove</h3>
-              <p className="text-[11px] text-zinc-400 font-inter font-medium">Nơi lắng nghe mọi tâm tư của bạn</p>
+              <p className="text-[11px] text-slate-500 font-inter font-medium">Nơi lắng nghe mọi tâm tư của bạn</p>
             </div>
           </div>
 
           <div className="space-y-4 z-10 pt-4 border-t border-rose-100/30">
             <div className="space-y-1">
               <h4 className="text-xs font-black text-zinc-700 font-inter uppercase tracking-wider">Cùng nhau hoàn thiện</h4>
-              <p className="text-[11px] text-zinc-500 font-inter leading-relaxed">
+              <p className="text-[11px] text-slate-600 font-inter leading-relaxed">
                 Mọi ý kiến của bạn từ đề xuất tính năng hay sửa các lỗi giao diện nhỏ đều được đội ngũ kỹ thuật ghi nhận và cải tiến nhanh chóng.
               </p>
             </div>

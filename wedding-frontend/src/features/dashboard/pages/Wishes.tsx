@@ -40,9 +40,9 @@ export const Wishes = () => {
       const cardsList = Array.isArray(cardsData) ? cardsData : (cardsData?.data || []);
       setCards(cardsList);
       setRsvps(rsvpsData || []);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error('Lỗi khi tải dữ liệu!');
+      toast.error('Lỗi: ' + (err.response?.data?.message || err.message || 'Không thể tải dữ liệu'));
     } finally {
       setIsLoading(false);
     }
@@ -203,7 +203,7 @@ export const Wishes = () => {
             <button
               onClick={fetchData}
               disabled={isLoading}
-              className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 hover:text-rose-500 hover:border-rose-200 hover:bg-rose-50/50 active:scale-95 transition-all cursor-pointer disabled:opacity-50 shadow-sm relative z-10"
+              className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-white text-slate-500 hover:text-rose-500 hover:border-rose-200 hover:bg-rose-50/50 active:scale-95 transition-all cursor-pointer disabled:opacity-50 shadow-sm relative z-10"
               title="Tải lại"
             >
               <RefreshCw size={18} className={isLoading ? 'animate-spin' : ''} />

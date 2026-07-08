@@ -66,15 +66,15 @@ export const Header = () => {
             <nav className={cn(
                 "mx-auto pointer-events-auto bg-white/80 backdrop-blur-xl border transition-all ease-[cubic-bezier(0.34,1.56,0.64,1)] duration-500 delay-0",
                 isScrolled
-                    ? 'max-w-5xl py-2 px-6 rounded-full shadow-[0_12px_40px_rgba(244,63,94,0.15)] bg-white/90 border-rose-100 translate-y-1 scale-[0.98]'
-                    : 'max-w-7xl py-2 px-10 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.05)] bg-white/90 border-rose-100'
+                    ? 'max-w-5xl py-2 px-4 md:px-6 rounded-[24px] md:rounded-full shadow-[0_12px_40px_rgba(244,63,94,0.15)] bg-white/90 border-rose-100 translate-y-1 scale-[0.98]'
+                    : 'max-w-7xl py-2 px-4 md:px-10 rounded-[24px] md:rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.05)] bg-white/90 border-rose-100'
             )}>
-                <div className="flex justify-between items-center h-14">
-                    <div className="flex items-center gap-2.5 shrink-0 group cursor-pointer">
-                        <div className="bg-rose-100 p-2 rounded-xl transition-transform group-hover:rotate-12">
-                            <RevolvingHeartsIcon size={28} color="#f43f5e" />
+                <div className="flex justify-between items-center h-14 gap-2">
+                    <div className="flex items-center gap-2 md:gap-2.5 shrink-0 group cursor-pointer">
+                        <div className="bg-rose-100 p-1.5 md:p-2 rounded-xl transition-transform group-hover:rotate-12">
+                            <RevolvingHeartsIcon size={24} color="#f43f5e" />
                         </div>
-                        <span className="text-2xl font-serif font-black text-zinc-800">DearLove</span>
+                        <span className="text-xl md:text-2xl font-serif font-black text-zinc-800">DearLove</span>
                     </div>
 
                     <div className="hidden md:flex items-center space-x-1">
@@ -97,27 +97,27 @@ export const Header = () => {
                         ))}
                     </div>
 
-                    <div className="flex items-center space-x-2 ml-auto md:ml-0">
+                    <div className="flex items-center space-x-1 md:space-x-2 ml-auto md:ml-0">
                         {user ? (
                             <div className="flex items-center bg-white border border-zinc-200 p-1.5 rounded-full shadow-sm">
-                                <div className="w-9 h-9 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 font-bold uppercase overflow-hidden shrink-0">
+                                <div className="w-8 h-8 md:w-9 md:h-9 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 font-bold uppercase overflow-hidden shrink-0 text-sm">
                                     {user.avatarUrl ? (
                                         <img src={user.avatarUrl} alt={user.fullName} className="w-full h-full object-cover" />
                                     ) : (
                                         user.fullName?.charAt(0) || 'U'
                                     )}
                                 </div>
-                                <div className="ml-2">
-                                    <Button onClick={() => navigate('/dashboard/overview')} variant="default" className="rounded-full h-9 px-4 text-white shadow-none text-sm flex items-center gap-1.5 font-medium border-0">
-                                        <Zap className="w-4 h-4" />
-                                        Tổng quan
+                                <div className="ml-1 md:ml-2 hidden sm:block">
+                                    <Button onClick={() => navigate('/dashboard/overview')} variant="default" className="rounded-full h-8 md:h-9 px-3 md:px-4 text-white shadow-none text-[13px] md:text-sm flex items-center gap-1.5 font-medium border-0">
+                                        <Zap className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                                        <span className="hidden sm:inline">Tổng quan</span>
                                     </Button>
                                 </div>
                             </div>
                         ) : (
                             <>
                                 <Link to="/login" className="block">
-                                    <Button variant="ghost" className="font-semibold text-gray-600 hover:text-rose-600 text-sm md:text-base px-3 md:px-4">
+                                    <Button variant="ghost" className="font-semibold text-gray-600 hover:text-rose-600 text-[13px] md:text-sm px-2 md:px-4 h-8 md:h-10">
                                         Đăng nhập
                                     </Button>
                                 </Link>
@@ -132,8 +132,8 @@ export const Header = () => {
                         )}
                     </div>
 
-                    <div className="md:hidden ml-1">
-                        <Button variant="ghost" size="icon" className="rounded-full hover:bg-rose-50" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                    <div className="md:hidden ml-1 shrink-0">
+                        <Button variant="ghost" size="icon" className="rounded-full hover:bg-rose-50 h-8 w-8" onClick={() => setIsMenuOpen(!isMenuOpen)}>
                             {isMenuOpen ? <X className="h-5 w-5 text-rose-600" /> : <Menu className="h-5 w-5" />}
                         </Button>
                     </div>

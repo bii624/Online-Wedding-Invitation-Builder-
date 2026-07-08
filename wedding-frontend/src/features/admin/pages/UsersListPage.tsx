@@ -155,7 +155,7 @@ export function UsersListPage() {
         />
       )}
       {/* Summary numbers */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
+      <div className="adm-stat-grid">
         {[
           { label: 'Tổng người dùng', value: summary.totalUsers || total, change: '+ 12.5%', color: '#6366f1', data: [10, 15, 8, 20, 25, 18, 30] },
           { label: 'Hoạt động', value: summary.active, change: '+ 8.2%', color: '#10b981', data: [5, 12, 10, 15, 20, 22, 28] },
@@ -200,9 +200,10 @@ export function UsersListPage() {
 
       <div className="adm-card">
         {/* Toolbar */}
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--adm-border)' }}>
-          <div className="adm-toolbar" style={{ margin: 0 }}>
-            <div className="adm-search">
+        <div className="adm-toolbar-wrap">
+          {/* Row 1: Search + Add button */}
+          <div className="adm-toolbar-row1">
+            <div className="adm-search" style={{ flex: 1 }}>
               <Search className="adm-search-icon" />
               <input
                 placeholder="Tìm theo tên hoặc email..."
@@ -210,6 +211,17 @@ export function UsersListPage() {
                 onChange={e => setSearch(e.target.value)}
               />
             </div>
+            <button
+              onClick={() => setShowCreateModal(true)}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', background: 'var(--adm-pink)', color: '#fff', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0 }}
+            >
+              <Plus size={16} />
+              <span>Thêm người dùng</span>
+            </button>
+          </div>
+
+          {/* Row 2: Filters + count */}
+          <div className="adm-toolbar-row2">
             <select className="adm-select" value={roleFilter} onChange={e => setRoleFilter(e.target.value)}>
               <option value="all">Tất cả role</option>
               <option value="user">User</option>
@@ -220,21 +232,12 @@ export function UsersListPage() {
               <option value="active">Hoạt động</option>
               <option value="suspended">Đã khóa</option>
             </select>
-            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 12 }}>
-              <span style={{ fontSize: 12, color: 'var(--adm-text-muted)' }}>{total} kết quả</span>
-              <button 
-                onClick={() => setShowCreateModal(true)}
-                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', background: 'var(--adm-pink)', color: '#fff', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 600 }}
-              >
-                <Plus size={16} />
-                Thêm người dùng
-              </button>
-            </div>
+            <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--adm-text-muted)', whiteSpace: 'nowrap' }}>{total} kết quả</span>
           </div>
         </div>
 
-        {/* Table */}
-        <div className="adm-table-wrap">
+        {/* ── Desktop table ── */}
+        <div className="adm-table-wrap adm-desktop-only">
           <table className="adm-table">
             <thead>
               <tr>
@@ -249,27 +252,17 @@ export function UsersListPage() {
             </thead>
             <tbody>
               {loading ? (
-                <tr>
-                  <td colSpan={7} style={{ textAlign: 'center', padding: '40px 0' }}>
-                    Đang tải dữ liệu...
-                  </td>
-                </tr>
+                <tr><td colSpan={7} style={{ textAlign: 'center', padding: '40px 0' }}>Đang tải dữ liệu...</td></tr>
               ) : users.length === 0 ? (
-                <tr>
-                  <td colSpan={7} style={{ textAlign: 'center', padding: '40px 0' }}>
-                    Không tìm thấy người dùng nào.
-                  </td>
-                </tr>
+                <tr><td colSpan={7} style={{ textAlign: 'center', padding: '40px 0' }}>Không tìm thấy người dùng nào.</td></tr>
               ) : (
                 users.map(u => (
                   <tr key={u.id}>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        {u.avatarUrl ? (
-                          <img src={u.avatarUrl} alt={u.fullName} className="adm-user-avatar" style={{ objectFit: 'cover' }} />
-                        ) : (
-                          <div className="adm-user-avatar">{u.fullName?.charAt(0)?.toUpperCase() || 'U'}</div>
-                        )}
+                        {u.avatarUrl
+                          ? <img src={u.avatarUrl} alt={u.fullName} className="adm-user-avatar" style={{ objectFit: 'cover' }} />
+                          : <div className="adm-user-avatar">{u.fullName?.charAt(0)?.toUpperCase() || 'U'}</div>}
                         <span style={{ fontWeight: 600, fontSize: 13 }}>{u.fullName}</span>
                       </div>
                     </td>
@@ -280,13 +273,10 @@ export function UsersListPage() {
                     <td style={{ color: 'var(--adm-text-muted)', fontSize: 12 }}>{new Date(u.createdAt).toLocaleDateString('vi-VN')}</td>
                     <td>
                       <div style={{ display: 'flex', gap: 4 }}>
-                        <button className="adm-btn adm-btn-ghost adm-btn-icon" title="Xem chi tiết" onClick={() => setSelectedUserId(u.id)}>
-                          <Eye size={14} />
-                        </button>
+                        <button className="adm-btn adm-btn-ghost adm-btn-icon" title="Xem chi tiết" onClick={() => setSelectedUserId(u.id)}><Eye size={14} /></button>
                         {u.status === 'active'
                           ? <button className="adm-btn adm-btn-danger-ghost adm-btn-icon" title="Khóa tài khoản" onClick={() => handleToggleStatus(u.id, u.status)}><Ban size={14} /></button>
-                          : <button className="adm-btn adm-btn-ghost adm-btn-icon" title="Mở khóa" style={{ color: 'var(--adm-success)' }} onClick={() => handleToggleStatus(u.id, u.status)}><UserCheck size={14} /></button>
-                        }
+                          : <button className="adm-btn adm-btn-ghost adm-btn-icon" title="Mở khóa" style={{ color: 'var(--adm-success)' }} onClick={() => handleToggleStatus(u.id, u.status)}><UserCheck size={14} /></button>}
                       </div>
                     </td>
                   </tr>
@@ -295,6 +285,48 @@ export function UsersListPage() {
             </tbody>
           </table>
         </div>
+
+        {/* ── Mobile card list ── */}
+        <div className="adm-mobile-only">
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--adm-text-muted)' }}>Đang tải dữ liệu...</div>
+          ) : users.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--adm-text-muted)' }}>Không tìm thấy người dùng nào.</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {users.map((u, i) => (
+                <div key={u.id} className="adm-user-card" style={{ borderBottom: i < users.length - 1 ? '1px solid var(--adm-border)' : 'none' }}>
+                  {/* Top: avatar + name + actions */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    {u.avatarUrl
+                      ? <img src={u.avatarUrl} alt={u.fullName} className="adm-user-avatar" style={{ objectFit: 'cover', flexShrink: 0 }} />
+                      : <div className="adm-user-avatar" style={{ flexShrink: 0 }}>{u.fullName?.charAt(0)?.toUpperCase() || 'U'}</div>}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontWeight: 700, fontSize: 14, margin: 0, color: 'var(--adm-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{u.fullName}</p>
+                      <p style={{ fontSize: 12, color: 'var(--adm-text-muted)', margin: '2px 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{u.email}</p>
+                    </div>
+                    {/* Action buttons */}
+                    <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>
+                      <button className="adm-btn adm-btn-ghost adm-btn-icon" title="Xem chi tiết" onClick={() => setSelectedUserId(u.id)}><Eye size={14} /></button>
+                      {u.status === 'active'
+                        ? <button className="adm-btn adm-btn-danger-ghost adm-btn-icon" title="Khóa" onClick={() => handleToggleStatus(u.id, u.status)}><Ban size={14} /></button>
+                        : <button className="adm-btn adm-btn-ghost adm-btn-icon" title="Mở khóa" style={{ color: 'var(--adm-success)' }} onClick={() => handleToggleStatus(u.id, u.status)}><UserCheck size={14} /></button>}
+                    </div>
+                  </div>
+                  {/* Bottom: badges + stats */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
+                    <RoleBadge role={u.role} />
+                    <StatusBadge status={u.status} />
+                    <span style={{ fontSize: 11, color: 'var(--adm-text-muted)', marginLeft: 'auto' }}>
+                      🗂 {u.cardCount} thiệp &nbsp;·&nbsp; {new Date(u.createdAt).toLocaleDateString('vi-VN')}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
 
         {/* Pagination */}
         {totalPages > 1 && (

@@ -8,7 +8,7 @@ import {
 } from '@google/generative-ai';
 
 /** Gemini model used for vision-based prompt generation. */
-const GEMINI_MODEL = 'gemini-1.5-flash';
+const GEMINI_MODEL = 'gemini-2.5-flash';
 
 /** Max words in the generated outpaint prompt. */
 const MAX_PROMPT_WORDS = 50;

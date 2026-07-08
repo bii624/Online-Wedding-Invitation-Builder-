@@ -23,7 +23,7 @@ export function PlansPage() {
   return (
     <div>
       {/* Summary cards */}
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16, marginBottom:24 }}>
+      <div className="adm-stat-grid">
         {MOCK_PLANS.map((p, i) => (
           <div key={p.id} style={{ background:'#fff', borderRadius:12, border:'1px solid var(--adm-border)', padding:'20px', boxShadow:'var(--adm-shadow)' }}>
             <div style={{ width:44, height:44, borderRadius:10, background: PLAN_BG_COLORS[i], display:'flex', alignItems:'center', justifyContent:'center', marginBottom:12 }}>

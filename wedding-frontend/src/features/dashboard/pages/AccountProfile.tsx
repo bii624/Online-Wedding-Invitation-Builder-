@@ -153,7 +153,7 @@ export const AccountProfile: React.FC = () => {
 
             <div className="flex-1 text-center sm:text-left space-y-1">
               <h2 className="text-lg font-black text-zinc-800 font-inter">{form.fullName}</h2>
-              <p className="text-xs text-zinc-400 font-inter font-medium">{form.email}</p>
+              <p className="text-xs text-slate-500 font-inter font-medium">{form.email}</p>
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
                 <span className="flex items-center gap-1 text-[10px] font-black tracking-wider uppercase text-amber-600 bg-amber-50 border border-amber-100/60 px-2.5 py-0.5 rounded-md shadow-2xs">
                   <Crown size={10} /> FREE PLAN
@@ -179,7 +179,7 @@ export const AccountProfile: React.FC = () => {
               <button
                 key={t.key}
                 onClick={() => setTab(t.key)}
-                className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer flex-1 md:flex-none justify-center md:justify-start ${tab === t.key ? 'bg-white border border-rose-100/40 text-rose-500 shadow-2xs' : 'border-transparent text-zinc-500 hover:text-zinc-800'}`}
+                className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer flex-1 md:flex-none justify-center md:justify-start ${tab === t.key ? 'bg-white border border-rose-100/40 text-rose-500 shadow-2xs' : 'border-transparent text-slate-600 hover:text-zinc-800'}`}
               >
                 {t.icon} {t.label}
               </button>
@@ -191,7 +191,7 @@ export const AccountProfile: React.FC = () => {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-wider">TÊN HIỂN THỊ <span className="text-rose-500">*</span></label>
+                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">TÊN HIỂN THỊ <span className="text-rose-500">*</span></label>
                     <input
                       value={form.fullName}
                       onChange={e => setForm({ ...form, fullName: e.target.value })}
@@ -199,15 +199,15 @@ export const AccountProfile: React.FC = () => {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-wider">EMAIL <span className="text-zinc-350">(KHÔNG THỂ THAY ĐỔI)</span></label>
+                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">EMAIL <span className="text-zinc-350">(KHÔNG THỂ THAY ĐỔI)</span></label>
                     <input
                       value={form.email}
                       disabled
-                      className="w-full px-4 py-3 rounded-xl border border-zinc-100 text-sm text-zinc-400 bg-zinc-50 cursor-not-allowed"
+                      className="w-full px-4 py-3 rounded-xl border border-zinc-100 text-sm text-slate-500 bg-zinc-50 cursor-not-allowed"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-wider">SỐ ĐIỆN THOẠI</label>
+                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">SỐ ĐIỆN THOẠI</label>
                     <input
                       type="tel"
                       value={form.phone}
@@ -217,7 +217,7 @@ export const AccountProfile: React.FC = () => {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-wider">NGÀY SINH</label>
+                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">NGÀY SINH</label>
                     <input
                       type="date"
                       value={form.dob}
@@ -228,7 +228,7 @@ export const AccountProfile: React.FC = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-wider">GIỚI THIỆU</label>
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">GIỚI THIỆU</label>
                   <textarea
                     rows={3}
                     value={form.bio}
@@ -246,7 +246,7 @@ export const AccountProfile: React.FC = () => {
                   >
                     {isSaving ? 'Đang lưu...' : saved ? <><Check size={14} /> Đã lưu!</> : 'Lưu thay đổi'}
                   </button>
-                  <span className="text-[11px] text-zinc-400 font-inter font-medium text-center sm:text-left">Dữ liệu cá nhân sẽ cập nhật đồng bộ lập tức</span>
+                  <span className="text-[11px] text-slate-500 font-inter font-medium text-center sm:text-left">Dữ liệu cá nhân sẽ cập nhật đồng bộ lập tức</span>
                 </div>
               </div>
             )}
@@ -254,7 +254,7 @@ export const AccountProfile: React.FC = () => {
             {tab === 'security' && (
               <div className="max-w-md space-y-5">
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-wider">MẬT KHẨU HIỆN TẠI</label>
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">MẬT KHẨU HIỆN TẠI</label>
                   <div className="relative">
                     <input
                       type={showPwd ? 'text' : 'password'}
@@ -263,14 +263,14 @@ export const AccountProfile: React.FC = () => {
                     />
                     <button
                       onClick={() => setShowPwd(!showPwd)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 cursor-pointer"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-zinc-600 cursor-pointer"
                     >
                       {showPwd ? <EyeOff size={14} /> : <Eye size={14} />}
                     </button>
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-wider">MẬT KHẨU MỚI</label>
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">MẬT KHẨU MỚI</label>
                   <input
                     type="password"
                     placeholder="Nhập mật khẩu mới (≥ 8 ký tự)..."
@@ -280,7 +280,7 @@ export const AccountProfile: React.FC = () => {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-wider">XÁC NHẬN MẬT KHẨU MỚI</label>
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">XÁC NHẬN MẬT KHẨU MỚI</label>
                   <input
                     type="password"
                     placeholder="Nhập lại mật khẩu mới..."
@@ -320,7 +320,7 @@ export const AccountProfile: React.FC = () => {
                   <div key={i} className="flex items-center justify-between p-4 bg-zinc-50/50 rounded-2xl border border-zinc-100">
                     <div className="space-y-0.5">
                       <div className="text-sm font-semibold text-zinc-700 font-inter">{n.label}</div>
-                      <div className="text-xs text-zinc-400 font-inter font-medium">{n.sub}</div>
+                      <div className="text-xs text-slate-500 font-inter font-medium">{n.sub}</div>
                     </div>
                     <div className={`w-10 h-5 rounded-full relative cursor-pointer transition-all ${n.on ? 'bg-rose-500' : 'bg-zinc-200'}`}>
                       <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow-xs transition-all ${n.on ? 'left-5' : 'left-0.5'}`} />
@@ -337,7 +337,7 @@ export const AccountProfile: React.FC = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1">
               <div className="text-sm font-bold text-zinc-700 font-inter">Xóa tài khoản vĩnh viễn</div>
-              <div className="text-xs text-zinc-400 font-inter font-medium">Hành động này hoàn tác thì tất cả thiệp mời cưới và dữ liệu sẽ bị xóa hoàn toàn.</div>
+              <div className="text-xs text-slate-500 font-inter font-medium">Hành động này hoàn tác thì tất cả thiệp mời cưới và dữ liệu sẽ bị xóa hoàn toàn.</div>
             </div>
             <button className="w-full sm:w-auto px-4 py-2.5 text-xs font-bold text-red-500 border border-red-200/50 rounded-xl hover:bg-red-50/30 transition-colors active:scale-95 cursor-pointer">
               Xóa tài khoản

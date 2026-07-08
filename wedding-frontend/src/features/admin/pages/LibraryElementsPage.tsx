@@ -541,7 +541,7 @@ export function LibraryElementsPage() {
   return (
     <div>
       {/* ── Page header ─────────────────────────────────── */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
         <div>
           <div className="adm-page-title">Elements</div>
           <div className="adm-page-subtitle">
@@ -609,6 +609,7 @@ export function LibraryElementsPage() {
       )}
 
       {/* ── Type quick filter ────────────────────────────── */}
+      {/* ── Type quick filter ────────────────────────────── */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
         <button onClick={() => setTypeFilter('')}
           style={{ background: !typeFilter ? 'var(--adm-pink)' : '#fff', border: `1px solid ${!typeFilter ? 'var(--adm-pink)' : 'var(--adm-border-mid)'}`, borderRadius: 8, padding: '7px 14px', fontSize: 12, fontWeight: 600, color: !typeFilter ? '#fff' : 'var(--adm-text-muted)', cursor: 'pointer', transition: 'all 0.18s' }}>
@@ -623,31 +624,34 @@ export function LibraryElementsPage() {
       </div>
 
       {/* ── Toolbar ──────────────────────────────────────── */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
-        <div className="adm-search" style={{ maxWidth: 280 }}>
-          <Search className="adm-search-icon" />
-          <input placeholder="Tìm theo tên, tag..." value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} />
+      <div className="adm-toolbar-wrap" style={{ background: '#fff', borderRadius: 16, border: '1px solid var(--adm-border)', marginBottom: 20 }}>
+        {/* Row 1: Search + count + refresh */}
+        <div className="adm-toolbar-row1">
+          <div className="adm-search" style={{ flex: 1 }}>
+            <Search className="adm-search-icon" />
+            <input placeholder="Tìm theo tên, tag..." value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} />
+          </div>
+          <button className="adm-btn adm-btn-outline adm-btn-sm" onClick={fetchData} title="Làm mới" style={{ flexShrink: 0 }}>
+            <RefreshCw size={13} />
+          </button>
         </div>
 
-        <select className="adm-select" value={premiumFilter} onChange={e => { setPremiumFilter(e.target.value); setPage(1); }}>
-          <option value="">Tất cả</option>
-          <option value="false">Free</option>
-          <option value="true">Premium</option>
-        </select>
-
-        <select className="adm-select" value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}>
-          <option value="">Mọi trạng thái</option>
-          <option value="published">Đã publish</option>
-          <option value="draft">Draft</option>
-        </select>
-
-        <button className="adm-btn adm-btn-outline adm-btn-sm" onClick={fetchData} title="Làm mới">
-          <RefreshCw size={13} />
-        </button>
-
-        <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--adm-text-muted)' }}>
-          {total} element
-        </span>
+        {/* Row 2: Filters */}
+        <div className="adm-toolbar-row2">
+          <select className="adm-select" value={premiumFilter} onChange={e => { setPremiumFilter(e.target.value); setPage(1); }}>
+            <option value="">Tất cả gói</option>
+            <option value="false">Free</option>
+            <option value="true">Premium</option>
+          </select>
+          <select className="adm-select" value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}>
+            <option value="">Mọi trạng thái</option>
+            <option value="published">Đã publish</option>
+            <option value="draft">Draft</option>
+          </select>
+          <span style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--adm-text-muted)', whiteSpace: 'nowrap' }}>
+            {total} kết quả
+          </span>
+        </div>
       </div>
 
       {/* ── Grid ─────────────────────────────────────────── */}

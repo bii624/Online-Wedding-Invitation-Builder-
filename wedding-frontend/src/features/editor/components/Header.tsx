@@ -79,7 +79,7 @@ export function Header() {
           <div className="bg-white/20 backdrop-blur-sm p-2 rounded-xl transition-transform group-hover:rotate-12 shadow-sm">
             <RevolvingHeartsIcon size={28} color="#fff" />
           </div>
-          <span className="text-2xl font-serif font-black text-white drop-shadow-sm">DearLove</span>
+          <span className="hidden md:inline text-2xl font-serif font-black text-white drop-shadow-sm">DearLove</span>
         </div>
         <div className="header-history">
           <button

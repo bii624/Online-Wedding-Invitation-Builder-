@@ -482,7 +482,7 @@ export const Overview = () => {
                 <h1 className="text-2xl md:text-3xl lg:text-4xl font-black font-inter tracking-tight leading-tight text-zinc-900">
                   Chào {displayName}!
                 </h1>
-                <p className="text-zinc-500 text-sm font-inter font-medium max-w-lg leading-relaxed">
+                <p className="text-slate-600 text-sm font-inter font-medium max-w-lg leading-relaxed">
                   Bạn đang sử dụng <span className="text-rose-500 font-bold">Gói trải nghiệm tự do</span>. Hãy thỏa sức sáng tạo và lan tỏa yêu thương qua những tấm thiệp cưới di động đẹp hoàn hảo nhất.
                 </p>
               </div>
@@ -539,13 +539,13 @@ export const Overview = () => {
                 <div className="h-8 w-8 rounded-lg bg-rose-50 flex items-center justify-center text-rose-500">
                   <ImageSizeSelectActualIcon size={18} color="currentColor" />
                 </div>
-                <span className="text-xs font-bold text-zinc-500 tracking-wide font-inter uppercase">Kho lưu trữ ảnh</span>
+                <span className="text-xs font-bold text-slate-600 tracking-wide font-inter uppercase">Kho lưu trữ ảnh</span>
               </div>
               <div>
                 <p className="text-3xl font-black text-zinc-800 mt-1 font-inter">
-                  {imageAssetsCount} <span className="text-sm font-semibold text-zinc-400">/ {isPremium ? '∞' : limits.photos} tệp</span>
+                  {imageAssetsCount} <span className="text-sm font-semibold text-slate-500">/ {isPremium ? '∞' : limits.photos} tệp</span>
                 </p>
-                <p className="text-[11px] text-zinc-400 font-bold mt-1">Đã tối ưu bộ nhớ</p>
+                <p className="text-[11px] text-slate-500 font-bold mt-1">Đã tối ưu bộ nhớ</p>
               </div>
             </div>
 
@@ -564,11 +564,11 @@ export const Overview = () => {
                 <div className="h-8 w-8 rounded-lg bg-pink-50 flex items-center justify-center text-pink-500">
                   <Clipboard2HeartFillIcon size={18} color="currentColor" />
                 </div>
-                <span className="text-xs font-bold text-zinc-500 tracking-wide font-inter uppercase">Thiệp kích hoạt</span>
+                <span className="text-xs font-bold text-slate-600 tracking-wide font-inter uppercase">Thiệp kích hoạt</span>
               </div>
               <div>
                 <p className="text-3xl font-black text-zinc-800 mt-1 font-inter">
-                  {activeCardsCount} <span className="text-sm font-semibold text-zinc-400">/ {isPremium ? '∞' : `0${limits.cards}`} thiệp</span>
+                  {activeCardsCount} <span className="text-sm font-semibold text-slate-500">/ {isPremium ? '∞' : `0${limits.cards}`} thiệp</span>
                 </p>
                 <p className="text-[11px] text-pink-500 font-bold mt-1">Trạng thái: Sẵn sàng</p>
               </div>
@@ -589,13 +589,13 @@ export const Overview = () => {
                 <div className="h-8 w-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
                   <PeopleEye16FilledIcon size={18} color="currentColor" />
                 </div>
-                <span className="text-xs font-bold text-zinc-500 tracking-wide font-inter uppercase">Khách ghé thăm</span>
+                <span className="text-xs font-bold text-slate-600 tracking-wide font-inter uppercase">Khách ghé thăm</span>
               </div>
               <div>
                 <p className="text-3xl font-black text-zinc-800 mt-1 font-inter">
-                  {totalViews} <span className="text-sm font-semibold text-zinc-400">/ {isPremium ? '∞' : limits.visitors} lượt</span>
+                  {totalViews} <span className="text-sm font-semibold text-slate-500">/ {isPremium ? '∞' : limits.visitors} lượt</span>
                 </p>
-                <p className="text-[11px] text-zinc-400 font-bold mt-1">Reset sau 30 ngày</p>
+                <p className="text-[11px] text-slate-500 font-bold mt-1">Reset sau 30 ngày</p>
               </div>
             </div>
 
@@ -647,7 +647,7 @@ export const Overview = () => {
             </div>
             <div>
               <h4 className="text-sm font-extrabold text-zinc-800 font-inter">Mách nhỏ để thiết kế thiệp đẹp</h4>
-              <p className="text-xs text-zinc-500 font-inter">Hãy chuẩn bị các hình ảnh cưới chất lượng cao (tỷ lệ 4:3 hoặc 16:9) để chèn vào thiệp trông sắc nét nhất!</p>
+              <p className="text-xs text-slate-600 font-inter">Hãy chuẩn bị các hình ảnh cưới chất lượng cao (tỷ lệ 4:3 hoặc 16:9) để chèn vào thiệp trông sắc nét nhất!</p>
             </div>
           </div>
           <Link

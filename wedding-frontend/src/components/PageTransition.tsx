@@ -7,7 +7,7 @@ interface PageTransitionProps {
 }
 
 // Routes that skip the page transition (e.g. full-screen tools)
-const SKIP_TRANSITION_ROUTES = ['/design', '/loading'];
+const SKIP_TRANSITION_ROUTES = ['/design', '/loading', '/admin'];
 
 const variants = {
   initial: {

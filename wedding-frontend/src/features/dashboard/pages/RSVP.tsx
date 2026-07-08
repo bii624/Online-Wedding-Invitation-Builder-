@@ -37,9 +37,9 @@ export const RSVP = () => {
         const firstCardId = (cardsData?.data || cardsData)[0].id;
         setSelectedCardId(firstCardId);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error('Lỗi khi tải dữ liệu RSVP!');
+      toast.error('Lỗi: ' + (err.response?.data?.message || err.message || 'Không thể tải dữ liệu'));
     } finally {
       setIsLoading(false);
     }
@@ -312,7 +312,7 @@ export const RSVP = () => {
             </div>
           ) : processedRsvps.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 text-center bg-zinc-50/30">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white border border-zinc-100 text-zinc-400 mb-4 shadow-sm">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white border border-zinc-100 text-slate-500 mb-4 shadow-sm">
                 <Calendar size={24} />
               </div>
               <h3 className="text-sm font-bold text-slate-700 mb-1.5">Chưa có khách nào xác nhận</h3>
@@ -323,7 +323,7 @@ export const RSVP = () => {
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-zinc-100 text-left font-inter">
-                <thead className="bg-zinc-50/80 border-b border-zinc-100 text-[11px] font-black uppercase tracking-wider text-zinc-500">
+                <thead className="bg-zinc-50/80 border-b border-zinc-100 text-[11px] font-black uppercase tracking-wider text-slate-600">
                   <tr>
                     <th className="px-6 py-4 whitespace-nowrap">Khách mời</th>
                     <th className="px-6 py-4 whitespace-nowrap">Phân loại</th>
@@ -342,8 +342,8 @@ export const RSVP = () => {
                         <td className="px-6 py-5">
                           <div className="font-semibold text-zinc-800 text-[14px] tracking-tight">{rsvp.guestName}</div>
                           {rsvp.phone && (
-                            <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 mt-1">
-                              <Phone size={12} className="text-zinc-400" /> {rsvp.phone}
+                            <div className="flex items-center gap-1.5 text-xs font-medium text-slate-600 mt-1">
+                              <Phone size={12} className="text-slate-500" /> {rsvp.phone}
                             </div>
                           )}
                         </td>
@@ -363,7 +363,7 @@ export const RSVP = () => {
                           </span>
                         </td>
                         <td className="px-6 py-5">
-                          <div className="font-medium text-zinc-700 text-sm">{rsvp.numAttendees} <span className="text-[11px] text-zinc-400 font-normal">khách</span></div>
+                          <div className="font-medium text-zinc-700 text-sm">{rsvp.numAttendees} <span className="text-[11px] text-slate-500 font-normal">khách</span></div>
                         </td>
                         <td className="px-6 py-5">
                           {rsvp.note ? (
@@ -380,7 +380,7 @@ export const RSVP = () => {
                           </td>
                         )}
                         <td className="px-6 py-5">
-                          <span className="text-xs font-medium text-zinc-400">
+                          <span className="text-xs font-medium text-slate-500">
                             {formatDate(rsvp.createdAt)}
                           </span>
                         </td>

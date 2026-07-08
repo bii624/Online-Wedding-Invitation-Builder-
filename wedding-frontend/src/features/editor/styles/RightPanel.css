@@ -782,3 +782,10 @@
 .rp-ai-section-wrapper .rp-ai-btn:hover svg {
   color: #ffffff;
 }
+
+/* ── Mobile: hide right panel entirely ─────────────────── */
+@media (max-width: 768px) {
+  .editor-right-panel {
+    display: none !important;
+  }
+}

@@ -110,7 +110,13 @@
   opacity: 1;
 }
 
-/* ── Divider ──────────────────────────────────────────────── */
+/* ── Divider & Wrapper ──────────────────────────────────────── */
+.toolbar-item-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .toolbar-divider {
   width: 40px;
   height: 1px;
@@ -649,4 +655,211 @@
   height: 100%;
   overflow-y: auto;
   flex: 1;
+}
+
+/* ============================================================
+   MOBILE RESPONSIVE — Bottom Toolbar & Bottom Sheets
+   ============================================================ */
+@media (max-width: 768px) {
+
+  /* ── Wrapper becomes a fixed bottom bar ─────────────────── */
+  .editor-toolbar-wrapper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    flex-direction: column-reverse;   /* toolbar icons at very bottom */
+    height: auto;
+    z-index: 500;
+    background: transparent;
+  }
+
+  /* ── The icon strip ─────────────────────────────────────── */
+  .editor-toolbar {
+    width: 100%;
+    height: 64px;
+    flex-direction: row;
+    align-items: center;
+    padding: 0 8px;
+    border-right: none;
+    border-top: 1px solid var(--ed-border);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    /* Hide scrollbar visually */
+    scrollbar-width: none;
+    gap: 0;
+    justify-content: flex-start;
+    background: #fff;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+  }
+
+  .editor-toolbar::-webkit-scrollbar { display: none; }
+
+  /* ── Each tool button — horizontal compact ───────────────── */
+  .toolbar-tools {
+    flex-direction: row;
+    align-items: center;
+    flex: unset;
+    width: auto;
+    gap: 0;
+    padding: 0;
+  }
+
+  .toolbar-btn {
+    width: 64px;
+    height: 56px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    border-radius: 0;
+    padding: 6px 4px 4px;
+  }
+
+  .toolbar-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .toolbar-btn-label {
+    font-size: 10px;
+  }
+
+  /* Tooltip hidden on mobile — not useful */
+  .toolbar-btn::after { display: none; }
+
+  /* Wrapper flexes horizontally */
+  .toolbar-item-wrapper {
+    flex-direction: row;
+  }
+
+  /* Divider becomes vertical */
+  .toolbar-divider {
+    width: 1px;
+    height: 32px;
+    margin: 0 2px;
+  }
+
+  /* Hide help button on mobile */
+  .toolbar-footer { display: none; }
+
+  /* ── Mobile Element Props Bar ───────────────────────────── */
+  /* (replaces toolbar icons when element is selected) */
+  .mobile-props-bar {
+    width: 100%;
+    height: 64px;
+    flex-direction: row;
+    align-items: center;
+    padding: 0 8px;
+    border-top: 1px solid var(--ed-border);
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0;
+    background: #fff;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+    display: flex;
+  }
+
+  .mobile-props-bar::-webkit-scrollbar { display: none; }
+
+  .mobile-prop-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    width: 68px;
+    height: 56px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #475569;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 6px 4px 4px;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .mobile-prop-btn.active {
+    color: #f43f5e;
+    background: #fff1f2;
+  }
+
+  .mobile-prop-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .mobile-close-btn {
+    margin-left: auto;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #475569;
+  }
+
+  /* ── Sub-panels become bottom sheets ────────────────────── */
+  .lt-image-panel,
+  .lt-effects-panel {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 64px !important;
+    top: auto !important;
+    width: 100% !important;
+    height: 55vh !important;
+    border-radius: 20px 20px 0 0;
+    border-right: none;
+    border-top: 1px solid var(--ed-border);
+    box-shadow: 0 -8px 32px rgba(0,0,0,0.18);
+    z-index: 600;
+    animation: lt-sheet-slide-up 0.25s cubic-bezier(0.22,1,0.36,1);
+  }
+
+  /* panels that render absolutely next to toolbar */
+  .lt-shape-popup {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 64px !important;
+    top: auto !important;
+    width: 100% !important;
+    max-height: 55vh;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -8px 32px rgba(0,0,0,0.18);
+    z-index: 600;
+    overflow-y: auto;
+    animation: lt-sheet-slide-up 0.25s cubic-bezier(0.22,1,0.36,1);
+  }
+
+  @keyframes lt-sheet-slide-up {
+    from { transform: translateY(100%); opacity: 0.6; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  /* Panel collapse button hidden on mobile */
+  .panel-collapse-btn { display: none; }
+
+  /* Hide standard toolbar when props bar replaces it */
+  .editor-toolbar.mobile-hidden {
+    display: none;
+  }
+}
+
+/* On desktop, never show mobile props bar */
+@media (min-width: 769px) {
+  .mobile-props-bar { display: none !important; }
 }
