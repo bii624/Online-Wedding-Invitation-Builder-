@@ -23,6 +23,7 @@ import {
   Download
 } from 'lucide-react';
 import { DashboardLayout } from '../../../features/dashboard/pages/DashboardLayout';
+import { RevolvingHeartsIcon } from '../../../components/icons/emojione-revolving-hearts';
 
 interface CardStats {
   viewCount: number;
@@ -249,7 +250,26 @@ export default function CardDetailPage() {
   };
 
   if (loading || !card || !stats) {
-    return <div className="p-8 text-center text-slate-500">Đang tải...</div>;
+    return (
+      <DashboardLayout>
+        <div className="w-full h-full min-h-[calc(100vh-8rem)] bg-white rounded-[2rem] flex flex-col items-center justify-center border border-rose-100/60 shadow-[0_4px_20px_rgba(244,63,94,0.03)] animate-in fade-in duration-500">
+          <div className="relative flex flex-col items-center space-y-4">
+            <div className="absolute -top-3 w-16 h-16 border-2 border-rose-100 border-t-rose-400 rounded-full slow-spin" />
+            <div className="w-10 h-10 flex items-center justify-center smooth-pulse">
+              <RevolvingHeartsIcon size={40} color="#f43f5e" />
+            </div>
+            <div className="space-y-1 text-center pt-2.5 z-10">
+              <span className="text-2xl font-poppins font-black tracking-tighter text-zinc-950 block">
+                Dear<span className="text-rose-500">Love</span>
+              </span>
+              <p className="text-sm font-semibold text-zinc-550 tracking-wide animate-pulse">
+                Đang tải chi tiết thiệp...
+              </p>
+            </div>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
   }
 
   const fullLink = `${window.location.origin}/view/${card.slug}`;
@@ -339,7 +359,7 @@ export default function CardDetailPage() {
         <div className="hidden md:block w-px bg-slate-100 shrink-0" />
 
         {/* CỘT PHẢI (70%) */}
-        <div className="w-full md:w-[70%] flex flex-col gap-4">
+        <div className="w-full md:w-[70%] flex flex-col gap-4 md:gap-5">
 
           {/* Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 shrink-0">
@@ -456,7 +476,7 @@ export default function CardDetailPage() {
           <div className="flex-1 flex flex-col justify-center">
             <div className="flex justify-between items-center mb-3">
               <h2 className="text-lg font-bold text-slate-800">Thống kê tổng quan</h2>
-              <Link to={`/dashboard/cards/${id}/wishes`} className="text-sm font-semibold text-[rgb(235,76,76)] hover:text-[rgb(255,112,112)] hover:underline">Chi tiết</Link>
+              <Link to={`/dashboard/wishes?cardId=${id}`} className="text-sm font-medium text-rose-500 hover:text-rose-600 hover:underline">Chi tiết</Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
  
@@ -508,7 +528,7 @@ export default function CardDetailPage() {
           <div className="flex-1 flex flex-col justify-center">
             <div className="flex justify-between items-center mb-3">
               <h2 className="text-lg font-bold text-slate-800">Phản hồi tham dự (RSVP)</h2>
-              <Link to={`/dashboard/cards/${id}/wishes?tab=rsvp`} className="text-sm font-semibold text-[rgb(235,76,76)] hover:text-[rgb(255,112,112)] hover:underline">Chi tiết</Link>
+              <Link to={`/dashboard/rsvp?cardId=${id}`} className="text-sm font-medium text-rose-500 hover:text-rose-600 hover:underline">Chi tiết</Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
  

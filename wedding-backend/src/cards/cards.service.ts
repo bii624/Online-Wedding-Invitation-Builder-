@@ -19,21 +19,21 @@ import { BatchUpdateBlocksDto } from './dto/batch-update-blocks.dto';
 import { ReorderBlockDto, ReorderAction } from './dto/reorder-block.dto';
 import { SaveCanvasDto } from './dto/save-canvas.dto';
 
-// ── Tiện ích sinh slug ───────────────────────────────────────────────────────
+// ΓöÇΓöÇ Tiß╗çn ├¡ch sinh slug ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function toSlugBase(text: string): string {
-  // Chuyển tiếng Việt và ký tự đặc biệt thành slug Latin cơ bản
+  // Chuyß╗ân tiß║┐ng Viß╗çt v├á k├╜ tß╗▒ ─æß║╖c biß╗çt th├ánh slug Latin c╞í bß║ún
   return text
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // bỏ dấu
-    .replace(/đ/g, 'd')
-    .replace(/[^a-z0-9\s-]/g, '') // giữ lại chữ, số, dấu cách, gạch ngang
+    .replace(/[\u0300-\u036f]/g, '') // bß╗Å dß║Ñu
+    .replace(/─æ/g, 'd')
+    .replace(/[^a-z0-9\s-]/g, '') // giß╗» lß║íi chß╗», sß╗æ, dß║Ñu c├ích, gß║ích ngang
     .trim()
-    .replace(/[\s-]+/g, '-'); // khoảng trắng -> gạch ngang
+    .replace(/[\s-]+/g, '-'); // khoß║úng trß║»ng -> gß║ích ngang
 }
 
 function randomSuffix(): string {
-  return Math.random().toString(36).substring(2, 7); // 5 ký tự ngẫu nhiên
+  return Math.random().toString(36).substring(2, 7); // 5 k├╜ tß╗▒ ngß║½u nhi├¬n
 }
 
 @Injectable()
@@ -48,8 +48,8 @@ export class CardsService {
   // ============================================================
 
   /**
-   * Sinh slug duy nhất từ title, tự thêm suffix nếu trùng.
-   * Thử tối đa 5 lần trước khi báo lỗi (trường hợp cực hiếm).
+   * Sinh slug duy nhß║Ñt tß╗½ title, tß╗▒ th├¬m suffix nß║┐u tr├╣ng.
+   * Thß╗¡ tß╗æi ─æa 5 lß║ºn tr╞░ß╗¢c khi b├ío lß╗ùi (tr╞░ß╗¥ng hß╗úp cß╗▒c hiß║┐m).
    */
   private async generateUniqueSlug(title: string): Promise<string> {
     const base = toSlugBase(title) || 'thep';
@@ -58,25 +58,25 @@ export class CardsService {
       const existing = await this.prisma.card.findUnique({ where: { slug } });
       if (!existing) return slug;
     }
-    // Dùng timestamp làm fallback an toàn tuyệt đối
+    // D├╣ng timestamp l├ám fallback an to├án tuyß╗çt ─æß╗æi
     return `${base}-${Date.now()}`;
   }
 
   /**
-   * Kiểm tra card thuộc user đang request.
-   * Ném ForbiddenException nếu không phải chủ sở hữu.
+   * Kiß╗âm tra card thuß╗Öc user ─æang request.
+   * N├⌐m ForbiddenException nß║┐u kh├┤ng phß║úi chß╗º sß╗ƒ hß╗»u.
    */
   private async verifyCardOwner(cardId: string, userId: string) {
     const card = await this.prisma.card.findUnique({ where: { id: cardId } });
-    if (!card) throw new NotFoundException('Không tìm thấy thiệp');
+    if (!card) throw new NotFoundException('Kh├┤ng t├¼m thß║Ñy thiß╗çp');
     if (card.userId !== userId)
-      throw new ForbiddenException('Bạn không có quyền thao tác thiệp này');
+      throw new ForbiddenException('Bß║ín kh├┤ng c├│ quyß╗ün thao t├íc thiß╗çp n├áy');
     return card;
   }
 
   /**
-   * Kiểm tra block thuộc đúng cardId VÀ cardId thuộc đúng userId.
-   * 2 lớp kiểm tra tránh IDOR (user A đoán blockId của user B).
+   * Kiß╗âm tra block thuß╗Öc ─æ├║ng cardId V├Ç cardId thuß╗Öc ─æ├║ng userId.
+   * 2 lß╗¢p kiß╗âm tra tr├ính IDOR (user A ─æo├ín blockId cß╗ºa user B).
    */
   private async verifyBlockOwner(
     blockId: string,
@@ -86,10 +86,10 @@ export class CardsService {
     const block = await this.prisma.cardBlock.findUnique({
       where: { id: blockId },
     });
-    if (!block) throw new NotFoundException('Không tìm thấy block');
+    if (!block) throw new NotFoundException('Kh├┤ng t├¼m thß║Ñy block');
     if (block.cardId !== cardId)
-      throw new ForbiddenException('Block không thuộc thiệp này');
-    await this.verifyCardOwner(cardId, userId); // xác thực thêm lớp 2
+      throw new ForbiddenException('Block kh├┤ng thuß╗Öc thiß╗çp n├áy');
+    await this.verifyCardOwner(cardId, userId); // x├íc thß╗▒c th├¬m lß╗¢p 2
     return block;
   }
 
@@ -98,7 +98,7 @@ export class CardsService {
   // ============================================================
 
   /**
-   * Kiểm tra slug hợp lệ và chưa tồn tại
+   * Kiß╗âm tra slug hß╗úp lß╗ç v├á ch╞░a tß╗ôn tß║íi
    */
   async checkSlug(slug: string, excludeCardId?: string) {
     if (!slug || typeof slug !== 'string') return { isAvailable: false };
@@ -111,7 +111,7 @@ export class CardsService {
   }
 
   /**
-   * Lấy thống kê của một thiệp (Chỉ chủ thiệp)
+   * Lß║Ñy thß╗æng k├¬ cß╗ºa mß╗Öt thiß╗çp (Chß╗ë chß╗º thiß╗çp)
    */
   async getCardStats(cardId: string, userId: string) {
     const card = await this.verifyCardOwner(cardId, userId);
@@ -133,7 +133,7 @@ export class CardsService {
           attending: 'yes',
           OR: [
             { guest: { side: 'groom' } },
-            { note: { startsWith: 'Khách nhà trai' } }
+            { note: { startsWith: 'Kh├ích nh├á trai' } }
           ]
         }
       }),
@@ -143,7 +143,7 @@ export class CardsService {
           attending: 'yes',
           OR: [
             { guest: { side: 'bride' } },
-            { note: { startsWith: 'Khách nhà gái' } }
+            { note: { startsWith: 'Kh├ích nh├á g├íi' } }
           ]
         }
       }),
@@ -168,26 +168,26 @@ export class CardsService {
   // ============================================================
 
   /**
-   * Tạo thiệp mới.
-   * Nếu có templateId → clone toàn bộ TemplateBlock vào CardBlock trong 1 transaction.
-   * Nếu không → tạo thiệp trắng.
+   * Tß║ío thiß╗çp mß╗¢i.
+   * Nß║┐u c├│ templateId ΓåÆ clone to├án bß╗Ö TemplateBlock v├áo CardBlock trong 1 transaction.
+   * Nß║┐u kh├┤ng ΓåÆ tß║ío thiß╗çp trß║»ng.
    */
   async createCard(dto: CreateCardDto, userId: string) {
     const slug = await this.generateUniqueSlug(dto.title);
 
     if (dto.templateId) {
-      // ── Tạo từ template — wrapped trong transaction ──────────
+      // ΓöÇΓöÇ Tß║ío tß╗½ template ΓÇö wrapped trong transaction ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
       return this.prisma.$transaction(async (tx) => {
-        // Lấy template và toàn bộ block của nó
+        // Lß║Ñy template v├á to├án bß╗Ö block cß╗ºa n├│
         const template = await tx.template.findUnique({
           where: { id: dto.templateId },
           include: { blocks: { orderBy: { zIndex: 'asc' } } },
         });
-        if (!template) throw new NotFoundException('Không tìm thấy template');
+        if (!template) throw new NotFoundException('Kh├┤ng t├¼m thß║Ñy template');
         if (template.status !== 'published')
-          throw new BadRequestException('Template chưa được phát hành');
+          throw new BadRequestException('Template ch╞░a ─æ╞░ß╗úc ph├ít h├ánh');
 
-        // Tạo Card kế thừa background + canvasWidth từ template
+        // Tß║ío Card kß║┐ thß╗½a background + canvasWidth tß╗½ template
         const card = await tx.card.create({
           data: {
             userId,
@@ -201,7 +201,7 @@ export class CardsService {
           },
         });
 
-        // Clone từng TemplateBlock → CardBlock
+        // Clone tß╗½ng TemplateBlock ΓåÆ CardBlock
         if (template.blocks.length > 0) {
           await tx.cardBlock.createMany({
             data: template.blocks.map((tb) => ({
@@ -222,7 +222,7 @@ export class CardsService {
           });
         }
 
-        // Tăng useCount + lấy card kèm blocks song song
+        // T─âng useCount + lß║Ñy card k├¿m blocks song song
         const [, cardWithBlocks] = await Promise.all([
           tx.template.update({
             where: { id: dto.templateId },
@@ -238,7 +238,7 @@ export class CardsService {
       });
     }
 
-    // ── Tạo thiệp trắng (không có template) ──────────────────
+    // ΓöÇΓöÇ Tß║ío thiß╗çp trß║»ng (kh├┤ng c├│ template) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
     return this.prisma.card.create({
       data: {
         userId,
@@ -254,7 +254,7 @@ export class CardsService {
   }
 
   /**
-   * Lấy danh sách thiệp của user với phân trang và bộ lọc.
+   * Lß║Ñy danh s├ích thiß╗çp cß╗ºa user vß╗¢i ph├ón trang v├á bß╗Ö lß╗ìc.
    */
   async getUserCards(userId: string, query: QueryCardDto) {
     const {
@@ -304,7 +304,7 @@ export class CardsService {
               thumbnailUrl: true,
             },
           },
-          _count: { select: { blocks: true } }, // đếm số block
+          _count: { select: { blocks: true } }, // ─æß║┐m sß╗æ block
         },
       }),
     ]);
@@ -321,70 +321,70 @@ export class CardsService {
   }
 
   /**
-   * Lấy chi tiết thiệp + toàn bộ blocks (chỉ chủ sở hữu).
+   * Lß║Ñy chi tiß║┐t thiß╗çp + to├án bß╗Ö blocks (chß╗ë chß╗º sß╗ƒ hß╗»u).
    */
   async getCardById(cardId: string, userId: string) {
     const card = await this.prisma.card.findUnique({
       where: { id: cardId },
       include: { blocks: { orderBy: { zIndex: 'asc' } } },
     });
-    if (!card) throw new NotFoundException('Không tìm thấy thiệp');
+    if (!card) throw new NotFoundException('Kh├┤ng t├¼m thß║Ñy thiß╗çp');
     if (card.userId !== userId)
-      throw new ForbiddenException('Bạn không có quyền xem thiệp này');
+      throw new ForbiddenException('Bß║ín kh├┤ng c├│ quyß╗ün xem thiß╗çp n├áy');
     return card;
   }
 
   /**
-   * Xem thiệp công khai qua slug — không cần đăng nhập.
-   * Kiểm tra: published + isPublic + chưa hết hạn + mật khẩu (nếu có).
+   * Xem thiß╗çp c├┤ng khai qua slug ΓÇö kh├┤ng cß║ºn ─æ─âng nhß║¡p.
+   * Kiß╗âm tra: published + isPublic + ch╞░a hß║┐t hß║ín + mß║¡t khß║⌐u (nß║┐u c├│).
    */
   async getPublicCardBySlug(slug: string, password?: string) {
     const card = await this.prisma.card.findUnique({
       where: { slug },
       include: { blocks: { orderBy: { zIndex: 'asc' } } },
     });
-    if (!card) throw new NotFoundException('Không tìm thấy thiệp');
+    if (!card) throw new NotFoundException('Kh├┤ng t├¼m thß║Ñy thiß╗çp');
     if (card.status !== CardStatus.published)
-      throw new NotFoundException('Thiệp chưa được phát hành');
+      throw new NotFoundException('Thiß╗çp ch╞░a ─æ╞░ß╗úc ph├ít h├ánh');
     if (!card.isPublic)
-      throw new ForbiddenException('Thiệp này không công khai');
+      throw new ForbiddenException('Thiß╗çp n├áy kh├┤ng c├┤ng khai');
     if (card.expiresAt && new Date() > card.expiresAt)
-      throw new ForbiddenException('Thiệp đã hết hạn');
+      throw new ForbiddenException('Thiß╗çp ─æ├ú hß║┐t hß║ín');
 
-    // Kiểm tra mật khẩu nếu thiệp có đặt mật khẩu
+    // Kiß╗âm tra mß║¡t khß║⌐u nß║┐u thiß╗çp c├│ ─æß║╖t mß║¡t khß║⌐u
     if (card.accessPassword) {
-      if (!password) throw new ForbiddenException('Thiệp này yêu cầu mật khẩu');
+      if (!password) throw new ForbiddenException('Thiß╗çp n├áy y├¬u cß║ºu mß║¡t khß║⌐u');
       const isMatch = await bcrypt.compare(password, card.accessPassword);
-      if (!isMatch) throw new ForbiddenException('Mật khẩu không đúng');
+      if (!isMatch) throw new ForbiddenException('Mß║¡t khß║⌐u kh├┤ng ─æ├║ng');
     }
 
-    // Ghi lượt xem bất đồng bộ (không block response)
+    // Ghi l╞░ß╗út xem bß║Ñt ─æß╗ông bß╗Ö (kh├┤ng block response)
     this.prisma.card
       .update({ where: { id: card.id }, data: { viewCount: { increment: 1 } } })
       .catch(() => { });
 
-    // Trả về card nhưng ẩn accessPassword
+    // Trß║ú vß╗ü card nh╞░ng ß║⌐n accessPassword
     const { accessPassword: _, ...safeCard } = card;
     return safeCard;
   }
 
   /**
-   * Cập nhật thông tin thiệp.
-   * Tự set publishedAt nếu chuyển status sang published lần đầu.
+   * Cß║¡p nhß║¡t th├┤ng tin thiß╗çp.
+   * Tß╗▒ set publishedAt nß║┐u chuyß╗ân status sang published lß║ºn ─æß║ºu.
    */
   async updateCard(cardId: string, userId: string, dto: UpdateCardDto) {
     const card = await this.verifyCardOwner(cardId, userId);
 
     let hashedPassword: string | undefined;
     if (dto.accessPassword !== undefined) {
-      // Nếu truyền chuỗi rỗng → xoá mật khẩu
+      // Nß║┐u truyß╗ün chuß╗ùi rß╗ùng ΓåÆ xo├í mß║¡t khß║⌐u
       hashedPassword =
         dto.accessPassword === ''
           ? undefined
           : await bcrypt.hash(dto.accessPassword, 10);
     }
 
-    // Tự set publishedAt khi publish lần đầu
+    // Tß╗▒ set publishedAt khi publish lß║ºn ─æß║ºu
     const publishedAt =
       dto.status === CardStatus.published && !card.publishedAt
         ? new Date()
@@ -417,20 +417,20 @@ export class CardsService {
   }
 
   /**
-   * Xóa cứng thiệp (cascade xóa luôn CardBlock theo schema).
-   * Đề xuất cả 2 cách:
-   *   - Soft delete: đổi status → archived (an toàn, khôi phục được)
-   *   - Hard delete: xóa khỏi DB luôn (dùng hàm này)
-   * FE gọi hàm nào tùy theo nhu cầu.
+   * X├│a cß╗⌐ng thiß╗çp (cascade x├│a lu├┤n CardBlock theo schema).
+   * ─Éß╗ü xuß║Ñt cß║ú 2 c├ích:
+   *   - Soft delete: ─æß╗òi status ΓåÆ archived (an to├án, kh├┤i phß╗Ñc ─æ╞░ß╗úc)
+   *   - Hard delete: x├│a khß╗Åi DB lu├┤n (d├╣ng h├ám n├áy)
+   * FE gß╗ìi h├ám n├áo t├╣y theo nhu cß║ºu.
    */
   async deleteCard(cardId: string, userId: string) {
     await this.verifyCardOwner(cardId, userId);
     await this.prisma.card.delete({ where: { id: cardId } });
-    return { message: 'Đã xóa thiệp thành công' };
+    return { message: '─É├ú x├│a thiß╗çp th├ánh c├┤ng' };
   }
 
   /**
-   * Soft delete: chuyển thiệp sang archived thay vì xóa cứng.
+   * Soft delete: chuyß╗ân thiß╗çp sang archived thay v├¼ x├│a cß╗⌐ng.
    */
   async archiveCard(cardId: string, userId: string) {
     await this.verifyCardOwner(cardId, userId);
@@ -445,13 +445,13 @@ export class CardsService {
   // ============================================================
 
   /**
-   * Tạo 1 block mới trên canvas.
+   * Tß║ío 1 block mß╗¢i tr├¬n canvas.
    */
   async createBlock(cardId: string, userId: string, dto: CreateCardBlockDto) {
-    // Xác thực card thuộc user
+    // X├íc thß╗▒c card thuß╗Öc user
     await this.verifyCardOwner(cardId, userId);
 
-    // Tính zIndex tự động nếu không truyền: đặt lên trên cùng hiện tại
+    // T├¡nh zIndex tß╗▒ ─æß╗Öng nß║┐u kh├┤ng truyß╗ün: ─æß║╖t l├¬n tr├¬n c├╣ng hiß╗çn tß║íi
     let zIndex = dto.zIndex;
     if (zIndex === undefined || zIndex === 0) {
       const maxBlock = await this.prisma.cardBlock.findFirst({
@@ -479,7 +479,7 @@ export class CardsService {
   }
 
   /**
-   * Cập nhật 1 block (drag, resize, xoay, đổi nội dung...).
+   * Cß║¡p nhß║¡t 1 block (drag, resize, xoay, ─æß╗òi nß╗Öi dung...).
    */
   async updateBlock(
     cardId: string,
@@ -511,28 +511,28 @@ export class CardsService {
   }
 
   /**
-   * Cập nhật nhiều block cùng lúc trong 1 transaction.
-   * Dùng cho multi-select drag, paste nhóm, undo-redo hàng loạt.
+   * Cß║¡p nhß║¡t nhiß╗üu block c├╣ng l├║c trong 1 transaction.
+   * D├╣ng cho multi-select drag, paste nh├│m, undo-redo h├áng loß║ít.
    */
   async batchUpdateBlocks(
     cardId: string,
     userId: string,
     dto: BatchUpdateBlocksDto,
   ) {
-    // Xác thực card thuộc user
+    // X├íc thß╗▒c card thuß╗Öc user
     await this.verifyCardOwner(cardId, userId);
 
-    // Xác thực tất cả block đều thuộc card này (tránh IDOR)
+    // X├íc thß╗▒c tß║Ñt cß║ú block ─æß╗üu thuß╗Öc card n├áy (tr├ính IDOR)
     const blockIds = dto.blocks.map((b) => b.id);
     const existingBlocks = await this.prisma.cardBlock.findMany({
       where: { id: { in: blockIds }, cardId },
       select: { id: true },
     });
     if (existingBlocks.length !== blockIds.length) {
-      throw new ForbiddenException('Một số block không thuộc thiệp này');
+      throw new ForbiddenException('Mß╗Öt sß╗æ block kh├┤ng thuß╗Öc thiß╗çp n├áy');
     }
 
-    // Chạy toàn bộ update trong 1 transaction
+    // Chß║íy to├án bß╗Ö update trong 1 transaction
     return this.prisma.$transaction(
       dto.blocks.map((item) =>
         this.prisma.cardBlock.update({
@@ -559,16 +559,16 @@ export class CardsService {
   }
 
   /**
-   * Xóa 1 block khỏi canvas.
+   * X├│a 1 block khß╗Åi canvas.
    */
   async deleteBlock(cardId: string, blockId: string, userId: string) {
     await this.verifyBlockOwner(blockId, cardId, userId);
     await this.prisma.cardBlock.delete({ where: { id: blockId } });
-    return { message: 'Đã xóa block thành công' };
+    return { message: '─É├ú x├│a block th├ánh c├┤ng' };
   }
 
   /**
-   * Thay đổi thứ tự lớp (zIndex) của block.
+   * Thay ─æß╗òi thß╗⌐ tß╗▒ lß╗¢p (zIndex) cß╗ºa block.
    * action: front/back/forward/backward
    */
   async reorderBlock(
@@ -579,7 +579,7 @@ export class CardsService {
   ) {
     const block = await this.verifyBlockOwner(blockId, cardId, userId);
 
-    // Lấy toàn bộ blocks của card, sắp xếp theo zIndex
+    // Lß║Ñy to├án bß╗Ö blocks cß╗ºa card, sß║»p xß║┐p theo zIndex
     const allBlocks = await this.prisma.cardBlock.findMany({
       where: { cardId },
       orderBy: { zIndex: 'asc' },
@@ -593,33 +593,33 @@ export class CardsService {
 
     switch (dto.action) {
       case ReorderAction.FRONT:
-        // Đặt lên trên cùng: zIndex = max + 1
+        // ─Éß║╖t l├¬n tr├¬n c├╣ng: zIndex = max + 1
         newZIndex = sorted[sorted.length - 1].zIndex + 1;
         break;
       case ReorderAction.BACK:
-        // Đặt xuống dưới cùng: zIndex = min - 1 (tối thiểu 0)
+        // ─Éß║╖t xuß╗æng d╞░ß╗¢i c├╣ng: zIndex = min - 1 (tß╗æi thiß╗âu 0)
         newZIndex = Math.max(0, sorted[0].zIndex - 1);
         break;
       case ReorderAction.FORWARD:
-        // Lên 1 lớp: hoán đổi zIndex với block phía trên
-        if (idx === sorted.length - 1) return block; // đã trên cùng
+        // L├¬n 1 lß╗¢p: ho├ín ─æß╗òi zIndex vß╗¢i block ph├¡a tr├¬n
+        if (idx === sorted.length - 1) return block; // ─æ├ú tr├¬n c├╣ng
         newZIndex = sorted[idx + 1].zIndex;
         await this.prisma.cardBlock.update({
           where: { id: sorted[idx + 1].id },
-          data: { zIndex: sorted[idx].zIndex }, // block phía trên xuống
+          data: { zIndex: sorted[idx].zIndex }, // block ph├¡a tr├¬n xuß╗æng
         });
         break;
       case ReorderAction.BACKWARD:
-        // Xuống 1 lớp: hoán đổi zIndex với block phía dưới
-        if (idx === 0) return block; // đã dưới cùng
+        // Xuß╗æng 1 lß╗¢p: ho├ín ─æß╗òi zIndex vß╗¢i block ph├¡a d╞░ß╗¢i
+        if (idx === 0) return block; // ─æ├ú d╞░ß╗¢i c├╣ng
         newZIndex = sorted[idx - 1].zIndex;
         await this.prisma.cardBlock.update({
           where: { id: sorted[idx - 1].id },
-          data: { zIndex: sorted[idx].zIndex }, // block phía dưới lên
+          data: { zIndex: sorted[idx].zIndex }, // block ph├¡a d╞░ß╗¢i l├¬n
         });
         break;
       default:
-        throw new BadRequestException('Action không hợp lệ');
+        throw new BadRequestException('Action kh├┤ng hß╗úp lß╗ç');
     }
 
     return this.prisma.cardBlock.update({
@@ -633,13 +633,13 @@ export class CardsService {
   // ============================================================
 
   /**
-   * Endpoint lưu toàn bộ canvas mỗi 30s.
-   * Pattern: FE gửi toàn bộ danh sách blocks hiện tại.
-   * Backend sync theo cách:
-   *   - Block có id hợp lệ UUID → UPDATE
-   *   - Block có id tạm (el-xxx) hoặc không có id → CREATE
-   *   - Block có trong DB nhưng không có trong payload → DELETE (đã bị FE xóa)
-   * Toàn bộ nằm trong 1 transaction để đảm bảo atomic.
+   * Endpoint l╞░u to├án bß╗Ö canvas mß╗ùi 30s.
+   * Pattern: FE gß╗¡i to├án bß╗Ö danh s├ích blocks hiß╗çn tß║íi.
+   * Backend sync theo c├ích:
+   *   - Block c├│ id hß╗úp lß╗ç UUID ΓåÆ UPDATE
+   *   - Block c├│ id tß║ím (el-xxx) hoß║╖c kh├┤ng c├│ id ΓåÆ CREATE
+   *   - Block c├│ trong DB nh╞░ng kh├┤ng c├│ trong payload ΓåÆ DELETE (─æ├ú bß╗ï FE x├│a)
+   * To├án bß╗Ö nß║▒m trong 1 transaction ─æß╗â ─æß║úm bß║úo atomic.
    */
   async saveCanvas(cardId: string, userId: string, dto: SaveCanvasDto) {
     await this.verifyCardOwner(cardId, userId);
@@ -649,14 +649,14 @@ export class CardsService {
 
     return this.prisma.$transaction(
       async (tx) => {
-        // Query 1: lấy existing IDs
+        // Query 1: lß║Ñy existing IDs
         const existingBlocks = await tx.cardBlock.findMany({
           where: { cardId },
           select: { id: true },
         });
         const existingIds = new Set(existingBlocks.map((b) => b.id));
 
-        // Phân loại
+        // Ph├ón loß║íi
         const toUpdate: typeof dto.blocks = [];
         const toCreate: typeof dto.blocks = [];
         const payloadIds = new Set<string>();
@@ -673,9 +673,9 @@ export class CardsService {
 
         const toDelete = [...existingIds].filter((id) => !payloadIds.has(id));
 
-        // Chạy song song: UPDATE bulk + CREATE bulk + DELETE + UPDATE card
+        // Chß║íy song song: UPDATE bulk + CREATE bulk + DELETE + UPDATE card
         await Promise.all([
-          // Query 2: UPDATE tất cả blocks bằng 1 raw SQL CASE WHEN
+          // Query 2: UPDATE tß║Ñt cß║ú blocks bß║▒ng 1 raw SQL CASE WHEN
           toUpdate.length > 0
             ? tx.$executeRaw`
             UPDATE "card_blocks" SET
@@ -696,7 +696,7 @@ export class CardsService {
           `
             : Promise.resolve(),
 
-          // Query 3: CREATE tất cả blocks mới bằng 1 createMany
+          // Query 3: CREATE tß║Ñt cß║ú blocks mß╗¢i bß║▒ng 1 createMany
           toCreate.length > 0
             ? tx.cardBlock.createMany({
               data: toCreate.map((block) => ({
@@ -719,7 +719,7 @@ export class CardsService {
             })
             : Promise.resolve(),
 
-          // Query 4: DELETE blocks đã xóa ở FE
+          // Query 4: DELETE blocks ─æ├ú x├│a ß╗ƒ FE
           toDelete.length > 0
             ? tx.cardBlock.deleteMany({
               where: { id: { in: toDelete }, cardId },
@@ -740,14 +740,14 @@ export class CardsService {
           }),
         ]);
 
-        // Query 6: trả về kết quả mới nhất
+        // Query 6: trß║ú vß╗ü kß║┐t quß║ú mß╗¢i nhß║Ñt
         return tx.card.findUnique({
           where: { id: cardId },
           include: { blocks: { orderBy: { zIndex: 'asc' } } },
         });
       },
       {
-        timeout: 10000, // tăng nhẹ cho an toàn, thực tế 6 queries xong rất nhanh
+        timeout: 10000, // t─âng nhß║╣ cho an to├án, thß╗▒c tß║┐ 6 queries xong rß║Ñt nhanh
         maxWait: 5000,
       },
     );
@@ -758,7 +758,7 @@ export class CardsService {
   // ============================================================
 
   /**
-   * Upload thumbnail cho thiệp
+   * Upload thumbnail cho thiß╗çp
    */
   async uploadCardThumbnail(
     cardId: string,
@@ -771,13 +771,90 @@ export class CardsService {
       await this.assetsService.deleteAssetByUrlSafe(card.thumbnailUrl, userId);
     }
 
-    // Upload lên Cloudinary (không lưu vào bảng assets của user)
+    // Upload l├¬n Cloudinary (kh├┤ng l╞░u v├áo bß║úng assets cß╗ºa user)
     const asset = await this.assetsService.uploadSystemImage(file, userId);
 
-    // Cập nhật thẻ
+    // Cập nhật URL vào template
     return this.prisma.card.update({
       where: { id: cardId },
       data: { thumbnailUrl: asset.url },
     });
+  }
+
+  // ==========================================
+  // ADMIN METHODS
+  // ==========================================
+
+  async getAdminCards(query: any) {
+    const { search, status, page = 1, limit = 20 } = query;
+    const skip = (page - 1) * limit;
+
+    const where: any = {
+      user: { role: { not: 'admin' } }
+    };
+    if (search) {
+      where.AND = [
+        {
+          OR: [
+            { title: { contains: search, mode: 'insensitive' } },
+            { user: { email: { contains: search, mode: 'insensitive' } } },
+            { user: { fullName: { contains: search, mode: 'insensitive' } } }
+          ]
+        }
+      ];
+    }
+    if (status && status !== 'all') {
+      where.status = status;
+    }
+
+    const [items, total] = await this.prisma.$transaction([
+      this.prisma.card.findMany({
+        where,
+        skip: Number(skip),
+        take: Number(limit),
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: { select: { email: true, fullName: true } },
+        },
+      }),
+      this.prisma.card.count({ where }),
+    ]);
+
+    return {
+      data: items.map((c: any) => ({
+        id: c.id,
+        title: c.title,
+        slug: c.slug,
+        status: c.status,
+        isPublic: c.isPublic,
+        viewCount: c.viewCount,
+        createdAt: c.createdAt,
+        user: c.user,
+      })),
+      pagination: {
+        total,
+        page: Number(page),
+        limit: Number(limit),
+        totalPages: Math.ceil(total / Number(limit)),
+      },
+    };
+  }
+
+  async updateCardVisibility(id: string, isPublic: boolean) {
+    const card = await this.prisma.card.findUnique({ where: { id } });
+    if (!card) throw new NotFoundException('Card not found');
+
+    return this.prisma.card.update({
+      where: { id },
+      data: { isPublic: (isPublic === true || String(isPublic) === 'true') },
+    });
+  }
+
+  async deleteAdminCard(id: string) {
+    const card = await this.prisma.card.findUnique({ where: { id } });
+    if (!card) throw new NotFoundException('Card not found');
+
+    await this.prisma.card.delete({ where: { id } });
+    return { message: 'Xóa thiệp thành công' };
   }
 }

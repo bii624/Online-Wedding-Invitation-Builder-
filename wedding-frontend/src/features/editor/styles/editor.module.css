@@ -84,6 +84,20 @@
   position: relative;
 }
 
+/* ── Mobile Responsive (≤768px) ──────────────────────────── */
+@media (max-width: 768px) {
+  .editor-root {
+    /* bottom toolbar height is 64px */
+    padding-bottom: 0;
+  }
+
+  .editor-body {
+    flex-direction: column;
+    /* canvas takes all space above toolbar */
+    padding-bottom: 64px;
+  }
+}
+
 /* ── Scrollbar Styles ────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;

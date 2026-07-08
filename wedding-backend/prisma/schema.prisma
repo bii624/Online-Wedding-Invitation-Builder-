@@ -375,13 +375,13 @@ model Guest {
   @@map("guests")
 }
 
-/// Phản hồi tham dự (RSVP) — gắn với toàn bộ thiệp, không còn theo từng sự kiện.
 model RsvpResponse {
   id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   cardId       String     @map("card_id") @db.Uuid
   guestId      String?    @map("guest_id") @db.Uuid // NULL nếu khách điền trực tiếp không qua link riêng
   guestName    String     @map("guest_name") // tên tự điền, độc lập với Guest.name
   phone        String?
+  side         GuestSide? @map("side") // nhà trai, nhà gái, cả hai (cho trường hợp public link)
   attending    RsvpStatus
   numAttendees Int        @default(1) @map("num_attendees")
   note         String?
@@ -403,6 +403,7 @@ model Wish {
   displayName String   @map("display_name")
   avatarUrl   String?  @map("avatar_url")
   message     String
+  side        String?  @default("none") // groom, bride, none
   isApproved  Boolean  @default(true) @map("is_approved") // chủ thiệp duyệt trước khi public
   isHidden    Boolean  @default(false) @map("is_hidden") // ẩn nhưng không xoá
   createdAt   DateTime @default(now()) @map("created_at")

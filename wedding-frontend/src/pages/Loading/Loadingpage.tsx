@@ -41,25 +41,13 @@ export default function LoadingPage({ message = "Đang tải dữ liệu ..." }:
   return (
     <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center p-6 select-none font-poppins">
       
-      <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes heartbeat {
-          0%   { transform: scale(1); }
-          14%  { transform: scale(1.22); }
-          28%  { transform: scale(1); }
-          42%  { transform: scale(1.22); }
-          70%  { transform: scale(1); }
-          100% { transform: scale(1); }
-        }
-        .heartbeat-animation {
-          animation: heartbeat 1.2s infinite ease-in-out;
-        }
-      `}} />
+
 
       <div className="relative flex flex-col items-center space-y-4">
         
-        <div className="absolute -top-3 w-16 h-16 border-2 border-rose-100 border-t-rose-500 rounded-full" />
+        <div className="absolute -top-3 w-16 h-16 border-2 border-rose-100 border-t-rose-400 rounded-full slow-spin" />
         
-        <div className="w-10 h-10 flex items-center justify-center heartbeat-animation">
+        <div className="w-10 h-10 flex items-center justify-center smooth-pulse">
           <RevolvingHeartsIcon size={40} color="#f43f5e" />
         </div>
         

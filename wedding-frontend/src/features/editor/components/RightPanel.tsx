@@ -105,7 +105,7 @@ function GlobalSettingsPanel() {
 }
 
 // ── ArrangeSection Component ───────────────────────────────────────
-function ArrangeSection({ element }: { element: CanvasElement }) {
+export function ArrangeSection({ element }: { element: CanvasElement }) {
   const [lockAspectRatio, setLockAspectRatio] = useState(false);
   const [activeTab, setActiveTab] = useState<'arrange' | 'layers'>('arrange');
   const {

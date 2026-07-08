@@ -5,9 +5,11 @@ import { CardsService } from './cards.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AssetsModule } from '../assets/assets.module';
 
+import { AdminCardsController } from './admin-cards.controller';
+
 @Module({
   imports: [PrismaModule, AssetsModule],
-  controllers: [CardsController],
+  controllers: [CardsController, AdminCardsController],
   providers: [CardsService],
   exports: [CardsService],
 })

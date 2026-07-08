@@ -49,7 +49,7 @@ export const MyCards = () => {
 
   return (
     <DashboardLayout>
-      <DashboardPanel className="p-8 min-h-[75vh]">
+      <DashboardPanel className="p-4 md:p-8 min-h-[75vh]">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-black text-[rgb(235,76,76)] font-inter">Thiệp Của Tôi</h1>
@@ -64,7 +64,7 @@ export const MyCards = () => {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
             {[1, 2, 3].map((i) => (
               <CardItemSkeleton key={i} />
             ))}
@@ -87,7 +87,7 @@ export const MyCards = () => {
           </div>
         ) : (
           <div className="flex flex-col min-h-[500px]">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 mb-auto">
               {currentCards.map(card => (
                 <CardItem
                   key={card.id}

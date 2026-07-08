@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { DashboardLayout } from './DashboardLayout';
 // DashboardPanel removed for Overview to use full-width layout
-import { Crown, Sparkles, ArrowRight, Sparkle, ArrowUpRight, UserCheck, MessageSquare } from 'lucide-react';
+import { Crown, Sparkles, ArrowRight, Sparkle, ArrowUpRight, Navigation, Gift, Image, Wallet, Store, Headphones, PlayCircle, Settings, Mails, MessageSquare, UserCheck } from 'lucide-react';
 import FloatingBackgroundHearts from '../../../components/FloatingBackgroundHearts';
 import { useAuthStore } from '../../../store/authStore';
 import { useState, useEffect } from 'react';
@@ -13,6 +13,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { toast } from 'sonner';
 
+import mockupImage from '../../../assets/images/mockup-thiep-cuoi-online-1.webp';
 // --- Custom Icon Components ---
 
 interface CustomIconProps {
@@ -352,12 +353,7 @@ export const Overview = () => {
     }
   };
 
-  const greeting = (() => {
-    const hr = new Date().getHours();
-    if (hr < 12) return 'Chào buổi sáng';
-    if (hr < 18) return 'Chào buổi chiều';
-    return 'Chào buổi tối';
-  })();
+
 
   const isPro = user?.currentPlanId === '00000000-0000-0000-0000-000000000002';
   const isPremium = user?.currentPlanId === 'premium-mock-id';
@@ -427,6 +423,13 @@ export const Overview = () => {
   const cardOffset = 138 - (138 * cardPercent) / 100;
   const visitorOffset = 138 - (138 * visitorPercent) / 100;
 
+  const hour = new Date().getHours();
+  let greeting = 'Chào';
+  if (hour < 12) greeting = 'Buổi sáng tốt lành,';
+  else if (hour < 18) greeting = 'Buổi chiều vui vẻ,';
+  else greeting = 'Đêm đã muộn.';
+  const subGreeting = 'Hãy nghỉ ngơi để rạng rỡ nhất trong ngày vui nhé';
+
   return (
     <DashboardLayout>
       <style dangerouslySetInnerHTML={{
@@ -474,39 +477,96 @@ export const Overview = () => {
           z-index: 1;
         }
       `}} />
-      <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
+      <div className="w-full space-y-5 md:space-y-8 animate-in fade-in duration-500 flex flex-col flex-1">
 
-        {/* Welcome Banner Card */}
-        <div className="relative overflow-hidden rounded-2xl moving-gradient-card border border-[rgb(255,166,166)]/30 p-6 md:p-8 text-zinc-800 shadow-lg shadow-[rgb(255,166,166)]/20 backdrop-blur-sm hover:shadow-[rgb(255,166,166)]/30 transition-all duration-300">
-          {/* Shimmer sweep layer */}
-          <div className="shimmer-bar" aria-hidden="true" />
-          {/* Floating background elements */}
-          <div className="absolute inset-0 -z-10 pointer-events-none opacity-15" />
-          <FloatingBackgroundHearts />
-          <div className="absolute -right-16 -top-16 h-72 w-72 rounded-full bg-[rgb(255,166,166)]/30 blur-3xl pointer-events-none" />
-          <div className="absolute -left-16 -bottom-16 h-72 w-72 rounded-full bg-[rgb(255,237,199)]/20 blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-8">
-            <div className="space-y-6 flex-1">
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-white/30 backdrop-blur-xs border border-white/40 px-3.5 py-1 text-[10px] font-black tracking-wider uppercase text-[rgb(235,76,76)] shadow-2xs">
+        {/* Mobile Greeting Card */}
+        <div className="md:hidden relative rounded-[2rem] bg-gradient-to-br from-rose-50/50 to-white border border-rose-100/40 p-5 mt-2 flex flex-col gap-4 shadow-xs">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-full overflow-hidden shrink-0 shadow-sm border border-white">
+              {user?.avatarUrl ? (
+                <img src={user.avatarUrl} alt={user.fullName} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-rose-200 text-rose-500 flex items-center justify-center font-bold text-xl">{user?.fullName?.charAt(0) || 'U'}</div>
+              )}
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-slate-800 leading-tight">
+                {greeting} <span className="text-slate-900">{displayName} ơi,</span>
+              </h2>
+              <p className="text-xs text-slate-500 mt-1 leading-snug pr-4">{subGreeting}</p>
+              <p className="text-[10px] text-slate-500 mt-1.5 font-medium">
+              <span className="font-bold">{totalViews.toLocaleString('vi-VN')}</span> lượt xem · <span className="font-bold">{rsvpPercent}%</span> xác nhận
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center justify-between mt-1">
+            <span className="px-3 py-1 bg-slate-100 text-slate-500 text-[10px] font-bold rounded-full uppercase tracking-wider">FREE</span>
+            <Link to="/dashboard/plan" className="px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-sm shadow-rose-200 transition-colors">
+              <Crown size={14} /> Nâng cấp
+            </Link>
+          </div>
+        </div>
+
+        {/* Quick Nav area App-like (Mobile Only) */}
+        <div className="mt-4 mb-2 md:hidden">
+          <div className="grid grid-cols-4 gap-y-6 gap-x-2">
+            {[
+              { icon: Mails, label: 'Thiệp của tôi', path: '/dashboard/my-cards', color: 'text-blue-500', bg: 'bg-blue-50/80 border border-blue-100/50' },
+              { icon: MessageSquare, label: 'Lời chúc', path: '/dashboard/wishes', color: 'text-teal-500', bg: 'bg-teal-50/80 border border-teal-100/50' },
+              { icon: Navigation, label: 'Tham dự', path: '/dashboard/rsvp', color: 'text-amber-500', bg: 'bg-amber-50/80 border border-amber-100/50' },
+              { icon: Gift, label: 'Quà tặng', path: '/dashboard/gifts', color: 'text-rose-500', bg: 'bg-rose-50/80 border border-rose-100/50' },
+              { icon: Image, label: 'Mẫu thiệp', path: '/dashboard/templates', color: 'text-orange-500', bg: 'bg-orange-50/80 border border-orange-100/50' },
+              { icon: Wallet, label: 'Ví', path: '/dashboard/plan', color: 'text-cyan-500', bg: 'bg-cyan-50/80 border border-cyan-100/50' },
+              { icon: Crown, label: 'Gói dịch vụ', path: '/dashboard/plan', color: 'text-yellow-500', bg: 'bg-yellow-50/80 border border-yellow-100/50' },
+              { icon: Store, label: 'Mua Add-ons', path: '/dashboard/plan', color: 'text-emerald-500', bg: 'bg-emerald-50/80 border border-emerald-100/50' },
+              { icon: Headphones, label: 'Hỗ trợ', path: '/dashboard/feedback', color: 'text-indigo-500', bg: 'bg-indigo-50/80 border border-indigo-100/50' },
+              { icon: PlayCircle, label: 'Hướng dẫn', path: '/dashboard/feedback', color: 'text-sky-500', bg: 'bg-sky-50/80 border border-sky-100/50' },
+              { icon: Settings, label: 'Cài đặt tài khoản', path: '/dashboard/account', color: 'text-slate-500', bg: 'bg-slate-100/80 border border-slate-200/50' },
+            ].map((item, idx) => (
+              <Link key={idx} to={item.path} className="flex flex-col items-center justify-start gap-1.5 group cursor-pointer">
+                <div className={`w-14 h-14 rounded-[1.2rem] flex items-center justify-center ${item.bg} ${item.color} group-active:scale-95 transition-transform shadow-xs`}>
+                  <item.icon size={26} strokeWidth={1.5} />
+                </div>
+                <span className="text-[10px] font-semibold text-slate-700 text-center leading-tight px-0.5">{item.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop Welcome Banner Card */}
+        <div className="hidden md:block relative rounded-[2.5rem] moving-gradient-card border border-rose-100/70 p-8 lg:p-10 text-zinc-800 shadow-[0_15px_40px_rgba(244,63,94,0.02)] mt-8">
+
+          {/* Background layer clipped to border radius */}
+          <div className="absolute inset-0 rounded-[2.5rem] overflow-hidden pointer-events-none">
+            {/* Shimmer sweep layer */}
+            <div className="shimmer-bar" aria-hidden="true" />
+            {/* Floating background elements */}
+            <div className="absolute inset-0 -z-10 opacity-15">
+              <FloatingBackgroundHearts />
+            </div>
+            <div className="absolute -right-16 -top-16 h-72 w-72 rounded-full bg-rose-100/30 blur-3xl pointer-events-none" />
+            <div className="absolute -left-16 -bottom-16 h-72 w-72 rounded-full bg-amber-100/20 blur-3xl pointer-events-none" />
+          </div>
+
+          <div className="relative z-10 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6">
+            <div className="space-y-6 flex-1 lg:max-w-[60%] xl:max-w-[65%]">
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 border border-rose-100/60 px-3.5 py-1.5 text-[10px] font-black tracking-wider uppercase text-rose-500 shadow-2xs">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 border border-white animate-pulse" /> ĐANG HOẠT ĐỘNG
               </div>
-              <div className="space-y-3">
-                <h1 className="text-3xl md:text-4xl font-black font-inter tracking-tight leading-tight text-zinc-900">
-                  {greeting}, <span className=" font-poppins font-semibold text-[rgb(235,76,76)]">{displayName} !</span>
+              <div className="space-y-2">
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-black font-inter tracking-tight leading-tight text-zinc-900">
+                  Chào {displayName}!
                 </h1>
-                <div className="space-y-1">
-                  <p className="text-zinc-650 text-[15px] font-inter font-medium max-w-lg leading-relaxed">
-                    Đám cưới của bạn sắp đến rồi — <span className="font-extrabold text-[rgb(235,76,76)]">chỉ còn {displayDays} ngày nữa thôi!</span>
-                  </p>
-                  <p className="text-zinc-500 text-xs font-inter font-semibold">
-                    Thiệp đã được xem <span className="font-bold text-zinc-855">{totalViews.toLocaleString('vi-VN')}</span> lần · <span className="font-bold text-zinc-855">{rsvpPercent}%</span> khách đã xác nhận tham dự
-                  </p>
-                </div>
+                <p className="text-slate-600 text-sm font-inter font-medium max-w-lg leading-relaxed">
+                  Bạn đang sử dụng <span className="text-rose-500 font-bold">Gói trải nghiệm tự do</span>. Hãy thỏa sức sáng tạo và lan tỏa yêu thương qua những tấm thiệp cưới di động đẹp hoàn hảo nhất.
+                </p>
+                <p className="text-slate-500 text-xs font-inter font-medium pt-1">
+                  Thiệp đã được xem <span className="font-bold text-slate-700">{totalViews.toLocaleString('vi-VN')}</span> lần · <span className="font-bold text-slate-700">{rsvpPercent}%</span> khách đã xác nhận tham dự
+                </p>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3 pt-2">
-               
+              <div className="flex flex-wrap items-center gap-2 md:gap-3 pt-2">
                 <Link
                   to={cards.length > 0 ? `/loading?next=${encodeURIComponent(`/design?id=${cards[0].id}`)}&message=${encodeURIComponent('Đang mở trình thiết kế...')}` : '/dashboard/create'}
                   className="flex items-center gap-2 rounded-full bg-[rgb(235,76,76)]/80 border border-white/20 hover:bg-[rgb(235,76,76)] px-6 py-3 font-bold text-white shadow-md hover:shadow-lg active:scale-95 transition-all duration-300 font-inter text-xs group no-underline"
@@ -516,6 +576,7 @@ export const Overview = () => {
                 </Link>
               </div>
             </div>
+          </div>
 
             <div className="hidden lg:flex items-center justify-center shrink-0 relative mr-4 select-none">
               {/* Glassmorphic Countdown Widget */}
@@ -542,10 +603,30 @@ export const Overview = () => {
                 </div>
               </div>
             </div>
+          {/* MOCKUP IMAGE CONTAINER */}
+          <div className="hidden lg:block absolute right-0 bottom-0 top-[-200px] w-1/2 overflow-hidden rounded-br-[2.5rem] pointer-events-none z-20">
+            <style>{`
+              @keyframes float-mockup {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-15px); }
+              }
+              .animate-float-mockup {
+                animation: float-mockup 4s ease-in-out infinite;
+              }
+            `}</style>
+            <img
+              src={mockupImage}
+              alt="Welcome banner"
+              className="absolute right-4 xl:right-15 -bottom-33 w-[260px] xl:w-[320px] object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.2)] animate-float-mockup"
+            />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:hidden flex items-center justify-between mb-2 mt-4 px-2">
+          <h3 className="text-lg font-black text-slate-800 tracking-tight">Thống kê sử dụng</h3>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
 
           <Link to={`/loading?next=${encodeURIComponent('/design')}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`} className="rounded-[2rem] bg-white/45 backdrop-blur-md border border-[rgb(255,166,166)]/30 p-6 flex items-center justify-between shadow-xs hover:shadow-md hover:border-[rgb(255,166,166)]/60 cursor-pointer block hover:no-underline transition-all duration-300">
             <div className="space-y-3">
@@ -553,7 +634,7 @@ export const Overview = () => {
                 <div className="h-8 w-8 rounded-lg bg-[rgb(255,237,199)] flex items-center justify-center text-[rgb(255,112,112)]">
                   <ImageSizeSelectActualIcon size={18} color="currentColor" />
                 </div>
-                <span className="text-xs font-bold text-zinc-500 tracking-wide font-inter uppercase">Kho lưu trữ ảnh</span>
+                <span className="text-xs font-bold text-slate-600 tracking-wide font-inter uppercase">Kho lưu trữ ảnh</span>
               </div>
               <div>
                 <p className="text-3xl font-black text-[rgb(235,76,76)] mt-1 font-inter">
@@ -578,7 +659,7 @@ export const Overview = () => {
                 <div className="h-8 w-8 rounded-lg bg-[rgb(255,237,199)] flex items-center justify-center text-[rgb(255,112,112)]">
                   <Clipboard2HeartFillIcon size={18} color="currentColor" />
                 </div>
-                <span className="text-xs font-bold text-zinc-500 tracking-wide font-inter uppercase">Thiệp kích hoạt</span>
+                <span className="text-xs font-bold text-slate-600 tracking-wide font-inter uppercase">Thiệp kích hoạt</span>
               </div>
               <div>
                 <p className="text-3xl font-black text-[rgb(235,76,76)] mt-1 font-inter">
@@ -603,7 +684,7 @@ export const Overview = () => {
                 <div className="h-8 w-8 rounded-lg bg-[rgb(255,237,199)] flex items-center justify-center text-[rgb(255,112,112)]">
                   <PeopleEye16FilledIcon size={18} color="currentColor" />
                 </div>
-                <span className="text-xs font-bold text-zinc-500 tracking-wide font-inter uppercase">Khách ghé thăm</span>
+                <span className="text-xs font-bold text-slate-600 tracking-wide font-inter uppercase">Khách ghé thăm</span>
               </div>
               <div>
                 <p className="text-3xl font-black text-[rgb(235,76,76)] mt-1 font-inter">
@@ -631,7 +712,7 @@ export const Overview = () => {
             <span className="bg-[rgb(255,237,199)] border border-[rgb(255,166,166)]/30 text-[rgb(235,76,76)] text-[10px] font-black tracking-wider uppercase px-2 py-0.5 rounded-md">Lối tắt tiện ích</span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-5">
             {[
               { icon: TemplateFilledIcon, label: 'Kho Mẫu Thiệp', path: '/dashboard/templates', color: 'text-[rgb(255,112,112)] bg-[rgb(255,237,199)] border-[rgb(255,166,166)]/30' },
               { icon: HeartWhiteSuitSmallIcon, label: 'Lời Chúc', path: '/dashboard/wishes', color: 'text-[rgb(255,112,112)] bg-[rgb(255,237,199)] border-[rgb(255,166,166)]/30' },
@@ -644,7 +725,7 @@ export const Overview = () => {
                 to={item.path}
                 className="flex flex-col items-center justify-center p-5 rounded-[1.75rem] border border-[rgb(255,166,166)]/10 bg-[rgb(255,237,199)]/25 hover:bg-white/60 hover:border-[rgb(255,166,166)]/70 hover:shadow-md transition-all duration-300 group hover:no-underline"
               >
-                <div className={`h-14 w-14 rounded-2xl flex items-center justify-center mb-3 border ${item.color} shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+                <div className={`h-10 w-10 md:h-14 md:w-14 rounded-xl md:rounded-2xl flex items-center justify-center mb-2 md:mb-3 border ${item.color} shadow-sm group-hover:scale-110 transition-transform duration-300`}>
                   <item.icon size={24} color="currentColor" />
                 </div>
                 <span className="text-sm font-bold text-zinc-700 font-inter group-hover:text-[rgb(235,76,76)] transition-colors">{item.label}</span>

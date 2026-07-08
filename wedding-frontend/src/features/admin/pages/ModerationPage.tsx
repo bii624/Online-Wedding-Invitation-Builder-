@@ -18,7 +18,7 @@ export function ModerationPage() {
   return (
     <div>
       {/* Summary */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}>
+      <div className="adm-stat-grid">
         {[
           { label: 'Chờ duyệt', value: MOCK_WISHES.filter(w=>!w.isApproved).length, color: '#f59e0b', bg: '#fffbeb', icon: <AlertTriangle size={24} color="#f59e0b" /> },
           { label: 'Bị báo cáo', value: MOCK_WISHES.filter(w=>w.isReported).length, color: '#ef4444', bg: '#fef2f2', icon: <AlertTriangle size={24} color="#ef4444" /> },

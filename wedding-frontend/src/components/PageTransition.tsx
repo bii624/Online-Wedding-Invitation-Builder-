@@ -7,7 +7,7 @@ interface PageTransitionProps {
 }
 
 // Routes that skip the page transition (e.g. full-screen tools)
-const SKIP_TRANSITION_ROUTES = ['/design'];
+const SKIP_TRANSITION_ROUTES = ['/design', '/loading', '/admin'];
 
 const variants = {
   initial: {
@@ -41,6 +41,8 @@ const noAnimVariants = {
   exit:    { opacity: 1 },
 };
 
+import { cloneElement, isValidElement } from 'react';
+
 export function PageTransition({ children }: PageTransitionProps) {
   const location = useLocation();
 
@@ -58,7 +60,7 @@ export function PageTransition({ children }: PageTransitionProps) {
         exit="exit"
         style={{ minHeight: shouldSkip ? undefined : '100vh' }}
       >
-        {children}
+        {isValidElement(children) ? cloneElement(children as any, { location }) : children}
       </motion.div>
     </AnimatePresence>
   );

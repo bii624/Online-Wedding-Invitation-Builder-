@@ -79,7 +79,7 @@ export function Header() {
           <div className="bg-white/20 backdrop-blur-sm p-2 rounded-xl transition-transform group-hover:rotate-12 shadow-sm">
             <RevolvingHeartsIcon size={28} color="#fff" />
           </div>
-          <span className="text-2xl font-serif font-black text-white drop-shadow-sm">DearLove</span>
+          <span className="hidden md:inline text-2xl font-serif font-black text-white drop-shadow-sm">DearLove</span>
         </div>
         <div className="header-history">
           <button
@@ -123,8 +123,8 @@ export function Header() {
           {statusInfo.label}
         </span>
 
-        {/* "Lưu ngay" button - chỉ hiện khi có cardId hoặc templateId và không đang saving */}
-        {(cardId || templateId) && autoSaveStatus !== 'saving' && (
+        {/* "Lưu ngay" button - luôn hiện cho card (nếu chưa có cardId sẽ tạo mới khi bấm), hoặc hiện cho template nếu có templateId */}
+        {(editorMode === 'card' || templateId) && autoSaveStatus !== 'saving' && (
           <button
             onClick={editorMode === 'template' ? saveTemplateNow : saveCanvasNow}
             title="Lưu ngay (Ctrl+S)"

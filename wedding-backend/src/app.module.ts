@@ -10,6 +10,9 @@ import { CardsModule } from './cards/cards.module';
 import { TemplatesModule } from './templates/templates.module';
 import { LibraryElementsModule } from './library-elements/library-elements.module';
 import { AdminStatsModule } from './admin-stats/admin-stats.module';
+import { WishesModule } from './wishes/wishes.module';
+import { RsvpsModule } from './rsvps/rsvps.module';
+import { ImageProcessModule } from './image-process/image-process.module';
 
 @Module({
   imports: [
@@ -22,6 +25,9 @@ import { AdminStatsModule } from './admin-stats/admin-stats.module';
     TemplatesModule,
     LibraryElementsModule,
     AdminStatsModule,
+    WishesModule,
+    RsvpsModule,
+    ImageProcessModule,
   ],
   controllers: [AppController],
   providers: [AppService],

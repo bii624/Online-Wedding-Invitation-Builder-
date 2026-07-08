@@ -14,6 +14,7 @@ import { CustomColorPicker } from '../CustomColorPicker';
 export interface ShapeRightPanelProps {
   element: CanvasElement;
   activeTab: 'settings' | 'effects';
+  activeSection?: string | null;
 }
 
 const LinkIcon = ({ linked, onClick }: { linked: boolean, onClick: () => void }) => (
@@ -33,7 +34,7 @@ const LinkIcon = ({ linked, onClick }: { linked: boolean, onClick: () => void })
   </svg>
 );
 
-export function ShapeRightPanel({ element, activeTab }: ShapeRightPanelProps) {
+export function ShapeRightPanel({ element, activeTab, activeSection }: ShapeRightPanelProps) {
   const { updateShapeProp, updateShapeProps, updateElementSize } = useEditorStore();
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showBorderColorPicker, setShowBorderColorPicker] = useState(false);
@@ -80,6 +81,7 @@ export function ShapeRightPanel({ element, activeTab }: ShapeRightPanelProps) {
 
   return (
     <div className="right-panel-scroll">
+      {(!activeSection || activeSection === 'shape-props') && (
       <Section title="Tùy chỉnh" icon={<LayoutIcon />}>
         {/* Type */}
         <div className="rp-field" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -150,7 +152,9 @@ export function ShapeRightPanel({ element, activeTab }: ShapeRightPanelProps) {
         )}  
 
       </Section>
+      )}
 
+      {(!activeSection || activeSection === 'shape-border') && (
       <Section title="Đường viền" icon={<BorderIcon />}>
         <div className="rp-field" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span className="rp-label">Kiểu</span>
@@ -251,7 +255,9 @@ export function ShapeRightPanel({ element, activeTab }: ShapeRightPanelProps) {
           </div>
         )}
       </Section>
+      )}
 
+      {(!activeSection || activeSection === 'shape-shadow') && (
       <Section title="Đổ bóng" icon={<ShadowIcon />}>
         <div className="rp-field" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span className="rp-label" style={{ fontStyle: 'italic' }}>Đổ bóng khối:</span>
@@ -303,10 +309,13 @@ export function ShapeRightPanel({ element, activeTab }: ShapeRightPanelProps) {
           </div>
         )}
       </Section>
+      )}
 
+      {(!activeSection || activeSection === 'shape-advanced') && (
       <Section title="Nâng cao" icon={<SettingsIcon />} defaultOpen={false}>
         <p className="rp-hint">Chưa có cài đặt nâng cao.</p>
       </Section>
+      )}
     </div>
   );
 }

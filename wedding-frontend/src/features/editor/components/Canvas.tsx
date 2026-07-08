@@ -308,6 +308,160 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
     [element.id, updateElementRotation, pushHistory]
   );
 
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if ((e.target as HTMLElement).closest('.canvas-el-ctrl-btn, .canvas-handle')) return;
+      e.stopPropagation();
+      selectElement(element.id);
+      const touch = e.touches[0];
+      const scale = zoom / 100;
+      dragRef.current = {
+        isDragging: true,
+        startX: touch.clientX,
+        startY: touch.clientY,
+        origX: element.x,
+        origY: element.y,
+      };
+
+      const handleTouchMove = (te: TouchEvent) => {
+        if (!dragRef.current.isDragging) return;
+        const touchMove = te.touches[0];
+        const dx = (touchMove.clientX - dragRef.current.startX) / scale;
+        const dy = (touchMove.clientY - dragRef.current.startY) / scale;
+        updateElementPosition(element.id, dragRef.current.origX + dx, dragRef.current.origY + dy);
+      };
+      const handleTouchEnd = () => {
+        if (dragRef.current.isDragging) {
+          dragRef.current.isDragging = false;
+          pushHistory();
+        }
+        window.removeEventListener('touchmove', handleTouchMove);
+        window.removeEventListener('touchend', handleTouchEnd);
+      };
+      window.addEventListener('touchmove', handleTouchMove, { passive: false });
+      window.addEventListener('touchend', handleTouchEnd);
+    },
+    [element.id, element.x, element.y, zoom, selectElement, updateElementPosition, pushHistory]
+  );
+
+  const handleResizeTouchStart = useCallback(
+    (e: React.TouchEvent, handle: string) => {
+      e.stopPropagation();
+      const scale = zoom / 100;
+      const touch = e.touches[0];
+      const startX = touch.clientX;
+      const startY = touch.clientY;
+      const origW = element.width;
+      const origH = element.height;
+      const origX = element.x;
+      const origY = element.y;
+      const rotDeg = element.rotation || 0;
+      const rad = (rotDeg * Math.PI) / 180;
+      const cos = Math.cos(rad);
+      const sin = Math.sin(rad);
+
+      const cx = origX + origW / 2;
+      const cy = origY + origH / 2;
+
+      let localOppositeX = 0;
+      let localOppositeY = 0;
+      if (handle.includes('t')) localOppositeY = origH / 2;
+      if (handle.includes('b')) localOppositeY = -origH / 2;
+      if (handle.includes('l')) localOppositeX = origW / 2;
+      if (handle.includes('r')) localOppositeX = -origW / 2;
+
+      const fixedX = cx + (localOppositeX * cos - localOppositeY * sin);
+      const fixedY = cy + (localOppositeX * sin + localOppositeY * cos);
+
+      const handleTouchMove = (te: TouchEvent) => {
+        const touchMove = te.touches[0];
+        const dx = (touchMove.clientX - startX) / scale;
+        const dy = (touchMove.clientY - startY) / scale;
+        const localDx = dx * cos + dy * sin;
+        const localDy = -dx * sin + dy * cos;
+
+        let newW = origW;
+        let newH = origH;
+        if (handle.includes('r')) {
+          newW = Math.max(15, origW + localDx);
+        } else if (handle.includes('l')) {
+          newW = Math.max(15, origW - localDx);
+        }
+        if (handle.includes('b')) {
+          newH = Math.max(15, origH + localDy);
+        } else if (handle.includes('t')) {
+          newH = Math.max(15, origH - localDy);
+        }
+
+        const isAspectLocked = element.type === 'image' && element.imageProps?.lockAspectRatio;
+        if (isAspectLocked) {
+          const ratio = origW / origH;
+          if (handle === 'tr' || handle === 'bl' || handle === 'tl' || handle === 'br') {
+            if (newW / ratio > newH) {
+              newH = newW / ratio;
+            } else {
+              newW = newH * ratio;
+            }
+          }
+        }
+
+        let newLocalOppositeX = 0;
+        let newLocalOppositeY = 0;
+        if (handle.includes('t')) newLocalOppositeY = newH / 2;
+        if (handle.includes('b')) newLocalOppositeY = -newH / 2;
+        if (handle.includes('l')) newLocalOppositeX = newW / 2;
+        if (handle.includes('r')) newLocalOppositeX = -newW / 2;
+
+        const newCx = fixedX - (newLocalOppositeX * cos - newLocalOppositeY * sin);
+        const newCy = fixedY - (newLocalOppositeX * sin + newLocalOppositeY * cos);
+        const newX = newCx - newW / 2;
+        const newY = newCy - newH / 2;
+
+        updateElementPosition(element.id, newX, newY);
+        updateElementSize(element.id, newW, newH);
+      };
+
+      const handleTouchEnd = () => {
+        pushHistory();
+        window.removeEventListener('touchmove', handleTouchMove);
+        window.removeEventListener('touchend', handleTouchEnd);
+      };
+      window.addEventListener('touchmove', handleTouchMove, { passive: false });
+      window.addEventListener('touchend', handleTouchEnd);
+    },
+    [element, zoom, updateElementPosition, updateElementSize, pushHistory]
+  );
+
+  const handleRotateTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      e.stopPropagation();
+      const el = document.querySelector(`[data-element-id="${element.id}"]`);
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+
+      const handleTouchMove = (te: TouchEvent) => {
+        const touchMove = te.touches[0];
+        const dx = touchMove.clientX - cx;
+        const dy = touchMove.clientY - cy;
+        const angleRad = Math.atan2(dy, dx);
+        let angleDeg = (angleRad * 180) / Math.PI - 90;
+        if (angleDeg < 0) angleDeg += 360;
+        angleDeg = Math.round(angleDeg);
+        updateElementRotation(element.id, angleDeg);
+      };
+      const handleTouchEnd = () => {
+        pushHistory();
+        window.removeEventListener('touchmove', handleTouchMove);
+        window.removeEventListener('touchend', handleTouchEnd);
+      };
+      window.addEventListener('touchmove', handleTouchMove, { passive: false });
+      window.addEventListener('touchend', handleTouchEnd);
+    },
+    [element.id, updateElementRotation, pushHistory]
+  );
+
 
   const entryWrapperStyle: React.CSSProperties = {
     position: 'absolute',
@@ -345,6 +499,7 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
           className={`canvas-element ${isSelected ? 'selected' : ''} ${loopClass}`}
           style={innerWrapperStyle}
           onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
           data-element-id={element.id}
         >
           {/* Selection border overlay */}
@@ -430,15 +585,15 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
 
 
               {/* Resize handles */}
-              <div className="canvas-handle tl" onMouseDown={(e) => handleResizeMouseDown(e, 'tl')} />
-              <div className="canvas-handle tr" onMouseDown={(e) => handleResizeMouseDown(e, 'tr')} />
-              <div className="canvas-handle bl" onMouseDown={(e) => handleResizeMouseDown(e, 'bl')} />
-              <div className="canvas-handle br" onMouseDown={(e) => handleResizeMouseDown(e, 'br')} />
-              <div className="canvas-handle tm" onMouseDown={(e) => handleResizeMouseDown(e, 'tm')} />
-              <div className="canvas-handle bm" onMouseDown={(e) => handleResizeMouseDown(e, 'bm')} />
-              <div className="canvas-handle ml" onMouseDown={(e) => handleResizeMouseDown(e, 'ml')} />
-              <div className="canvas-handle mr" onMouseDown={(e) => handleResizeMouseDown(e, 'mr')} />
-              <div className="canvas-handle rotate" onMouseDown={handleRotateMouseDown} />
+              <div className="canvas-handle tl" onMouseDown={(e) => handleResizeMouseDown(e, 'tl')} onTouchStart={(e) => handleResizeTouchStart(e, 'tl')} />
+              <div className="canvas-handle tr" onMouseDown={(e) => handleResizeMouseDown(e, 'tr')} onTouchStart={(e) => handleResizeTouchStart(e, 'tr')} />
+              <div className="canvas-handle bl" onMouseDown={(e) => handleResizeMouseDown(e, 'bl')} onTouchStart={(e) => handleResizeTouchStart(e, 'bl')} />
+              <div className="canvas-handle br" onMouseDown={(e) => handleResizeMouseDown(e, 'br')} onTouchStart={(e) => handleResizeTouchStart(e, 'br')} />
+              <div className="canvas-handle tm" onMouseDown={(e) => handleResizeMouseDown(e, 'tm')} onTouchStart={(e) => handleResizeTouchStart(e, 'tm')} />
+              <div className="canvas-handle bm" onMouseDown={(e) => handleResizeMouseDown(e, 'bm')} onTouchStart={(e) => handleResizeTouchStart(e, 'bm')} />
+              <div className="canvas-handle ml" onMouseDown={(e) => handleResizeMouseDown(e, 'ml')} onTouchStart={(e) => handleResizeTouchStart(e, 'ml')} />
+              <div className="canvas-handle mr" onMouseDown={(e) => handleResizeMouseDown(e, 'mr')} onTouchStart={(e) => handleResizeTouchStart(e, 'mr')} />
+              <div className="canvas-handle rotate" onMouseDown={handleRotateMouseDown} onTouchStart={handleRotateTouchStart} />
             </>
           )}
 

@@ -7,7 +7,7 @@ import 'animate.css';
 import { RedEnvelope } from '../../features/editor/components/Widgets/RedEnvelope';
 import { X, Music, VolumeX } from 'lucide-react';
 import { CalendarEditorElement } from '../../features/editor/components/Widgets/CalendarEditorElement';
-
+import { ThreeDSlider, FlatSlider, GridCollage, MixedCollage } from '../../features/editor/components/ImageEditorElement';
 
 // ─── Loop animation CSS classes (same as editor) ─────────
 function getLoopClass(ap: AnimationProperties): string {
@@ -328,6 +328,38 @@ function PublicAlbumElement({ element }: { element: CanvasElement }) {
   if (!ap || ap.images.length === 0) return null;
   const [current, setCurrent] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  if (ap.sliderStyle && ap.sliderStyle !== 'slideshow') {
+    const is3d = ap.sliderStyle === '3d';
+    const isFlat = ap.sliderStyle === 'flat';
+    const isGrid = ap.sliderStyle === 'grid';
+    const isCollage = ap.sliderStyle === 'collage';
+
+    const containerStyle: React.CSSProperties = {
+      width: '100%',
+      height: '100%',
+      backgroundColor: ap.backgroundColor,
+      opacity: ap.opacity,
+      padding: `${ap.padding.top}px ${ap.padding.right}px ${ap.padding.bottom}px ${ap.padding.left}px`,
+      borderWidth: `${ap.border.width}px`,
+      borderStyle: ap.border.style as any,
+      borderColor: ap.border.color,
+      borderRadius: `${ap.border.radius}px`,
+      boxShadow: ap.shadow.color !== 'transparent' ? `${ap.shadow.x}px ${ap.shadow.y}px ${ap.shadow.blur}px ${ap.shadow.spread}px ${ap.shadow.color}` : 'none',
+      position: 'relative',
+      overflow: is3d ? 'visible' : 'hidden'
+    };
+
+    return (
+      <div style={containerStyle}>
+        {is3d && <ThreeDSlider images={ap.images} />}
+        {isFlat && <FlatSlider images={ap.images} />}
+        {isGrid && <GridCollage images={ap.images} />}
+        {isCollage && <MixedCollage images={ap.images} />}
+      </div>
+    );
+  }
+
   useEffect(() => {
     if (ap.delay > 0) {
       const t = setInterval(() => setCurrent(c => (c + 1) % ap.images.length), ap.delay * 1000);
@@ -398,8 +430,10 @@ function PublicFormElement({ element, cardId }: { element: CanvasElement; cardId
   const fp = element.formProps;
   if (!fp) return null;
   const [name, setName] = useState('');
-  const [guestType, setGuestType] = useState('Khách nhà trai');
-  const [attending, setAttending] = useState('yes');
+  const [isGroomGuest, setIsGroomGuest] = useState(false);
+  const [isBrideGuest, setIsBrideGuest] = useState(false);
+  const [groomAttending, setGroomAttending] = useState<'yes' | 'no' | null>(null);
+  const [brideAttending, setBrideAttending] = useState<'yes' | 'no' | null>(null);
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -410,13 +444,27 @@ function PublicFormElement({ element, cardId }: { element: CanvasElement; cardId
     setSubmitting(true);
     try {
       if (fp.showAttendance) {
-        await cardsApi.submitRsvp(cardId, { guestName: name, attending: attending as 'yes' | 'no', note: `${fp.showGuestType ? guestType + ' - ' : ''}${message}` });
+        if (isGroomGuest && groomAttending) {
+          await cardsApi.submitRsvp(cardId, { guestName: name, attending: groomAttending, side: 'groom', note: message });
+        }
+        if (isBrideGuest && brideAttending) {
+          await cardsApi.submitRsvp(cardId, { guestName: name, attending: brideAttending, side: 'bride', note: message });
+        }
+        if (!isGroomGuest && !isBrideGuest) {
+            // fallback if no side selected but attendance enabled (shouldn't happen with new UI logic usually, but just in case)
+            await cardsApi.submitRsvp(cardId, { guestName: name, attending: 'yes', side: 'none', note: message });
+        }
       }
+
+      let wishSide = 'none';
+      if (isGroomGuest && isBrideGuest) wishSide = 'both';
+      else if (isGroomGuest) wishSide = 'groom';
+      else if (isBrideGuest) wishSide = 'bride';
+
       if (message.trim()) {
-        await cardsApi.submitWish(cardId, { displayName: name, message: message });
+        await cardsApi.submitWish(cardId, { displayName: name, message: message, side: wishSide });
       } else if (!fp.showAttendance) {
-        // if only wish is enabled but no message, just send a basic wish
-        await cardsApi.submitWish(cardId, { displayName: name, message: 'Đã xem thiệp' });
+        await cardsApi.submitWish(cardId, { displayName: name, message: 'Đã xem thiệp', side: wishSide });
       }
       setSubmitted(true);
     } catch { setSubmitting(false); }
@@ -436,60 +484,73 @@ function PublicFormElement({ element, cardId }: { element: CanvasElement; cardId
 
   return (
     <form onSubmit={handleSubmit} style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', fontFamily: fp.fontFamily, color: fp.textColor, opacity: fp.opacity }}>
-      <h2 style={{ fontSize: `${fp.fontSize + 10}px`, fontWeight: 'bold', marginBottom: '16px', textTransform: 'uppercase', textAlign: fp.alignment }}>
-        SỔ LƯU BÚT
+      <h2 style={{ fontSize: `${fp.fontSize + 8}px`, fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>
+        Gửi lời chúc đến cô dâu và chú rể
       </h2>
-      <div style={{ flex: 1, backgroundColor: fp.backgroundColor, padding: `${fp.padding.top}px ${fp.padding.right}px ${fp.padding.bottom}px ${fp.padding.left}px`, border: `${fp.border.width}px ${fp.border.style} ${fp.border.color}`, borderRadius: fp.border.radius, boxShadow: `${fp.shadow.x}px ${fp.shadow.y}px ${fp.shadow.blur}px ${fp.shadow.spread}px ${fp.shadow.color}`, display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'stretch', overflow: 'hidden' }}>
-        <input required value={name} onChange={e => setName(e.target.value)} placeholder="Nhập tên của bạn*" style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: `1px solid ${fp.inputBorderColor}`, backgroundColor: 'transparent', outline: 'none', fontFamily: fp.fontFamily, color: fp.textColor, fontSize: `${fp.fontSize}px` }} />
+      <div style={{ flex: 1, backgroundColor: fp.backgroundColor, padding: `${fp.padding.top}px ${fp.padding.right}px ${fp.padding.bottom}px ${fp.padding.left}px`, border: `${fp.border.width}px ${fp.border.style} ${fp.border.color}`, borderRadius: fp.border.radius, boxShadow: `${fp.shadow.x}px ${fp.shadow.y}px ${fp.shadow.blur}px ${fp.shadow.spread}px ${fp.shadow.color}`, display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'stretch' }}>
+        
+        <div className="flex flex-col gap-1.5">
+          <input required value={name} onChange={e => setName(e.target.value)} placeholder="Họ tên của bạn *" className="w-full px-4 py-3 rounded-xl bg-transparent outline-none transition-all duration-200 focus:shadow-[0_0_0_1px_currentColor] focus:ring-0" style={{ border: `1px solid ${fp.inputBorderColor}`, fontFamily: fp.fontFamily, color: fp.textColor, fontSize: `${fp.fontSize}px` }} />
+        </div>
 
         {fp.showGuestType && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: `${fp.fontSize}px`, marginTop: '12px' }}>
-            <span style={{ fontWeight: 600 }}>Bạn là:</span>
-            <div style={{ display: 'flex', gap: '48px', alignItems: 'center' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: `1.5px solid ${fp.textColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }}>
-                  {guestType === 'Khách nhà trai' && <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: fp.textColor }} />}
-                </div>
-                <input type="radio" name={`guestType_${element.id}`} checked={guestType === 'Khách nhà trai'} onChange={() => setGuestType('Khách nhà trai')} style={{ display: 'none' }} />
-                Khách nhà trai
-              </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: `1.5px solid ${fp.textColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }}>
-                  {guestType === 'Khách nhà gái' && <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: fp.textColor }} />}
-                </div>
-                <input type="radio" name={`guestType_${element.id}`} checked={guestType === 'Khách nhà gái'} onChange={() => setGuestType('Khách nhà gái')} style={{ display: 'none' }} />
-                Khách nhà gái
-              </label>
+          <div className="flex flex-col gap-2" style={{ fontSize: `${fp.fontSize}px` }}>
+            <span className="font-bold tracking-wide mb-1">Bạn là khách của <span className="font-normal opacity-70 text-[0.9em] lowercase">(chọn 1 hoặc cả 2)</span></span>
+            
+            <div className="grid grid-cols-2 gap-3">
+              {/* Nhà trai */}
+              <div className="border rounded-xl p-3 flex flex-col gap-2 transition-all duration-300" style={{ borderColor: isGroomGuest ? fp.textColor : fp.inputBorderColor, backgroundColor: isGroomGuest ? 'rgba(0,0,0,0.02)' : 'transparent', opacity: isGroomGuest ? 1 : 0.65 }}>
+                <label className="flex items-center cursor-pointer select-none gap-2">
+                  <input type="checkbox" checked={isGroomGuest} onChange={(e) => setIsGroomGuest(e.target.checked)} style={{ accentColor: fp.textColor, width: 18, height: 18, cursor: 'pointer' }} />
+                  <span className="font-bold">Nhà trai</span>
+                </label>
+                
+                {fp.showAttendance && (
+                  <div className="flex flex-col gap-2 mt-1">
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <input type="radio" name="groomAttending" checked={groomAttending === 'yes'} onChange={() => setGroomAttending('yes')} className="w-4 h-4 accent-rose-500 cursor-pointer" required={isGroomGuest} disabled={!isGroomGuest} />
+                      <span className={`text-[0.9em] transition-all duration-200 ${groomAttending === 'yes' ? 'font-bold' : 'font-medium'}`}>Sẽ tham dự</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <input type="radio" name="groomAttending" checked={groomAttending === 'no'} onChange={() => setGroomAttending('no')} className="w-4 h-4 accent-rose-500 cursor-pointer" required={isGroomGuest} disabled={!isGroomGuest} />
+                      <span className={`text-[0.9em] transition-all duration-200 ${groomAttending === 'no' ? 'font-bold' : 'font-medium'}`}>Không thể đến</span>
+                    </label>
+                  </div>
+                )}
+              </div>
+
+              {/* Nhà gái */}
+              <div className="border rounded-xl p-3 flex flex-col gap-2 transition-all duration-300" style={{ borderColor: isBrideGuest ? fp.textColor : fp.inputBorderColor, backgroundColor: isBrideGuest ? 'rgba(0,0,0,0.02)' : 'transparent', opacity: isBrideGuest ? 1 : 0.65 }}>
+                <label className="flex items-center cursor-pointer select-none gap-2">
+                  <input type="checkbox" checked={isBrideGuest} onChange={(e) => setIsBrideGuest(e.target.checked)} style={{ accentColor: fp.textColor, width: 18, height: 18, cursor: 'pointer' }} />
+                  <span className="font-bold">Nhà gái</span>
+                </label>
+                
+                {fp.showAttendance && (
+                  <div className="flex flex-col gap-2 mt-1">
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <input type="radio" name="brideAttending" checked={brideAttending === 'yes'} onChange={() => setBrideAttending('yes')} className="w-4 h-4 accent-rose-500 cursor-pointer" required={isBrideGuest} disabled={!isBrideGuest} />
+                      <span className={`text-[0.9em] transition-all duration-200 ${brideAttending === 'yes' ? 'font-bold' : 'font-medium'}`}>Sẽ tham dự</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer group">
+                      <input type="radio" name="brideAttending" checked={brideAttending === 'no'} onChange={() => setBrideAttending('no')} className="w-4 h-4 accent-rose-500 cursor-pointer" required={isBrideGuest} disabled={!isBrideGuest} />
+                      <span className={`text-[0.9em] transition-all duration-200 ${brideAttending === 'no' ? 'font-bold' : 'font-medium'}`}>Không thể đến</span>
+                    </label>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
 
-        {fp.showAttendance && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: `${fp.fontSize}px`, marginTop: '12px' }}>
-            <span style={{ fontWeight: 600 }}>Bạn có thể tham dự không?:</span>
-            <div style={{ display: 'flex', gap: '48px', alignItems: 'center' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: `1.5px solid ${fp.textColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }}>
-                  {attending === 'yes' && <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: fp.textColor }} />}
-                </div>
-                <input type="radio" name={`attendance_${element.id}`} checked={attending === 'yes'} onChange={() => setAttending('yes')} style={{ display: 'none' }} />
-                Sẽ tham dự
-              </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: `1.5px solid ${fp.textColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent' }}>
-                  {attending === 'no' && <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: fp.textColor }} />}
-                </div>
-                <input type="radio" name={`attendance_${element.id}`} checked={attending === 'no'} onChange={() => setAttending('no')} style={{ display: 'none' }} />
-                Rất tiếc không thể đến
-              </label>
-            </div>
-          </div>
-        )}
+        <div className="flex flex-col gap-1.5">
+          <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="Lời chúc của bạn *" rows={3} className="w-full px-4 py-3 rounded-xl bg-transparent outline-none transition-all duration-200 focus:shadow-[0_0_0_1px_currentColor] focus:ring-0" style={{ border: `1px solid ${fp.inputBorderColor}`, fontFamily: fp.fontFamily, color: fp.textColor, fontSize: `${fp.fontSize}px`, resize: 'none' }} required />
+        </div>
 
-        <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="Nhập lời chúc của bạn*" rows={3} style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: `1px solid ${fp.inputBorderColor}`, backgroundColor: 'transparent', outline: 'none', fontFamily: fp.fontFamily, color: fp.textColor, fontSize: `${fp.fontSize}px`, resize: 'none' }} />
 
-        <div style={{ display: 'flex', justifyContent: alignItems, marginTop: '8px' }}>
-          <button type="submit" disabled={submitting} style={{ backgroundColor: fp.buttonBgColor, color: fp.buttonTextColor, padding: '10px 24px', borderRadius: '8px', border: 'none', fontWeight: 'bold', textTransform: 'uppercase', cursor: submitting ? 'not-allowed' : 'pointer', fontFamily: fp.fontFamily, fontSize: `${fp.fontSize}px` }}>
+
+        <div className="flex justify-center mt-2 pb-2">
+          <button type="submit" disabled={submitting} className={`w-full py-3.5 px-6 rounded-xl border-none font-bold tracking-wider uppercase transition-all duration-200 active:scale-[0.98] ${submitting ? 'cursor-not-allowed opacity-80' : 'cursor-pointer hover:opacity-90 shadow-lg hover:shadow-xl'}`} style={{ backgroundColor: fp.buttonBgColor, color: fp.buttonTextColor, fontFamily: fp.fontFamily, fontSize: `${fp.fontSize}px`, boxShadow: `0 4px 14px 0 ${fp.buttonBgColor}40` }}>
             {submitting ? 'ĐANG GỬI...' : 'GỬI LỜI CHÚC'}
           </button>
         </div>

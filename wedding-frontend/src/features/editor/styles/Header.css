@@ -213,3 +213,67 @@
 .header-avatar:hover {
   border-color: rgba(255, 255, 255, 0.5);
 }
+
+/* ── Mobile Responsive ───────────────────────────────────── */
+@media (max-width: 768px) {
+  .editor-header {
+    padding: 0 12px;
+  }
+
+  .header-logo-text {
+    display: none;
+  }
+
+  .header-history {
+    margin-left: 8px;
+    gap: 0;
+  }
+
+  .header-history-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .header-status {
+    min-width: unset;
+    padding: 4px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    gap: 4px;
+  }
+
+  .header-status span {
+    display: none;
+  }
+
+  .header-status button {
+    display: none !important;
+  }
+
+  .header-actions {
+    gap: 4px;
+  }
+
+  .header-btn {
+    padding: 6px;
+    font-size: 0;
+    gap: 0;
+    border-radius: 50%;
+  }
+
+  .header-btn svg {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+  }
+
+  .header-divider {
+    display: none;
+  }
+
+  .header-avatar {
+    width: 28px;
+    height: 28px;
+  }
+}

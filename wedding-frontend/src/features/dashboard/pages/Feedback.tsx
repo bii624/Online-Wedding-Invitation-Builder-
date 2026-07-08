@@ -16,7 +16,6 @@ export const Feedback = () => {
     e.preventDefault();
     if (!form.message.trim()) return;
 
-    // Send via email client (no backend endpoint yet)
     const subject = encodeURIComponent(`[DearLove Góp Ý] ${form.category}${form.title ? ' – ' + form.title : ''}`);
     const body = encodeURIComponent(
       `Chủ đề: ${form.category}\n\n${form.message}\n\n---\nThông tin liên hệ: ${form.contact || 'Không cung cấp'}`
@@ -58,7 +57,7 @@ export const Feedback = () => {
               </div>
  
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-wider">Tiêu đề ngắn gọn</label>
+                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">Tiêu đề ngắn gọn</label>
                 <input
                   type="text"
                   value={form.title}
@@ -83,7 +82,7 @@ export const Feedback = () => {
             </div>
  
             <div className="space-y-1.5">
-              <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-wider">Thông tin liên hệ (Không bắt buộc)</label>
+              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider">Thông tin liên hệ (Không bắt buộc)</label>
               <input
                 type="text"
                 value={form.contact}
@@ -101,7 +100,7 @@ export const Feedback = () => {
               >
                 {sent ? <><Check size={14} /> Gửi thành công!</> : <><Send size={13} /> Gửi ý kiến đóng góp</>}
               </button>
-              <span className="text-[11px] text-zinc-400 font-inter font-medium text-center sm:text-left">Đội ngũ DearLove sẽ đọc kỹ và cải tiến ngay lập tức</span>
+              <span className="text-[11px] text-slate-500 font-inter font-medium text-center sm:text-left">Đội ngũ DearLove sẽ đọc kỹ và cải tiến ngay lập tức</span>
             </div>
           </form>
         </div>

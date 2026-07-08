@@ -139,17 +139,17 @@ const TestimonialsSection = () => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.15 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className="container px-40 mx-auto"
+      className="container px-4 md:px-10 lg:px-40 mx-auto"
     >
-      <div className="flex flex-col items-center justify-center max-w-3xl mx-auto mb-20 text-center">
+      <div className="flex flex-col items-center justify-center max-w-3xl mx-auto mb-12 md:mb-20 text-center">
         <div className="inline-block px-6 py-2 rounded-full bg-white border border-rose-100 text-[11px] font-bold uppercase tracking-[0.5em] text-rose-400 shadow-sm mb-8">
           FEEDBACK
         </div>
-        <h2 className="text-5xl md:text-5xl font-bold text-slate-800 tracking-tighter leading-none italic mb-8">
+        <h2 className="text-4xl md:text-5xl font-bold text-slate-800 tracking-tighter leading-none italic mb-8">
           Người dùng <span className="text-pink-500">nói gì?</span>
         </h2>
       </div>
-      <div className="flex justify-center gap-8 mask-[linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)] max-h-200 overflow-hidden">
+      <div className="flex justify-center gap-4 md:gap-8 mask-[linear-gradient(to_bottom,transparent,black_15%,black_85%,transparent)] max-h-[600px] md:max-h-200 overflow-hidden">
         <TestimonialsColumn testimonials={firstColumn} duration={25} />
         <TestimonialsColumn testimonials={secondColumn} className="hidden md:block" duration={35} />
         <TestimonialsColumn testimonials={thirdColumn} className="hidden lg:block" duration={30} />

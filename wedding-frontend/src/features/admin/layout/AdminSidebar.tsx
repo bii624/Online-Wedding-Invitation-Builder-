@@ -33,7 +33,12 @@ const configNav: NavItem[] = [
   { label: 'Kiểm duyệt', path: '/admin/moderation', icon: <ShieldCheck size={18} />, badge: '3' },
 ];
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
 
@@ -42,8 +47,14 @@ export function AdminSidebar() {
     navigate('/');
   };
 
+  const handleNavClick = () => {
+    if (window.innerWidth <= 768 && onClose) {
+      onClose();
+    }
+  };
+
   return (
-    <aside className="adm-sidebar">
+    <aside className={`adm-sidebar ${isOpen ? 'open' : ''}`}>
       {/* Logo */}
       <div className="adm-sidebar-logo" style={{ textDecoration: 'none' }}>
         <div className="bg-rose-100 rounded-2xl w-10 h-10 flex items-center justify-center">
@@ -65,6 +76,7 @@ export function AdminSidebar() {
             to={item.path}
             end
             className={({ isActive }) => `adm-nav-link${isActive ? ' active' : ''}`}
+            onClick={handleNavClick}
           >
             <span className="adm-nav-icon">{item.icon}</span>
             {item.label}
@@ -79,6 +91,7 @@ export function AdminSidebar() {
             key={item.path}
             to={item.path}
             className={({ isActive }) => `adm-nav-link${isActive ? ' active' : ''}`}
+            onClick={handleNavClick}
           >
             <span className="adm-nav-icon">{item.icon}</span>
             {item.label}
@@ -93,6 +106,7 @@ export function AdminSidebar() {
             key={item.path}
             to={item.path}
             className={({ isActive }) => `adm-nav-link${isActive ? ' active' : ''}`}
+            onClick={handleNavClick}
           >
             <span className="adm-nav-icon">{item.icon}</span>
             {item.label}

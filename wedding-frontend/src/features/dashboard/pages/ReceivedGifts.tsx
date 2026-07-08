@@ -73,7 +73,7 @@ export const ReceivedGifts = () => {
 
   return (
     <DashboardLayout>
-      <DashboardPanel className="p-8 min-h-[75vh]">
+      <DashboardPanel className="p-4 md:p-8 min-h-[75vh]">
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 pb-6 border-b border-[rgb(255,166,166)]/30">
           <div>
