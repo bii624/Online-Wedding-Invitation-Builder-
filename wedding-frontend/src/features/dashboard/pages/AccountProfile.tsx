@@ -120,18 +120,18 @@ export const AccountProfile: React.FC = () => {
     <DashboardLayout>
       <DashboardPanel className="p-6">
       <div className="max-w-3xl mx-auto space-y-6 animate-in fade-in duration-500">
-
-        <div className="bg-white rounded-4xl border border-rose-100/50 shadow-[0_15px_40px_rgba(244,63,94,0.01)] p-6">
+ 
+        <div className=" backdrop-blur-md rounded-[2.5rem] border border-[rgb(255,166,166)]/30 shadow-md shadow-[rgb(255,166,166)]/5 p-6">
           <div className="flex flex-col sm:flex-row items-center gap-5">
             <div className="relative shrink-0">
               {isUploadingAvatar ? (
-                <div className="w-16 h-16 rounded-2xl bg-zinc-100 flex items-center justify-center border border-rose-100 shadow-md">
-                  <Loader2 className="animate-spin text-rose-500" size={24} />
+                <div className="w-16 h-16 rounded-2xl bg-zinc-100 flex items-center justify-center border border-[rgb(255,166,166)]/40 shadow-md">
+                  <Loader2 className="animate-spin text-[rgb(235,76,76)]" size={24} />
                 </div>
               ) : user?.avatarUrl ? (
-                <img src={user.avatarUrl} alt={form.fullName} className="w-16 h-16 rounded-2xl object-cover shadow-md shadow-rose-200" />
+                <img src={user.avatarUrl} alt={form.fullName} className="w-16 h-16 rounded-2xl object-cover shadow-md shadow-[rgb(255,166,166)]/40" />
               ) : (
-                <div className="w-16 h-16 rounded-2xl bg-linear-to-tr from-rose-500 to-pink-600 text-white flex items-center justify-center text-2xl font-black shadow-md shadow-rose-200">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[rgb(255,112,112)] to-[rgb(235,76,76)] text-white flex items-center justify-center text-2xl font-black shadow-md shadow-[rgb(255,166,166)]/30">
                   {form.fullName ? form.fullName.charAt(0).toUpperCase() : 'U'}
                 </div>
               )}
@@ -145,14 +145,14 @@ export const AccountProfile: React.FC = () => {
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploadingAvatar}
-                className="absolute -bottom-1 -right-1 w-7 h-7 bg-rose-500 rounded-full flex items-center justify-center text-white shadow-md border-2 border-white hover:bg-rose-600 transition-all cursor-pointer disabled:opacity-50"
+                className="absolute -bottom-1 -right-1 w-7 h-7 bg-[rgb(235,76,76)] rounded-full flex items-center justify-center text-white shadow-md border-2 border-white hover:bg-[rgb(255,112,112)] transition-all cursor-pointer disabled:opacity-50"
               >
                 <Camera size={11} />
               </button>
             </div>
-
+ 
             <div className="flex-1 text-center sm:text-left space-y-1">
-              <h2 className="text-lg font-black text-zinc-800 font-inter">{form.fullName}</h2>
+              <h2 className="text-lg font-black text-[rgb(235,76,76)] font-inter">{form.fullName}</h2>
               <p className="text-xs text-zinc-400 font-inter font-medium">{form.email}</p>
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
                 <span className="flex items-center gap-1 text-[10px] font-black tracking-wider uppercase text-amber-600 bg-amber-50 border border-amber-100/60 px-2.5 py-0.5 rounded-md shadow-2xs">
@@ -163,39 +163,39 @@ export const AccountProfile: React.FC = () => {
                 </span>
               </div>
             </div>
-
+ 
             <Link
               to="/dashboard/plan"
-              className="w-full sm:w-auto text-center text-xs font-bold text-white px-5 py-3 rounded-xl transition-all shadow-sm shadow-rose-500/10 hover:shadow-rose-500/20 active:scale-95 bg-rose-600 hover:bg-rose-700 cursor-pointer"
+              className="w-full sm:w-auto text-center text-xs font-bold text-white px-5 py-3 rounded-xl transition-all shadow-sm shadow-[rgb(235,76,76)]/10 hover:shadow-[rgb(235,76,76)]/20 bg-[rgb(235,76,76)] hover:bg-[rgb(255,112,112)] cursor-pointer"
             >
               Nâng cấp Pro
             </Link>
           </div>
         </div>
-
-        <div className="bg-white rounded-4xl border border-rose-100/50 shadow-[0_15px_40px_rgba(244,63,94,0.01)] overflow-hidden">
-          <div className="flex border-b border-rose-100/30 bg-zinc-50/40 p-2 gap-1">
+ 
+        <div className="bg-white/40 backdrop-blur-md rounded-[1.5rem] border border-[rgb(255,166,166)]/30 shadow-md shadow-[rgb(255,166,166)]/5 overflow-hidden">
+          <div className="flex border-b border-[rgb(255,166,166)]/25 bg-[rgb(255,237,199)]/10 p-2 gap-1">
             {tabs.map(t => (
               <button
                 key={t.key}
                 onClick={() => setTab(t.key)}
-                className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer ${tab === t.key ? 'bg-white border border-rose-100/40 text-rose-500 shadow-2xs' : 'border-transparent text-zinc-500 hover:text-zinc-800'}`}
+                className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer ${tab === t.key ? 'bg-white/90 border border-[rgb(255,166,166)]/40 text-[rgb(235,76,76)] shadow-2xs' : 'border-transparent text-zinc-500 hover:text-zinc-800'}`}
               >
                 {t.icon} {t.label}
               </button>
             ))}
           </div>
-
+ 
           <div className="p-8">
             {tab === 'info' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-wider">TÊN HIỂN THỊ <span className="text-rose-500">*</span></label>
+                    <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-wider">TÊN HIỂN THỊ <span className="text-[rgb(235,76,76)]">*</span></label>
                     <input
                       value={form.fullName}
                       onChange={e => setForm({ ...form, fullName: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm text-zinc-800 outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-50 transition-all bg-white"
+                      className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm text-zinc-800 outline-none focus:border-[rgb(255,112,112)] focus:ring-2 focus:ring-[rgb(235,76,76)]/10 transition-all bg-white"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -213,7 +213,7 @@ export const AccountProfile: React.FC = () => {
                       value={form.phone}
                       onChange={e => setForm({ ...form, phone: e.target.value })}
                       placeholder="Nhập số điện thoại..."
-                      className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm text-zinc-800 outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-50 transition-all bg-white"
+                      className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm text-zinc-800 outline-none focus:border-[rgb(255,112,112)] focus:ring-2 focus:ring-[rgb(235,76,76)]/10 transition-all bg-white"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -222,11 +222,11 @@ export const AccountProfile: React.FC = () => {
                       type="date"
                       value={form.dob}
                       onChange={e => setForm({ ...form, dob: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm text-zinc-650 outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-50 transition-all bg-white"
+                      className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm text-zinc-650 outline-none focus:border-[rgb(255,112,112)] focus:ring-2 focus:ring-[rgb(235,76,76)]/10 transition-all bg-white"
                     />
                   </div>
                 </div>
-
+ 
                 <div className="space-y-1.5">
                   <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-wider">GIỚI THIỆU</label>
                   <textarea
@@ -234,15 +234,15 @@ export const AccountProfile: React.FC = () => {
                     value={form.bio}
                     onChange={e => setForm({ ...form, bio: e.target.value })}
                     placeholder="Viết vài dòng giới thiệu về bạn..."
-                    className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm text-zinc-800 outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-50 transition-all bg-white resize-none"
+                    className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm text-zinc-800 outline-none focus:border-[rgb(255,112,112)] focus:ring-2 focus:ring-[rgb(235,76,76)]/10 transition-all bg-white resize-none"
                   />
                 </div>
-
+ 
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-2">
                   <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white text-xs font-bold transition-all hover:bg-rose-700 active:scale-95 bg-rose-600 cursor-pointer shadow-sm shadow-rose-500/10 disabled:opacity-50"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-white text-xs font-bold transition-all hover:bg-[rgb(255,112,112)] active:scale-95 bg-[rgb(235,76,76)] cursor-pointer shadow-sm shadow-[rgb(235,76,76)]/10 disabled:opacity-50"
                   >
                     {isSaving ? 'Đang lưu...' : saved ? <><Check size={14} /> Đã lưu!</> : 'Lưu thay đổi'}
                   </button>
@@ -250,7 +250,7 @@ export const AccountProfile: React.FC = () => {
                 </div>
               </div>
             )}
-
+ 
             {tab === 'security' && (
               <div className="max-w-md space-y-5">
                 <div className="space-y-1.5">
@@ -259,7 +259,7 @@ export const AccountProfile: React.FC = () => {
                     <input
                       type={showPwd ? 'text' : 'password'}
                       placeholder="Nhập mật khẩu hiện tại..."
-                      className="w-full px-4 py-3 pr-10 rounded-xl border border-zinc-200 text-sm text-zinc-800 outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-50 transition-all bg-white"
+                      className="w-full px-4 py-3 pr-10 rounded-xl border border-zinc-200 text-sm text-zinc-800 outline-none focus:border-[rgb(255,112,112)] focus:ring-2 focus:ring-[rgb(235,76,76)]/10 transition-all bg-white"
                     />
                     <button
                       onClick={() => setShowPwd(!showPwd)}
@@ -276,7 +276,7 @@ export const AccountProfile: React.FC = () => {
                     placeholder="Nhập mật khẩu mới (≥ 8 ký tự)..."
                     value={securityForm.newPassword}
                     onChange={e => setSecurityForm({ ...securityForm, newPassword: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm text-zinc-800 outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-50 transition-all bg-white"
+                    className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm text-zinc-800 outline-none focus:border-[rgb(255,112,112)] focus:ring-2 focus:ring-[rgb(235,76,76)]/10 transition-all bg-white"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -286,10 +286,10 @@ export const AccountProfile: React.FC = () => {
                     placeholder="Nhập lại mật khẩu mới..."
                     value={securityForm.confirmPassword}
                     onChange={e => setSecurityForm({ ...securityForm, confirmPassword: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm text-zinc-800 outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-50 transition-all bg-white"
+                    className="w-full px-4 py-3 rounded-xl border border-zinc-200 text-sm text-zinc-800 outline-none focus:border-[rgb(255,112,112)] focus:ring-2 focus:ring-[rgb(235,76,76)]/10 transition-all bg-white"
                   />
                 </div>
-
+ 
                 <button
                   onClick={handleUpdatePassword}
                   disabled={isUpdatingPwd}
@@ -297,7 +297,7 @@ export const AccountProfile: React.FC = () => {
                 >
                   {isUpdatingPwd ? 'Đang cập nhật...' : 'Cập nhật mật khẩu'}
                 </button>
-
+ 
                 <div className="p-4 bg-sky-50/40 rounded-2xl border border-sky-100/50 leading-relaxed">
                   <div className="flex items-center gap-2 text-xs font-bold text-sky-700 mb-1">
                     <Globe size={13} /> Đăng nhập bằng mạng xã hội
@@ -308,7 +308,7 @@ export const AccountProfile: React.FC = () => {
                 </div>
               </div>
             )}
-
+ 
             {tab === 'notifications' && (
               <div className="space-y-4">
                 {[
@@ -322,7 +322,7 @@ export const AccountProfile: React.FC = () => {
                       <div className="text-sm font-semibold text-zinc-700 font-inter">{n.label}</div>
                       <div className="text-xs text-zinc-400 font-inter font-medium">{n.sub}</div>
                     </div>
-                    <div className={`w-10 h-5 rounded-full relative cursor-pointer transition-all ${n.on ? 'bg-rose-500' : 'bg-zinc-200'}`}>
+                    <div className={`w-10 h-5 rounded-full relative cursor-pointer transition-all ${n.on ? 'bg-[rgb(235,76,76)]' : 'bg-zinc-200'}`}>
                       <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow-xs transition-all ${n.on ? 'left-5' : 'left-0.5'}`} />
                     </div>
                   </div>
@@ -331,8 +331,8 @@ export const AccountProfile: React.FC = () => {
             )}
           </div>
         </div>
-
-        <div className="bg-white rounded-[2rem] border border-red-100/50 shadow-[0_15px_40px_rgba(239,68,68,0.01)] p-6 space-y-4">
+ 
+        <div className="bg-white/20 backdrop-blur-md rounded-[2.5rem] border border-red-200/30 shadow-[0_15px_40px_rgba(239,68,68,0.01)] p-6 space-y-4">
           <h4 className="text-[10px] font-black text-red-500 uppercase tracking-wider">Vùng nguy hiểm</h4>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1">
@@ -344,7 +344,7 @@ export const AccountProfile: React.FC = () => {
             </button>
           </div>
         </div>
-
+ 
       </div>
       </DashboardPanel>
     </DashboardLayout>

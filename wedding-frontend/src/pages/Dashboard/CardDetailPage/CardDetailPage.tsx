@@ -64,7 +64,7 @@ export default function CardDetailPage() {
   const [editSlug, setEditSlug] = useState('');
   const [slugChecking, setSlugChecking] = useState(false);
   const [slugError, setSlugError] = useState('');
-  const slugTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const slugTimeoutRef = useRef<any>(null);
 
   useEffect(() => {
     if (id) {
@@ -113,7 +113,7 @@ export default function CardDetailPage() {
   };
 
   const checkSlugAvailability = async (newSlug: string) => {
-    if (!newSlug || newSlug === card.slug) {
+    if (!newSlug || !card || newSlug === card.slug) {
       setSlugError('');
       return true;
     }
@@ -256,18 +256,18 @@ export default function CardDetailPage() {
 
   return (
     <DashboardLayout>
-      <div className="w-full h-full min-h-[calc(100vh-8rem)] bg-white rounded-[2rem] p-6 border border-rose-100/60 shadow-[0_4px_20px_rgba(244,63,94,0.03)] flex flex-col md:flex-row gap-6 animate-in fade-in duration-500">
+      <div className="w-full h-full min-h-[calc(100vh-8rem)] bg-white/45 backdrop-blur-md rounded-[2.5rem] p-6 border border-[rgb(255,166,166)]/30 shadow-md shadow-[rgb(255,166,166)]/5 flex flex-col md:flex-row gap-6 animate-in fade-in duration-500">
         {/* CỘT TRÁI (30%) */}
         <div className="w-full md:w-[30%] flex flex-col gap-4">
-
+ 
           {/* Preview Container */}
           <div className="bg-slate-100 rounded-2xl overflow-hidden relative shadow-sm h-[320px] md:h-[400px] flex flex-1 group cursor-pointer border border-slate-200" onClick={() => window.open(fullLink, '_blank')}>
             {/* Lượt xem góc trên */}
             <div className="absolute top-4 left-4 bg-white/90 backdrop-blur text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-full z-10 flex items-center gap-1 shadow-sm">
-              <Globe size={14} className="text-rose-500" />
+              <Globe size={14} className="text-[rgb(235,76,76)]" />
               {stats.viewCount} lượt xem
             </div>
-
+ 
             <div className="w-full h-full relative overflow-hidden">
               {card.thumbnailUrl ? (
                 <div
@@ -287,16 +287,16 @@ export default function CardDetailPage() {
                 </div>
               )}
             </div>
-
+ 
             {/* Nút Xem Thiệp (Overlay khi hover) */}
             <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none bg-black/10">
-              <div className="bg-white/95 backdrop-blur-sm text-rose-600 font-semibold px-6 py-3 rounded-full shadow-xl flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 border border-rose-100">
+              <div className="bg-white/95 backdrop-blur-sm text-[rgb(235,76,76)] font-semibold px-6 py-3 rounded-full shadow-xl flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 border border-[rgb(255,166,166)]/40">
                 <ExternalLink size={18} />
                 Xem thiệp
               </div>
             </div>
           </div>
-
+ 
           {/* Thời gian */}
           <div className="flex justify-between items-center text-sm text-slate-500 px-2">
             <div>
@@ -308,16 +308,16 @@ export default function CardDetailPage() {
               <p>{new Date(card.updatedAt).toLocaleString('vi-VN', { dateStyle: 'short', timeStyle: 'short' })}</p>
             </div>
           </div>
-
+ 
           {/* Actions */}
           <div className="flex flex-col gap-2 shrink-0">
             <button
               onClick={() => setShowQRModal(true)}
-              className="w-full py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 shadow-sm shadow-rose-200 text-sm"
+              className="w-full py-2.5 bg-[rgb(235,76,76)] hover:bg-[rgb(255,112,112)] text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 shadow-sm shadow-[rgb(255,166,166)]/20 text-sm"
             >
               Mã QR Thiệp
             </button>
-
+ 
             <div className="flex gap-2">
               <button
                 onClick={() => navigate(`/loading?next=${encodeURIComponent(`/design?id=${card.id}`)}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`)}
@@ -450,19 +450,19 @@ export default function CardDetailPage() {
             </div>
           </div>
 
-          <hr className="border-slate-100 shrink-0" />
-
+          <hr className="border-[rgb(255,166,166)]/20 shrink-0" />
+ 
           {/* Thống kê tổng quan */}
           <div className="flex-1 flex flex-col justify-center">
             <div className="flex justify-between items-center mb-3">
               <h2 className="text-lg font-bold text-slate-800">Thống kê tổng quan</h2>
-              <Link to={`/dashboard/cards/${id}/wishes`} className="text-sm font-medium text-rose-500 hover:text-rose-600 hover:underline">Chi tiết</Link>
+              <Link to={`/dashboard/cards/${id}/wishes`} className="text-sm font-semibold text-[rgb(235,76,76)] hover:text-[rgb(255,112,112)] hover:underline">Chi tiết</Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-
-              <div className="rounded-2xl bg-white border border-rose-100/60 p-5 flex flex-col gap-3 shadow-xs transition-all duration-300 hover:shadow-sm hover:border-rose-200">
+ 
+              <div className="rounded-2xl bg-white border border-[rgb(255,166,166)]/30 p-5 flex flex-col gap-3 shadow-xs transition-all duration-300 hover:shadow-sm hover:border-[rgb(255,166,166)]/60">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-rose-50 flex items-center justify-center text-rose-500 shrink-0">
+                  <div className="h-8 w-8 rounded-lg bg-[rgb(255,237,199)] flex items-center justify-center text-[rgb(235,76,76)] shrink-0">
                     <Eye size={18} />
                   </div>
                   <span className="text-xs font-bold text-zinc-500 tracking-wide font-inter uppercase line-clamp-1">Lượt xem</span>
@@ -472,10 +472,10 @@ export default function CardDetailPage() {
                   <p className="text-[11px] text-zinc-400 font-bold mt-1">Truy cập online</p>
                 </div>
               </div>
-
-              <div className="rounded-2xl bg-white border border-rose-100/60 p-5 flex flex-col gap-3 shadow-xs transition-all duration-300 hover:shadow-sm hover:border-rose-200">
+ 
+              <div className="rounded-2xl bg-white border border-[rgb(255,166,166)]/30 p-5 flex flex-col gap-3 shadow-xs transition-all duration-300 hover:shadow-sm hover:border-[rgb(255,166,166)]/60">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-500 shrink-0">
+                  <div className="h-8 w-8 rounded-lg bg-[rgb(255,237,199)] flex items-center justify-center text-[rgb(255,112,112)] shrink-0">
                     <Users size={18} />
                   </div>
                   <span className="text-xs font-bold text-zinc-500 tracking-wide font-inter uppercase line-clamp-1">Khách mời</span>
@@ -485,36 +485,36 @@ export default function CardDetailPage() {
                   <p className="text-[11px] text-zinc-400 font-bold mt-1">Tổng nhận link</p>
                 </div>
               </div>
-
-              <div className="rounded-2xl bg-white border border-rose-100/60 p-5 flex flex-col gap-3 shadow-xs transition-all duration-300 hover:shadow-sm hover:border-rose-200">
+ 
+              <div className="rounded-2xl bg-white border border-[rgb(255,166,166)]/30 p-5 flex flex-col gap-3 shadow-xs transition-all duration-300 hover:shadow-sm hover:border-[rgb(255,166,166)]/60">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-pink-50 flex items-center justify-center text-pink-500 shrink-0">
+                  <div className="h-8 w-8 rounded-lg bg-[rgb(255,237,199)] flex items-center justify-center text-[rgb(255,112,112)] shrink-0">
                     <MessageSquare size={18} />
                   </div>
                   <span className="text-xs font-bold text-zinc-500 tracking-wide font-inter uppercase line-clamp-1">Lời chúc</span>
                 </div>
                 <div>
                   <p className="text-3xl font-black text-zinc-800 font-inter">{stats.totalWishes}</p>
-                  <p className="text-[11px] text-pink-500 font-bold mt-1">Lưu bút online</p>
+                  <p className="text-[11px] text-[rgb(235,76,76)] font-bold mt-1">Lưu bút online</p>
                 </div>
               </div>
-
+ 
             </div>
           </div>
-
-          <hr className="border-slate-100 shrink-0" />
-
+ 
+          <hr className="border-[rgb(255,166,166)]/20 shrink-0" />
+ 
           {/* Thống kê người tham dự */}
           <div className="flex-1 flex flex-col justify-center">
             <div className="flex justify-between items-center mb-3">
               <h2 className="text-lg font-bold text-slate-800">Phản hồi tham dự (RSVP)</h2>
-              <Link to={`/dashboard/cards/${id}/wishes?tab=rsvp`} className="text-sm font-medium text-rose-500 hover:text-rose-600 hover:underline">Chi tiết</Link>
+              <Link to={`/dashboard/cards/${id}/wishes?tab=rsvp`} className="text-sm font-semibold text-[rgb(235,76,76)] hover:text-[rgb(255,112,112)] hover:underline">Chi tiết</Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-
-              <div className="rounded-2xl bg-white border border-rose-100/60 p-5 flex flex-col gap-3 shadow-xs transition-all duration-300 hover:shadow-sm hover:border-rose-200">
+ 
+              <div className="rounded-2xl bg-white border border-[rgb(255,166,166)]/30 p-5 flex flex-col gap-3 shadow-xs transition-all duration-300 hover:shadow-sm hover:border-[rgb(255,166,166)]/60">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500 shrink-0">
+                  <div className="h-8 w-8 rounded-lg bg-[rgb(255,237,199)] flex items-center justify-center text-[rgb(255,112,112)] shrink-0">
                     <MailOpen size={18} />
                   </div>
                   <span className="text-xs font-bold text-zinc-500 tracking-wide font-inter uppercase line-clamp-1">Phản hồi</span>
@@ -524,11 +524,11 @@ export default function CardDetailPage() {
                   <p className="text-[11px] text-zinc-400 font-bold mt-1">Xác nhận tham gia</p>
                 </div>
               </div>
-
-              <div className="rounded-2xl bg-white border border-emerald-100/60 p-5 flex flex-col gap-3 shadow-xs transition-all duration-300 hover:shadow-sm hover:border-emerald-200 relative overflow-hidden">
-                <div className="absolute top-0 right-0 -mr-6 -mt-6 w-20 h-20 rounded-full bg-emerald-50 blur-2xl pointer-events-none" />
+ 
+              <div className="rounded-2xl bg-white border border-[rgb(255,166,166)]/30 p-5 flex flex-col gap-3 shadow-xs transition-all duration-300 hover:shadow-sm hover:border-[rgb(255,166,166)]/60 relative overflow-hidden">
+                <div className="absolute top-0 right-0 -mr-6 -mt-6 w-20 h-20 rounded-full bg-[rgb(255,237,199)]/40 blur-2xl pointer-events-none" />
                 <div className="flex items-center gap-2 relative z-10">
-                  <div className="h-8 w-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 shrink-0">
+                  <div className="h-8 w-8 rounded-lg bg-[rgb(255,237,199)] flex items-center justify-center text-[rgb(235,76,76)] shrink-0">
                     <UserCheck size={18} />
                   </div>
                   <span className="text-xs font-bold text-zinc-500 tracking-wide font-inter uppercase line-clamp-1">Tham dự</span>
@@ -541,27 +541,27 @@ export default function CardDetailPage() {
                   </div>
                 </div>
               </div>
-
-              <div className="rounded-2xl bg-white border border-rose-100/60 p-5 flex flex-col gap-3 shadow-xs transition-all duration-300 hover:shadow-sm hover:border-rose-200">
+ 
+              <div className="rounded-2xl bg-white border border-[rgb(255,166,166)]/30 p-5 flex flex-col gap-3 shadow-xs transition-all duration-300 hover:shadow-sm hover:border-[rgb(255,166,166)]/60">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-red-50 flex items-center justify-center text-red-500 shrink-0">
+                  <div className="h-8 w-8 rounded-lg bg-[rgb(255,237,199)] flex items-center justify-center text-[rgb(235,76,76)] shrink-0">
                     <UserMinus size={18} />
                   </div>
                   <span className="text-xs font-bold text-zinc-500 tracking-wide font-inter uppercase line-clamp-1">Vắng mặt</span>
                 </div>
                 <div>
-                  <p className="text-3xl font-black text-rose-500 font-inter">{stats.notAttending}</p>
+                  <p className="text-3xl font-black text-[rgb(235,76,76)] font-inter">{stats.notAttending}</p>
                   <p className="text-[11px] text-zinc-400 font-bold mt-1">Không tham dự</p>
                 </div>
               </div>
-
+ 
             </div>
           </div>
-
+ 
         </div>
-
+ 
         {/* MODALS */}
-
+ 
         {/* QR Modal */}
         {showQRModal && (
           <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setShowQRModal(false)}>
@@ -569,9 +569,9 @@ export default function CardDetailPage() {
               <button onClick={() => setShowQRModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
                 <X size={24} />
               </button>
-              <h3 className="text-2xl font-bold text-rose-500  mb-2">Mã QR Thiệp</h3>
+              <h3 className="text-2xl font-bold text-[rgb(235,76,76)]  mb-2">Mã QR Thiệp</h3>
               <p className="text-sm text-slate-500 mb-8 text-center">Quét mã để mở trực tiếp trên điện thoại</p>
-
+ 
               <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-6 relative flex items-center justify-center">
                 <QRCode
                   id="qr-code-svg"
@@ -591,11 +591,11 @@ export default function CardDetailPage() {
                   </div>
                 )}
               </div>
-
+ 
               <div className="flex gap-3 w-full">
                 <button
                   onClick={downloadQR}
-                  className="flex-1 py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
+                  className="flex-1 py-3 bg-[rgb(235,76,76)] hover:bg-[rgb(255,112,112)] text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
                 >
                   <Download size={18} />
                   Tải QR (PNG)

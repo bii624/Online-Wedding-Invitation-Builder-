@@ -75,26 +75,26 @@ export const ReceivedGifts = () => {
     <DashboardLayout>
       <DashboardPanel className="p-8 min-h-[75vh]">
 
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 pb-6 border-b border-rose-100/30">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 pb-6 border-b border-[rgb(255,166,166)]/30">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">Quà Cưới Đã Nhận</h1>
-            <p className="mt-1.5 text-xs text-slate-500 font-medium">
+            <h1 className="text-2xl font-bold text-[rgb(235,76,76)]">Quà Cưới Đã Nhận</h1>
+            <p className="mt-1.5 text-xs text-zinc-555 font-medium">
               Theo dõi danh sách quà mừng và hiện kim từ khách mời gửi tặng
             </p>
           </div>
           <button
             onClick={fetchGifts}
             disabled={isLoading}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-xs font-bold text-zinc-650 hover:text-rose-500 hover:border-rose-100/80 hover:bg-rose-50/20 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-xs font-bold text-zinc-650 hover:text-[rgb(235,76,76)] hover:border-[rgb(255,166,166)] hover:bg-[rgb(255,237,199)]/20 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
           >
             <RefreshCw size={13} className={isLoading ? 'animate-spin' : ''} /> Làm mới
           </button>
         </div>
-
+ 
         {/* Stats */}
         <div className="grid gap-5 md:grid-cols-2 mb-8">
-          <div className="flex items-center gap-4 rounded-2xl border border-rose-100/40 bg-rose-50/10 p-5">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-rose-50 text-rose-500 border border-rose-100/50 shadow-2xs">
+          <div className="flex items-center gap-4 rounded-2xl border border-[rgb(255,166,166)]/45 bg-[rgb(255,237,199)]/10 p-5">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[rgb(255,237,199)] text-[rgb(235,76,76)] border border-[rgb(255,166,166)]/50 shadow-2xs">
               <Gift size={18} />
             </div>
             <div>
@@ -103,8 +103,8 @@ export const ReceivedGifts = () => {
               <p className="text-xs text-slate-500 font-medium mt-1">Hệ thống ghi nhận</p>
             </div>
           </div>
-          <div className="flex items-center gap-4 rounded-2xl border border-amber-100/40 bg-amber-50/10 p-5">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-amber-600 border border-amber-100/50 shadow-2xs">
+          <div className="flex items-center gap-4 rounded-2xl border border-[rgb(255,166,166)]/40 bg-[rgb(255,237,199)]/10 p-5">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[rgb(255,237,199)] text-[rgb(255,112,112)] border border-[rgb(255,166,166)]/50 shadow-2xs">
               <DollarSign size={18} />
             </div>
             <div>
@@ -116,26 +116,26 @@ export const ReceivedGifts = () => {
             </div>
           </div>
         </div>
-
+ 
         {/* Table */}
-        <div className="overflow-hidden rounded-2xl border border-rose-100/30 bg-white shadow-2xs">
+        <div className="overflow-hidden rounded-2xl border border-[rgb(255,166,166)]/30 bg-white shadow-2xs">
           {isLoading ? (
             <div className="flex items-center justify-center py-20">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-500" />
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[rgb(235,76,76)]" />
             </div>
           ) : gifts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-rose-50/50 text-rose-400 border border-rose-100/30 mb-3">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[rgb(255,237,199)]/40 text-[rgb(255,112,112)] border border-[rgb(255,166,166)]/30 mb-3">
                 <Gift size={20} />
               </div>
-              <h3 className="text-base font-bold text-slate-800 mb-1.5">Không có quà nào</h3>
+              <h3 className="text-base font-bold text-[rgb(235,76,76)] mb-1.5">Không có quà nào</h3>
               <p className="max-w-xs text-center text-xs text-slate-500 font-medium leading-relaxed mt-1">
                 Thông tin quà tặng và hiện kim của khách gửi qua cổng mừng thiệp sẽ được liệt kê tại đây.
               </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-zinc-100 text-left text-xs text-slate-600">
+              <table className="min-w-full divide-y divide-zinc-100 text-left text-xs text-slate-655">
                 <thead className="bg-slate-50/60 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                   <tr>
                     <th className="px-6 py-4">Ngày nhận</th>
@@ -150,10 +150,10 @@ export const ReceivedGifts = () => {
                     <tr key={gift.id} className="hover:bg-zinc-50/30 transition-colors">
                       <td className="px-6 py-4 text-slate-400">{formatDate(gift.createdAt)}</td>
                       <td className="px-6 py-4 font-medium text-slate-800">{gift.guestName}</td>
-                      <td className="px-6 py-4 text-slate-600 max-w-xs truncate" title={gift.giftName}>
+                      <td className="px-6 py-4 text-slate-650 max-w-xs truncate" title={gift.giftName}>
                         {gift.giftName}
                       </td>
-                      <td className="px-6 py-4 font-bold text-rose-500">
+                      <td className="px-6 py-4 font-bold text-[rgb(235,76,76)]">
                         {formatCurrency(gift.amount)}
                       </td>
                       <td className="px-6 py-4 text-slate-500 font-medium">{gift.cardTitle}</td>

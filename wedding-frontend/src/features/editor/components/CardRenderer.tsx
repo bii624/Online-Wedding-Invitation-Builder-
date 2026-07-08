@@ -151,7 +151,7 @@ export function CardRenderer({ elements, background, canvasWidth }: CardRenderer
       )}
       
       {sortedElements.map(element => {
-        if (!element.isVisible && element.isVisible !== undefined) return null;
+        if (!(element as any).isVisible && (element as any).isVisible !== undefined) return null;
         return <RenderedElement key={element.id} element={element} />;
       })}
     </div>

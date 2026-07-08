@@ -67,24 +67,24 @@ export const Wishes = () => {
   return (
     <DashboardLayout>
       <DashboardPanel className="p-8 min-h-[75vh]">
-
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 pb-6 border-b border-rose-100/30">
+ 
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8 pb-6 border-b border-[rgb(255,166,166)]/30">
           <div>
-            <h1 className="text-2xl font-black text-zinc-800 font-inter">Lời Chúc Đã Nhận</h1>
-            <p className="mt-1.5 text-xs text-zinc-400 font-inter font-medium">Lưu giữ những lời chúc yêu thương gửi đến vợ chồng bạn</p>
+            <h1 className="text-2xl font-black text-[rgb(235,76,76)] font-inter">Lời Chúc Đã Nhận</h1>
+            <p className="mt-1.5 text-xs text-zinc-550 font-inter font-medium">Lưu giữ những lời chúc yêu thương gửi đến vợ chồng bạn</p>
           </div>
           <button
             onClick={fetchWishes}
             disabled={isLoading}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-xs font-bold text-rose-500 hover:border-rose-100/85 hover:bg-rose-50/20 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-xs font-bold text-[rgb(235,76,76)] hover:border-[rgb(255,166,166)] hover:bg-[rgb(255,237,199)]/20 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
           >
             <RefreshCw size={13} className={isLoading ? 'animate-spin' : ''} /> Làm mới
           </button>
         </div>
-
+ 
         <div className="grid gap-5 md:grid-cols-3 mb-8">
-          <div className="flex items-center gap-4 rounded-2xl border border-rose-100/40 bg-rose-50/10 p-5">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-rose-50 text-rose-500 border border-rose-100/50 shadow-2xs">
+          <div className="flex items-center gap-4 rounded-2xl border border-[rgb(255,166,166)]/45 bg-[rgb(255,237,199)]/10 p-5">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[rgb(255,237,199)] text-[rgb(235,76,76)] border border-[rgb(255,166,166)]/40 shadow-2xs">
               <MessageCircle size={18} />
             </div>
             <div>
@@ -93,8 +93,8 @@ export const Wishes = () => {
               <p className="text-xs text-slate-500 font-medium mt-1">Lời chúc được ghi nhận</p>
             </div>
           </div>
-          <div className="flex items-center gap-4 rounded-2xl border border-amber-100/40 bg-amber-50/10 p-5">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-amber-600 border border-amber-100/50 shadow-2xs">
+          <div className="flex items-center gap-4 rounded-2xl border border-[rgb(255,166,166)]/40 bg-[rgb(255,237,199)]/10 p-5">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[rgb(255,237,199)] text-[rgb(255,112,112)] border border-[rgb(255,166,166)]/40 shadow-2xs">
               <CalendarDays size={18} />
             </div>
             <div>
@@ -107,8 +107,8 @@ export const Wishes = () => {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-4 rounded-2xl border border-pink-100/40 bg-pink-50/10 p-5">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-pink-50 text-pink-500 border border-pink-100/50 shadow-2xs">
+          <div className="flex items-center gap-4 rounded-2xl border border-[rgb(255,166,166)]/40 bg-[rgb(255,237,199)]/10 p-5">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[rgb(255,237,199)] text-[rgb(255,112,112)] border border-[rgb(255,166,166)]/40 shadow-2xs">
               <Heart size={18} />
             </div>
             <div>
@@ -118,15 +118,15 @@ export const Wishes = () => {
             </div>
           </div>
         </div>
-
-        <div className="overflow-hidden rounded-2xl border border-rose-100/30 bg-white shadow-2xs">
+ 
+        <div className="overflow-hidden rounded-2xl border border-[rgb(255,166,166)]/30 bg-white shadow-2xs">
           {isLoading ? (
             <div className="flex items-center justify-center py-20">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-rose-500" />
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[rgb(235,76,76)]" />
             </div>
           ) : wishes.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-rose-50/50 text-rose-400 border border-rose-100/30 mb-3">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[rgb(255,237,199)]/40 text-[rgb(255,112,112)] border border-[rgb(255,166,166)]/30 mb-3">
                 <Heart size={20} />
               </div>
               <p className="text-sm font-bold text-zinc-750 font-inter">Không có lời chúc nào</p>
@@ -151,7 +151,7 @@ export const Wishes = () => {
                     <tr key={wish.id} className="hover:bg-zinc-50/30 transition-colors">
                       <td className="px-6 py-4 font-bold text-zinc-800 font-inter">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-7 h-7 rounded-full bg-rose-500/10 text-rose-600 flex items-center justify-center text-xs font-black shadow-2xs overflow-hidden shrink-0">
+                          <div className="w-7 h-7 rounded-full bg-[rgb(255,237,199)] text-[rgb(235,76,76)] flex items-center justify-center text-xs font-black shadow-2xs overflow-hidden shrink-0">
                             {wish.avatarUrl ? (
                               <img src={wish.avatarUrl} alt={wish.displayName} className="w-full h-full object-cover" />
                             ) : (
@@ -165,7 +165,7 @@ export const Wishes = () => {
                         {wish.message}
                       </td>
                       <td className="px-6 py-4">
-                        <span className="text-rose-500 font-semibold">{wish.card?.title || 'Không tên'}</span>
+                        <span className="text-[rgb(235,76,76)] font-semibold">{wish.card?.title || 'Không tên'}</span>
                       </td>
                       <td className="px-6 py-4 text-zinc-400">
                         {formatDate(wish.createdAt)}

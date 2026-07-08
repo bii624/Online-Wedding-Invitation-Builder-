@@ -1,12 +1,17 @@
 import { Link } from 'react-router-dom';
 import { DashboardLayout } from './DashboardLayout';
 // DashboardPanel removed for Overview to use full-width layout
-import { Crown, Sparkles, ArrowRight, Sparkle, ArrowUpRight } from 'lucide-react';
+import { Crown, Sparkles, ArrowRight, Sparkle, ArrowUpRight, UserCheck, MessageSquare } from 'lucide-react';
 import FloatingBackgroundHearts from '../../../components/FloatingBackgroundHearts';
 import { useAuthStore } from '../../../store/authStore';
 import { useState, useEffect } from 'react';
 import { cardsApi } from '../../../api/cardsApi';
 import { assetsApi } from '../../../api/assetsApi';
+import { CardItem, CardItemSkeleton } from '../components/CardItem';
+import { templatesData } from '../../../data/templates';
+import { formatDistanceToNow } from 'date-fns';
+import { vi } from 'date-fns/locale';
+import { toast } from 'sonner';
 
 // --- Custom Icon Components ---
 
@@ -311,23 +316,48 @@ export const Overview = () => {
 
   const [cards, setCards] = useState<any[]>([]);
   const [assets, setAssets] = useState<any[]>([]);
+  const [rsvps, setRsvps] = useState<any[]>([]);
+  const [wishes, setWishes] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const fetchStatsAndData = async () => {
+    try {
+      const cardsRes = await cardsApi.getUserCards();
+      const assetsRes = await assetsApi.getAssets();
+      const rsvpsRes = await cardsApi.getAllRsvps();
+      const wishesRes = await cardsApi.getAllWishes();
+      setCards(cardsRes.data || cardsRes || []);
+      setAssets(assetsRes || []);
+      setRsvps(rsvpsRes.data || rsvpsRes || []);
+      setWishes(wishesRes.data || wishesRes || []);
+    } catch (err) {
+      console.error('Error fetching dashboard data:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const cardsRes = await cardsApi.getUserCards();
-        const assetsRes = await assetsApi.getAssets();
-        setCards(cardsRes.data || cardsRes || []);
-        setAssets(assetsRes || []);
-      } catch (err) {
-        console.error('Error fetching dashboard stats:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
+    fetchStatsAndData();
   }, []);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await cardsApi.deleteCard(id);
+      toast.success('Xóa thiệp cưới thành công!');
+      fetchStatsAndData();
+    } catch (err: any) {
+      console.error(err);
+      toast.error('Không thể xóa thiệp cưới!');
+    }
+  };
+
+  const greeting = (() => {
+    const hr = new Date().getHours();
+    if (hr < 12) return 'Chào buổi sáng';
+    if (hr < 18) return 'Chào buổi chiều';
+    return 'Chào buổi tối';
+  })();
 
   const isPro = user?.currentPlanId === '00000000-0000-0000-0000-000000000002';
   const isPremium = user?.currentPlanId === 'premium-mock-id';
@@ -345,6 +375,52 @@ export const Overview = () => {
   const photoPercent = Math.min(100, Math.round((imageAssetsCount / limits.photos) * 100)) || 0;
   const cardPercent = Math.min(100, Math.round((activeCardsCount / limits.cards) * 100)) || 0;
   const visitorPercent = Math.min(100, Math.round((totalViews / limits.visitors) * 100)) || 0;
+
+  // --- Countdown & Stats calculations ---
+  const getTargetDate = () => {
+    for (const card of cards) {
+      if (card.settings?.targetDate) return new Date(card.settings.targetDate);
+      if (card.settings?.weddingDate) return new Date(card.settings.weddingDate);
+      if (card.weddingDate) return new Date(card.weddingDate);
+    }
+    // Default target date: August 12 of the next/current year
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    let target = new Date(`${currentYear}-08-12`);
+    if (target.getTime() < now.getTime()) {
+      target = new Date(`${currentYear + 1}-08-12`);
+    }
+    return target;
+  };
+
+  const targetDate = getTargetDate();
+  const displayDays = Math.max(0, Math.ceil((targetDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)));
+  const targetDay = String(targetDate.getDate()).padStart(2, '0');
+  const targetMonth = String(targetDate.getMonth() + 1).padStart(2, '0');
+  const targetYear = String(targetDate.getFullYear());
+
+  const attendingRsvps = rsvps.filter(r => r.attending === 'yes').length;
+  const totalRsvps = rsvps.length;
+  const rsvpPercent = totalRsvps > 0 ? Math.round((attendingRsvps / totalRsvps) * 100) : 68;
+
+  const activities = [
+    ...rsvps.map(r => ({
+      id: `rsvp-${r.id}`,
+      type: 'rsvp',
+      title: 'Xác nhận tham dự',
+      desc: `${r.guestName} đã xác nhận ${r.attending === 'yes' ? 'SẼ THAM GIA' : r.attending === 'no' ? 'KHÔNG THAM GIA' : 'CÓ THỂ THAM GIA'}${r.numAttendees ? ` (${r.numAttendees} người)` : ''}`,
+      time: new Date(r.createdAt || r.updatedAt),
+    })),
+    ...wishes.map(w => ({
+      id: `wish-${w.id}`,
+      type: 'wish',
+      title: 'Lời chúc mới',
+      desc: `${w.displayName || w.guestName || 'Ai đó'} gửi lời chúc: "${w.message}"`,
+      time: new Date(w.createdAt || w.updatedAt),
+    }))
+  ].sort((a, b) => b.time.getTime() - a.time.getTime()).slice(0, 5);
+
+  const suggestedTemplates = templatesData.filter(t => t.tag === 'WEDDING').slice(0, 3);
 
   // SVG dash offset values based on 138 circumference (2 * PI * 22)
   const photoOffset = 138 - (138 * photoPercent) / 100;
@@ -370,14 +446,14 @@ export const Overview = () => {
         .moving-gradient-card {
           background: linear-gradient(
             135deg,
-            rgba(255, 228, 230, 0.80),
-            rgba(255, 241, 242, 0.70),
+            rgba(245, 175, 175, 0.30),
+            rgba(255, 205, 201, 0.40),
             rgba(255, 255, 255, 0.95),
             rgba(254, 243, 199, 0.50),
             rgba(255, 237, 213, 0.55),
             rgba(243, 232, 255, 0.35),
             rgba(255, 255, 255, 0.95),
-            rgba(255, 228, 230, 0.80)
+            rgba(253, 121, 121, 0.80)
           ) !important;
           background-size: 400% 400% !important;
           animation: bannerGradientShift 16s ease infinite !important;
@@ -401,181 +477,316 @@ export const Overview = () => {
       <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
 
         {/* Welcome Banner Card */}
-        <div className="relative overflow-hidden rounded-2xl moving-gradient-card border border-rose-100/60 p-6 md:p-8 text-zinc-800 shadow-lg shadow-rose-100/30 backdrop-blur-sm shadow-inner">
+        <div className="relative overflow-hidden rounded-2xl moving-gradient-card border border-[rgb(255,166,166)]/30 p-6 md:p-8 text-zinc-800 shadow-lg shadow-[rgb(255,166,166)]/20 backdrop-blur-sm hover:shadow-[rgb(255,166,166)]/30 transition-all duration-300">
           {/* Shimmer sweep layer */}
           <div className="shimmer-bar" aria-hidden="true" />
           {/* Floating background elements */}
-          <div className="absolute inset-0 -z-10 pointer-events-none opacity-15">
-            <FloatingBackgroundHearts />
-          </div>
-          <div className="absolute -right-16 -top-16 h-72 w-72 rounded-full bg-rose-100/30 blur-3xl pointer-events-none" />
-          <div className="absolute -left-16 -bottom-16 h-72 w-72 rounded-full bg-amber-100/20 blur-3xl pointer-events-none" />
+          <div className="absolute inset-0 -z-10 pointer-events-none opacity-15" />
+          <FloatingBackgroundHearts />
+          <div className="absolute -right-16 -top-16 h-72 w-72 rounded-full bg-[rgb(255,166,166)]/30 blur-3xl pointer-events-none" />
+          <div className="absolute -left-16 -bottom-16 h-72 w-72 rounded-full bg-[rgb(255,237,199)]/20 blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-8">
             <div className="space-y-6 flex-1">
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 border border-rose-100/60 px-3.5 py-1.5 text-[10px] font-black tracking-wider uppercase text-rose-500 shadow-2xs">
-                <Sparkles size={11} className="text-amber-500 animate-pulse" /> KHÔNG GIAN THIẾT KẾ CỦA BẠN
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-white/30 backdrop-blur-xs border border-white/40 px-3.5 py-1 text-[10px] font-black tracking-wider uppercase text-[rgb(235,76,76)] shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 border border-white animate-pulse" /> ĐANG HOẠT ĐỘNG
               </div>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <h1 className="text-3xl md:text-4xl font-black font-inter tracking-tight leading-tight text-zinc-900">
-                  Chào {displayName}!
+                  {greeting}, <span className=" font-poppins font-semibold text-[rgb(235,76,76)]">{displayName} !</span>
                 </h1>
-                <p className="text-zinc-500 text-sm font-inter font-medium max-w-lg leading-relaxed">
-                  Bạn đang sử dụng <span className="text-rose-500 font-bold">Gói trải nghiệm tự do</span>. Hãy thỏa sức sáng tạo và lan tỏa yêu thương qua những tấm thiệp cưới di động đẹp hoàn hảo nhất.
-                </p>
+                <div className="space-y-1">
+                  <p className="text-zinc-650 text-[15px] font-inter font-medium max-w-lg leading-relaxed">
+                    Đám cưới của bạn sắp đến rồi — <span className="font-extrabold text-[rgb(235,76,76)]">chỉ còn {displayDays} ngày nữa thôi!</span>
+                  </p>
+                  <p className="text-zinc-500 text-xs font-inter font-semibold">
+                    Thiệp đã được xem <span className="font-bold text-zinc-855">{totalViews.toLocaleString('vi-VN')}</span> lần · <span className="font-bold text-zinc-855">{rsvpPercent}%</span> khách đã xác nhận tham dự
+                  </p>
+                </div>
               </div>
 
               <div className="flex flex-wrap items-center gap-3 pt-2">
+               
                 <Link
-                  to={`/loading?next=${encodeURIComponent('/design')}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`}
-
-                  className="flex items-center gap-2 rounded-full bg-rose-600 hover:bg-rose-700 px-6 py-3.5 font-bold text-white shadow-md shadow-rose-500/10 hover:shadow-lg hover:shadow-rose-500/20 active:scale-95 transition-all duration-300 font-inter text-xs group"
+                  to={cards.length > 0 ? `/loading?next=${encodeURIComponent(`/design?id=${cards[0].id}`)}&message=${encodeURIComponent('Đang mở trình thiết kế...')}` : '/dashboard/create'}
+                  className="flex items-center gap-2 rounded-full bg-[rgb(235,76,76)]/80 border border-white/20 hover:bg-[rgb(235,76,76)] px-6 py-3 font-bold text-white shadow-md hover:shadow-lg active:scale-95 transition-all duration-300 font-inter text-xs group no-underline"
                 >
-                  <span>Tạo thiệp mới ngay</span>
-                  <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                </Link>
-
-                <Link
-                  to="/dashboard/plan"
-                  className="flex items-center gap-2 rounded-full bg-white hover:bg-zinc-50 border border-zinc-200 px-6 py-3.5 font-bold text-zinc-650 shadow-2xs hover:shadow-xs active:scale-95 transition-all duration-300 font-inter text-xs"
-                >
-                  <span>Nâng cấp gói dịch vụ</span>
+                  <span>Chỉnh sửa ngay</span>
+                  <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform text-white" />
                 </Link>
               </div>
             </div>
 
-            <div className="hidden lg:flex items-center justify-center shrink-0 relative mr-4 select-none pointer-events-none">
-              <img src="" alt="Welcome banner" className="w-full h-auto rounded-2xl" />
+            <div className="hidden lg:flex items-center justify-center shrink-0 relative mr-4 select-none">
+              {/* Glassmorphic Countdown Widget */}
+              <div className="flex flex-col items-center justify-between w-44 bg-white/20 backdrop-blur-md border border-[rgb(255,166,166)]/30 rounded-3xl p-5 text-[rgb(235,76,76)] shadow-lg shadow-[rgb(255,166,166)]/5">
+                <span className="text-[10px] font-black tracking-widest uppercase text-[rgb(235,76,76)]/80">ĐẾM NGƯỢC</span>
+                <div className="my-3 text-center">
+                  <span className="text-5xl font-black font-inter tracking-tighter leading-none block">{displayDays}</span>
+                  <span className="text-[11px] font-bold text-[rgb(235,76,76)]/95 mt-1 block">ngày nữa</span>
+                </div>
+                <div className="w-full border-t border-[rgb(255,166,166)]/20 my-2" />
+                <div className="flex justify-between w-full text-center px-1">
+                  <div>
+                    <span className="text-sm font-black block">{targetMonth}</span>
+                    <span className="text-[9px] font-semibold text-[rgb(235,76,76)]/70 block uppercase">tháng</span>
+                  </div>
+                  <div>
+                    <span className="text-sm font-black block">{targetDay}</span>
+                    <span className="text-[9px] font-semibold text-[rgb(235,76,76)]/70 block uppercase">ngày</span>
+                  </div>
+                  <div>
+                    <span className="text-sm font-black block">{targetYear}</span>
+                    <span className="text-[9px] font-semibold text-[rgb(235,76,76)]/70 block uppercase">năm</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-          <Link to={`/loading?next=${encodeURIComponent('/design')}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`} className="rounded-4xl bg-white/80 backdrop-blur-sm border border-rose-100/60 p-6 flex items-center justify-between shadow-sm shadow-rose-50/20 shadow-inner transition-all duration-300 hover:shadow-md hover:border-rose-200 cursor-pointer block hover:no-underline">
-
+          <Link to={`/loading?next=${encodeURIComponent('/design')}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`} className="rounded-[2rem] bg-white/45 backdrop-blur-md border border-[rgb(255,166,166)]/30 p-6 flex items-center justify-between shadow-xs hover:shadow-md hover:border-[rgb(255,166,166)]/60 cursor-pointer block hover:no-underline transition-all duration-300">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-lg bg-rose-50 flex items-center justify-center text-rose-500">
+                <div className="h-8 w-8 rounded-lg bg-[rgb(255,237,199)] flex items-center justify-center text-[rgb(255,112,112)]">
                   <ImageSizeSelectActualIcon size={18} color="currentColor" />
                 </div>
                 <span className="text-xs font-bold text-zinc-500 tracking-wide font-inter uppercase">Kho lưu trữ ảnh</span>
               </div>
               <div>
-                <p className="text-3xl font-black text-zinc-800 mt-1 font-inter">
-                  {imageAssetsCount} <span className="text-sm font-semibold text-zinc-400">/ {isPremium ? '∞' : limits.photos} tệp</span>
+                <p className="text-3xl font-black text-[rgb(235,76,76)] mt-1 font-inter">
+                  {imageAssetsCount} <span className="text-sm font-semibold text-[rgb(255,166,166)]">/ {isPremium ? '∞' : limits.photos} tệp</span>
                 </p>
-                <p className="text-[11px] text-zinc-400 font-bold mt-1">Đã tối ưu bộ nhớ</p>
+                <p className="text-[11px] text-zinc-400 font-medium mt-1">Đã tối ưu bộ nhớ</p>
               </div>
             </div>
 
             <div className="relative flex items-center justify-center shrink-0">
               <svg className="w-14 h-14 transform -rotate-90">
                 <circle cx="28" cy="28" r="22" className="stroke-zinc-100" strokeWidth="3" fill="transparent" />
-                <circle cx="28" cy="28" r="22" className="stroke-rose-500" strokeWidth="3.5" fill="transparent" strokeDasharray="138" strokeDashoffset={isPremium ? 0 : photoOffset} strokeLinecap="round" />
+                <circle cx="28" cy="28" r="22" className="stroke-[rgb(255,112,112)]" strokeWidth="3.5" fill="transparent" strokeDasharray="138" strokeDashoffset={isPremium ? 0 : photoOffset} strokeLinecap="round" />
               </svg>
-              <span className="absolute text-xs font-black text-zinc-700">{isPremium ? '100%' : `${photoPercent}%`}</span>
+              <span className="absolute text-xs font-black text-[rgb(235,76,76)]">{isPremium ? '100%' : `${photoPercent}%`}</span>
             </div>
           </Link>
 
-          <Link to="/dashboard/my-cards" className="rounded-4xl bg-white/80 backdrop-blur-sm border border-rose-100/60 p-6 flex items-center justify-between shadow-sm shadow-rose-50/20 shadow-inner transition-all duration-300 hover:shadow-md hover:border-rose-200 cursor-pointer block hover:no-underline">
+          <Link to="/dashboard/my-cards" className="rounded-[2rem] bg-white/45 backdrop-blur-md border border-[rgb(255,166,166)]/30 p-6 flex items-center justify-between shadow-xs hover:shadow-md hover:border-[rgb(255,166,166)]/60 cursor-pointer block hover:no-underline transition-all duration-300">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-lg bg-pink-50 flex items-center justify-center text-pink-500">
+                <div className="h-8 w-8 rounded-lg bg-[rgb(255,237,199)] flex items-center justify-center text-[rgb(255,112,112)]">
                   <Clipboard2HeartFillIcon size={18} color="currentColor" />
                 </div>
                 <span className="text-xs font-bold text-zinc-500 tracking-wide font-inter uppercase">Thiệp kích hoạt</span>
               </div>
               <div>
-                <p className="text-3xl font-black text-zinc-800 mt-1 font-inter">
-                  {activeCardsCount} <span className="text-sm font-semibold text-zinc-400">/ {isPremium ? '∞' : `0${limits.cards}`} thiệp</span>
+                <p className="text-3xl font-black text-[rgb(235,76,76)] mt-1 font-inter">
+                  {activeCardsCount} <span className="text-sm font-semibold text-[rgb(255,166,166)]">/ {isPremium ? '∞' : `0${limits.cards}`} thiệp</span>
                 </p>
-                <p className="text-[11px] text-pink-500 font-bold mt-1">Trạng thái: Sẵn sàng</p>
+                <p className="text-[11px] text-zinc-400 font-medium mt-1">Trạng thái: Sẵn sàng</p>
               </div>
             </div>
 
             <div className="relative flex items-center justify-center shrink-0">
               <svg className="w-14 h-14 transform -rotate-90">
                 <circle cx="28" cy="28" r="22" className="stroke-zinc-100" strokeWidth="3" fill="transparent" />
-                <circle cx="28" cy="28" r="22" className="stroke-pink-500" strokeWidth="3.5" fill="transparent" strokeDasharray="138" strokeDashoffset={isPremium ? 0 : cardOffset} strokeLinecap="round" />
+                <circle cx="28" cy="28" r="22" className="stroke-[rgb(255,112,112)]" strokeWidth="3.5" fill="transparent" strokeDasharray="138" strokeDashoffset={isPremium ? 0 : cardOffset} strokeLinecap="round" />
               </svg>
-              <span className="absolute text-xs font-black text-zinc-700">{isPremium ? '100%' : `${cardPercent}%`}</span>
+              <span className="absolute text-xs font-black text-[rgb(235,76,76)]">{isPremium ? '100%' : `${cardPercent}%`}</span>
             </div>
           </Link>
 
-          <Link to="/dashboard/my-cards" className="rounded-4xl bg-white/80 backdrop-blur-sm border border-rose-100/60 p-6 flex items-center justify-between shadow-sm shadow-rose-50/20 shadow-inner transition-all duration-300 hover:shadow-md hover:border-rose-200 cursor-pointer block hover:no-underline">
+          <Link to="/dashboard/my-cards" className="rounded-[2rem] bg-white/45 backdrop-blur-md border border-[rgb(255,166,166)]/30 p-6 flex items-center justify-between shadow-xs hover:shadow-md hover:border-[rgb(255,166,166)]/60 cursor-pointer block hover:no-underline transition-all duration-300">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
+                <div className="h-8 w-8 rounded-lg bg-[rgb(255,237,199)] flex items-center justify-center text-[rgb(255,112,112)]">
                   <PeopleEye16FilledIcon size={18} color="currentColor" />
                 </div>
                 <span className="text-xs font-bold text-zinc-500 tracking-wide font-inter uppercase">Khách ghé thăm</span>
               </div>
               <div>
-                <p className="text-3xl font-black text-zinc-800 mt-1 font-inter">
-                  {totalViews} <span className="text-sm font-semibold text-zinc-400">/ {isPremium ? '∞' : limits.visitors} lượt</span>
+                <p className="text-3xl font-black text-[rgb(235,76,76)] mt-1 font-inter">
+                  {totalViews} <span className="text-sm font-semibold text-[rgb(255,166,166)]">/ {isPremium ? '∞' : limits.visitors} lượt</span>
                 </p>
-                <p className="text-[11px] text-zinc-400 font-bold mt-1">Reset sau 30 ngày</p>
+                <p className="text-[11px] text-zinc-400 font-medium mt-1">Reset sau 30 ngày</p>
               </div>
             </div>
 
-            {/* Circular Progress Gauge */}
             <div className="relative flex items-center justify-center shrink-0">
               <svg className="w-14 h-14 transform -rotate-90">
                 <circle cx="28" cy="28" r="22" className="stroke-zinc-100" strokeWidth="3" fill="transparent" />
-                <circle cx="28" cy="28" r="22" className="stroke-amber-400" strokeWidth="3.5" fill="transparent" strokeDasharray="138" strokeDashoffset={isPremium ? 0 : visitorOffset} strokeLinecap="round" />
+                <circle cx="28" cy="28" r="22" className="stroke-[rgb(255,112,112)]" strokeWidth="3.5" fill="transparent" strokeDasharray="138" strokeDashoffset={isPremium ? 0 : visitorOffset} strokeLinecap="round" />
               </svg>
-              <span className="absolute text-xs font-black text-zinc-700">{isPremium ? '100%' : `${visitorPercent}%`}</span>
+              <span className="absolute text-xs font-black text-[rgb(235,76,76)]">{isPremium ? '100%' : `${visitorPercent}%`}</span>
             </div>
           </Link>
 
         </div>
 
         {/* Quick Nav area */}
-        <div className="rounded-[2.5rem] bg-white/85 backdrop-blur-sm border border-rose-100/50 p-6 shadow-sm shadow-rose-50/20 shadow-inner">
+        <div className="rounded-[2rem] bg-white/45 backdrop-blur-md border border-[rgb(255,166,166)]/30 p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-base font-bold text-zinc-800 font-inter">Khu vực điều hướng nhanh</h3>
-            <span className="text-xs font-bold text-rose-400 bg-rose-50 px-3 py-1 rounded-full border border-rose-100/50">LỐI TẮT TIỆN ÍCH</span>
+            <h3 className="text-base font-bold text-[rgb(235,76,76)] font-inter">Khu vực điều hướng nhanh</h3>
+            <span className="bg-[rgb(255,237,199)] border border-[rgb(255,166,166)]/30 text-[rgb(235,76,76)] text-[10px] font-black tracking-wider uppercase px-2 py-0.5 rounded-md">Lối tắt tiện ích</span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-5">
             {[
-              { icon: TemplateFilledIcon, label: 'Kho Mẫu Thiệp', path: '/dashboard/templates', color: 'text-rose-500 bg-rose-50 border-rose-100/50' },
-              { icon: HeartWhiteSuitSmallIcon, label: 'Lời Chúc', path: '/dashboard/wishes', color: 'text-pink-500 bg-pink-50 border-pink-100/50' },
-              { icon: FolderPeople24FilledIcon, label: 'Khách RSVP', path: '/dashboard/rsvp', color: 'text-rose-600 bg-rose-50/50 border-rose-100/30' },
-              { icon: Crown, label: 'Nâng Cấp VIP', path: '/dashboard/plan', color: 'text-amber-600 bg-amber-50 border-amber-100/50' },
-              { icon: PersonSupport16FilledIcon, label: 'Hỗ Trợ', path: '/dashboard/feedback', color: 'text-purple-600 bg-purple-50 border-purple-100/50' },
+              { icon: TemplateFilledIcon, label: 'Kho Mẫu Thiệp', path: '/dashboard/templates', color: 'text-[rgb(255,112,112)] bg-[rgb(255,237,199)] border-[rgb(255,166,166)]/30' },
+              { icon: HeartWhiteSuitSmallIcon, label: 'Lời Chúc', path: '/dashboard/wishes', color: 'text-[rgb(255,112,112)] bg-[rgb(255,237,199)] border-[rgb(255,166,166)]/30' },
+              { icon: FolderPeople24FilledIcon, label: 'Khách RSVP', path: '/dashboard/rsvp', color: 'text-[rgb(255,112,112)] bg-[rgb(255,237,199)] border-[rgb(255,166,166)]/30' },
+              { icon: Crown, label: 'Nâng Cấp VIP', path: '/dashboard/plan', color: 'text-[rgb(235,76,76)] bg-[rgb(255,237,199)] border-[rgb(255,166,166)]/40' },
+              { icon: PersonSupport16FilledIcon, label: 'Hỗ Trợ', path: '/dashboard/feedback', color: 'text-[rgb(255,112,112)] bg-[rgb(255,237,199)] border-[rgb(255,166,166)]/30' },
             ].map((item, idx) => (
               <Link
                 key={idx}
                 to={item.path}
-                className="flex flex-col items-center justify-center p-5 rounded-[1.75rem] border border-zinc-100 bg-zinc-50/30 hover:bg-white hover:border-rose-200 hover:shadow-md transition-all duration-300 group"
+                className="flex flex-col items-center justify-center p-5 rounded-[1.75rem] border border-[rgb(255,166,166)]/10 bg-[rgb(255,237,199)]/25 hover:bg-white/60 hover:border-[rgb(255,166,166)]/70 hover:shadow-md transition-all duration-300 group hover:no-underline"
               >
                 <div className={`h-14 w-14 rounded-2xl flex items-center justify-center mb-3 border ${item.color} shadow-sm group-hover:scale-110 transition-transform duration-300`}>
                   <item.icon size={24} color="currentColor" />
                 </div>
-                <span className="text-sm font-bold text-zinc-700 font-inter group-hover:text-rose-600 transition-colors">{item.label}</span>
+                <span className="text-sm font-bold text-zinc-700 font-inter group-hover:text-[rgb(235,76,76)] transition-colors">{item.label}</span>
               </Link>
             ))}
           </div>
         </div>
 
-        <div className="rounded-4xl bg-rose-50/40 backdrop-blur-sm border border-rose-100/40 p-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm shadow-rose-50/20 shadow-inner">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0">
-              <Sparkle size={20} className="animate-pulse" />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Left Column: Thiệp của tôi & Mẫu thiết kế gợi ý */}
+          <div className="lg:col-span-8 space-y-8">
+            {/* Thiệp của tôi */}
+            <div className="bg-white/45 backdrop-blur-md border border-[rgb(255,166,166)]/30 rounded-[2rem] p-6 shadow-xs space-y-5">
+              <div className="flex items-center justify-between pb-2 border-b border-[rgb(255,237,199)]">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-black text-[rgb(235,76,76)] font-inter">Thiệp của tôi</h3>
+                  <span className="bg-[rgb(255,237,199)] border border-[rgb(255,166,166)]/30 text-[rgb(235,76,76)] text-[10px] font-black tracking-wider uppercase px-2 py-0.5 rounded-md">
+                    Danh sách
+                  </span>
+                </div>
+                <Link to="/dashboard/my-cards" className="text-xs font-bold text-[rgb(255,112,112)] hover:text-[rgb(235,76,76)] transition-colors no-underline">
+                  Xem tất cả &rarr;
+                </Link>
+              </div>
+
+              {isLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {[1, 2].map((i) => <CardItemSkeleton key={i} />)}
+                </div>
+              ) : cards.length === 0 ? (
+                <div className="flex flex-col items-center justify-center p-8 bg-[rgb(255,237,199)]/20 border border-[rgb(255,166,166)]/20 rounded-2xl min-h-[160px]">
+                  <p className="text-sm font-semibold text-zinc-400 font-inter mb-4">Bạn chưa tạo thiệp cưới nào</p>
+                  <Link
+                    to="/dashboard/create"
+                    className="bg-[rgb(255,112,112)] hover:bg-[rgb(235,76,76)] text-white px-5 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm shadow-[rgb(255,112,112)]/10 no-underline"
+                  >
+                    Tạo thiệp ngay
+                  </Link>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {cards.slice(0, 2).map(card => (
+                    <CardItem
+                      key={card.id}
+                      card={{
+                        id: card.id,
+                        title: card.title || 'Chưa có tiêu đề',
+                        slug: card.slug,
+                        thumbnailUrl: card.thumbnailUrl || card.settings?.coverImage || null,
+                        isPublished: card.status === 'published' || card.isPublic,
+                        viewCount: card.viewCount || 0,
+                        updatedAt: card.updatedAt
+                      }}
+                      onDelete={handleDelete}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
-            <div>
-              <h4 className="text-sm font-extrabold text-zinc-800 font-inter">Mách nhỏ để thiết kế thiệp đẹp</h4>
-              <p className="text-xs text-zinc-500 font-inter">Hãy chuẩn bị các hình ảnh cưới chất lượng cao (tỷ lệ 4:3 hoặc 16:9) để chèn vào thiệp trông sắc nét nhất!</p>
+
+            {/* Mẫu gợi ý */}
+            <div className="bg-white/45 backdrop-blur-md border border-[rgb(255,166,166)]/30 rounded-[2rem] p-6 shadow-xs space-y-5">
+              <div className="flex items-center justify-between pb-2 border-b border-[rgb(255,237,199)]">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-black text-[rgb(235,76,76)] font-inter">Mẫu gợi ý thiết kế đẹp</h3>
+                  <span className="bg-[rgb(255,237,199)] border border-[rgb(255,166,166)]/30 text-[rgb(235,76,76)] text-[10px] font-black tracking-wider uppercase px-2 py-0.5 rounded-md">
+                    Xu hướng
+                  </span>
+                </div>
+                <Link to="/dashboard/templates" className="text-xs font-bold text-[rgb(255,112,112)] hover:text-[rgb(235,76,76)] transition-colors no-underline">
+                  Xem kho mẫu &rarr;
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
+                {suggestedTemplates.map((item) => (
+                  <Link
+                    key={item.id}
+                    to={`/loading?next=${encodeURIComponent(`/design?templateId=${item.id}`)}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`}
+                    className="bg-white rounded-2xl overflow-hidden border border-[rgb(255,166,166)]/20 hover:border-[rgb(255,112,112)] shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 group flex flex-col hover:no-underline"
+                  >
+                    <div className="relative aspect-[3/4.2] overflow-hidden bg-[rgb(255,237,199)]/20 border-b border-[rgb(255,237,199)]">
+                      <img
+                        src={item.mainImage}
+                        alt={item.title}
+                        className="w-full h-full object-cover object-top transition-all"
+                      />
+                      <span className="absolute top-2.5 left-2.5 bg-white/95 text-[9px] font-black tracking-widest text-[rgb(235,76,76)] px-2 py-0.5 rounded-full border border-[rgb(255,237,199)] uppercase">
+                        {item.price}
+                      </span>
+                    </div>
+                    <div className="p-3 flex-1 flex flex-col justify-between">
+                      <h4 className="font-bold text-slate-800 text-xs line-clamp-1 group-hover:text-[rgb(255,112,112)] transition-colors" title={item.title}>
+                        {item.title}
+                      </h4>
+                      <span className="text-[10px] text-zinc-400 font-bold mt-1">Mã: {item.code}</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
-          <Link
-            to="/dashboard/templates"
-            className="text-xs font-bold text-rose-500 hover:text-rose-600 flex items-center gap-1 hover:underline font-inter"
-          >
-            Xem kho mẫu ngay <ArrowUpRight size={14} />
-          </Link>
+
+          {/* Right Column: Hoạt động gần đây */}
+          <div className="lg:col-span-4">
+            <div className="bg-white/45 backdrop-blur-md border border-[rgb(255,166,166)]/30 rounded-[2rem] p-6 shadow-xs space-y-5 min-h-[300px] flex flex-col">
+              <div className="flex items-center gap-2 pb-2 border-b border-[rgb(255,237,199)] shrink-0">
+                <h3 className="text-lg font-black text-[rgb(235,76,76)] font-inter">Hoạt động gần đây</h3>
+                <span className="bg-[rgb(255,237,199)] border border-[rgb(255,166,166)]/30 text-[rgb(235,76,76)] text-[10px] font-black tracking-wider uppercase px-2 py-0.5 rounded-md">
+                  Live
+                </span>
+              </div>
+
+              {activities.length === 0 ? (
+                <div className="flex-1 flex flex-col items-center justify-center py-20 text-zinc-400">
+                  <span className="text-xs font-semibold">Chưa có hoạt động nào gần đây</span>
+                </div>
+              ) : (
+                <div className="space-y-4 flex-1">
+                  {activities.map((act) => (
+                    <div key={act.id} className="flex items-start gap-3 border-b border-[rgb(255,237,199)] pb-3 last:border-0 last:pb-0">
+                      <div className={`p-2 rounded-xl shrink-0 ${act.type === 'rsvp' ? 'bg-[rgb(255,237,199)] text-[rgb(235,76,76)]' : 'bg-[rgb(255,237,199)] text-[rgb(255,112,112)]'
+                        }`}>
+                        {act.type === 'rsvp' ? <UserCheck size={15} /> : <MessageSquare size={15} />}
+                      </div>
+                      <div className="flex-1 min-w-0 text-left">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-xs font-bold text-[rgb(235,76,76)] truncate">{act.title}</span>
+                          <span className="text-[9px] text-zinc-400 whitespace-nowrap">
+                            {formatDistanceToNow(act.time, { addSuffix: true, locale: vi })}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-zinc-550 font-medium font-inter mt-0.5 leading-relaxed break-words line-clamp-2">
+                          {act.desc}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
       </div>

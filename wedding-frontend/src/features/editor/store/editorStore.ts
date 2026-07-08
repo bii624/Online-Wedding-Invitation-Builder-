@@ -1267,7 +1267,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         targetCenterY = canvasHeight - h / 2;
         break;
       case 'middle':
-        targetCenterY = canvasHeight / 2;
+        targetCenterY = getViewportCenterY(get().zoom, canvasHeight);
         break;
     }
 
