@@ -431,7 +431,7 @@ const INITIAL_STATE: EditorState = {
   lastSavedData: null,
   editorMode: 'card' as const,
   templateId: null,
-  isLoadingTemplate: false,
+  isLoadingEditor: false,
   autoScroll: false,
   autoScrollSpeed: 50,
 };
@@ -1373,8 +1373,29 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
   setAutoSaveStatus: (status) => set({ autoSaveStatus: status }),
 
   saveCanvasNow: async () => {
-    const { cardId, elements, canvasBackground, music, canvasWidth, lastSavedData } = get();
-    if (!cardId) return;
+    let currentCardId = get().cardId;
+
+    if (!currentCardId) {
+      set({ autoSaveStatus: 'saving' });
+      try {
+        const newCard = await cardsApi.createCard({
+          title: 'Thiết kế mới',
+        });
+        currentCardId = newCard.id;
+        set({ cardId: currentCardId });
+        
+        // Cập nhật URL trên trình duyệt để thêm ?id=...
+        const url = new URL(window.location.href);
+        url.searchParams.set('id', currentCardId);
+        window.history.replaceState({}, '', url.toString());
+      } catch (err) {
+        console.error('[saveCanvasNow] Create new card failed:', err);
+        set({ autoSaveStatus: 'error' });
+        return;
+      }
+    }
+
+    const { elements, canvasBackground, music, canvasWidth, lastSavedData } = get();
 
     const currentDataStr = JSON.stringify({ elements, canvasBackground, music, canvasWidth });
     if (currentDataStr === lastSavedData) return;
@@ -1427,7 +1448,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         autoScrollSpeed: get().autoScrollSpeed,
       };
 
-      await cardsApi.saveCanvas(cardId, {
+      await cardsApi.saveCanvas(currentCardId, {
         blocks,
         background: canvasBackground as object,
         settings,
@@ -1450,7 +1471,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
               canvas.toBlob((b) => resolve(b), 'image/webp', 0.8);
             });
             if (blob) {
-              await cardsApi.uploadCardThumbnail(cardId, blob);
+              await cardsApi.uploadCardThumbnail(currentCardId, blob);
             }
           }
         } catch (thumbErr) {
@@ -1464,7 +1485,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
   },
 
   loadCardData: async (cardId: string) => {
-    set({ cardId });
+    set({ cardId, editorMode: 'card', isLoadingEditor: true });
     try {
       const card = await cardsApi.getCard(cardId);
       // Map blocks → elements
@@ -1522,17 +1543,19 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         history: [{ elements, canvasBackground: background }],
         historyIndex: 0,
         selectedElement: null,
+        isLoadingEditor: false,
       });
       set({ lastSavedData: JSON.stringify({ elements, canvasBackground: background, music, canvasWidth: card.canvasWidth ?? get().canvasWidth }) });
     } catch (err) {
       console.error('[loadCardData] Failed:', err);
+      set({ isLoadingEditor: false });
     }
   },
 
   // ── Template Editor ────────────────────────────────────
   loadTemplateData: async (templateId: string) => {
     // mark loading state so UI can show a loading screen
-    set({ templateId, editorMode: 'template', isLoadingTemplate: true });
+    set({ templateId, editorMode: 'template', isLoadingEditor: true });
     try {
       const template = await templatesEditorApi.getTemplateCanvas(templateId);
       const elements = (template.blocks ?? []).map((block: any) => {
@@ -1589,14 +1612,14 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         historyIndex: 0,
         selectedElement: null,
         autoSaveStatus: 'idle',
-        isLoadingTemplate: false,
+        isLoadingEditor: false,
       });
       const mappedElements = get().elements;
       set({ lastSavedData: JSON.stringify({ elements: mappedElements, canvasBackground: background, music: null, canvasWidth: template.canvasWidth ?? get().canvasWidth }) });
     } catch (err) {
       console.error('[loadTemplateData] Failed:', err);
       // ensure loading flag cleared on error
-      set({ isLoadingTemplate: false });
+      set({ isLoadingEditor: false });
     }
   },
 

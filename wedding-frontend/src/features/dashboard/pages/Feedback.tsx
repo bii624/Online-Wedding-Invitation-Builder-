@@ -34,7 +34,7 @@ export const Feedback = () => {
     <DashboardLayout>
       <DashboardPanel className="min-h-[75vh] flex flex-col lg:flex-row animate-in fade-in duration-500">
 
-        <div className="flex-1 p-8 sm:p-10 space-y-6">
+        <div className="flex-1 p-5 sm:p-8 md:p-10 space-y-5 md:space-y-6">
           <div>
             <h1 className="text-2xl font-black text-zinc-800 font-inter">Chia Sẻ & Góp Ý</h1>
             <p className="mt-1.5 text-xs text-zinc-400 font-inter font-medium">DearLove luôn trân trọng mọi ý kiến đóng góp từ bạn để cải tiến hệ thống tốt hơn</p>

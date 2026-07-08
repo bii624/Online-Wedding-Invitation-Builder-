@@ -437,7 +437,7 @@ export interface EditorState {
   editorMode: 'card' | 'template';
   templateId: string | null;
   // Loading state when fetching template data from server
-  isLoadingTemplate: boolean;
+  isLoadingEditor: boolean;
   
   // Global settings
   autoScroll: boolean;

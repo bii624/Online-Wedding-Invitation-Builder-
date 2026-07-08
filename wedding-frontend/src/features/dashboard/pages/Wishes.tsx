@@ -171,10 +171,10 @@ export const Wishes = () => {
 
   return (
     <DashboardLayout>
-      <DashboardPanel className="p-8">
+      <DashboardPanel className="p-4 md:p-8">
 
         {/* Header */}
-        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 mb-8 pb-6 border-b border-rose-100/30">
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-6 md:mb-8 pb-4 md:pb-6 border-b border-rose-100/30">
           <div>
             <h1 className="text-2xl font-bold text-slate-800">Quản lý lời chúc</h1>
             <p className="mt-1.5 text-xs text-slate-500 font-medium">Lưu giữ những lời chúc yêu thương gửi đến vợ chồng bạn</p>
@@ -212,7 +212,7 @@ export const Wishes = () => {
         </div>
 
         {/* TOP STATS */}
-        <div className="grid gap-5 md:grid-cols-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5 mb-6 md:mb-8">
           <div className="flex flex-col justify-center rounded-2xl border border-rose-100/40 bg-rose-50/20 p-5 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <p className="text-[11px] font-bold text-rose-500 uppercase tracking-wider">Tổng lời chúc</p>
@@ -269,7 +269,7 @@ export const Wishes = () => {
         </div>
 
         {/* MIDDLE SECTION */}
-        <div className="grid gap-5 md:grid-cols-2 mb-8">
+        <div className="grid gap-4 md:gap-5 md:grid-cols-2 mb-6 md:mb-8">
 
           {/* Lời chúc theo bên họ */}
           <div className="rounded-2xl border border-rose-100/40 bg-white p-6 shadow-sm">

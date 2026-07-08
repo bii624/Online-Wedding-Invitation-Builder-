@@ -48,7 +48,7 @@ export const MyCards = () => {
 
   return (
     <DashboardLayout>
-      <DashboardPanel className="p-8 min-h-[75vh]">
+      <DashboardPanel className="p-4 md:p-8 min-h-[75vh]">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-black text-zinc-800 font-inter">Thiệp Của Tôi</h1>
@@ -56,9 +56,9 @@ export const MyCards = () => {
           </div>
           <button
             onClick={() => navigate('/dashboard/create')}
-            className="bg-rose-600 hover:bg-rose-700 text-white px-5 py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm shadow-rose-500/10 hover:shadow-rose-500/20 cursor-pointer"
+            className="shrink-0 bg-rose-600 hover:bg-rose-700 text-white px-4 md:px-5 py-2.5 md:py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 active:scale-95 transition-all shadow-sm shadow-rose-500/10 hover:shadow-rose-500/20 cursor-pointer"
           >
-            <Edit3 size={14} /> Tạo thiệp mới
+            <Edit3 size={14} /> <span className="hidden sm:inline">Tạo thiệp mới</span><span className="sm:hidden">Tạo mới</span>
           </button>
         </div>
 

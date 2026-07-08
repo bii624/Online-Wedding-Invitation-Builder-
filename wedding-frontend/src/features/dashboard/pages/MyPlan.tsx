@@ -90,8 +90,8 @@ export const MyPlan: React.FC = () => {
 
   return (
     <DashboardLayout title="Gói dịch vụ" subtitle="Chọn gói phù hợp với nhu cầu của bạn">
-      <DashboardPanel className="p-6">
-      <div className="max-w-5xl mx-auto space-y-7 pb-8">
+      <DashboardPanel className="p-4 md:p-6">
+      <div className="max-w-5xl mx-auto space-y-5 md:space-y-7 pb-6 md:pb-8">
         <div className="bg-gradient-to-r from-rose-50 to-pink-50 border border-rose-100/60 rounded-3xl p-5 flex flex-col sm:flex-row items-center gap-4 shadow-2xs">
           <div className="w-10 h-10 rounded-2xl bg-rose-500 flex items-center justify-center text-white shadow-sm shadow-rose-200">
             <Crown size={20} />
@@ -131,7 +131,7 @@ export const MyPlan: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-5 items-start">
           {plans.map(plan => {
             const { icon, iconBg, ...serializablePlan } = plan
             return (

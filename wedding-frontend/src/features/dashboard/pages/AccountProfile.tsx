@@ -118,7 +118,7 @@ export const AccountProfile: React.FC = () => {
 
   return (
     <DashboardLayout>
-      <DashboardPanel className="p-6">
+      <DashboardPanel className="p-4 md:p-6">
       <div className="max-w-5xl mx-auto w-full flex-1 space-y-6 animate-in fade-in duration-500">
 
         <div className="bg-white rounded-4xl border border-rose-100/50 shadow-[0_15px_40px_rgba(244,63,94,0.01)] p-6">
@@ -173,20 +173,20 @@ export const AccountProfile: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-4xl border border-rose-100/50 shadow-[0_15px_40px_rgba(244,63,94,0.01)] overflow-hidden">
+        <div className="bg-white rounded-3xl md:rounded-4xl border border-rose-100/50 shadow-[0_15px_40px_rgba(244,63,94,0.01)] overflow-hidden">
           <div className="flex border-b border-rose-100/30 bg-zinc-50/40 p-2 gap-1">
             {tabs.map(t => (
               <button
                 key={t.key}
                 onClick={() => setTab(t.key)}
-                className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer ${tab === t.key ? 'bg-white border border-rose-100/40 text-rose-500 shadow-2xs' : 'border-transparent text-zinc-500 hover:text-zinc-800'}`}
+                className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 md:py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer flex-1 md:flex-none justify-center md:justify-start ${tab === t.key ? 'bg-white border border-rose-100/40 text-rose-500 shadow-2xs' : 'border-transparent text-zinc-500 hover:text-zinc-800'}`}
               >
                 {t.icon} {t.label}
               </button>
             ))}
           </div>
 
-          <div className="p-8">
+          <div className="p-4 md:p-8">
             {tab === 'info' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">

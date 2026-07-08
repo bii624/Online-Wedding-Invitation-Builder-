@@ -7,7 +7,7 @@ export const CreateCard = () => {
 
   return (
     <DashboardLayout>
-      <div className="bg-white/80 backdrop-blur-lg rounded-3xl border border-rose-100/30 shadow-lg p-6 sm:p-10 flex-1 flex flex-col">
+      <div className="bg-white/80 backdrop-blur-lg rounded-3xl border border-rose-100/30 shadow-lg p-4 sm:p-6 md:p-10 flex-1 flex flex-col">
         <div className="w-full py-4 flex-1 flex flex-col">
 
           {/* Header */}
@@ -63,7 +63,7 @@ export const CreateCard = () => {
           </div>
 
           {/* VIP Premium Banner */}
-          <div className="relative overflow-hidden p-8 sm:p-10 rounded-3xl bg-gradient-to-r from-rose-50 to-rose-100/50 flex flex-col sm:flex-row items-center gap-8 shadow-md border border-rose-200/60">
+          <div className="relative overflow-hidden p-6 sm:p-8 md:p-10 rounded-3xl bg-gradient-to-r from-rose-50 to-rose-100/50 flex flex-col sm:flex-row items-center gap-6 sm:gap-8 shadow-md border border-rose-200/60">
             {/* Premium Gradients */}
             <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-rose-200/30 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-amber-100/40 rounded-full blur-[60px] translate-y-1/3 -translate-x-1/4 pointer-events-none" />

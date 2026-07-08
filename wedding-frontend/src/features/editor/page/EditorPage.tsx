@@ -38,10 +38,18 @@ export function EditorPage() {
     cardId,
     templateId,
     editorMode,
-    isLoadingTemplate,
+    isLoadingEditor,
   } = useEditorStore();
 
   const [searchParams] = useSearchParams();
+  const cardIdParam = searchParams.get('id');
+  const templateIdParam = searchParams.get('templateId');
+
+  // Ngăn chặn giật (flicker) bằng cách kiểm tra xem dữ liệu trong store đã khớp với URL chưa
+  const isDataMismatch = 
+    (cardIdParam && cardIdParam !== cardId) || 
+    (templateIdParam && templateIdParam !== templateId);
+  const showLoading = isLoadingEditor || isDataMismatch;
 
   // ── Load dữ liệu từ URL params ───────────────────────────
   useEffect(() => {
@@ -54,18 +62,19 @@ export function EditorPage() {
         return;
       }
 
-      const cardIdParam = searchParams.get('id');
-      const templateIdParam = searchParams.get('templateId');
-
       if (templateIdParam) {
         // Chế độ thiết kế template (admin)
-        loadTemplateData(templateIdParam);
+        if (templateId !== templateIdParam) {
+          loadTemplateData(templateIdParam);
+        }
       } else if (cardIdParam) {
         // Chế độ thiết kế card (user)
-        loadCardData(cardIdParam);
+        if (cardId !== cardIdParam) {
+          loadCardData(cardIdParam);
+        }
       }
     }
-  }, [isInitialized, user, searchParams]);
+  }, [isInitialized, user, searchParams, cardId, templateId, loadTemplateData, loadCardData, cardIdParam, templateIdParam]);
 
   // ── Auto-save mỗi 30s ────────────────────────────────────
   useEffect(() => {
@@ -74,11 +83,10 @@ export function EditorPage() {
       const timer = setInterval(() => saveTemplateNow(), AUTO_SAVE_INTERVAL_MS);
       return () => clearInterval(timer);
     } else {
-      if (!cardId) return;
       const timer = setInterval(() => saveCanvasNow(), AUTO_SAVE_INTERVAL_MS);
       return () => clearInterval(timer);
     }
-  }, [cardId, templateId, editorMode]);
+  }, [cardId, templateId, editorMode, saveTemplateNow, saveCanvasNow]);
 
   // ── Keyboard shortcuts ────────────────────────────────────
   useEffect(() => {
@@ -161,9 +169,9 @@ export function EditorPage() {
 
       {/* ── Main Body ───────────────────── */}
       <div className={styles['editor-body']}>
-        {isLoadingTemplate ? (
+        {showLoading ? (
           <div style={{ flex: 1 }}>
-            <LoadingPage message="Đang tải mẫu..." />
+            <LoadingPage message="Đang tải dữ liệu..." />
           </div>
         ) : (
           <>

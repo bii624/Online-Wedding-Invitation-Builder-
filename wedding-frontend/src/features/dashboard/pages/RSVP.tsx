@@ -139,10 +139,10 @@ export const RSVP = () => {
 
   return (
     <DashboardLayout>
-      <DashboardPanel className="p-8 min-h-[75vh]">
+      <DashboardPanel className="p-4 md:p-8 min-h-[75vh]">
 
         {/* HEADER & FILTER */}
-        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 mb-8 pb-6 border-b border-rose-100/30">
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-6 md:mb-8 pb-4 md:pb-6 border-b border-rose-100/30">
           <div>
             <h1 className="text-2xl font-bold text-slate-800">Quản lý Khách mời (RSVP)</h1>
             <p className="mt-1.5 text-xs text-slate-500 font-medium">Kiểm soát lượng khách xác nhận tham dự theo từng thiệp cưới</p>
@@ -183,7 +183,7 @@ export const RSVP = () => {
         </div>
 
         {/* THỐNG KÊ CHI TIẾT */}
-        <div className="grid gap-5 md:grid-cols-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5 mb-6 md:mb-8">
           <div className="flex flex-col justify-center rounded-2xl border border-rose-100/40 bg-rose-50/20 p-5 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <p className="text-[11px] font-bold text-rose-500 uppercase tracking-wider">Tổng xác nhận</p>
@@ -242,7 +242,7 @@ export const RSVP = () => {
         </div>
 
         {/* BỘ LỌC BẢNG (SEARCH, FILTER, SORT) */}
-        <div className="flex flex-col xl:flex-row gap-2.5 mb-6 bg-zinc-50/70 p-2 rounded-xl border border-zinc-100/80">
+        <div className="flex flex-col gap-2.5 mb-5 md:mb-6 bg-zinc-50/70 p-2 rounded-xl border border-zinc-100/80">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
             <input

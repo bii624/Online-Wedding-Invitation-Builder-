@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { DashboardLayout } from './DashboardLayout';
 // DashboardPanel removed for Overview to use full-width layout
-import { Crown, Sparkles, ArrowRight, Sparkle, ArrowUpRight } from 'lucide-react';
+import { Crown, Sparkles, ArrowRight, Sparkle, ArrowUpRight, Navigation, Gift, Image, Wallet, Store, Headphones, PlayCircle, Settings, Mails, MessageSquare } from 'lucide-react';
 import FloatingBackgroundHearts from '../../../components/FloatingBackgroundHearts';
 import { useAuthStore } from '../../../store/authStore';
 import { useState, useEffect } from 'react';
@@ -351,6 +351,13 @@ export const Overview = () => {
   const cardOffset = 138 - (138 * cardPercent) / 100;
   const visitorOffset = 138 - (138 * visitorPercent) / 100;
 
+  const hour = new Date().getHours();
+  let greeting = 'Chào';
+  if (hour < 12) greeting = 'Buổi sáng tốt lành,';
+  else if (hour < 18) greeting = 'Buổi chiều vui vẻ,';
+  else greeting = 'Đêm đã muộn.';
+  const subGreeting = 'Hãy nghỉ ngơi để rạng rỡ nhất trong ngày vui nhé 😴';
+
   return (
     <DashboardLayout>
       <style dangerouslySetInnerHTML={{
@@ -398,10 +405,61 @@ export const Overview = () => {
           z-index: 1;
         }
       `}} />
-      <div className="w-full space-y-8 animate-in fade-in duration-500 flex flex-col flex-1">
+      <div className="w-full space-y-5 md:space-y-8 animate-in fade-in duration-500 flex flex-col flex-1">
 
-        {/* Welcome Banner Card */}
-        <div className="relative rounded-[2.5rem] moving-gradient-card border border-rose-100/70 p-8 md:p-10 text-zinc-800 shadow-[0_15px_40px_rgba(244,63,94,0.02)] mt-8">
+        {/* Mobile Greeting Card */}
+        <div className="md:hidden relative rounded-[2rem] bg-gradient-to-br from-rose-50/50 to-white border border-rose-100/40 p-5 mt-2 flex flex-col gap-4 shadow-xs">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-full overflow-hidden shrink-0 shadow-sm border border-white">
+              {user?.avatarUrl ? (
+                <img src={user.avatarUrl} alt={user.fullName} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-rose-200 text-rose-500 flex items-center justify-center font-bold text-xl">{user?.fullName?.charAt(0) || 'U'}</div>
+              )}
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-slate-800 leading-tight">
+                {greeting} <span className="text-slate-900">{displayName} ơi,</span>
+              </h2>
+              <p className="text-xs text-slate-500 mt-1 leading-snug pr-4">{subGreeting}</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-between mt-1">
+            <span className="px-3 py-1 bg-slate-100 text-slate-500 text-[10px] font-bold rounded-full uppercase tracking-wider">FREE</span>
+            <Link to="/dashboard/plan" className="px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-sm shadow-rose-200 transition-colors">
+              <Crown size={14} /> Nâng cấp
+            </Link>
+          </div>
+        </div>
+
+        {/* Quick Nav area App-like (Mobile Only) */}
+        <div className="mt-4 mb-2 md:hidden">
+          <div className="grid grid-cols-4 gap-y-6 gap-x-2">
+            {[
+              { icon: Mails, label: 'Thiệp của tôi', path: '/dashboard/my-cards', color: 'text-blue-500', bg: 'bg-blue-50/80 border border-blue-100/50' },
+              { icon: MessageSquare, label: 'Lời chúc', path: '/dashboard/wishes', color: 'text-teal-500', bg: 'bg-teal-50/80 border border-teal-100/50' },
+              { icon: Navigation, label: 'Tham dự', path: '/dashboard/rsvp', color: 'text-amber-500', bg: 'bg-amber-50/80 border border-amber-100/50' },
+              { icon: Gift, label: 'Quà tặng', path: '/dashboard/gifts', color: 'text-rose-500', bg: 'bg-rose-50/80 border border-rose-100/50' },
+              { icon: Image, label: 'Mẫu thiệp', path: '/dashboard/templates', color: 'text-orange-500', bg: 'bg-orange-50/80 border border-orange-100/50' },
+              { icon: Wallet, label: 'Ví', path: '/dashboard/plan', color: 'text-cyan-500', bg: 'bg-cyan-50/80 border border-cyan-100/50' },
+              { icon: Crown, label: 'Gói dịch vụ', path: '/dashboard/plan', color: 'text-yellow-500', bg: 'bg-yellow-50/80 border border-yellow-100/50' },
+              { icon: Store, label: 'Mua Add-ons', path: '/dashboard/plan', color: 'text-emerald-500', bg: 'bg-emerald-50/80 border border-emerald-100/50' },
+              { icon: Headphones, label: 'Hỗ trợ', path: '/dashboard/feedback', color: 'text-indigo-500', bg: 'bg-indigo-50/80 border border-indigo-100/50' },
+              { icon: PlayCircle, label: 'Hướng dẫn', path: '/dashboard/feedback', color: 'text-sky-500', bg: 'bg-sky-50/80 border border-sky-100/50' },
+              { icon: Settings, label: 'Cài đặt tài khoản', path: '/dashboard/account', color: 'text-slate-500', bg: 'bg-slate-100/80 border border-slate-200/50' },
+            ].map((item, idx) => (
+              <Link key={idx} to={item.path} className="flex flex-col items-center justify-start gap-1.5 group cursor-pointer">
+                <div className={`w-14 h-14 rounded-[1.2rem] flex items-center justify-center ${item.bg} ${item.color} group-active:scale-95 transition-transform shadow-xs`}>
+                  <item.icon size={26} strokeWidth={1.5} />
+                </div>
+                <span className="text-[10px] font-semibold text-slate-700 text-center leading-tight px-0.5">{item.label}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop Welcome Banner Card */}
+        <div className="hidden md:block relative rounded-[2.5rem] moving-gradient-card border border-rose-100/70 p-8 lg:p-10 text-zinc-800 shadow-[0_15px_40px_rgba(244,63,94,0.02)] mt-8">
 
           {/* Background layer clipped to border radius */}
           <div className="absolute inset-0 rounded-[2.5rem] overflow-hidden pointer-events-none">
@@ -415,13 +473,13 @@ export const Overview = () => {
             <div className="absolute -left-16 -bottom-16 h-72 w-72 rounded-full bg-amber-100/20 blur-3xl pointer-events-none" />
           </div>
 
-          <div className="relative z-10 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-8">
+          <div className="relative z-10 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6">
             <div className="space-y-6 flex-1 lg:max-w-[60%] xl:max-w-[65%]">
               <div className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 border border-rose-100/60 px-3.5 py-1.5 text-[10px] font-black tracking-wider uppercase text-rose-500 shadow-2xs">
                 <Sparkles size={11} className="text-amber-500 animate-pulse" /> KHÔNG GIAN THIẾT KẾ CỦA BẠN
               </div>
               <div className="space-y-2">
-                <h1 className="text-3xl md:text-4xl font-black font-inter tracking-tight leading-tight text-zinc-900">
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-black font-inter tracking-tight leading-tight text-zinc-900">
                   Chào {displayName}!
                 </h1>
                 <p className="text-zinc-500 text-sm font-inter font-medium max-w-lg leading-relaxed">
@@ -429,7 +487,7 @@ export const Overview = () => {
                 </p>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3 pt-2">
+              <div className="flex flex-wrap items-center gap-2 md:gap-3 pt-2">
                 <Link
                   to={`/loading?next=${encodeURIComponent('/design')}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`}
 
@@ -468,7 +526,11 @@ export const Overview = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:hidden flex items-center justify-between mb-2 mt-4 px-2">
+          <h3 className="text-lg font-black text-slate-800 tracking-tight">Thống kê sử dụng</h3>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
 
           <Link to={`/loading?next=${encodeURIComponent('/design')}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`} className="rounded-4xl bg-white/80 backdrop-blur-sm border border-rose-100/60 p-6 flex items-center justify-between shadow-sm shadow-rose-50/20 shadow-inner transition-all duration-300 hover:shadow-md hover:border-rose-200 cursor-pointer block hover:no-underline">
 
@@ -549,14 +611,14 @@ export const Overview = () => {
 
         </div>
 
-        {/* Quick Nav area */}
-        <div className="rounded-[2.5rem] bg-white/85 backdrop-blur-sm border border-rose-100/50 p-6 shadow-sm shadow-rose-50/20 shadow-inner">
+        {/* Desktop Quick Nav area */}
+        <div className="hidden md:block rounded-[2.5rem] bg-white/85 backdrop-blur-sm border border-rose-100/50 p-6 shadow-sm shadow-rose-50/20 shadow-inner">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-base font-bold text-zinc-800 font-inter">Khu vực điều hướng nhanh</h3>
             <span className="text-xs font-bold text-rose-400 bg-rose-50 px-3 py-1 rounded-full border border-rose-100/50">LỐI TẮT TIỆN ÍCH</span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-5">
             {[
               { icon: TemplateFilledIcon, label: 'Kho Mẫu Thiệp', path: '/dashboard/templates', color: 'text-rose-500 bg-rose-50 border-rose-100/50' },
               { icon: HeartWhiteSuitSmallIcon, label: 'Lời Chúc', path: '/dashboard/wishes', color: 'text-pink-500 bg-pink-50 border-pink-100/50' },
@@ -567,18 +629,18 @@ export const Overview = () => {
               <Link
                 key={idx}
                 to={item.path}
-                className="flex flex-col items-center justify-center p-5 rounded-[1.75rem] border border-zinc-100 bg-zinc-50/30 hover:bg-white hover:border-rose-200 hover:shadow-md transition-all duration-300 group"
+                className="flex flex-col items-center justify-center p-3 md:p-5 rounded-[1.25rem] md:rounded-[1.75rem] border border-zinc-100 bg-zinc-50/30 hover:bg-white hover:border-rose-200 hover:shadow-md transition-all duration-300 group"
               >
-                <div className={`h-14 w-14 rounded-2xl flex items-center justify-center mb-3 border ${item.color} shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+                <div className={`h-10 w-10 md:h-14 md:w-14 rounded-xl md:rounded-2xl flex items-center justify-center mb-2 md:mb-3 border ${item.color} shadow-sm group-hover:scale-110 transition-transform duration-300`}>
                   <item.icon size={24} color="currentColor" />
                 </div>
-                <span className="text-sm font-bold text-zinc-700 font-inter group-hover:text-rose-600 transition-colors">{item.label}</span>
+                <span className="text-xs md:text-sm font-bold text-zinc-700 font-inter group-hover:text-rose-600 transition-colors text-center leading-tight">{item.label}</span>
               </Link>
             ))}
           </div>
         </div>
 
-        <div className="rounded-4xl bg-rose-50/40 backdrop-blur-sm border border-rose-100/40 p-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm shadow-rose-50/20 shadow-inner">
+        <div className="rounded-[1.5rem] md:rounded-[2.5rem] bg-rose-50/40 backdrop-blur-sm border border-rose-100/40 p-4 md:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 md:gap-4 shadow-sm shadow-rose-50/20">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600 shrink-0">
               <Sparkle size={20} className="animate-pulse" />

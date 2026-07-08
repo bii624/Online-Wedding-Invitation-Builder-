@@ -123,8 +123,8 @@ export function Header() {
           {statusInfo.label}
         </span>
 
-        {/* "Lưu ngay" button - chỉ hiện khi có cardId hoặc templateId và không đang saving */}
-        {(cardId || templateId) && autoSaveStatus !== 'saving' && (
+        {/* "Lưu ngay" button - luôn hiện cho card (nếu chưa có cardId sẽ tạo mới khi bấm), hoặc hiện cho template nếu có templateId */}
+        {(editorMode === 'card' || templateId) && autoSaveStatus !== 'saving' && (
           <button
             onClick={editorMode === 'template' ? saveTemplateNow : saveCanvasNow}
             title="Lưu ngay (Ctrl+S)"

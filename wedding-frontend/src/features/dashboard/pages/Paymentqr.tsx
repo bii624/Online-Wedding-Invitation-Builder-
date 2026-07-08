@@ -89,7 +89,7 @@ export const PaymentQR: React.FC = () => {
   const expired = secondsLeft <= 0
 
   return (
-    <div className="min-h-screen bg-[#fdfbfc] px-4 py-10">
+    <div className="min-h-screen bg-[#fdfbfc] p-4 md:p-8 md:py-10">
       <div className="mx-auto max-w-5xl">
         <Link to="/dashboard/plan" className="mb-6 inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-slate-600">
           <ArrowLeft size={14} /> Quay lại trang gói dịch vụ
@@ -100,7 +100,7 @@ export const PaymentQR: React.FC = () => {
           <p className="mt-1.5 text-sm text-slate-500">Hoàn tất chuyển khoản để kích hoạt gói dịch vụ ngay lập tức</p>
         </div>
 
-        <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-rose-100 bg-rose-50/40 p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-rose-100 bg-rose-50/40 p-4 md:p-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <span className="rounded-md bg-rose-100 px-2 py-0.5 text-[10px] font-black text-rose-600">{plan.tag}</span>
             <div>
@@ -136,7 +136,7 @@ export const PaymentQR: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <div className="space-y-5 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+          <div className="space-y-5 rounded-2xl border border-slate-100 bg-white p-4 md:p-6 shadow-sm">
             <h2 className="flex items-center gap-2 text-base font-bold text-slate-900">
               <CreditCard size={18} className="text-rose-500" /> Thông tin chuyển khoản
             </h2>
@@ -210,7 +210,7 @@ export const PaymentQR: React.FC = () => {
             </p>
           </div>
 
-          <div className="flex flex-col items-center space-y-5 rounded-2xl border border-slate-100 bg-white p-6 text-center shadow-sm">
+          <div className="flex flex-col items-center space-y-5 rounded-2xl border border-slate-100 bg-white p-4 md:p-6 text-center shadow-sm">
             <div>
               <h2 className="text-base font-bold text-slate-900">Quét QR để thanh toán</h2>
               <p className="mt-1 text-xs text-slate-400">Mở ứng dụng ngân hàng và quét mã QR bên dưới</p>
