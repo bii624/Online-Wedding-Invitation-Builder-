@@ -438,7 +438,7 @@ export interface EditorState {
   templateId: string | null;
   // Loading state when fetching template data from server
   isLoadingEditor: boolean;
-  
+
   // Global settings
   autoScroll: boolean;
   autoScrollSpeed: number;

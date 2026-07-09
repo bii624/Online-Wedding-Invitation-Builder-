@@ -585,7 +585,7 @@ export function LeftToolbar() {
                 </button>
                 <button className={`mobile-prop-btn ${mobilePropSheet === 'curve' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'curve' ? null : 'curve')}>
                   <SettingsIcon />
-                  Uốn cong chữ
+                  Uốn cong
                 </button>
                 <button className={`mobile-prop-btn ${mobilePropSheet === 'spacing' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'spacing' ? null : 'spacing')}>
                   <LayoutIcon />
@@ -668,7 +668,7 @@ export function LeftToolbar() {
             {/* Position / size — always visible */}
             <button className={`mobile-prop-btn ${mobilePropSheet === 'arrange' ? 'active' : ''}`} onClick={() => setMobilePropSheet(mobilePropSheet === 'arrange' ? null : 'arrange')}>
               <LayoutIcon />
-              Vị trí
+              Căn chỉnh
             </button>
 
             {/* Animation / effects — always visible */}

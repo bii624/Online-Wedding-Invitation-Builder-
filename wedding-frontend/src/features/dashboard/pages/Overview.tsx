@@ -12,6 +12,7 @@ import { templatesData } from '../../../data/templates';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { toast } from 'sonner';
+import { LinhAIWidget } from '../../linh-ai/components/LinhAIWidget';
 
 import mockupImage from '../../../assets/images/mockup-thiep-cuoi-online-1.webp';
 // --- Custom Icon Components ---
@@ -496,7 +497,7 @@ export const Overview = () => {
               </h2>
               <p className="text-xs text-slate-500 mt-1 leading-snug pr-4">{subGreeting}</p>
               <p className="text-[10px] text-slate-500 mt-1.5 font-medium">
-              <span className="font-bold">{totalViews.toLocaleString('vi-VN')}</span> lượt xem · <span className="font-bold">{rsvpPercent}%</span> xác nhận
+                <span className="font-bold">{totalViews.toLocaleString('vi-VN')}</span> lượt xem · <span className="font-bold">{rsvpPercent}%</span> xác nhận
               </p>
             </div>
           </div>
@@ -578,31 +579,7 @@ export const Overview = () => {
             </div>
           </div>
 
-            <div className="hidden lg:flex items-center justify-center shrink-0 relative mr-4 select-none">
-              {/* Glassmorphic Countdown Widget */}
-              <div className="flex flex-col items-center justify-between w-44 bg-white/20 backdrop-blur-md border border-[rgb(255,166,166)]/30 rounded-3xl p-5 text-[rgb(235,76,76)] shadow-lg shadow-[rgb(255,166,166)]/5">
-                <span className="text-[10px] font-black tracking-widest uppercase text-[rgb(235,76,76)]/80">ĐẾM NGƯỢC</span>
-                <div className="my-3 text-center">
-                  <span className="text-5xl font-black font-inter tracking-tighter leading-none block">{displayDays}</span>
-                  <span className="text-[11px] font-bold text-[rgb(235,76,76)]/95 mt-1 block">ngày nữa</span>
-                </div>
-                <div className="w-full border-t border-[rgb(255,166,166)]/20 my-2" />
-                <div className="flex justify-between w-full text-center px-1">
-                  <div>
-                    <span className="text-sm font-black block">{targetMonth}</span>
-                    <span className="text-[9px] font-semibold text-[rgb(235,76,76)]/70 block uppercase">tháng</span>
-                  </div>
-                  <div>
-                    <span className="text-sm font-black block">{targetDay}</span>
-                    <span className="text-[9px] font-semibold text-[rgb(235,76,76)]/70 block uppercase">ngày</span>
-                  </div>
-                  <div>
-                    <span className="text-sm font-black block">{targetYear}</span>
-                    <span className="text-[9px] font-semibold text-[rgb(235,76,76)]/70 block uppercase">năm</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+
           {/* MOCKUP IMAGE CONTAINER */}
           <div className="hidden lg:block absolute right-0 bottom-0 top-[-200px] w-1/2 overflow-hidden rounded-br-[2.5rem] pointer-events-none z-20">
             <style>{`
@@ -871,6 +848,7 @@ export const Overview = () => {
         </div>
 
       </div>
+      <LinhAIWidget />
     </DashboardLayout>
   );
 };

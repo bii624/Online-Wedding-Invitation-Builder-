@@ -13,6 +13,7 @@ import { AdminStatsModule } from './admin-stats/admin-stats.module';
 import { WishesModule } from './wishes/wishes.module';
 import { RsvpsModule } from './rsvps/rsvps.module';
 import { ImageProcessModule } from './image-process/image-process.module';
+import { LinhAIModule } from './linh-ai/linh-ai.module';
 
 @Module({
   imports: [
@@ -28,8 +29,9 @@ import { ImageProcessModule } from './image-process/image-process.module';
     WishesModule,
     RsvpsModule,
     ImageProcessModule,
+    LinhAIModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

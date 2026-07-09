@@ -370,7 +370,7 @@ interface EditorActions {
   loadCardData: (cardId: string) => Promise<void>;
   loadTemplateData: (templateId: string) => Promise<void>;
   saveTemplateNow: () => Promise<void>;
-  
+
   // Settings
   setAutoScroll: (enabled: boolean) => void;
   setAutoScrollSpeed: (speed: number) => void;
@@ -444,10 +444,10 @@ const getViewportCenterY = (zoom: number, canvasHeight: number): number => {
     const scale = zoom / 100;
     const workspaceRect = workspace.getBoundingClientRect();
     const canvasRect = canvasEl.getBoundingClientRect();
-    
+
     const visibleCenterY = workspaceRect.top + workspaceRect.height / 2;
     const offsetInCanvas = (visibleCenterY - canvasRect.top) / scale;
-    
+
     return Math.max(50, Math.min(offsetInCanvas, canvasHeight - 50));
   }
   return 200;
@@ -539,11 +539,11 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     const id = `el-img-${Date.now()}`;
     const x = 50 + Math.random() * 80;
     const y = Math.max(50, getViewportCenterY(get().zoom, get().canvasHeight) - 150 + Math.random() * 80);
-    
+
     let frameProps: Partial<ImageProperties> = {
       frameType: frameType as any,
     };
-    
+
     // Apply specific frame presets
     if (frameType === 'circle') {
       frameProps.borderRadius = 999;
@@ -584,7 +584,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         shadowColor: 'rgba(0, 0, 0, 0.08)',
       };
     }
-    
+
     const newEl: CanvasElement = {
       id,
       type: 'image',
@@ -602,7 +602,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         ...frameProps
       },
     };
-    
+
     const updated = elements.map((el) => ({ ...el, isSelected: false }));
     set({
       elements: [...updated, newEl],
@@ -998,7 +998,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
   },
 
   setCropElementId: (id) => set({ cropElementId: id }),
-  
+
   setAiModalState: (state) => set({ aiModalState: state }),
 
   updateElementCrop: (id, cropData, newWidth, newHeight) => {
@@ -1240,7 +1240,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     set({ elements: updatedElements, selectedElement: updatedSelected });
     get().pushHistory();
   },
-    
+
   alignElementToPage: (id: string, align: 'top' | 'bottom' | 'left' | 'right' | 'center' | 'middle') => {
     const { elements, canvasWidth, canvasHeight, selectedElement } = get();
     const element = elements.find((el) => el.id === id);
@@ -1383,7 +1383,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         });
         currentCardId = newCard.id;
         set({ cardId: currentCardId });
-        
+
         // Cập nhật URL trên trình duyệt để thêm ?id=...
         const url = new URL(window.location.href);
         url.searchParams.set('id', currentCardId);
@@ -1707,4 +1707,5 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     }
   },
 }));
+
 

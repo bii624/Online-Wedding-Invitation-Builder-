@@ -217,16 +217,16 @@ export function CountdownPanel({ element }: CountdownPanelProps) {
         />
       </Section>
 
-      <PaddingSection 
-        padding={{ top: props.paddingTop, right: props.paddingRight, bottom: props.paddingBottom, left: props.paddingLeft }} 
+      <PaddingSection
+        padding={{ top: props.paddingTop, right: props.paddingRight, bottom: props.paddingBottom, left: props.paddingLeft }}
         onChange={(p) => { handlePropChange('paddingTop', p.top); handlePropChange('paddingRight', p.right); handlePropChange('paddingBottom', p.bottom); handlePropChange('paddingLeft', p.left); }}
       />
-      <BorderSection 
-        border={{ width: props.borderWidth, style: props.borderStyle, color: props.borderColor, radius: props.borderRadius }} 
+      <BorderSection
+        border={{ width: props.borderWidth, style: props.borderStyle, color: props.borderColor, radius: props.borderRadius }}
         onChange={(b) => { handlePropChange('borderWidth', b.width); handlePropChange('borderStyle', b.style); handlePropChange('borderColor', b.color); handlePropChange('borderRadius', b.radius); }}
       />
-      <ShadowSection 
-        shadow={{ x: props.shadowX, y: props.shadowY, blur: props.shadowBlur, spread: props.shadowSpread, color: props.shadowColor }} 
+      <ShadowSection
+        shadow={{ x: props.shadowX, y: props.shadowY, blur: props.shadowBlur, spread: props.shadowSpread, color: props.shadowColor }}
         onChange={(s) => { handlePropChange('shadowX', s.x); handlePropChange('shadowY', s.y); handlePropChange('shadowBlur', s.blur); handlePropChange('shadowSpread', s.spread); handlePropChange('shadowColor', s.color); }}
       />
     </div>
