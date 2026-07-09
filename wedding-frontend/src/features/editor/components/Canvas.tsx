@@ -17,6 +17,7 @@ import { CalendarEditorElement } from './Widgets/CalendarEditorElement';
 import { AlbumEditorElement } from './Widgets/AlbumEditorElement';
 import { FormEditorElement } from './Widgets/FormEditorElement';
 import { ButtonEditorElement } from './Widgets/ButtonEditorElement';
+import { CoverPagePreview } from './CoverPagePreview';
 
 // ── SVG Icons ─────────────────────────────────────────────
 const GridIcon = () => (
@@ -606,6 +607,7 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
 // ── Main Canvas ────────────────────────────────────────────
 export function MainCanvas() {
   const {
+    currentPage,
     elements,
     zoom,
     setZoom,
@@ -727,7 +729,6 @@ export function MainCanvas() {
     <div className="editor-canvas-area">
       {/* Top-left Canvas Controls */}
       <div className="canvas-controls-top">
-        {/* Removed width/height popup as requested, width is now fixed to 500px */}
         <button
           id="btn-toggle-grid"
           className={`canvas-ctrl-btn ${showGrid ? 'active' : ''}`}
@@ -757,47 +758,69 @@ export function MainCanvas() {
           </defs>
         </svg>
 
-        <div
-          className="canvas-scale-wrapper"
-          style={{
-            transform: `scale(${scale})`,
-            margin: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            transformOrigin: 'top center',
-            paddingBottom: '60px' // Space for the pill
-          }}
-        >
+        {currentPage === 'cover' ? (
           <div
-            id="editor-canvas-frame"
-            className="canvas-frame"
-            ref={canvasRef}
+            className="canvas-scale-wrapper"
             style={{
-              width: 500, // Hardcoded width as requested
-              height: canvasHeight,
-              margin: 0,
-              ...(canvasBackground.type === 'solid' && { backgroundColor: canvasBackground.color }),
-              ...(canvasBackground.type === 'gradient' && { backgroundImage: `linear-gradient(${canvasBackground.gradientAngle}deg, ${canvasBackground.gradientFrom}, ${canvasBackground.gradientTo})` }),
-              ...(canvasBackground.type === 'image' && { backgroundImage: `url(${canvasBackground.imageSrc})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: canvasBackground.imageOpacity }),
+              transform: `scale(${scale})`,
+              margin: 'auto',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transformOrigin: 'top center',
+              paddingTop: '40px',
+              paddingBottom: '60px',
             }}
-            onClick={(e) => e.stopPropagation()}
           >
-            {/* Grid overlay */}
-            {showGrid && <div className="canvas-grid" />}
+            <div
+              className="canvas-frame"
+              style={{ width: 500, height: 900, margin: 0, overflow: 'hidden', borderRadius: '12px' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <CoverPagePreview />
+            </div>
+          </div>
+        ) : (
+          <div
+            className="canvas-scale-wrapper"
+            style={{
+              transform: `scale(${scale})`,
+              margin: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              transformOrigin: 'top center',
+              paddingBottom: '60px' // Space for the pill
+            }}
+          >
+            <div
+              id="editor-canvas-frame"
+              className="canvas-frame"
+              ref={canvasRef}
+              style={{
+                width: 500, // Hardcoded width as requested
+                height: canvasHeight,
+                margin: 0,
+                ...(canvasBackground.type === 'solid' && { backgroundColor: canvasBackground.color }),
+                ...(canvasBackground.type === 'gradient' && { backgroundImage: `linear-gradient(${canvasBackground.gradientAngle}deg, ${canvasBackground.gradientFrom}, ${canvasBackground.gradientTo})` }),
+                ...(canvasBackground.type === 'image' && { backgroundImage: `url(${canvasBackground.imageSrc})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: canvasBackground.imageOpacity }),
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Grid overlay */}
+              {showGrid && <div className="canvas-grid" />}
 
-            {/* ── Element list – dispatched by type ── */}
-            {[...elements]
-              .sort((a, b) => a.zIndex - b.zIndex)
-              .map((el) => (
-                <DraggableElement key={el.id} element={el} zoom={zoom} />
-              ))}
+              {/* ── Element list – dispatched by type ── */}
+              {[...elements]
+                .sort((a, b) => a.zIndex - b.zIndex)
+                .map((el) => (
+                  <DraggableElement key={el.id} element={el} zoom={zoom} />
+                ))}
 
-            {/* Empty state hint */}
-            {elements.length === 0 && (
-              <div className="canvas-empty-hint">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18" /><path d="M9 21V9" />
+              {/* Empty state hint */}
+              {elements.length === 0 && (
+                <div className="canvas-empty-hint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 </svg>
                 <p>Chọn công cụ ở bên trái để bắt đầu thiết kế</p>
               </div>
@@ -840,7 +863,8 @@ export function MainCanvas() {
               <PlusIcon />
             </button>
           </div>
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Zoom Controls – bottom right */}

@@ -7,7 +7,7 @@ import { NotificationPopup } from './NotificationPopup';
 
 import {
   LayoutDashboard, Palette, MessageSquare,
-  UserCheck, Menu,Mails, Wallet, Home, Gift, User, Crown,MessageCircle, Bell, Megaphone, LayoutTemplate,
+  UserCheck, Menu, Mails, Wallet, Home, Gift, User, Crown, MessageCircle, Bell, Megaphone, LayoutTemplate,
   ChevronLeft, LogOut, Search, Heart
 } from 'lucide-react';
 
@@ -18,6 +18,19 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode; title
   const [isSidebarOpen, setIsSidebarOpen] = useState(() => typeof window !== 'undefined' ? window.innerWidth >= 768 : true);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsSidebarOpen(true);
+      } else {
+        setIsSidebarOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    // Run once to initialize correctly on mount
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   if (user && user.role === 'admin') {
     return <Navigate to="/admin" replace />;
   }
@@ -66,55 +79,48 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode; title
   const SidebarContent = () => (
     <>
       {/* Logo + Close */}
-      <div className="flex items-center justify-between px-5 h-16 shrink-0 border-b border-slate-200">
-        <Link to="/dashboard/overview" className="flex items-center gap-2.5 group cursor-pointer no-underline" onClick={closeSidebar}>
-          <div className="bg-rose-100 rounded-2xl w-10 h-10 flex items-center justify-center transition-transform group-hover:rotate-12">
-            <RevolvingHeartsIcon size={28} color="#f43f5e" />
+      <div className="flex items-center justify-between px-5 h-16 shrink-0 border-b border-[rgb(255,166,166)]/30">
+        <Link to="/dashboard/overview" className="flex items-center gap-2 group cursor-pointer no-underline" onClick={closeSidebar}>
+          <div className="bg-[rgb(253,205,209)] p-1.5 rounded-lg transition-transform group-hover:rotate-12 flex items-center justify-center border border-[rgb(255,166,166)]/30">
+            <RevolvingHeartsIcon size={20} color="#f43f5e" />
           </div>
-          <div>
-            <span className="text-[18px] font-extrabold text-slate-800 tracking-[-0.4px] block leading-tight">DearLove</span>
-            <span className="text-[10px] font-semibold text-rose-500 uppercase tracking-[0.8px] block -mt-0.5">User Panel</span>
-          </div>
+          <span className="text-lg font-serif font-black text-[rgb(235, 76, 76)] tracking-tight">DearLove</span>
         </Link>
 
         <button
           onClick={closeSidebar}
-          className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-all cursor-pointer flex items-center justify-center"
-          title="Thu gọn menu"
+          className="p-1.5 rounded-lg text-zinc-400 hover:text-[rgb(235, 76, 76)] hover:bg-[rgb(255,237,199)]/45 border border-transparent hover:border-[rgb(255,166,166)]/30 transition-all cursor-pointer flex items-center justify-center" title="Thu gọn menu"
         >
           <ChevronLeft size={18} />
         </button>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-6 overflow-y-auto custom-scrollbar-mini">
-        {menuGroups.map((group, idx) => (
-          <div key={idx} className="space-y-2">
-            <h3 className="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-[1px] mb-2">{group.title}</h3>
-            <div className="space-y-1">
-              {group.items.map((item, itemIdx) => {
-                const Icon = item.icon;
-                const isActive = location.pathname === item.path;
-                return (
-                  <Link
-                    key={itemIdx}
-                    to={item.path}
-                    onClick={closeSidebar}
-                    className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-[10px] transition-all duration-200 text-sm ${isActive
-                      ? 'bg-rose-50 text-rose-500 font-semibold'
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium'
-                      }`}
-                  >
-                    <span className={isActive ? 'text-rose-500' : 'text-slate-400 transition-colors group-hover:text-slate-600'}>
-                      <Icon size={18} />
-                    </span>
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </div>
+      <nav className="flex-1 px-4 py-6 space-y-6 overflow-y-auto custom-scrollbar-mini">        {menuGroups.map((group, idx) => (
+        <div key={idx} className="space-y-2">
+          <h3 className="px-3 text-[10px] font-black text-[rgb(255,112,112)] uppercase tracking-wider">{group.title}</h3>          <div className="space-y-1">
+            {group.items.map((item, itemIdx) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={itemIdx}
+                  to={item.path}
+                  onClick={closeSidebar}
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 text-sm font-semibold border ${isActive
+                    ? 'bg-rose-50 border-[rgb(255,166,166)]/40 text-rose-500 shadow-2xs'
+                    : 'border-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-medium'}`}
+                >
+                  {/* <span className={isActive ? 'text-rose-500' : 'text-slate-400 transition-colors group-hover:text-slate-600'}> */}
+                  <Icon size={17} />
+                  {/* </span> */}
+                  {item.name}
+                </Link>
+              );
+            })}
           </div>
-        ))}
+        </div>
+      ))}
       </nav>
 
       {/* User footer */}
@@ -148,8 +154,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode; title
         </div>
         <button
           onClick={handleLogout}
-          className="w-full mt-3 flex items-center gap-3 px-3.5 py-3 rounded-[10px] transition-all duration-200 text-sm font-medium text-slate-600 hover:bg-rose-50 hover:text-rose-600 cursor-pointer"
-        >
+          className="w-full mt-3 flex items-center gap-3 px-4 py-2.5 rounded-full transition-all duration-200 text-xs font-bold text-zinc-500 hover:bg-[rgb(255,237,199)]/30 hover:text-[rgb(235,76,76)] border border-transparent hover:border-[rgb(255,166,166)]/30 cursor-pointer"        >
           <LogOut size={17} />
           Đăng xuất
         </button>
@@ -178,8 +183,8 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode; title
         />
         {/* Sidebar panel */}
         <aside
-          className={`relative w-[80vw] max-w-sm bg-white flex flex-col h-full shadow-2xl transition-transform duration-300 ease-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
-          style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
+          className={`relative w-[80vw] max-w-sm bg-white/95 backdrop-blur-xl border-r border-[rgb(255,166,166)]/30 flex flex-col h-full shadow-2xl transition-transform duration-300 ease-out rounded-r-[2.25rem] ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+          style={{ fontFamily: "'Poppins', 'Inter', system-ui, sans-serif" }}
         >
           <SidebarContent />
         </aside>
@@ -189,33 +194,31 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode; title
       <main className="flex-1 flex flex-col h-full overflow-hidden relative min-w-0">
 
         {/* Header Desktop */}
-        <header className="hidden md:flex h-14 md:h-16 bg-gradient-to-r from-rose-50/70 via-rose-50/40 to-amber-50/70 backdrop-blur-md border-b border-rose-100/60 items-center justify-between px-4 md:px-6 shrink-0 z-10">
-          <div className="flex items-center gap-2 md:gap-3 min-w-0">
-            {/* Hamburger / logo toggle */}
-            {!isSidebarOpen && (
-              <button
-                onClick={() => setIsSidebarOpen(true)}
-                className="flex items-center gap-2 group cursor-pointer focus:outline-none shrink-0"
-                title="Mở menu"
-              >
-                <div className="bg-[rgb(253,205,209)] p-1.5 rounded-lg transition-transform group-hover:rotate-12 flex items-center justify-center border border-[rgb(255,166,166)]/30 shadow-sm">
-                  <RevolvingHeartsIcon size={20} color="rgb(235, 76, 76)" />
-                </div>
-                <span className="text-lg font-serif font-black text-[rgb(235, 76, 76)] tracking-tight">DearLove</span>
-                <span className="text-[10px] font-bold text-[rgb(235, 76, 76)] bg-[rgb(253,205,209)] border border-[rgb(255,166,166)]/40 px-2 py-0.5 rounded-md hover:bg-[rgb(255,237,199)]/80 transition-colors ml-1 uppercase tracking-wider">
-                  Menu
-                </span>
-              </button>
-            )}
-            
-          </div>
+        <header className="hidden md:flex h-14 md:h-16 bg-transparent backdrop-blur-md border-b border-white/5 items-center justify-between px-4 md:px-6 shrink-0 z-10 shadow-none">          <div className="flex items-center gap-2 md:gap-3 min-w-0">
+          {/* Hamburger / logo toggle */}
+          {!isSidebarOpen && (
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="flex items-center gap-2 group cursor-pointer focus:outline-none shrink-0"
+              title="Mở menu"
+            >
+              <div className="bg-[rgb(253,205,209)] p-1.5 rounded-lg transition-transform group-hover:rotate-12 flex items-center justify-center border border-[rgb(255,166,166)]/30 shadow-sm">
+                <RevolvingHeartsIcon size={20} color="rgb(235, 76, 76)" />
+              </div>
+              <span className="text-lg font-serif font-black text-[rgb(235, 76, 76)] tracking-tight">DearLove</span>
+              <span className="text-[10px] font-bold text-[rgb(235, 76, 76)] bg-[rgb(253,205,209)] border border-[rgb(255,166,166)]/40 px-2 py-0.5 rounded-md hover:bg-[rgb(255,237,199)]/80 transition-colors ml-1 uppercase tracking-wider">
+                Menu
+              </span>
+            </button>
+          )}
+
+        </div>
 
           {/* Header Right: Megaphone status & Actions */}
-          <div className="flex items-center gap-4">
-            <div className="hidden lg:flex items-center gap-2 bg-[rgb(255,237,199)]/40 border border-[rgb(255,166,166)]/30 text-[rgb(235,76,76)] px-4 py-1.5 rounded-full text-[10px] font-bold shadow-2xs">
-              <Megaphone size={12} className="animate-bounce" />
-              <span>Hệ thống tạo thiệp di động đang hoạt động tối ưu!</span>
-            </div>
+          <div className="  flex items-center gap-4 ">            <div className="hidden lg:flex items-center gap-2 bg-[rgb(255,237,199)]/40 border border-[rgb(255,166,166)]/30 text-[rgb(235,76,76)] px-4 py-1.5 rounded-full text-[10px] font-bold shadow-2xs">
+            <Megaphone size={12} className="animate-bounce" />
+            <span>Hệ thống tạo thiệp di động đang hoạt động tối ưu!</span>
+          </div>
 
             {/* Notifications */}
             <div className="flex items-center gap-3 bg-[rgb(255,237,199)]/20 border border-[rgb(255,166,166)]/30 p-1.5 rounded-full shadow-2xs relative">
@@ -233,11 +236,11 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode; title
               <div className="w-[1px] h-5 bg-[rgb(255,166,166)]/30" />
 
               <div className="w-7 h-7 rounded-full bg-linear-to-tr from-rose-500 to-pink-600 text-white flex items-center justify-center font-black text-xs shadow-sm ring-2 ring-rose-100 overflow-hidden">
-              {user?.avatarUrl ? (
-                <img src={user.avatarUrl} alt={user.fullName} className="w-full h-full object-cover" />
-              ) : (
-                user?.fullName?.charAt(0) || 'U'
-              )}
+                {user?.avatarUrl ? (
+                  <img src={user.avatarUrl} alt={user.fullName} className="w-full h-full object-cover" />
+                ) : (
+                  user?.fullName?.charAt(0) || 'U'
+                )}
               </div>
             </div>
           </div>
@@ -277,7 +280,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode; title
           {/* Spacer for mobile bottom nav to prevent overlap */}
           <div className="h-[90px] shrink-0 md:hidden" aria-hidden="true" />
         </div>
-        
+
         {/* Mobile Bottom Navigation */}
         <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-[0_-8px_30px_rgba(0,0,0,0.06)] z-40 flex justify-between px-2 h-[68px] pb-safe items-center">
           <Link to="/dashboard/overview" className={`flex-1 flex flex-col items-center justify-center gap-1 ${location.pathname.includes('overview') ? 'text-rose-600' : 'text-slate-600'}`}>

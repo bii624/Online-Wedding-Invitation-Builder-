@@ -49,6 +49,10 @@ function RenderedElement({ element }: { element: CanvasElement }) {
       el.style.animationDuration = `${ap.entryDuration}s`;
       el.style.animationDelay = `${ap.entryDelay}s`;
       el.style.animationTimingFunction = ap.entryEasing;
+      
+      // Xóa opacity inline ngay lập tức để không phải đợi React render, tránh delay
+      el.style.opacity = '';
+
       el.classList.remove('animate__animated', `animate__${ap.entryEffect}`);
       void el.offsetHeight; // reflow
       el.classList.add('animate__animated', `animate__${ap.entryEffect}`);
@@ -69,12 +73,13 @@ function RenderedElement({ element }: { element: CanvasElement }) {
             const rootTop = entry.rootBounds ? entry.rootBounds.top : 0;
             if (entry.boundingClientRect.top > rootTop + window.innerHeight / 3) {
               setHasTriggered(false);
+              el.style.opacity = '0'; // Ẩn ngay lập tức trước khi React update state
               el.classList.remove('animate__animated', `animate__${ap.entryEffect}`);
             }
           }
         });
       },
-      { rootMargin: '0px 0px -40% 0px', threshold: 0 }
+      { rootMargin: '50px 0px 50px 0px', threshold: 0 }
     );
 
     observer.observe(observerTarget);
@@ -98,22 +103,30 @@ function RenderedElement({ element }: { element: CanvasElement }) {
     width: '100%',
     height: '100%',
     transform: element.rotation ? `rotate(${element.rotation}deg)` : undefined,
-    opacity: (ap?.entryEnabled && ap.entryEffect !== 'none' && !hasTriggered) ? 0 : ((element as any)[`${element.type}Props`]?.opacity ?? 1),
+    ...(ap.loopEnabled && ap.loopEffect !== 'none' ? {
+      '--anim-dur': `${ap.loopDuration}s`,
+      '--anim-delay': `${ap.loopDelay}s`,
+    } as React.CSSProperties : {}),
   };
 
   return (
     <div ref={observerRef} style={style}>
-      <div ref={animRef} className={loopClass} style={innerStyle}>
-        {element.type === 'text' && <TextEditorElement element={element} zoom={100} />}
-        {element.type === 'image' && <ImageEditorElement element={element} zoom={100} />}
-        {element.type === 'shape' && <ShapeEditorElement element={element} zoom={100} />}
-        {element.type === 'countdown' && <CountdownEditorElement element={element} zoom={100} />}
-        {element.type === 'map' && <MapEditorElement element={element} zoom={100} />}
-        {element.type === 'qr_code' && <QrGiftBoxEditorElement element={element} zoom={100} />}
-        {element.type === 'calendar' && <CalendarEditorElement element={element} zoom={100} />}
-        {element.type === 'album' && <AlbumEditorElement element={element} zoom={100} />}
-        {element.type === 'form' && <FormEditorElement element={element} zoom={100} />}
-        {element.type === 'button_contact' && <ButtonEditorElement element={element} zoom={100} />}
+      <div 
+        ref={animRef} 
+        style={{ width: '100%', height: '100%', opacity: (ap?.entryEnabled && ap.entryEffect !== 'none' && !hasTriggered) ? 0 : ((element as any)[`${element.type}Props`]?.opacity ?? 1) }}
+      >
+        <div className={loopClass} style={innerStyle}>
+          {element.type === 'text' && <TextEditorElement element={element} zoom={100} />}
+          {element.type === 'image' && <ImageEditorElement element={element} zoom={100} />}
+          {element.type === 'shape' && <ShapeEditorElement element={element} zoom={100} />}
+          {element.type === 'countdown' && <CountdownEditorElement element={element} zoom={100} />}
+          {element.type === 'map' && <MapEditorElement element={element} zoom={100} />}
+          {element.type === 'qr_code' && <QrGiftBoxEditorElement element={element} zoom={100} />}
+          {element.type === 'calendar' && <CalendarEditorElement element={element} zoom={100} />}
+          {element.type === 'album' && <AlbumEditorElement element={element} zoom={100} />}
+          {element.type === 'form' && <FormEditorElement element={element} zoom={100} />}
+          {element.type === 'button_contact' && <ButtonEditorElement element={element} zoom={100} />}
+        </div>
       </div>
     </div>
   );

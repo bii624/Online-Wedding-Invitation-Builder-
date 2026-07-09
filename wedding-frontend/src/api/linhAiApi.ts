@@ -18,8 +18,8 @@ export interface LinhChatResponse {
 }
 
 export const linhAiApi = {
-  chat: async (query: string): Promise<LinhChatResponse> => {
-    const { data } = await axiosClient.post<LinhChatResponse>('/linh-ai/chat', { query });
+  chat: async (query: string, history?: { role: string; content: string }[]): Promise<LinhChatResponse> => {
+    const { data } = await axiosClient.post<LinhChatResponse>('/linh-ai/chat', { query, history });
     return data;
   },
 };

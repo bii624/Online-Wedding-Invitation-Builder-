@@ -16,7 +16,7 @@ interface FontPickerModalProps {
 const DEFAULT_FONTS = [
   'Inter', 'Playfair Display', 'Roboto', 'Open Sans', 'Lato', 'Montserrat',
   'Poppins', 'Raleway', 'Oswald', 'Merriweather', 'Georgia', 'Arial',
-  'Great Vibes', 'Dancing Script', 'Pacifico',
+  'Great Vibes', 'Dancing Script', 'Pacifico', 'Lora'
 ];
 
 export function FontPickerModal({ isOpen, onClose, onSelect, currentFont }: FontPickerModalProps) {

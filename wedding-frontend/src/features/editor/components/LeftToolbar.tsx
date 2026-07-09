@@ -14,6 +14,7 @@ import { TextRightPanel } from './RightPanels/TextRightPanel';
 import { ImageRightPanel } from './RightPanels/ImageRightPanel';
 import { ShapeRightPanel } from './RightPanels/ShapeRightPanel';
 import { ArrangeSection } from './RightPanel';
+import { BeginPagePanel } from './BeginPage';
 import { EffectsRightPanel } from './RightPanels/EffectsRightPanel';
 import { CountdownPanel } from './RightPanels/Widgets/CountdownPanel';
 import { MapRightPanel } from './RightPanels/Widgets/MapRightPanel';
@@ -130,6 +131,15 @@ const LibraryIcon = () => (
     <path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z" />
   </svg>
 );
+const PagesIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="16" y1="13" x2="8" y2="13" />
+    <line x1="16" y1="17" x2="8" y2="17" />
+    <polyline points="10 9 9 9 8 9" />
+  </svg>
+);
 
 // ── Image Upload Sub-Panel ────────────────────────────────
 function ImageUploadPanel({ onClose }: { onClose: () => void }) {
@@ -205,6 +215,7 @@ function ImageUploadPanel({ onClose }: { onClose: () => void }) {
           <ChevronLeft size={16} />
         </button>
       </div>
+
 
       {/* Upload zone */}
       <div
@@ -295,6 +306,9 @@ interface ToolConfig {
 
 const TOOLS: ToolConfig[] = [
   {
+    id: 'pages', label: 'Trang mở đầu', icon: PagesIcon, tooltip: 'Quản lý trang'
+  },
+  {
     id: 'text', label: 'Văn bản', icon: () => (
       <HugeiconsIcon
         icon={HugeTextIcon}
@@ -354,6 +368,7 @@ export function LeftToolbar() {
   const [showLibraryPanel, setShowLibraryPanel] = useState(false);
   const [showWidgetsPanel, setShowWidgetsPanel] = useState(false);
   const [showTemplatesPanel, setShowTemplatesPanel] = useState(false);
+  const [showPagesPanel, setShowPagesPanel] = useState(false);
   // Mobile element props bottom sheet
   const [mobilePropSheet, setMobilePropSheet] = useState<string | null>(null);
 
@@ -365,9 +380,17 @@ export function LeftToolbar() {
     setShowLibraryPanel(false);
     setShowWidgetsPanel(false);
     setShowTemplatesPanel(false);
+    setShowPagesPanel(false);
   };
 
   const handleToolClick = (tool: ToolType) => {
+    if (tool === 'pages') {
+      const next = activeTool === 'pages' ? !showPagesPanel : true;
+      setActiveTool('pages');
+      closeAllPanels();
+      setShowPagesPanel(next);
+      return;
+    }
     if (tool === 'image') {
       const next = activeTool === 'image' ? !showImagePanel : true;
       setActiveTool('image');
@@ -432,7 +455,7 @@ export function LeftToolbar() {
         <div className="toolbar-tools">
           {TOOLS.map((tool, index) => (
             <div key={tool.id ?? index} className="toolbar-item-wrapper">
-              {index === 5 && <div className="toolbar-divider" />}
+              {index === 6 && <div className="toolbar-divider" />}
               <button
                 id={`tool-${tool.id}`}
                 className={`toolbar-btn ${activeTool === tool.id ? 'active' : ''}`}
@@ -458,6 +481,11 @@ export function LeftToolbar() {
           </button>
         </div>
       </aside>
+
+      {/* Pages slide-out panel */}
+      {showPagesPanel && (
+        <BeginPagePanel onClose={() => setShowPagesPanel(false)} />
+      )}
 
       {/* Image upload slide-out panel */}
       {showImagePanel && (
@@ -778,15 +806,17 @@ export function LeftToolbar() {
           <MobileBottomSheet
             isOpen={mobilePropSheet === 'widget-props'}
             onClose={() => setMobilePropSheet(null)}
-            title={{
-              'countdown': 'Cài đặt Đếm ngược',
-              'map': 'Cài đặt Bản đồ',
-              'qr_code': 'Cài đặt Quà tặng & QR',
-              'calendar': 'Cài đặt Lịch cưới',
-              'album': 'Cài đặt Album ảnh',
-              'form': 'Cài đặt RSVP Form',
-              'button_contact': 'Cài đặt Nút liên hệ'
-            }[selectedElement.type] ?? 'Cài đặt tiện ích'}
+            title={(
+              {
+                'countdown': 'Cài đặt Đếm ngược',
+                'map': 'Cài đặt Bản đồ',
+                'qr_code': 'Cài đặt Quà tặng & QR',
+                'calendar': 'Cài đặt Lịch cưới',
+                'album': 'Cài đặt Album ảnh',
+                'form': 'Cài đặt RSVP Form',
+                'button_contact': 'Cài đặt Nút liên hệ'
+              } as Record<string, string>
+            )[selectedElement.type] ?? 'Cài đặt tiện ích'}
           >
             <div style={{ padding: '0 0 24px 0' }}>
               {selectedElement.type === 'countdown' && (

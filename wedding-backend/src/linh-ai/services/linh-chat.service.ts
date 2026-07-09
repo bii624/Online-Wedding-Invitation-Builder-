@@ -21,7 +21,12 @@ Trong kiến trúc RAG của hệ thống, bạn là module LLM xử lý cuối 
 
 # RAG EXECUTION RULES (CRITICAL)
 1. STRICT CONTEXT RELIANCE: Nhiệm vụ cốt lõi của bạn là tổng hợp và trả lời [USER_QUERY] TUYỆT ĐỐI dựa trên các thông tin có trong [CONTEXT]. Không sử dụng dữ liệu huấn luyện bên ngoài để tự tạo ra số liệu, giá cả, hay tên nhà cung cấp.
-2. MISSING DATA FALLBACK: Nếu [CONTEXT] trống hoặc không chứa thông tin đáp ứng được [USER_QUERY], bạn phải phản hồi thành thật: "Hiện tại hệ thống dữ liệu của Linh chưa cập nhật thông tin này..." và chỉ đưa ra lời khuyên chung về mặt khái niệm.
+2. MISSING DATA FALLBACK (SỬA LẠI):
+- Nếu [CONTEXT] không có thông tin NHƯNG câu hỏi thuộc kiến thức 
+  phổ thông (đổi lịch âm/dương, hợp tuổi, phong tục chung...) 
+  → dùng kiến thức nền để trả lời, KHÔNG nói "chưa cập nhật".
+- Chỉ nói "chưa cập nhật" khi câu hỏi liên quan đến dữ liệu 
+  riêng của hệ thống (giá dịch vụ, nhà cung cấp cụ thể...).
 3. DATA PRESENTATION & ANALYTICS: Khi người dùng yêu cầu thống kê hoặc báo cáo (ví dụ: lượng khách truy cập, số người xác nhận trên các thiệp cưới), bạn PHẢI bóc tách dữ liệu và liệt kê chi tiết, rành mạch cho từng thiệp/hạng mục cụ thể. Tuyệt đối không được báo cáo thống kê theo dạng chung chung hoặc gộp số liệu gây khó hiểu.
 
 # 3D ANIMATION CONTROL (EMOTION STATES)
@@ -47,7 +52,7 @@ export class LinhChatService {
     this.genAI = new GoogleGenerativeAI(apiKey);
   }
 
-  async chat(userId: string, query: string): Promise<LinhChatResponse> {
+  async chat(userId: string, query: string, history: { role: string; content: string }[] = []): Promise<LinhChatResponse> {
     try {
       // ── 1. Build User Context from DB ─────────────────────
       const userContext = await this.buildUserContext(userId);
@@ -87,7 +92,19 @@ export class LinhChatService {
         },
       });
 
-      const result = await model.generateContent(userPrompt);
+      const chatHistory = history.map((msg) => ({
+        role: msg.role === 'linh' || msg.role === 'model' ? 'model' : 'user',
+        parts: [{ text: msg.content }],
+      }));
+
+      // Gemini strictly requires the first message in history to be from a 'user'.
+      // It also requires alternating messages, but dropping the initial 'model' greeting is enough here.
+      while (chatHistory.length > 0 && chatHistory[0].role !== 'user') {
+        chatHistory.shift();
+      }
+
+      const chatSession = model.startChat({ history: chatHistory });
+      const result = await chatSession.sendMessage(userPrompt);
       const text = result.response.text().trim();
       const parsed = JSON.parse(text) as LinhChatResponse;
 

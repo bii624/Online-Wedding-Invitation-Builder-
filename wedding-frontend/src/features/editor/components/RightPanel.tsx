@@ -23,6 +23,7 @@ import { CalendarPanel } from './RightPanels/Widgets/CalendarPanel';
 import { AlbumRightPanel } from './RightPanels/Widgets/AlbumRightPanel';
 import { FormRightPanel } from './RightPanels/Widgets/FormRightPanel';
 import { ButtonRightPanel } from './RightPanels/Widgets/ButtonRightPanel';
+import { CoverPageRightPanel } from './RightPanels/CoverPageRightPanel';
 import {
   SlidersHorizontal,
   Wand2,
@@ -37,7 +38,8 @@ import {
   AlignStartHorizontal,
   AlignEndHorizontal,
   Lock,
-  Unlock
+  Unlock,
+  ChevronRight
 } from 'lucide-react';
 import type { CanvasElement } from '../types/editor.types';
 
@@ -153,15 +155,15 @@ export function ArrangeSection({ element }: { element: CanvasElement }) {
   return (
     <Section title="Sắp xếp & Căn chỉnh" icon={<LayoutIcon />} defaultOpen={true}>
       <div className="rp-tabs-container mb-4" style={{ display: 'flex', borderBottom: '1px solid var(--ed-border)', paddingBottom: '8px', marginBottom: '16px' }}>
-        <button 
+        <button
           className={`rp-tab-btn ${activeTab === 'arrange' ? 'active' : ''}`}
           onClick={() => setActiveTab('arrange')}
-          style={{ 
-            flex: 1, 
-            padding: '6px 12px', 
-            background: 'none', 
-            border: 'none', 
-            fontWeight: 600, 
+          style={{
+            flex: 1,
+            padding: '6px 12px',
+            background: 'none',
+            border: 'none',
+            fontWeight: 600,
             fontSize: '13px',
             color: activeTab === 'arrange' ? 'var(--ed-accent, #f43f5e)' : 'var(--ed-text-muted)',
             borderBottom: activeTab === 'arrange' ? '2px solid var(--ed-accent, #f43f5e)' : 'none',
@@ -170,15 +172,15 @@ export function ArrangeSection({ element }: { element: CanvasElement }) {
         >
           Sắp xếp
         </button>
-        <button 
+        <button
           className={`rp-tab-btn ${activeTab === 'layers' ? 'active' : ''}`}
           onClick={() => setActiveTab('layers')}
-          style={{ 
-            flex: 1, 
-            padding: '6px 12px', 
-            background: 'none', 
-            border: 'none', 
-            fontWeight: 600, 
+          style={{
+            flex: 1,
+            padding: '6px 12px',
+            background: 'none',
+            border: 'none',
+            fontWeight: 600,
             fontSize: '13px',
             color: activeTab === 'layers' ? 'var(--ed-accent, #f43f5e)' : 'var(--ed-text-muted)',
             borderBottom: activeTab === 'layers' ? '2px solid var(--ed-accent, #f43f5e)' : 'none',
@@ -192,28 +194,28 @@ export function ArrangeSection({ element }: { element: CanvasElement }) {
       {activeTab === 'arrange' ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div className="rp-grid-2">
-            <button 
+            <button
               className="flex items-center justify-center gap-1.5 py-2 px-3 border border-zinc-200 rounded-lg text-xs font-semibold text-zinc-700 bg-white hover:bg-zinc-50 active:scale-95 transition-all cursor-pointer"
               onClick={() => bringElementForward(id)}
               title="Đưa lên một lớp"
             >
               <ArrowUp size={14} /> Lên 1 lớp
             </button>
-            <button 
+            <button
               className="flex items-center justify-center gap-1.5 py-2 px-3 border border-zinc-200 rounded-lg text-xs font-semibold text-zinc-700 bg-white hover:bg-zinc-50 active:scale-95 transition-all cursor-pointer"
               onClick={() => sendElementBackward(id)}
               title="Hạ xuống một lớp"
             >
               <ArrowDown size={14} /> Xuống 1 lớp
             </button>
-            <button 
+            <button
               className="flex items-center justify-center gap-1.5 py-2 px-3 border border-zinc-200 rounded-lg text-xs font-semibold text-zinc-700 bg-white hover:bg-zinc-50 active:scale-95 transition-all cursor-pointer"
               onClick={() => bringElementToFront(id)}
               title="Đưa lên trên cùng"
             >
               <ArrowUpToLine size={14} /> Trên cùng
             </button>
-            <button 
+            <button
               className="flex items-center justify-center gap-1.5 py-2 px-3 border border-zinc-200 rounded-lg text-xs font-semibold text-zinc-700 bg-white hover:bg-zinc-50 active:scale-95 transition-all cursor-pointer"
               onClick={() => sendElementToBack(id)}
               title="Hạ xuống dưới cùng"
@@ -227,37 +229,37 @@ export function ArrangeSection({ element }: { element: CanvasElement }) {
               Căn chỉnh trang
             </div>
             <div className="rp-grid-2">
-              <button 
+              <button
                 className="flex items-center justify-center gap-1.5 py-2 px-3 border border-zinc-200 rounded-lg text-xs font-semibold text-zinc-700 bg-white hover:bg-zinc-50 active:scale-95 transition-all cursor-pointer"
                 onClick={() => alignElementToPage(id, 'top')}
               >
                 <AlignStartVertical size={14} /> Căn trên
               </button>
-              <button 
+              <button
                 className="flex items-center justify-center gap-1.5 py-2 px-3 border border-zinc-200 rounded-lg text-xs font-semibold text-zinc-700 bg-white hover:bg-zinc-50 active:scale-95 transition-all cursor-pointer"
                 onClick={() => alignElementToPage(id, 'left')}
               >
                 <AlignStartHorizontal size={14} /> Căn trái
               </button>
-              <button 
+              <button
                 className="flex items-center justify-center gap-1.5 py-2 px-3 border border-zinc-200 rounded-lg text-xs font-semibold text-zinc-700 bg-white hover:bg-zinc-50 active:scale-95 transition-all cursor-pointer"
                 onClick={() => alignElementToPage(id, 'center')}
               >
                 <AlignCenterVertical size={14} /> Giữa dọc
               </button>
-              <button 
+              <button
                 className="flex items-center justify-center gap-1.5 py-2 px-3 border border-zinc-200 rounded-lg text-xs font-semibold text-zinc-700 bg-white hover:bg-zinc-50 active:scale-95 transition-all cursor-pointer"
                 onClick={() => alignElementToPage(id, 'middle')}
               >
                 <AlignCenterHorizontal size={14} /> Giữa ngang
               </button>
-              <button 
+              <button
                 className="flex items-center justify-center gap-1.5 py-2 px-3 border border-zinc-200 rounded-lg text-xs font-semibold text-zinc-700 bg-white hover:bg-zinc-50 active:scale-95 transition-all cursor-pointer"
                 onClick={() => alignElementToPage(id, 'bottom')}
               >
                 <AlignEndVertical size={14} /> Căn dưới
               </button>
-              <button 
+              <button
                 className="flex items-center justify-center gap-1.5 py-2 px-3 border border-zinc-200 rounded-lg text-xs font-semibold text-zinc-700 bg-white hover:bg-zinc-50 active:scale-95 transition-all cursor-pointer"
                 onClick={() => alignElementToPage(id, 'right')}
               >
@@ -345,7 +347,7 @@ export function ArrangeSection({ element }: { element: CanvasElement }) {
           {allElementsSorted.map((el) => {
             const isSelected = el.id === id;
             return (
-              <div 
+              <div
                 key={el.id}
                 onClick={() => selectElement(el.id)}
                 style={{
@@ -377,10 +379,14 @@ export function ArrangeSection({ element }: { element: CanvasElement }) {
 }
 
 // ── Main Right Panel ───────────────────────────────────────
-export function RightPanel() {
-  const { activeRightTab, setActiveRightTab, selectedElement, activeTool } = useEditorStore();
+export function RightPanel({ onCollapse }: { onCollapse?: () => void }) {
+  const { currentPage, activeRightTab, setActiveRightTab, selectedElement, activeTool } = useEditorStore();
 
   const renderSettingsContent = () => {
+    if (currentPage === 'cover') {
+      return <CoverPageRightPanel />;
+    }
+
     // ── Image element selected → ImageRightPanel ──────────
     if (selectedElement?.type === 'text' && selectedElement.textProps) {
       return (
@@ -455,31 +461,54 @@ export function RightPanel() {
   return (
     <aside className="editor-right-panel" aria-label="Thuộc tính">
       {/* Tabs */}
-      <div className="right-panel-tabs">
-        <button
-          id="tab-settings"
-          className={`right-panel-tab ${activeRightTab === 'settings' ? 'active' : ''}`}
-          onClick={() => setActiveRightTab('settings')}
-        >
-          <SlidersHorizontal size={16} /> Cài đặt
-        </button>
-        <button
-          id="tab-effects"
-          className={`right-panel-tab ${activeRightTab === 'effects' ? 'active' : ''}`}
-          onClick={() => setActiveRightTab('effects')}
-        >
-          <Wand2 size={16} /> Hiệu ứng
-        </button>
-      </div>
+      <div className="right-panel-tabs" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', flex: 1 }}>
+          <button
+            id="tab-settings"
+            className={`right-panel-tab ${activeRightTab === 'settings' ? 'active' : ''}`}
+            onClick={() => setActiveRightTab('settings')}
+          >
+            <SlidersHorizontal size={16} /> Cài đặt
+          </button>
+          <button
+            id="tab-effects"
+            className={`right-panel-tab ${activeRightTab === 'effects' ? 'active' : ''}`}
+            onClick={() => setActiveRightTab('effects')}
+          >
+            <Wand2 size={16} /> Hiệu ứng
+          </button>
+        </div>
 
+        {onCollapse && (
+          <button
+            className="right-panel-collapse-btn"
+            onClick={onCollapse}
+            title="Thu gọn bảng"
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: '0 12px',
+              height: '100%',
+              color: '#64748b',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              alignSelf: 'stretch',
+            }}
+          >
+            <ChevronRight size={18} />
+          </button>
+        )}
+      </div>
       {/* Content */}
       <div className="right-panel-content">
         {activeRightTab === 'settings' ? (
           <>
             {renderSettingsContent()}
-            {selectedElement && <ArrangeSection element={selectedElement} />}
+            {currentPage === 'main' && selectedElement && <ArrangeSection element={selectedElement} />}
           </>
-        ) : selectedElement ? (
+        ) : selectedElement && currentPage === 'main' ? (
           <EffectsRightPanel elementId={selectedElement.id} />
         ) : (
           <EmptyState />

@@ -14,6 +14,7 @@ export type ToolType =
   | 'effects'
   | 'presets'
   | 'library'
+  | 'pages'
   | null;
 
 export type AlignType = 'left' | 'center' | 'right' | 'justify';
@@ -350,6 +351,35 @@ export interface ButtonContactContent {
   shadow: { x: number; y: number; blur: number; spread: number; color: string };
 }
 
+// ── Cover Page Properties ──────────────────────────────────
+export interface CoverPageProps {
+  groomName: string;
+  brideName: string;
+  nameFontSize: number;
+  nameFontFamily: string;
+  date: string;
+  dateFontSize: number;
+  dateFontFamily: string;
+  bgColor: string; // card
+  outerBgColor: string; // outer
+  nameColor: string;
+  dateColor: string;
+  buttonLabel: string;
+  buttonBgColor: string;
+  buttonTextColor: string;
+  buttonBorderRadius: number;
+  showPattern: boolean;
+  patternStyle: 'red' | 'gold' | 'emerald' | 'hidden' | 'custom';
+  patternCustomImage?: string;
+  patternOpacity: number;
+  patternColor: string;
+  showEffect: boolean;
+  effectType: 'cherry' | 'yellow' | 'heart' | 'hy';
+  effectParticleCount: number;
+  effectColor: string;
+  effectSpeed: number;
+}
+
 // ── Canvas Element (base + union) ─────────────────────────
 export type CanvasElementType = 'text' | 'image' | 'shape' | 'countdown' | 'map' | 'qr_code' | 'calendar' | 'album' | 'form' | 'button_contact';
 
@@ -442,4 +472,8 @@ export interface EditorState {
   // Global settings
   autoScroll: boolean;
   autoScrollSpeed: number;
+
+  // Pages
+  currentPage: 'main' | 'cover';
+  coverPageProps: CoverPageProps;
 }

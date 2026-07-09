@@ -14,8 +14,8 @@ export const NotificationPopup: React.FC<NotificationPopupProps> = ({ isOpen, on
     <>
       <div className="fixed inset-0 z-40" onClick={onClose} />
 
-      <div className="absolute bottom-20 left-4 w-72 bg-white rounded-2xl border border-rose-100/60 shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-3 duration-250 text-left">
-        <div className="px-4 py-3 bg-linear-to-r from-rose-50/30 to-amber-50/20 border-b border-rose-100/30 flex items-center justify-between text-zinc-800">
+      <div className="absolute bottom-20 left-4 w-72 bg-white rounded-2xl border border-[rgb(255,220,220)]/60 shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-3 duration-250 text-left">
+        <div className="px-4 py-3 bg-linear-to-r from-[rgba(235,76,76,0.05)] to-[rgba(255,237,199,0.2)] border-b border-[rgb(255,220,220)]/30 flex items-center justify-between text-zinc-800">
           <span className="text-xs font-black font-poppins">Thông báo mới</span>
           <span className="text-[10px] font-black text-rose-500 bg-rose-50 border border-rose-100/60 px-2 py-0.5 rounded-full">3 mới</span>
         </div>
@@ -61,8 +61,7 @@ export const NotificationPopup: React.FC<NotificationPopupProps> = ({ isOpen, on
         <Link
           to="/dashboard/wishes"
           onClick={onClose}
-          className="text-[10px] font-black text-center block py-2.5 bg-zinc-50/40 hover:bg-rose-50/20 text-rose-500 border-t border-rose-100/20 transition-all font-poppins no-underline"
-        >
+          className="text-[10px] font-black text-center block py-2.5 bg-zinc-50/40 hover:bg-[rgba(235,76,76,0.05)] text-[rgb(235,76,76)] border-t border-[rgb(255,220,220)]/20 transition-all font-inter no-underline"        >
           Xem tất cả thông báo
         </Link>
       </div>

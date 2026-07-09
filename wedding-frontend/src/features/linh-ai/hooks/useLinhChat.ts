@@ -17,13 +17,15 @@ export function useLinhChat() {
   const sendMessage = useCallback(async (query: string) => {
     if (!query.trim() || isLoading) return;
 
+    const history = messages.map(m => ({ role: m.role, content: m.content }));
+
     // Add user message
     setMessages((prev) => [...prev, { role: 'user', content: query }]);
     setIsLoading(true);
     setEmotion('thinking');
 
     try {
-      const res = await linhAiApi.chat(query);
+      const res = await linhAiApi.chat(query, history);
       setEmotion(res.emotion);
       setMessages((prev) => [
         ...prev,

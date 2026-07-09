@@ -168,25 +168,25 @@ const PRESETS: PresetDef[] = [
     id: 'fadeInAll',
     label: 'Fade In All',
     icon: IconFadeInAll,
-    apply: (i) => ({ entryEnabled: true, entryEffect: 'fadeIn', entryDuration: 1.0, entryDelay: 2 + i * 0.15, entryEasing: 'ease-out' }),
+    apply: (i) => ({ entryEnabled: true, entryEffect: 'fadeIn', entryDuration: 1.0, entryDelay: 2, entryEasing: 'ease-out' }),
   },
   {
     id: 'slideUpAll',
     label: 'Slide Up All',
     icon: IconSlideUpAll,
-    apply: (i) => ({ entryEnabled: true, entryEffect: 'slideInUp', entryDuration: 0.9, entryDelay: 2 + i * 0.15, entryEasing: 'ease-out' }),
+    apply: (i) => ({ entryEnabled: true, entryEffect: 'slideInUp', entryDuration: 0.9, entryDelay: 2, entryEasing: 'ease-out' }),
   },
   {
     id: 'scaleInAll',
     label: 'Scale In All',
     icon: IconScaleInAll,
-    apply: (i) => ({ entryEnabled: true, entryEffect: 'zoomIn', entryDuration: 0.8, entryDelay: 2 + i * 0.15, entryEasing: 'ease-out' }),
+    apply: (i) => ({ entryEnabled: true, entryEffect: 'zoomIn', entryDuration: 0.8, entryDelay: 2, entryEasing: 'ease-out' }),
   },
   {
     id: 'flipInAll',
     label: 'Flip In All',
     icon: IconFlipInAll,
-    apply: (i) => ({ entryEnabled: true, entryEffect: 'flipInX', entryDuration: 1.0, entryDelay: 2 + i * 0.15, entryEasing: 'ease' }),
+    apply: (i) => ({ entryEnabled: true, entryEffect: 'flipInX', entryDuration: 1.0, entryDelay: 2, entryEasing: 'ease' }),
   },
   {
     id: 'slideUpMix',
@@ -195,7 +195,7 @@ const PRESETS: PresetDef[] = [
     apply: (i) => ({
       entryEnabled: true,
       entryEffect: i % 2 === 0 ? 'slideInUp' : 'slideInDown',
-      entryDuration: 0.9, entryDelay: 2 + i * 0.15, entryEasing: 'ease-out',
+      entryDuration: 0.9, entryDelay: 2, entryEasing: 'ease-out',
     }),
   },
   {
@@ -205,50 +205,50 @@ const PRESETS: PresetDef[] = [
     apply: (i) => ({
       entryEnabled: true,
       entryEffect: i % 2 === 0 ? 'fadeInLeft' : 'fadeInRight',
-      entryDuration: 1.0, entryDelay: 2 + i * 0.15, entryEasing: 'ease-out',
+      entryDuration: 1.0, entryDelay: 2, entryEasing: 'ease-out',
     }),
   },
   {
     id: 'bounceInAll',
     label: 'Bounce In All',
     icon: IconBounceInAll,
-    apply: (i) => ({ entryEnabled: true, entryEffect: 'bounceIn', entryDuration: 1.0, entryDelay: 2 + i * 0.15, entryEasing: 'ease' }),
+    apply: (i) => ({ entryEnabled: true, entryEffect: 'bounceIn', entryDuration: 1.0, entryDelay: 2, entryEasing: 'ease' }),
   },
   {
     id: 'fadeInDownAll',
     label: 'Fade In Down All',
     icon: IconFadeInDownAll,
-    apply: (i) => ({ entryEnabled: true, entryEffect: 'fadeInDown', entryDuration: 1.0, entryDelay: 2 + i * 0.15, entryEasing: 'ease-out' }),
+    apply: (i) => ({ entryEnabled: true, entryEffect: 'fadeInDown', entryDuration: 1.0, entryDelay: 2, entryEasing: 'ease-out' }),
   },
   {
     id: 'zoomInUpAll',
     label: 'Zoom In Up All',
     icon: IconZoomInUpAll,
-    apply: (i) => ({ entryEnabled: true, entryEffect: 'zoomInUp', entryDuration: 0.9, entryDelay: 2 + i * 0.15, entryEasing: 'ease-out' }),
+    apply: (i) => ({ entryEnabled: true, entryEffect: 'zoomInUp', entryDuration: 0.9, entryDelay: 2, entryEasing: 'ease-out' }),
   },
   {
     id: 'rotateInAll',
     label: 'Rotate In All',
     icon: IconRotateInAll,
-    apply: (i) => ({ entryEnabled: true, entryEffect: 'rotateIn', entryDuration: 1.0, entryDelay: 2 + i * 0.15, entryEasing: 'ease-out' }),
+    apply: (i) => ({ entryEnabled: true, entryEffect: 'rotateIn', entryDuration: 1.0, entryDelay: 2, entryEasing: 'ease-out' }),
   },
   {
     id: 'lightSpeedAll',
     label: 'Light Speed All',
     icon: IconLightSpeedAll,
-    apply: (i) => ({ entryEnabled: true, entryEffect: 'lightSpeedInRight', entryDuration: 0.8, entryDelay: 2 + i * 0.15, entryEasing: 'ease-out' }),
+    apply: (i) => ({ entryEnabled: true, entryEffect: 'lightSpeedInRight', entryDuration: 0.8, entryDelay: 2, entryEasing: 'ease-out' }),
   },
   {
     id: 'backInUpAll',
     label: 'Back In Up All',
     icon: IconBackInUpAll,
-    apply: (i) => ({ entryEnabled: true, entryEffect: 'backInUp', entryDuration: 1.0, entryDelay: 2 + i * 0.15, entryEasing: 'ease-out' }),
+    apply: (i) => ({ entryEnabled: true, entryEffect: 'backInUp', entryDuration: 1.0, entryDelay: 2, entryEasing: 'ease-out' }),
   },
   {
     id: 'jackInTheBox',
     label: 'Jack In The Box',
     icon: IconJackInTheBox,
-    apply: (i) => ({ entryEnabled: true, entryEffect: 'jackInTheBox', entryDuration: 1.2, entryDelay: 2 + i * 0.15, entryEasing: 'ease-out' }),
+    apply: (i) => ({ entryEnabled: true, entryEffect: 'jackInTheBox', entryDuration: 1.2, entryDelay: 2, entryEasing: 'ease-out' }),
   },
   {
     id: 'slideInMix',
@@ -257,7 +257,7 @@ const PRESETS: PresetDef[] = [
     apply: (i) => ({
       entryEnabled: true,
       entryEffect: i % 2 === 0 ? 'slideInLeft' : 'slideInRight',
-      entryDuration: 0.9, entryDelay: 2 + i * 0.15, entryEasing: 'ease-out',
+      entryDuration: 0.9, entryDelay: 2, entryEasing: 'ease-out',
     }),
   },
 ];

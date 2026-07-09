@@ -8,6 +8,7 @@ import { RedEnvelope } from '../../features/editor/components/Widgets/RedEnvelop
 import { X, Music, VolumeX } from 'lucide-react';
 import { CalendarEditorElement } from '../../features/editor/components/Widgets/CalendarEditorElement';
 import { ThreeDSlider, FlatSlider, GridCollage, MixedCollage } from '../../features/editor/components/ImageEditorElement';
+import { CoverPagePreview } from '../../features/editor/components/CoverPagePreview';
 
 // ─── Loop animation CSS classes (same as editor) ─────────
 function getLoopClass(ap: AnimationProperties): string {
@@ -594,6 +595,7 @@ function PublicElement({ element, scrollingDown, cardId }: { element: CanvasElem
           if (entry.isIntersecting && !triggeredRef.current && scrollingDown) {
             triggeredRef.current = true;
             setHasTriggered(true);
+            el.style.opacity = ''; // Loại bỏ delay hiển thị
             el.style.animationDuration = `${ap.entryDuration}s`;
             el.style.animationDelay = `${ap.entryDelay}s`;
             el.style.animationTimingFunction = ap.entryEasing;
@@ -603,7 +605,7 @@ function PublicElement({ element, scrollingDown, cardId }: { element: CanvasElem
           }
         });
       },
-      { rootMargin: '0px 0px -40% 0px', threshold: 0 }
+      { rootMargin: '50px 0px 50px 0px', threshold: 0 }
     );
     observer.observe(target);
     return () => observer.disconnect();
@@ -679,6 +681,19 @@ export function PublicViewPage() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const lastScrollY = useRef(0);
   const userInteracted = useRef(false);
+  const [showCover, setShowCover] = useState(true);
+
+  // Lock body scroll when cover is visible
+  useEffect(() => {
+    if (showCover) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [showCover]);
 
   // Fetch card data (public endpoint, no auth needed)
   useEffect(() => {
@@ -774,7 +789,7 @@ export function PublicViewPage() {
 
   // Auto-scroll logic (Super Smooth Implementation)
   useEffect(() => {
-    if (!card || !card.settings?.autoScroll) return;
+    if (!card || !card.settings?.autoScroll || showCover) return;
 
     let animationFrameId: number;
     let lastTime = performance.now();
@@ -835,7 +850,7 @@ export function PublicViewPage() {
       window.removeEventListener('mousedown', stopScroll);
       window.removeEventListener('mouseup', resumeScroll);
     };
-  }, [card]);
+  }, [card, showCover]);
 
   if (loading) return <LoadingPage />;
   if (notFound || !card) return <NotFoundPage />;
@@ -904,11 +919,32 @@ export function PublicViewPage() {
 
         {/* Canvas container */}
         <div style={{ width: 500, maxWidth: '100vw', minHeight: canvasHeight, position: 'relative', overflow: 'hidden', ...bgStyle }}>
-          {[...elements]
-            .sort((a, b) => a.zIndex - b.zIndex)
-            .map(el => (
-              <PublicElement key={el.id} element={el} scrollingDown={scrollingDown} cardId={card.id} />
-            ))}
+          <div style={{ height: canvasHeight, width: '100%', position: 'relative' }}>
+            {[...elements]
+              .sort((a, b) => a.zIndex - b.zIndex)
+              .map(el => (
+                <PublicElement key={el.id} element={el} scrollingDown={scrollingDown} cardId={card.id} />
+              ))}
+          </div>
+        </div>
+
+        {/* Cover Page Overlay - Fixed to Viewport */}
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '100%',
+            maxWidth: 500,
+            height: '100dvh', // Use dynamic viewport height for mobile browsers
+            zIndex: 9999,
+            transition: 'opacity 0.8s ease-in-out',
+            opacity: showCover ? 1 : 0,
+            pointerEvents: showCover ? 'auto' : 'none',
+          }}
+        >
+          <CoverPagePreview onOpen={() => setShowCover(false)} customProps={(card?.settings as any)?.coverPage} />
         </div>
 
         {/* Branding */}

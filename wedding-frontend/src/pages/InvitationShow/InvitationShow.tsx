@@ -157,8 +157,7 @@ export const InvitationShow: React.FC = () => {
 
                                 <button
                                     onClick={handleShootHeart}
-                                    className="bg-white-500 hover:bg-rose-600 text-white rounded-full py-2.5 px-4 text-xs font-bold flex items-center justify-center gap-1 border border-rose-400/20 active:scale-95 transition-all shadow-md cursor-pointer"
-                                >
+                                    className="bg-rose-500 hover:bg-rose-600 text-white rounded-full py-2.5 px-4 text-xs font-bold flex items-center justify-center gap-1 border border-rose-400/20 active:scale-95 transition-all shadow-md cursor-pointer"                                >
                                     <span>💖</span>
                                     <span>Bắn tim</span>
                                 </button>

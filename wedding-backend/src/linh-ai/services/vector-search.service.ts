@@ -26,17 +26,19 @@ export class VectorSearchService implements OnModuleInit {
     const apiKey = this.config.get<string>('GEMINI_API_KEY') || '';
     this.genAI = new GoogleGenerativeAI(apiKey);
     this.embeddingModel = this.genAI.getGenerativeModel({
-      model: 'text-embedding-004',
+      model: 'gemini-embedding-2',
     });
   }
 
   async onModuleInit() {
-    try {
-      await this.indexWeddingKnowledge();
-      this.logger.log(`Vector store initialized with ${this.vectorStore.length} documents`);
-    } catch (err: any) {
-      this.logger.error(`Failed to initialize vector store: ${err.message}`);
-    }
+    // Run in background so it doesn't block server startup
+    this.indexWeddingKnowledge()
+      .then(() => {
+        this.logger.log(`Vector store initialized with ${this.vectorStore.length} documents`);
+      })
+      .catch((err: any) => {
+        this.logger.error(`Failed to initialize vector store: ${err.message}`);
+      });
   }
 
   /**
@@ -44,13 +46,30 @@ export class VectorSearchService implements OnModuleInit {
    */
   private async indexWeddingKnowledge() {
     for (const item of WEDDING_KNOWLEDGE) {
-      const embedding = await this.embed(item.content);
-      this.vectorStore.push({
-        id: item.topic,
-        content: item.content,
-        topic: item.topic,
-        embedding,
-      });
+      let success = false;
+      let retries = 0;
+      while (!success && retries < 5) {
+        try {
+          const embedding = await this.embed(item.content);
+          this.vectorStore.push({
+            id: item.topic,
+            content: item.content,
+            topic: item.topic,
+            embedding,
+          });
+          success = true;
+        } catch (err: any) {
+          if (err.message && err.message.includes('429')) {
+            this.logger.warn(`Rate limit hit. Retrying in 15 seconds...`);
+            await new Promise((resolve) => setTimeout(resolve, 15000));
+            retries++;
+          } else {
+            throw err;
+          }
+        }
+      }
+      // Sleep for 1.5 seconds between items to stay well below 100 RPM
+      await new Promise((resolve) => setTimeout(resolve, 1500));
     }
   }
 

@@ -335,6 +335,7 @@
 .lt-uploaded-section {
   padding: 8px 12px;
   flex: 1;
+  overflow-y: auto;
 }
 
 .lt-uploaded-header {
@@ -668,7 +669,8 @@
     bottom: 0;
     left: 0;
     right: 0;
-    flex-direction: column-reverse;   /* toolbar icons at very bottom */
+    flex-direction: column-reverse;
+    /* toolbar icons at very bottom */
     height: auto;
     z-index: 500;
     background: transparent;
@@ -692,10 +694,12 @@
     gap: 0;
     justify-content: flex-start;
     background: #fff;
-    box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
   }
 
-  .editor-toolbar::-webkit-scrollbar { display: none; }
+  .editor-toolbar::-webkit-scrollbar {
+    display: none;
+  }
 
   /* ── Each tool button — horizontal compact ───────────────── */
   .toolbar-tools {
@@ -726,7 +730,9 @@
   }
 
   /* Tooltip hidden on mobile — not useful */
-  .toolbar-btn::after { display: none; }
+  .toolbar-btn::after {
+    display: none;
+  }
 
   /* Wrapper flexes horizontally */
   .toolbar-item-wrapper {
@@ -741,7 +747,9 @@
   }
 
   /* Hide help button on mobile */
-  .toolbar-footer { display: none; }
+  .toolbar-footer {
+    display: none;
+  }
 
   /* ── Mobile Element Props Bar ───────────────────────────── */
   /* (replaces toolbar icons when element is selected) */
@@ -758,11 +766,13 @@
     scrollbar-width: none;
     gap: 0;
     background: #fff;
-    box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
     display: flex;
   }
 
-  .mobile-props-bar::-webkit-scrollbar { display: none; }
+  .mobile-props-bar::-webkit-scrollbar {
+    display: none;
+  }
 
   .mobile-prop-btn {
     display: flex;
@@ -786,8 +796,8 @@
   }
 
   .mobile-prop-btn.active {
-    color: #f43f5e;
-    background: #fff1f2;
+    color: var(--ed-accent);
+    background: var(--ed-bg-hover);
   }
 
   .mobile-prop-btn svg {
@@ -829,12 +839,12 @@
     top: auto !important;
     width: 100% !important;
     height: 55vh !important;
-    border-radius: 20px 20px 0 0;
-    border-right: none;
-    border-top: 1px solid var(--ed-border);
-    box-shadow: 0 -8px 32px rgba(0,0,0,0.18);
-    z-index: 600;
-    animation: lt-sheet-slide-up 0.25s cubic-bezier(0.22,1,0.36,1);
+    border-radius: 20px 20px 0 0 !important;
+    border-right: none !important;
+    border-top: 1px solid var(--ed-border) !important;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.18) !important;
+    z-index: 600 !important;
+    animation: lt-sheet-slide-up 0.25s cubic-bezier(0.22, 1, 0.36, 1) !important;
   }
 
   /* panels that render absolutely next to toolbar */
@@ -845,21 +855,30 @@
     bottom: 64px !important;
     top: auto !important;
     width: 100% !important;
-    max-height: 55vh;
-    border-radius: 20px 20px 0 0;
-    box-shadow: 0 -8px 32px rgba(0,0,0,0.18);
-    z-index: 600;
-    overflow-y: auto;
-    animation: lt-sheet-slide-up 0.25s cubic-bezier(0.22,1,0.36,1);
+    max-height: 55vh !important;
+    border-radius: 20px 20px 0 0 !important;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.18) !important;
+    z-index: 600 !important;
+    overflow-y: auto !important;
+    animation: lt-sheet-slide-up 0.25s cubic-bezier(0.22, 1, 0.36, 1) !important;
   }
 
   @keyframes lt-sheet-slide-up {
-    from { transform: translateY(100%); opacity: 0.6; }
-    to   { transform: translateY(0);    opacity: 1; }
+    from {
+      transform: translateY(100%);
+      opacity: 0.6;
+    }
+
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 
   /* Panel collapse button hidden on mobile */
-  .panel-collapse-btn { display: none; }
+  .panel-collapse-btn {
+    display: none;
+  }
 
   /* Hide standard toolbar when props bar replaces it */
   .editor-toolbar.mobile-hidden {
@@ -869,5 +888,7 @@
 
 /* On desktop, never show mobile props bar */
 @media (min-width: 769px) {
-  .mobile-props-bar { display: none !important; }
+  .mobile-props-bar {
+    display: none !important;
+  }
 }

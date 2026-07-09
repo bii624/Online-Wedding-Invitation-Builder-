@@ -71,7 +71,7 @@ function App() {
           <Route path="/loading" element={<LoadingPage />} />
 
           {/* Static Pages */}
-          <Route path="/templates" element={<Templates />} />
+
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/contact" element={<Contact />} />
 

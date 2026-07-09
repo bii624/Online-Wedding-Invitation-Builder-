@@ -246,6 +246,34 @@ export const DEFAULT_BUTTON_CONTACT_PROPS: import('../types/editor.types').Butto
   shadow: { x: 0, y: 4, blur: 12, spread: 0, color: 'rgba(0,0,0,0.1)' }
 };
 
+export const DEFAULT_COVER_PAGE_PROPS: import('../types/editor.types').CoverPageProps = {
+  groomName: 'Van Thuan',
+  brideName: 'Anh Truc',
+  nameFontSize: 42,
+  nameFontFamily: 'Playfair Display',
+  date: '23 tháng 8, 2004',
+  dateFontSize: 20,
+  dateFontFamily: 'Playfair Display',
+  bgColor: '#A31D16',
+  outerBgColor: '#3C0F0F',
+  nameColor: '#F0D497',
+  dateColor: '#F0D497',
+  buttonLabel: 'Mở thiệp',
+  buttonBgColor: '#F0D497',
+  buttonTextColor: '#4A1212',
+  buttonBorderRadius: 24,
+  showPattern: true,
+  patternStyle: 'custom',
+  patternCustomImage: 'https://res.cloudinary.com/dimrl0w79/image/upload/v1783091497/dearlove/library_elements/njsjlfrf0ctt5rnkg0hv.webp',
+  patternOpacity: 36,
+  patternColor: '#E74C3C',
+  showEffect: true,
+  effectType: 'hy',
+  effectParticleCount: 30,
+  effectColor: '#F0D497',
+  effectSpeed: 50,
+};
+
 // ── Initial data ──────────────────────────────────────────
 const INITIAL_ELEMENTS: CanvasElement[] = [
   {
@@ -374,6 +402,10 @@ interface EditorActions {
   // Settings
   setAutoScroll: (enabled: boolean) => void;
   setAutoScrollSpeed: (speed: number) => void;
+
+  // Pages
+  setCurrentPage: (page: 'main' | 'cover') => void;
+  updateCoverPageProps: (props: Partial<import('../types/editor.types').CoverPageProps>) => void;
 }
 
 
@@ -389,6 +421,8 @@ const INITIAL_BACKGROUND: BackgroundProperties = {
 };
 
 const INITIAL_STATE: EditorState = {
+  currentPage: 'main',
+  coverPageProps: DEFAULT_COVER_PAGE_PROPS,
   activeTool: 'text',
   selectedElement: INITIAL_ELEMENTS[0],
   elements: INITIAL_ELEMENTS,
@@ -462,6 +496,18 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
   },
   setAutoScrollSpeed: (speed) => {
     set({ autoScrollSpeed: speed });
+  },
+
+  setCurrentPage: (page) => {
+    set({ currentPage: page });
+    // Maybe deselect elements when switching pages
+    get().selectElement(null);
+  },
+
+  updateCoverPageProps: (props) => {
+    set((state) => ({
+      coverPageProps: { ...state.coverPageProps, ...props },
+    }));
   },
 
   setActiveTool: (tool) => set({ activeTool: tool }),
@@ -1446,6 +1492,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         canvasHeight: get().canvasHeight,
         autoScroll: get().autoScroll,
         autoScrollSpeed: get().autoScrollSpeed,
+        coverPage: get().coverPageProps,
       };
 
       await cardsApi.saveCanvas(currentCardId, {

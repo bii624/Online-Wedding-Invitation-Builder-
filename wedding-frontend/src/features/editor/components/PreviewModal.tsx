@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useEditorStore } from '../store/editorStore';
 import { CardRenderer } from './CardRenderer';
+import { CoverPagePreview } from './CoverPagePreview';
 
 interface PreviewModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ export function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
   const [windowSize, setWindowSize] = useState({ w: window.innerWidth, h: window.innerHeight });
   const [containerWidth, setContainerWidth] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [showCover, setShowCover] = useState(true);
   const containerRef = React.useRef<HTMLDivElement>(null);
   const innerContainerRef = React.useRef<HTMLDivElement>(null);
 
@@ -31,7 +33,22 @@ export function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
     observer.observe(containerRef.current);
     return () => observer.disconnect();
   }, [isOpen]);
+  useEffect(() => {
+    if (isOpen && containerRef.current) {
+      containerRef.current.scrollTop = 0;
+    }
+  }, [isOpen]);
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -42,41 +59,41 @@ export function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
 
   // Auto-scroll logic (Super Smooth Implementation)
   useEffect(() => {
-    if (!autoScroll || !containerRef.current || !isOpen || isHovered) {
+    if (!autoScroll || !containerRef.current || !isOpen || isHovered || showCover) {
       if (innerContainerRef.current) {
         innerContainerRef.current.style.transform = `translateY(0px)`;
       }
       return;
     }
-    
+
     const container = containerRef.current;
     const innerContainer = innerContainerRef.current;
     let animationFrameId: number;
     let lastTime = performance.now();
     let exactScrollTop = container.scrollTop;
-    
+
     // Speed mapping: autoScrollSpeed is 10-100.
     // Max speed (100) = ~120px/sec. Min speed (10) = ~12px/sec.
     const pixelsPerSecond = (autoScrollSpeed / 100) * 120;
-    
+
     const scrollStep = (currentTime: number) => {
       // Prevent massive jumps if tab was inactive
       let deltaTime = (currentTime - lastTime) / 1000;
-      if (deltaTime > 0.1) deltaTime = 0.016; 
+      if (deltaTime > 0.1) deltaTime = 0.016;
       lastTime = currentTime;
-      
+
       exactScrollTop += pixelsPerSecond * deltaTime;
-      
+
       const integerScroll = Math.floor(exactScrollTop);
       const fractionalScroll = exactScrollTop - integerScroll;
-      
+
       container.scrollTop = integerScroll;
-      
+
       // Sub-pixel translation for buttery smooth animation
       if (innerContainer) {
         innerContainer.style.transform = `translateY(-${fractionalScroll}px)`;
       }
-      
+
       // Stop if reached bottom
       if (container.scrollTop + container.clientHeight < container.scrollHeight - 1) {
         animationFrameId = requestAnimationFrame(scrollStep);
@@ -84,13 +101,13 @@ export function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
         innerContainer.style.transform = `translateY(0px)`;
       }
     };
-    
+
     const timeoutId = setTimeout(() => {
       lastTime = performance.now();
       exactScrollTop = container.scrollTop;
       animationFrameId = requestAnimationFrame(scrollStep);
     }, 1500); // Wait 1.5s before starting scroll
-    
+
     return () => {
       clearTimeout(timeoutId);
       cancelAnimationFrame(animationFrameId);
@@ -107,7 +124,7 @@ export function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
   // Phone mockup dimensions
   const PHONE_INNER_W = 500;
   const PHONE_INNER_H = 926;
-  
+
   // Calculate dynamic scale based on the actual measured container width (fixes scrollbar clipping)
   const actualContainerWidth = containerWidth || (isMobile ? windowSize.w - 32 : PHONE_INNER_W);
   const scale = actualContainerWidth / canvasWidth;
@@ -140,14 +157,25 @@ export function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
     >
       <style>{`
         .preview-scroll-container::-webkit-scrollbar {
-          width: 0px;
+           width: 5px;
+       
+        }
+          .preview-scroll-container::-webkit-scrollbar-track {
           background: transparent;
         }
-        .preview-scroll-container {
-          scrollbar-width: none;
+           .preview-scroll-container::-webkit-scrollbar-thumb {
+          background: rgba(235, 76, 76, 0.35);
+          border-radius: 9999px;
+        }
+        .preview-scroll-container::-webkit-scrollbar-thumb:hover {
+          background: rgba(235, 76, 76, 0.6);
+        }
+           .preview-scroll-container {
+            scrollbar-width: thin;
+          scrollbar-color: rgba(235, 76, 76, 0.35) transparent;
         }
       `}</style>
-      <div 
+      <div
         style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
         onClick={(e) => e.stopPropagation()} // Prevent close when clicking inside
       >
@@ -167,7 +195,7 @@ export function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
               height: windowSize.h - 80,
               position: 'relative',
               borderRadius: 8,
-              overflowY: 'auto',
+              overflowY: showCover ? 'hidden' : 'auto',
               overflowX: 'hidden',
               boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)',
               backgroundColor: '#fff',
@@ -189,6 +217,23 @@ export function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
               }}>
                 <CardRenderer elements={elements} background={canvasBackground} canvasWidth={canvasWidth} />
               </div>
+            </div>
+
+            {/* Cover Page Overlay */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              zIndex: 100,
+              transition: 'opacity 0.8s ease-in-out, transform 0.8s ease-in-out',
+              opacity: showCover ? 1 : 0,
+              transform: showCover ? 'translateY(0)' : 'translateY(-20px)',
+              pointerEvents: showCover ? 'auto' : 'none',
+              backgroundColor: '#fff' // To prevent seeing Canvas below during fade
+            }}>
+              <CoverPagePreview onOpen={() => setShowCover(false)} />
             </div>
           </div>
         ) : (
@@ -221,7 +266,7 @@ export function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
                 zIndex: 10,
               }}
             />
-            
+
             {/* Screen */}
             <div
               ref={containerRef}
@@ -237,7 +282,7 @@ export function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
                 height: PHONE_INNER_H,
                 backgroundColor: '#fff',
                 borderRadius: 24,
-                overflowY: 'auto',
+                overflowY: showCover ? 'hidden' : 'auto',
                 overflowX: 'hidden',
                 position: 'relative',
               }}
@@ -258,6 +303,23 @@ export function PreviewModal({ isOpen, onClose }: PreviewModalProps) {
                 }}>
                   <CardRenderer elements={elements} background={canvasBackground} canvasWidth={canvasWidth} />
                 </div>
+              </div>
+
+              {/* Cover Page Overlay */}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                zIndex: 100,
+                transition: 'opacity 0.8s ease-in-out, transform 0.8s ease-in-out',
+                opacity: showCover ? 1 : 0,
+                transform: showCover ? 'translateY(0)' : 'translateY(-20px)',
+                pointerEvents: showCover ? 'auto' : 'none',
+                backgroundColor: '#fff' // To prevent seeing Canvas below during fade
+              }}>
+                <CoverPagePreview onOpen={() => setShowCover(false)} />
               </div>
             </div>
 

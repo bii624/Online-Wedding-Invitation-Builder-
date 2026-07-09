@@ -20,7 +20,7 @@ import { useEditorStore } from '../store/editorStore';
 import { useAuthStore } from '../../../store/authStore';
 import { assetsApi } from '../../../api/assetsApi';
 import type { Asset } from '../../../api/assetsApi';
-
+import { SlidersHorizontal, ChevronUp, ChevronDown } from 'lucide-react';
 const AUTO_SAVE_INTERVAL_MS = 30_000; // 30 seconds
 
 export function EditorPage() {
@@ -46,11 +46,12 @@ export function EditorPage() {
   const templateIdParam = searchParams.get('templateId');
 
   // Ngăn chặn giật (flicker) bằng cách kiểm tra xem dữ liệu trong store đã khớp với URL chưa
-  const isDataMismatch = 
-    (cardIdParam && cardIdParam !== cardId) || 
+  const isDataMismatch =
+    (cardIdParam && cardIdParam !== cardId) ||
     (templateIdParam && templateIdParam !== templateId);
   const showLoading = isLoadingEditor || isDataMismatch;
-
+  const [isRightPanelOpen, setIsRightPanelOpen] = useState(true);
+  const [isFilmstripOpen, setIsFilmstripOpen] = useState(true);
   // ── Load dữ liệu từ URL params ───────────────────────────
   useEffect(() => {
     if (isInitialized) {
@@ -179,13 +180,58 @@ export function EditorPage() {
             <LeftToolbar />
 
             {/* Center: Canvas + Filmstrip */}
-            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
-              <MainCanvas />
-              <Filmstrip />
+            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden', position: 'relative' }}>              <MainCanvas />
+              {/* Toggle pages button */}
+              <div style={{
+                position: 'absolute',
+                bottom: isFilmstripOpen ? '90px' : '16px',
+                left: '24px',
+                zIndex: 100,
+                display: 'flex',
+                gap: '8px'
+              }}>
+                <button
+                  onClick={() => setIsFilmstripOpen(!isFilmstripOpen)}
+                  style={{
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    background: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    color: '#64748b',
+                  }}
+                  title={isFilmstripOpen ? "Ẩn danh sách trang" : "Hiển thị danh sách trang"}
+                >
+                  {isFilmstripOpen ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+                  <span>{isFilmstripOpen ? "Ẩn trang" : "Hiện trang"}</span>
+                </button>
+              </div>
+
+              {isFilmstripOpen && <Filmstrip />}
+
+              {/* Floating button to open Right Panel when closed (desktop only) */}
+              {!isRightPanelOpen && (
+                <button
+                  className="editor-expand-right-btn"
+                  onClick={() => setIsRightPanelOpen(true)}
+                  title="Mở cài đặt thuộc tính"
+                >
+                  <SlidersHorizontal size={16} />
+                </button>
+              )}
+
             </div>
 
             {/* Right Properties Panel */}
-            <RightPanel />
+            {isRightPanelOpen && (
+              <RightPanel onCollapse={() => setIsRightPanelOpen(false)} />
+            )}
           </>
         )}
       </div>
