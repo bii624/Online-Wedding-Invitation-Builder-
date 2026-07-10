@@ -58,6 +58,14 @@ export default function LoginPage() {
       setIsLoading(true);
       const response = await axiosClient.post("/auth/login", { email, password });
 
+      // Lưu token vào localStorage để bypass lỗi third-party cookie trên Mobile (Safari ITP)
+      if (response.data.accessToken) {
+        localStorage.setItem("access_token", response.data.accessToken);
+      }
+      if (response.data.refreshToken) {
+        localStorage.setItem("refresh_token", response.data.refreshToken);
+      }
+
       setUser(response.data.user);
       toast.success("Đăng nhập thành công!");
 

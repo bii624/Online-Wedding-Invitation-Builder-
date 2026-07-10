@@ -13,9 +13,26 @@ export default function LoadingPage({ message = "Đang tải dữ liệu ..." }:
   const { user, isInitialized } = useAuthStore();
 
   const explicitNext = searchParams.get("next");
+  const token = searchParams.get("token");
+  const refresh = searchParams.get("refresh");
 
   useEffect(() => {
+    // If there's a token in the URL (from OAuth redirect), save it to localStorage
+    if (token) {
+      localStorage.setItem("access_token", token);
+    }
+    if (refresh) {
+      localStorage.setItem("refresh_token", refresh);
+    }
     
+    // Check if we need to clean up URL params without refreshing
+    if (token || refresh) {
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete("token");
+      newUrl.searchParams.delete("refresh");
+      window.history.replaceState({}, document.title, newUrl.toString());
+    }
+
     if (explicitNext) {
       const timer = window.setTimeout(() => {
         navigate(explicitNext, { replace: true });

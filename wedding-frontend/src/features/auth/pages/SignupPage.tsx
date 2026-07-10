@@ -88,6 +88,15 @@ export default function SignupPage() {
       });
 
       const loginResponse = await axiosClient.post('/auth/login', { email, password });
+      
+      // Lưu token vào localStorage để bypass lỗi third-party cookie trên Mobile
+      if (loginResponse.data.accessToken) {
+        localStorage.setItem("access_token", loginResponse.data.accessToken);
+      }
+      if (loginResponse.data.refreshToken) {
+        localStorage.setItem("refresh_token", loginResponse.data.refreshToken);
+      }
+
       setUser(loginResponse.data.user);
 
       toast.success('Đăng ký thành công!');

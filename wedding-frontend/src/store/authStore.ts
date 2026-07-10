@@ -42,6 +42,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
       set({ user: null });
     }
   },

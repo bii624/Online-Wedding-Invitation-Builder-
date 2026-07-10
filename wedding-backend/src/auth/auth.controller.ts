@@ -184,10 +184,12 @@ export class AuthController {
     // Đăng ký hoặc tìm user OAuth Google
     const user = await this.authService.findOrCreateOAuthUser(req.user);
     // Đăng nhập, set cookie (HttpOnly, Secure, SameSite)
-    await this.authService.login(user, res);
+    const authResult = await this.authService.login(user, res);
 
-    // Redirect về frontend, FE sẽ tự động nhận cookie
-    return res.redirect(process.env.FRONTEND_URL || 'http://localhost:5173/');
+    // Redirect về frontend kèm loading page và token để bypass lỗi third-party cookie trên Mobile
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173/';
+    const redirectUrl = `${frontendUrl.replace(/\/$/, '')}/loading?next=${encodeURIComponent('/dashboard/overview')}&message=${encodeURIComponent('Đăng nhập thành công!')}&token=${authResult.accessToken}&refresh=${authResult.refreshToken}`;
+    return res.redirect(redirectUrl);
   }
 
   // =====================================================================
@@ -207,11 +209,11 @@ export class AuthController {
     // Đăng ký hoặc tìm user OAuth Facebook
     const user = await this.authService.findOrCreateOAuthUser(req.user);
     // Đăng nhập, set cookie (HttpOnly, Secure, SameSite)
-    await this.authService.login(user, res);
+    const authResult = await this.authService.login(user, res);
 
-    // Redirect về frontend kèm loading page, FE sẽ tự động nhận cookie
+    // Redirect về frontend kèm loading page và token để bypass lỗi third-party cookie trên Mobile
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173/';
-    const redirectUrl = `${frontendUrl.replace(/\/$/, '')}/loading?next=${encodeURIComponent('/dashboard/overview')}&message=${encodeURIComponent('Đăng nhập thành công!')}`;
+    const redirectUrl = `${frontendUrl.replace(/\/$/, '')}/loading?next=${encodeURIComponent('/dashboard/overview')}&message=${encodeURIComponent('Đăng nhập thành công!')}&token=${authResult.accessToken}&refresh=${authResult.refreshToken}`;
     return res.redirect(redirectUrl);
   }
 
