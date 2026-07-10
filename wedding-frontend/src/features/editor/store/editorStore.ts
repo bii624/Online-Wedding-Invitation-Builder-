@@ -1574,9 +1574,9 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
 
       const background = card.background ?? get().canvasBackground;
       const music = card.settings?.music ?? null;
-      const height = card.settings?.canvasHeight ?? get().canvasHeight;
-      const autoScroll = card.settings?.autoScroll ?? false;
-      const autoScrollSpeed = card.settings?.autoScrollSpeed ?? 50;
+      const height = card.settings?.canvasHeight ?? (card.background as any)?.canvasHeight ?? get().canvasHeight;
+      const autoScroll = card.settings?.autoScroll ?? (card.background as any)?.autoScroll ?? false;
+      const autoScrollSpeed = card.settings?.autoScrollSpeed ?? (card.background as any)?.autoScrollSpeed ?? 50;
 
       set({
         cardId,

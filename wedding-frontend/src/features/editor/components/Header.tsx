@@ -40,6 +40,8 @@ const SaveIcon = () => (
 import { useState } from 'react';
 import { PreviewModal } from './PreviewModal';
 import { PublishModal } from './PublishModal';
+import { adminApi } from '../../admin/api/adminApi';
+import { toast } from 'sonner';
 
 const AUTO_SAVE_LABELS: Record<string, { label: string; color: string; pulse: boolean }> = {
   idle: { label: 'Sẵn sàng', color: '#9ca3af', pulse: false },
@@ -59,6 +61,24 @@ export function Header() {
   const canRedo = historyIndex < history.length - 1;
 
   const statusInfo = AUTO_SAVE_LABELS[autoSaveStatus] ?? AUTO_SAVE_LABELS.idle;
+
+  const handlePublishClick = async () => {
+    if (editorMode === 'template') {
+      if (!templateId) return;
+      if (!window.confirm('Bạn có chắc muốn phát hành template này? Khách hàng sẽ có thể nhìn thấy và sử dụng template này trên thư viện.')) return;
+      
+      try {
+        await saveTemplateNow();
+        await adminApi.updateTemplateStatus(templateId, 'published');
+        toast.success('Đã xuất bản template thành công!');
+      } catch (err) {
+        toast.error('Lỗi khi xuất bản template');
+      }
+    } else {
+      setShowPublish(true);
+    }
+  };
+
   const handleLogoClick = () => {
     if (user?.role === 'admin') {
       navigate('/admin');
@@ -159,7 +179,7 @@ export function Header() {
           Xem trước
         </button>
         <div className="header-divider" />
-        <button id="btn-publish" className="header-btn header-btn-publish" onClick={() => setShowPublish(true)}>
+        <button id="btn-publish" className="header-btn header-btn-publish" onClick={handlePublishClick}>
           <PublishIcon />
           Xuất bản
         </button>
