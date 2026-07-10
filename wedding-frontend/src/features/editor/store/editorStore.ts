@@ -1490,6 +1490,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       const settings = {
         ...(music ? { music } : {}),
         canvasHeight: get().canvasHeight,
+        canvasWidth: get().canvasWidth,
         autoScroll: get().autoScroll,
         autoScrollSpeed: get().autoScrollSpeed,
         coverPage: get().coverPageProps,
@@ -1590,7 +1591,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         elements,
         canvasBackground: background,
         music,
-        canvasWidth: card.canvasWidth ?? get().canvasWidth,
+        canvasWidth: card.settings?.canvasWidth ?? card.canvasWidth ?? get().canvasWidth,
         canvasHeight: height,
         autoScroll,
         autoScrollSpeed,

@@ -904,6 +904,7 @@ export function PublicViewPage() {
   });
 
   const canvasHeight: number = card.settings?.canvasHeight || 900;
+  const canvasWidth: number = card.settings?.canvasWidth || card.canvasWidth || 500;
   const bgStyle: React.CSSProperties = {
     ...(bg.type === 'solid' && { backgroundColor: bg.color }),
     ...(bg.type === 'gradient' && { backgroundImage: `linear-gradient(${bg.gradientAngle}deg, ${bg.gradientFrom}, ${bg.gradientTo})` }),
@@ -927,7 +928,7 @@ export function PublicViewPage() {
         )}
 
         {/* Canvas container */}
-        <div style={{ width: 500, maxWidth: '100vw', minHeight: canvasHeight, position: 'relative', overflow: 'hidden', ...bgStyle }}>
+        <div style={{ width: canvasWidth, maxWidth: '100vw', minHeight: canvasHeight, position: 'relative', overflow: 'hidden', ...bgStyle }}>
           <div style={{ height: canvasHeight, width: '100%', position: 'relative' }}>
             {[...elements]
               .sort((a, b) => a.zIndex - b.zIndex)
@@ -945,7 +946,7 @@ export function PublicViewPage() {
             left: '50%',
             transform: 'translateX(-50%)',
             width: '100%',
-            maxWidth: 500,
+            maxWidth: canvasWidth,
             height: '100dvh', // Use dynamic viewport height for mobile browsers
             zIndex: 9999,
             transition: 'opacity 0.8s ease-in-out',
@@ -956,8 +957,8 @@ export function PublicViewPage() {
           <CoverPagePreview onOpen={() => setShowCover(false)} customProps={(card?.settings as any)?.coverPage} />
         </div>
 
-        {/* Branding */}
-        <div style={{ width: '100%', maxWidth: 500, padding: '20px 16px', textAlign: 'center' }}>
+        {/* Powered by Watermark */}
+        <div style={{ width: '100%', maxWidth: canvasWidth, padding: '20px 16px', textAlign: 'center' }}>
           <a href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#f43f5e', textDecoration: 'none', fontSize: 13, fontWeight: 600 }}>
             💕 Tạo thiệp cưới đẹp tại <strong style={{ marginLeft: 4 }}>DearLove</strong>
           </a>

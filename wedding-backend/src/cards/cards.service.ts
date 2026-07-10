@@ -197,8 +197,9 @@ export class CardsService {
             groomName: dto.groomName,
             brideName: dto.brideName,
             background: template.background as Prisma.InputJsonValue,
-            canvasWidth: template.canvasWidth,
-            settings: {},
+            settings: {
+              canvasWidth: template.canvasWidth,
+            },
           },
         });
 
