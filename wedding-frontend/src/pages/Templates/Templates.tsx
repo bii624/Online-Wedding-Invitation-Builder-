@@ -177,7 +177,7 @@ export const Templates: React.FC = () => {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: 15 }}
                                 transition={{ duration: 0.4 }}
-                                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6"
+                                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 md:gap-6"
                             >
                                 {filteredTemplates.map((item) => {
                                     const idNum = typeof item.id === 'string' ? parseInt(item.id.replace(/\D/g, '')) || 99 : item.id;
@@ -252,12 +252,16 @@ export const Templates: React.FC = () => {
                                                 </div>
                                             </div>
 
-                                            <div className="p-4 space-y-1 text-left">
-                                                <div className="flex justify-between items-center text-[10px] font-bold text-zinc-400 uppercase tracking-wider font-poppins">
-                                                    <span>Mã: {codeText}</span>
-                                                    <span className="text-[rgb(235,76,76)] bg-[rgb(255,237,199)] px-2 py-0.5 rounded-md lowercase">{priceText}</span>
+                                            <div className="p-5 flex flex-col gap-2 text-left">
+                                                <div className="flex justify-between items-center gap-3">
+                                                    <span className="text-[10px] font-medium text-zinc-400 uppercase tracking-wider truncate flex-1 min-w-0" title={`Mã: ${codeText}`}>
+                                                        Mã: {codeText}
+                                                    </span>
+                                                    <span className="text-[10px] font-bold text-[rgb(235,76,76)] bg-[rgb(255,237,199)] px-2.5 py-1 rounded-md lowercase shrink-0 whitespace-nowrap">
+                                                        {priceText}
+                                                    </span>
                                                 </div>
-                                                <h3 className="font-bold text-zinc-800 text-sm tracking-tight leading-snug truncate group-hover:text-[rgb(235,76,76)] transition-colors duration-300">
+                                                <h3 className="font-bold text-zinc-800 text-[15px] tracking-tight leading-snug truncate group-hover:text-[rgb(235,76,76)] transition-colors duration-300" title={titleText}>
                                                     {titleText}
                                                 </h3>
                                             </div>

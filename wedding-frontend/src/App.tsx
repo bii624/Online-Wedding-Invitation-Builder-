@@ -45,6 +45,7 @@ import Templates from './pages/Templates/Templates';
 import { Reviews } from './pages/Reviews/Reviews';
 import { Contact } from './pages/Contact/Contact';
 import { PublicViewPage } from './pages/PublicViewPage/PublicViewPage';
+import { TemplatesDashboard } from './features/dashboard/pages/TemplatesDashboard';
 
 
 function App() {
@@ -69,7 +70,7 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/loading" element={<LoadingPage />} />
-
+          <Route path="/templates" element={<Templates />} />
           {/* Static Pages */}
 
           <Route path="/reviews" element={<Reviews />} />
@@ -81,7 +82,7 @@ function App() {
           <Route path="/dashboard/my-cards" element={<MyCardsDashboard />} />
           <Route path="/dashboard/create" element={<CreateCard />} />
           <Route path="/dashboard/cards/:id" element={<CardDetailPage />} />
-          <Route path="/dashboard/templates" element={<Templates />} />
+          <Route path="/dashboard/templates" element={<TemplatesDashboard />} />
           <Route path="/dashboard/wishes" element={<Wishes />} />
           <Route path="/dashboard/rsvp" element={<RSVP />} />
           <Route path="/dashboard/gifts" element={<ReceivedGifts />} />
