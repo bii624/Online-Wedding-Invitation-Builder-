@@ -1595,6 +1595,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         canvasHeight: height,
         autoScroll,
         autoScrollSpeed,
+        coverPageProps: card.settings?.coverPage ?? DEFAULT_COVER_PAGE_PROPS,
         history: [{ elements, canvasBackground: background }],
         historyIndex: 0,
         selectedElement: null,
@@ -1670,6 +1671,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         canvasHeight: height,
         autoScroll,
         autoScrollSpeed,
+        coverPageProps: template.background?.coverPage ?? DEFAULT_COVER_PAGE_PROPS,
         history: [{ elements, canvasBackground: background }],
         historyIndex: 0,
         selectedElement: null,
@@ -1737,6 +1739,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
           canvasHeight: get().canvasHeight,
           autoScroll: get().autoScroll,
           autoScrollSpeed: get().autoScrollSpeed,
+          coverPage: get().coverPageProps,
         },
       });
 
