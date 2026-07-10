@@ -308,6 +308,7 @@
   cursor: move;
   user-select: none;
   transition: none;
+  touch-action: none; /* Prevent browser scroll/pan while dragging element on mobile */
 }
 
 .canvas-element:hover .canvas-el-border {

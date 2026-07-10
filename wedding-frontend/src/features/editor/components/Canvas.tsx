@@ -313,6 +313,7 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
     (e: React.TouchEvent) => {
       if ((e.target as HTMLElement).closest('.canvas-el-ctrl-btn, .canvas-handle')) return;
       e.stopPropagation();
+      e.preventDefault(); // Prevent canvas scroll while dragging element
       selectElement(element.id);
       const touch = e.touches[0];
       const scale = zoom / 100;
@@ -326,6 +327,7 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
 
       const handleTouchMove = (te: TouchEvent) => {
         if (!dragRef.current.isDragging) return;
+        te.preventDefault(); // Prevent scroll during drag
         const touchMove = te.touches[0];
         const dx = (touchMove.clientX - dragRef.current.startX) / scale;
         const dy = (touchMove.clientY - dragRef.current.startY) / scale;
@@ -348,6 +350,7 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
   const handleResizeTouchStart = useCallback(
     (e: React.TouchEvent, handle: string) => {
       e.stopPropagation();
+      e.preventDefault(); // Prevent canvas scroll while resizing
       const scale = zoom / 100;
       const touch = e.touches[0];
       const startX = touch.clientX;
@@ -375,6 +378,7 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
       const fixedY = cy + (localOppositeX * sin + localOppositeY * cos);
 
       const handleTouchMove = (te: TouchEvent) => {
+        te.preventDefault(); // Prevent scroll during resize
         const touchMove = te.touches[0];
         const dx = (touchMove.clientX - startX) / scale;
         const dy = (touchMove.clientY - startY) / scale;
@@ -436,6 +440,7 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
   const handleRotateTouchStart = useCallback(
     (e: React.TouchEvent) => {
       e.stopPropagation();
+      e.preventDefault(); // Prevent canvas scroll while rotating
       const el = document.querySelector(`[data-element-id="${element.id}"]`);
       if (!el) return;
       const rect = el.getBoundingClientRect();
@@ -443,6 +448,7 @@ function DraggableElement({ element, zoom }: DraggableElementProps) {
       const cy = rect.top + rect.height / 2;
 
       const handleTouchMove = (te: TouchEvent) => {
+        te.preventDefault(); // Prevent scroll during rotate
         const touchMove = te.touches[0];
         const dx = touchMove.clientX - cx;
         const dy = touchMove.clientY - cy;

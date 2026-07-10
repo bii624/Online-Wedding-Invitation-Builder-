@@ -98,8 +98,24 @@ export function CustomColorPicker({
     onClose();
   };
 
+  // Detect mobile for backdrop
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+
   return (
-    <div className={`custom-color-picker-wrapper ${alignRight ? 'ccp-align-right' : ''}`}>
+    <>
+      {/* Mobile backdrop — tap outside to close */}
+      {isMobile && (
+        <div
+          className="ccp-mobile-backdrop"
+          onClick={handleClose}
+        />
+      )}
+      <div className={`custom-color-picker-wrapper ${alignRight ? 'ccp-align-right' : ''}`}>
       <div className="ccp-header">
         {!forceSolid && (
         <div className="ccp-tabs">
@@ -190,6 +206,7 @@ export function CustomColorPicker({
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

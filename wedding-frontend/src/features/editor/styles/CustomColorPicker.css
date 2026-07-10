@@ -175,3 +175,41 @@
   transform: translateY(-50%);
   margin: 0;
 }
+
+/* ── Mobile backdrop ─────────────────────────────────────── */
+.ccp-mobile-backdrop {
+  display: none;
+}
+
+/* ── Mobile: keep picker inside the viewport ────────────── */
+@media (max-width: 768px) {
+  .custom-color-picker-wrapper {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+    width: min(92vw, 300px) !important;
+    max-height: 90vh;
+    overflow-y: auto;
+    z-index: 9999 !important;
+  }
+
+  .ccp-align-right.custom-color-picker-wrapper {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+  }
+
+  .ccp-mobile-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 9998;
+  }
+}
