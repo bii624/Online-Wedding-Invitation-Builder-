@@ -383,19 +383,13 @@ export const Overview = () => {
   const isPro = user?.currentPlanId === '00000000-0000-0000-0000-000000000002';
   const isPremium = user?.currentPlanId === 'premium-mock-id';
 
-  const limits = {
-    photos: isPremium ? 9999 : (isPro ? 100 : 10),
-    cards: isPremium ? 9999 : (isPro ? 5 : 1),
-    visitors: isPremium ? 999999 : (isPro ? 5000 : 300)
-  };
+
 
   const imageAssetsCount = assets.filter(asset => asset.type === 'image').length;
   const activeCardsCount = cards.length;
   const totalViews = cards.reduce((sum, card) => sum + (card.viewCount || 0), 0);
 
-  const photoPercent = Math.min(100, Math.round((imageAssetsCount / limits.photos) * 100)) || 0;
-  const cardPercent = Math.min(100, Math.round((activeCardsCount / limits.cards) * 100)) || 0;
-  const visitorPercent = Math.min(100, Math.round((totalViews / limits.visitors) * 100)) || 0;
+
 
   // --- Countdown & Stats calculations ---
   const getTargetDate = () => {
@@ -455,10 +449,7 @@ export const Overview = () => {
     }))
   ].sort((a, b) => b.time.getTime() - a.time.getTime()).slice(0, 5);
 
-  // SVG dash offset values based on 138 circumference (2 * PI * 22)
-  const photoOffset = 138 - (138 * photoPercent) / 100;
-  const cardOffset = 138 - (138 * cardPercent) / 100;
-  const visitorOffset = 138 - (138 * visitorPercent) / 100;
+
 
   const hour = new Date().getHours();
   let greeting = 'Chào';
@@ -651,7 +642,7 @@ export const Overview = () => {
               </div>
               <div>
                 <p className="text-3xl font-black text-[rgb(235,76,76)] mt-1 font-inter">
-                  {imageAssetsCount} <span className="text-sm font-semibold text-[rgb(255,166,166)]">/ {isPremium ? '∞' : limits.photos} tệp</span>
+                  {imageAssetsCount} <span className="text-sm font-semibold text-[rgb(255,166,166)]"> {isPremium ? '∞' : ""} tệp</span>
                 </p>
                 <p className="text-[11px] text-zinc-400 font-medium mt-1">Đã tối ưu bộ nhớ</p>
               </div>
@@ -660,9 +651,7 @@ export const Overview = () => {
             <div className="relative flex items-center justify-center shrink-0">
               <svg className="w-14 h-14 transform -rotate-90">
                 <circle cx="28" cy="28" r="22" className="stroke-zinc-100" strokeWidth="3" fill="transparent" />
-                <circle cx="28" cy="28" r="22" className="stroke-[rgb(255,112,112)]" strokeWidth="3.5" fill="transparent" strokeDasharray="138" strokeDashoffset={isPremium ? 0 : photoOffset} strokeLinecap="round" />
               </svg>
-              <span className="absolute text-xs font-black text-[rgb(235,76,76)]">{isPremium ? '100%' : `${photoPercent}%`}</span>
             </div>
           </Link>
 
@@ -676,7 +665,7 @@ export const Overview = () => {
               </div>
               <div>
                 <p className="text-3xl font-black text-[rgb(235,76,76)] mt-1 font-inter">
-                  {activeCardsCount} <span className="text-sm font-semibold text-[rgb(255,166,166)]">/ {isPremium ? '∞' : `0${limits.cards}`} thiệp</span>
+                  {activeCardsCount} <span className="text-sm font-semibold text-[rgb(255,166,166)]"> {isPremium ? '∞' : ""} thiệp</span>
                 </p>
                 <p className="text-[11px] text-zinc-400 font-medium mt-1">Trạng thái: Sẵn sàng</p>
               </div>
@@ -685,9 +674,7 @@ export const Overview = () => {
             <div className="relative flex items-center justify-center shrink-0">
               <svg className="w-14 h-14 transform -rotate-90">
                 <circle cx="28" cy="28" r="22" className="stroke-zinc-100" strokeWidth="3" fill="transparent" />
-                <circle cx="28" cy="28" r="22" className="stroke-[rgb(255,112,112)]" strokeWidth="3.5" fill="transparent" strokeDasharray="138" strokeDashoffset={isPremium ? 0 : cardOffset} strokeLinecap="round" />
               </svg>
-              <span className="absolute text-xs font-black text-[rgb(235,76,76)]">{isPremium ? '100%' : `${cardPercent}%`}</span>
             </div>
           </Link>
 
@@ -701,7 +688,7 @@ export const Overview = () => {
               </div>
               <div>
                 <p className="text-3xl font-black text-[rgb(235,76,76)] mt-1 font-inter">
-                  {totalViews} <span className="text-sm font-semibold text-[rgb(255,166,166)]">/ {isPremium ? '∞' : limits.visitors} lượt</span>
+                  {totalViews} <span className="text-sm font-semibold text-[rgb(255,166,166)]"> {isPremium ? '∞' : ""} lượt</span>
                 </p>
                 <p className="text-[11px] text-zinc-400 font-medium mt-1">Reset sau 30 ngày</p>
               </div>
@@ -710,9 +697,7 @@ export const Overview = () => {
             <div className="relative flex items-center justify-center shrink-0">
               <svg className="w-14 h-14 transform -rotate-90">
                 <circle cx="28" cy="28" r="22" className="stroke-zinc-100" strokeWidth="3" fill="transparent" />
-                <circle cx="28" cy="28" r="22" className="stroke-[rgb(255,112,112)]" strokeWidth="3.5" fill="transparent" strokeDasharray="138" strokeDashoffset={isPremium ? 0 : visitorOffset} strokeLinecap="round" />
               </svg>
-              <span className="absolute text-xs font-black text-[rgb(235,76,76)]">{isPremium ? '100%' : `${visitorPercent}%`}</span>
             </div>
           </Link>
 

@@ -79,21 +79,30 @@ function PublicImageElement({ element }: { element: CanvasElement }) {
       border: ip.borderWidth > 0 && ip.borderStyle !== 'none' ? `${ip.borderWidth}px ${ip.borderStyle} ${ip.borderColor}` : undefined,
       boxShadow: ip.shadowBlur > 0 || ip.shadowX !== 0 || ip.shadowY !== 0 ? `${ip.shadowX}px ${ip.shadowY}px ${ip.shadowBlur}px ${ip.shadowColor}` : undefined,
       padding: `${ip.paddingTop}px ${ip.paddingRight}px ${ip.paddingBottom}px ${ip.paddingLeft}px`,
-      boxSizing: 'border-box', overflow: 'hidden', display: 'flex', position: 'relative',
+      boxSizing: 'border-box', overflow: (ip.galleryImages && ip.galleryImages.length > 0 && (!ip.sliderStyle || ip.sliderStyle === '3d')) ? 'visible' : 'hidden', display: 'flex', position: 'relative',
     }}>
-      <img src={ip.src} alt={ip.alt} draggable={false} crossOrigin="anonymous"
-        style={{
-          width: crop ? `${10000 / crop.width}%` : '100%',
-          height: crop ? `${10000 / crop.height}%` : '100%',
-          left: crop ? `${-(crop.x / crop.width) * 100}%` : undefined,
-          top: crop ? `${-(crop.y / crop.height) * 100}%` : undefined,
-          position: crop ? 'absolute' : undefined,
-          objectFit: crop ? 'fill' : ip.objectFit,
-          maxWidth: crop ? 'none' : undefined,
-          maxHeight: crop ? 'none' : undefined,
-          transform, display: 'block', pointerEvents: 'none',
-        }}
-      />
+      {ip.galleryImages && ip.galleryImages.length > 0 ? (
+        <>
+          {(!ip.sliderStyle || ip.sliderStyle === '3d') && <ThreeDSlider images={ip.galleryImages} />}
+          {ip.sliderStyle === 'flat' && <FlatSlider images={ip.galleryImages} />}
+          {ip.sliderStyle === 'grid' && <GridCollage images={ip.galleryImages} />}
+          {ip.sliderStyle === 'collage' && <MixedCollage images={ip.galleryImages} />}
+        </>
+      ) : (
+        <img src={ip.src} alt={ip.alt} draggable={false} crossOrigin="anonymous"
+          style={{
+            width: crop ? `${10000 / crop.width}%` : '100%',
+            height: crop ? `${10000 / crop.height}%` : '100%',
+            left: crop ? `${-(crop.x / crop.width) * 100}%` : undefined,
+            top: crop ? `${-(crop.y / crop.height) * 100}%` : undefined,
+            position: crop ? 'absolute' : undefined,
+            objectFit: crop ? 'fill' : ip.objectFit,
+            maxWidth: crop ? 'none' : undefined,
+            maxHeight: crop ? 'none' : undefined,
+            transform, display: 'block', pointerEvents: 'none',
+          }}
+        />
+      )}
     </div>
   );
 }

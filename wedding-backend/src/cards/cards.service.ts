@@ -187,7 +187,7 @@ export class CardsService {
         if (template.status !== 'published')
           throw new BadRequestException('Template ch╞░a ─æ╞░ß╗úc ph├ít h├ánh');
 
-        // Tß║ío Card kß║┐ thß╗½a background + canvasWidth tß╗½ template
+        // Tạo Card kế thừa background + canvasWidth từ template
         const card = await tx.card.create({
           data: {
             userId,
@@ -197,6 +197,7 @@ export class CardsService {
             groomName: dto.groomName,
             brideName: dto.brideName,
             background: template.background as Prisma.InputJsonValue,
+            canvasWidth: template.canvasWidth,
             settings: {},
           },
         });

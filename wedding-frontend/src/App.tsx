@@ -17,6 +17,7 @@ import { MyCardsPage } from './pages/MyCardsPage/MyCardsPage';
 import CardDetailPage from './pages/Dashboard/CardDetailPage/CardDetailPage';
 import { PageTransition } from './components/PageTransition';
 import { RouteProgressBar } from './components/RouteProgressBar';
+import { InAppBrowserBlocker } from './components/InAppBrowserBlocker';
 
 
 // Dashboard
@@ -57,6 +58,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <InAppBrowserBlocker>
       <Toaster richColors position="top-center" />
       <RouteProgressBar />
       <PageTransition>
@@ -111,6 +113,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </PageTransition>
+      </InAppBrowserBlocker>
     </BrowserRouter>
   );
 }

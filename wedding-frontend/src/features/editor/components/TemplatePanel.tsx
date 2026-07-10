@@ -215,11 +215,11 @@ export function TemplatePanel({ onClose }: TemplatePanelProps) {
               ) : fullPreview ? (
                 <div style={{ 
                   width: '100%', 
-                  height: (Math.max(2000, ...(fullPreview.blocks?.map((b: any) => (b.posY || 0) + (b.height || 0)) || [2000])) + 100) * previewScale 
+                  height: (fullPreview.canvasHeight || Math.max(2000, ...(fullPreview.blocks?.map((b: any) => (b.posY || 0) + (b.height || 0)) || [2000])) + 100) * previewScale 
                 }}>
                   <div style={{ 
-                    width: 500, // Force 500px as per user request
-                    height: Math.max(2000, ...(fullPreview.blocks?.map((b: any) => (b.posY || 0) + (b.height || 0)) || [2000])) + 100,
+                    width: fullPreview.canvasWidth || 500, // Dynamic width
+                    height: fullPreview.canvasHeight || Math.max(2000, ...(fullPreview.blocks?.map((b: any) => (b.posY || 0) + (b.height || 0)) || [2000])) + 100,
                     transform: `scale(${previewScale})`,
                     transformOrigin: 'top left'
                   }}>

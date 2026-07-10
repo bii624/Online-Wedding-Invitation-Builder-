@@ -1574,7 +1574,14 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
 
       const background = card.background ?? get().canvasBackground;
       const music = card.settings?.music ?? null;
-      const height = card.settings?.canvasHeight ?? (card.background as any)?.canvasHeight ?? get().canvasHeight;
+      let height = card.canvasHeight ?? card.settings?.canvasHeight ?? (card.background as any)?.canvasHeight ?? get().canvasHeight;
+      // Auto-expand height if elements are out of bounds
+      if (elements.length > 0) {
+        const maxElementY = Math.max(...elements.map(el => el.y + el.height));
+        if (maxElementY + 100 > height) {
+          height = maxElementY + 100;
+        }
+      }
       const autoScroll = card.settings?.autoScroll ?? (card.background as any)?.autoScroll ?? false;
       const autoScrollSpeed = card.settings?.autoScrollSpeed ?? (card.background as any)?.autoScrollSpeed ?? 50;
 
@@ -1642,7 +1649,14 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       });
 
       const background = template.background ?? get().canvasBackground;
-      const height = template.background?.canvasHeight ?? get().canvasHeight;
+      let height = template.canvasHeight ?? template.background?.canvasHeight ?? get().canvasHeight;
+      // Auto-expand height if elements are out of bounds
+      if (elements.length > 0) {
+        const maxElementY = Math.max(...elements.map(el => el.y + el.height));
+        if (maxElementY + 100 > height) {
+          height = maxElementY + 100;
+        }
+      }
       const autoScroll = template.background?.autoScroll ?? false;
       const autoScrollSpeed = template.background?.autoScrollSpeed ?? 50;
 
