@@ -1432,7 +1432,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
 
         // Cập nhật URL trên trình duyệt để thêm ?id=...
         const url = new URL(window.location.href);
-        url.searchParams.set('id', currentCardId);
+        url.searchParams.set('id', currentCardId as string);
         window.history.replaceState({}, '', url.toString());
       } catch (err) {
         console.error('[saveCanvasNow] Create new card failed:', err);
@@ -1495,7 +1495,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         coverPage: get().coverPageProps,
       };
 
-      await cardsApi.saveCanvas(currentCardId, {
+      await cardsApi.saveCanvas(currentCardId as string, {
         blocks,
         background: canvasBackground as object,
         settings,
@@ -1518,7 +1518,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
               canvas.toBlob((b) => resolve(b), 'image/webp', 0.8);
             });
             if (blob) {
-              await cardsApi.uploadCardThumbnail(currentCardId, blob);
+              await cardsApi.uploadCardThumbnail(currentCardId as string, blob);
             }
           }
         } catch (thumbErr) {
