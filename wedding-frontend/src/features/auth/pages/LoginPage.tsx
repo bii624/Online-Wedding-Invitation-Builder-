@@ -62,11 +62,7 @@ export default function LoginPage() {
       toast.success("Đăng nhập thành công!");
 
       if (response.data.user.role === 'admin') {
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-          navigate(`/loading?next=${encodeURIComponent('/admin')}&message=${encodeURIComponent('Đăng nhập thành công!')}`);
-        } else {
-          window.location.href = "https://admin.zenlove.vn";
-        }
+        navigate(`/loading?next=${encodeURIComponent('/admin')}&message=${encodeURIComponent('Đăng nhập thành công!')}`);
       } else {
         navigate(`/loading?next=${encodeURIComponent('/dashboard/overview')}&message=${encodeURIComponent('Đăng nhập thành công!')}`);
       }
