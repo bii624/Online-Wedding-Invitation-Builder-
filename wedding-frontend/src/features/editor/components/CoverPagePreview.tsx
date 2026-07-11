@@ -109,10 +109,10 @@ export function CoverPagePreview({ onOpen, customProps }: { onOpen?: () => void,
           position: 'relative',
           width: '90%',
           maxWidth: '400px',
-          height: '65%',
+          minHeight: '65%',
           display: 'flex',
           justifyContent: 'center',
-          alignItems: 'center',
+          alignItems: 'stretch',
           zIndex: 10,
         }}
       >
@@ -143,11 +143,8 @@ export function CoverPagePreview({ onOpen, customProps }: { onOpen?: () => void,
         {/* Main Card */}
         <div
           style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
+            position: 'relative',
             width: '100%',
-            height: '100%',
             backgroundColor: coverPageProps.bgColor,
             borderRadius: '24px',
             boxShadow: '0 10px 30px rgba(0,0,0,0.3)',

@@ -691,6 +691,7 @@ export function PublicViewPage() {
   const lastScrollY = useRef(0);
   const userInteracted = useRef(false);
   const [showCover, setShowCover] = useState(true);
+  const [scale, setScale] = useState(1);
 
   // Lock body scroll when cover is visible
   useEffect(() => {
@@ -860,6 +861,21 @@ export function PublicViewPage() {
       window.removeEventListener('mouseup', resumeScroll);
     };
   }, [card, showCover]);
+  const canvasWidth: number = card?.settings?.canvasWidth || card?.canvasWidth || 500;
+
+  useEffect(() => {
+    const handleResize = () => {
+      const windowWidth = Math.min(window.innerWidth, document.documentElement.clientWidth);
+      if (windowWidth < canvasWidth) {
+        setScale(windowWidth / canvasWidth);
+      } else {
+        setScale(1);
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [canvasWidth]);
 
   if (loading) return <LoadingPage />;
   if (notFound || !card) return <NotFoundPage />;
@@ -902,9 +918,8 @@ export function PublicViewPage() {
       default: return base;
     }
   });
-
   const canvasHeight: number = card.settings?.canvasHeight || 900;
-  const canvasWidth: number = card.settings?.canvasWidth || card.canvasWidth || 500;
+
   const bgStyle: React.CSSProperties = {
     ...(bg.type === 'solid' && { backgroundColor: bg.color }),
     ...(bg.type === 'gradient' && { backgroundImage: `linear-gradient(${bg.gradientAngle}deg, ${bg.gradientFrom}, ${bg.gradientTo})` }),
@@ -928,8 +943,8 @@ export function PublicViewPage() {
         )}
 
         {/* Canvas container */}
-        <div style={{ width: canvasWidth, maxWidth: '100vw', minHeight: canvasHeight, position: 'relative', overflow: 'hidden', ...bgStyle }}>
-          <div style={{ height: canvasHeight, width: '100%', position: 'relative' }}>
+        <div style={{ width: canvasWidth * scale, height: canvasHeight * scale, position: 'relative', overflow: 'hidden' }}>
+          <div style={{ width: canvasWidth, height: canvasHeight, position: 'relative', transform: `scale(${scale})`, transformOrigin: 'top left', ...bgStyle }}>
             {[...elements]
               .sort((a, b) => a.zIndex - b.zIndex)
               .map(el => (
