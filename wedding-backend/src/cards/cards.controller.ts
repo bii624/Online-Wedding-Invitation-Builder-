@@ -83,7 +83,10 @@ export class CardsController {
   <meta property="og:title" content="${title}" />
   <meta property="og:description" content="${desc}" />
   <meta property="og:image" content="${img}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://${process.env.FRONTEND_DOMAIN || 'online-wedding-invitation-builder-production.up.railway.app'}/share/${slug}" />
   <meta name="twitter:card" content="summary_large_image">
   <title>${title}</title>
 </head>
