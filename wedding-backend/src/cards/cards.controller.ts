@@ -14,6 +14,7 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  Header,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -61,6 +62,37 @@ export class CardsController {
     @Query() query: PublicCardQueryDto,
   ) {
     return this.cardsService.getPublicCardBySlug(slug, query.password);
+  }
+
+  @Get('public/og/:slug')
+  @Header('Content-Type', 'text/html; charset=utf-8')
+  @ApiOperation({
+    summary: 'Tạo thẻ meta OpenGraph HTML cho bot Facebook/Zalo',
+  })
+  async getPublicOg(@Param('slug') slug: string) {
+    const card = await this.cardsService.getPublicCardBySlug(slug);
+    const title = card.title || 'Thiệp Cưới';
+    const settings = card.settings as Record<string, any> || {};
+    const desc = settings?.description || 'Trân trọng kính mời quý khách đến dự tiệc cưới của chúng tôi.';
+    const img = card.thumbnailUrl || 'https://via.placeholder.com/600x315?text=Wedding+Invitation';
+    const html = `
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta property="og:title" content="${title}" />
+  <meta property="og:description" content="${desc}" />
+  <meta property="og:image" content="${img}" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image">
+  <title>${title}</title>
+</head>
+<body>
+  <script>window.location.href = "/view/${slug}";</script>
+</body>
+</html>
+    `;
+    return html;
   }
 
   // ==========================================================================

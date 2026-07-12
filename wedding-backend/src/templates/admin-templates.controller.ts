@@ -97,7 +97,7 @@ export class AdminTemplatesController {
   @Post(':id/canvas')
   saveCanvas(
     @Param('id') id: string,
-    @Body() body: { blocks: any[]; background?: object },
+    @Body() body: { blocks: any[]; background?: object; canvasWidth?: number },
   ) {
     return this.service.saveTemplateCanvas(id, body);
   }

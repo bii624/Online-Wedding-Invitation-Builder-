@@ -171,7 +171,7 @@ export default function CardDetailPage() {
   };
 
   const copyLink = () => {
-    const link = `${window.location.origin}/view/${card?.slug}`;
+    const link = `${window.location.origin}/share/${card?.slug}`;
     navigator.clipboard.writeText(link);
     toast.success('Đã copy đường dẫn');
   };
@@ -272,7 +272,7 @@ export default function CardDetailPage() {
     );
   }
 
-  const fullLink = `${window.location.origin}/view/${card.slug}`;
+  const fullLink = `${window.location.origin}/share/${card.slug}`;
 
   return (
     <DashboardLayout>
@@ -404,7 +404,7 @@ export default function CardDetailPage() {
                       {slugError ? (
                         <p className="text-xs text-red-500 mt-1">{slugError}</p>
                       ) : (
-                        <p className="text-xs text-slate-400 mt-1">/view/{editSlug}</p>
+                        <p className="text-xs text-slate-400 mt-1">/share/{editSlug}</p>
                       )}
                     </div>
                     <button

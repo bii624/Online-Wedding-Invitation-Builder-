@@ -27,7 +27,7 @@ import type { CanvasBlockPayload } from '../../../api/cardsApi';
 export const DEFAULT_ANIMATION_PROPS: AnimationProperties = {
   entryEnabled: false,
   entryEffect: 'none',
-  entryDuration: 1.3,
+  entryDuration: 1.0,
   entryDelay: 0,
   entryEasing: 'ease',
   loopEnabled: false,
@@ -1734,6 +1734,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
 
       await templatesEditorApi.saveTemplateCanvas(templateId, {
         blocks,
+        canvasWidth: get().canvasWidth,
         background: {
           ...(canvasBackground as object),
           canvasHeight: get().canvasHeight,

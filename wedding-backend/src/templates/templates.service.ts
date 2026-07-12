@@ -248,7 +248,7 @@ export class TemplatesService {
   // POST /api/admin/templates/:id/canvas — lưu blocks + background
   async saveTemplateCanvas(
     id: string,
-    dto: { blocks: any[]; background?: object },
+    dto: { blocks: any[]; background?: object; canvasWidth?: number },
   ) {
     const template = await this.prisma.template.findUnique({ where: { id } });
     if (!template) throw new NotFoundException('Template không tồn tại');
@@ -257,10 +257,13 @@ export class TemplatesService {
       // Chạy song song: xoá blocks cũ + cập nhật background
       await Promise.all([
         tx.templateBlock.deleteMany({ where: { templateId: id } }),
-        dto.background
+        (dto.background || dto.canvasWidth)
           ? tx.template.update({
             where: { id },
-            data: { background: dto.background },
+            data: {
+              ...(dto.background && { background: dto.background }),
+              ...(dto.canvasWidth && { canvasWidth: dto.canvasWidth }),
+            },
           })
           : Promise.resolve(),
       ]);

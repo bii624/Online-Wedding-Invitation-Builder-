@@ -55,7 +55,7 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
 
   if (!isOpen) return null;
 
-  const publicUrl = publishedSlug ? `${window.location.origin}/view/${publishedSlug}` : '';
+  const publicUrl = publishedSlug ? `${window.location.origin}/share/${publishedSlug}` : '';
 
   const handleCopy = () => {
     if (!publicUrl) return;
@@ -274,7 +274,7 @@ export function PublishModal({ isOpen, onClose }: PublishModalProps) {
 
             <div style={{ display: 'flex', borderRadius: 12, border: '1px solid #e2e8f0', overflow: 'hidden' }}>
               <div style={{ padding: '12px 16px', background: '#f8fafc', borderRight: '1px solid #e2e8f0', color: '#475569', fontWeight: 500, fontSize: 15 }}>
-                {window.location.origin}/view/
+                {window.location.origin}/share/
               </div>
               <input
                 type="text"

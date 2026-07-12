@@ -36,7 +36,7 @@ export function CardItem({ card, onDelete }: CardItemProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
 
-  const fullLink = `${window.location.origin}/view/${card.slug}`;
+  const fullLink = `${window.location.origin}/share/${card.slug}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(fullLink).then(() => {

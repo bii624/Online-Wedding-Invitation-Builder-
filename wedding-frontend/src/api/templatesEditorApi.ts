@@ -4,6 +4,7 @@ import type { CanvasBlockPayload } from './cardsApi';
 export interface SaveTemplateCanvasPayload {
   blocks: CanvasBlockPayload[];
   background?: object;
+  canvasWidth?: number;
 }
 
 export const templatesEditorApi = {

@@ -607,7 +607,7 @@ function PublicElement({ element, scrollingDown, cardId, showCover }: { element:
             triggeredRef.current = true;
             setHasTriggered(true);
             el.style.opacity = ''; // Loại bỏ delay hiển thị
-            el.style.animationDuration = `${ap.entryDuration || 1.3}s`;
+            el.style.animationDuration = `${ap.entryDuration || 1.0}s`;
             el.style.animationDelay = `${ap.entryDelay || 0}s`;
             el.style.animationTimingFunction = ap.entryEasing || 'ease';
             el.classList.remove('animate__animated', `animate__${ap.entryEffect}`);
