@@ -27,7 +27,7 @@ import type { CanvasBlockPayload } from '../../../api/cardsApi';
 export const DEFAULT_ANIMATION_PROPS: AnimationProperties = {
   entryEnabled: false,
   entryEffect: 'none',
-  entryDuration: 1,
+  entryDuration: 1.3,
   entryDelay: 0,
   entryEasing: 'ease',
   loopEnabled: false,

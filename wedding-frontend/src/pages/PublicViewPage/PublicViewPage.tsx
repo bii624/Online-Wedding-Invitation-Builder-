@@ -585,7 +585,7 @@ function PublicButtonElement({ element }: { element: CanvasElement }) {
 }
 
 // ─── Single Element with Scroll Animation ────────────────
-function PublicElement({ element, scrollingDown, cardId }: { element: CanvasElement; scrollingDown: boolean; cardId: string }) {
+function PublicElement({ element, scrollingDown, cardId, showCover }: { element: CanvasElement; scrollingDown: boolean; cardId: string; showCover: boolean }) {
   const ap = element.animationProps;
   const observerRef = useRef<HTMLDivElement>(null);
   const animRef = useRef<HTMLDivElement>(null);
@@ -599,6 +599,7 @@ function PublicElement({ element, scrollingDown, cardId }: { element: CanvasElem
     const target = observerRef.current;
     const el = animRef.current;
     if (!target || !el || !ap || !ap.entryEnabled || ap.entryEffect === 'none') return;
+    if (showCover) return;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach(entry => {
@@ -606,9 +607,9 @@ function PublicElement({ element, scrollingDown, cardId }: { element: CanvasElem
             triggeredRef.current = true;
             setHasTriggered(true);
             el.style.opacity = ''; // Loại bỏ delay hiển thị
-            el.style.animationDuration = `${ap.entryDuration}s`;
-            el.style.animationDelay = `${ap.entryDelay}s`;
-            el.style.animationTimingFunction = ap.entryEasing;
+            el.style.animationDuration = `${ap.entryDuration || 1.3}s`;
+            el.style.animationDelay = `${ap.entryDelay || 0}s`;
+            el.style.animationTimingFunction = ap.entryEasing || 'ease';
             el.classList.remove('animate__animated', `animate__${ap.entryEffect}`);
             void el.offsetHeight;
             el.classList.add('animate__animated', `animate__${ap.entryEffect}`);
@@ -619,7 +620,7 @@ function PublicElement({ element, scrollingDown, cardId }: { element: CanvasElem
     );
     observer.observe(target);
     return () => observer.disconnect();
-  }, [ap, scrollingDown]);
+  }, [ap, scrollingDown, showCover]);
 
   return (
     <div ref={observerRef} style={{ position: 'absolute', left: element.x, top: element.y, width: element.width, height: element.height, zIndex: element.zIndex }}>
@@ -843,7 +844,7 @@ export function PublicViewPage() {
         isHovered = false;
         lastTime = performance.now();
         exactScrollTop = window.scrollY;
-      }, 2000);
+      }, 3000);
     };
 
     window.addEventListener('touchstart', stopScroll, { passive: true });
@@ -976,7 +977,7 @@ export function PublicViewPage() {
             {[...elements]
               .sort((a, b) => a.zIndex - b.zIndex)
               .map(el => (
-                <PublicElement key={el.id} element={el} scrollingDown={scrollingDown} cardId={card.id} />
+                <PublicElement key={el.id} element={el} scrollingDown={scrollingDown} cardId={card.id} showCover={showCover} />
               ))}
           </div>
         </div>
