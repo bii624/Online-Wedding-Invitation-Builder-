@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { createPortal } from 'react-dom';
 import { useParams, useNavigate } from 'react-router-dom';
 import { cardsApi } from '../../api/cardsApi';
+import { assetsApi } from '../../api/assetsApi';
 import type { CanvasElement, BackgroundProperties, AnimationProperties } from '../../features/editor/types/editor.types';
 import 'animate.css';
 import { RedEnvelope } from '../../features/editor/components/Widgets/RedEnvelope';
@@ -461,8 +462,8 @@ function PublicFormElement({ element, cardId }: { element: CanvasElement; cardId
           await cardsApi.submitRsvp(cardId, { guestName: name, attending: brideAttending, side: 'bride', note: message });
         }
         if (!isGroomGuest && !isBrideGuest) {
-            // fallback if no side selected but attendance enabled (shouldn't happen with new UI logic usually, but just in case)
-            await cardsApi.submitRsvp(cardId, { guestName: name, attending: 'yes', side: 'none', note: message });
+          // fallback if no side selected but attendance enabled (shouldn't happen with new UI logic usually, but just in case)
+          await cardsApi.submitRsvp(cardId, { guestName: name, attending: 'yes', side: 'none', note: message });
         }
       }
 
@@ -498,7 +499,7 @@ function PublicFormElement({ element, cardId }: { element: CanvasElement; cardId
         Gửi lời chúc đến cô dâu và chú rể
       </h2>
       <div style={{ flex: 1, backgroundColor: fp.backgroundColor, padding: `${fp.padding.top}px ${fp.padding.right}px ${fp.padding.bottom}px ${fp.padding.left}px`, border: `${fp.border.width}px ${fp.border.style} ${fp.border.color}`, borderRadius: fp.border.radius, boxShadow: `${fp.shadow.x}px ${fp.shadow.y}px ${fp.shadow.blur}px ${fp.shadow.spread}px ${fp.shadow.color}`, display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'stretch' }}>
-        
+
         <div className="flex flex-col gap-1.5">
           <input required value={name} onChange={e => setName(e.target.value)} placeholder="Họ tên của bạn *" className="w-full px-4 py-3 rounded-xl bg-transparent outline-none transition-all duration-200 focus:shadow-[0_0_0_1px_currentColor] focus:ring-0" style={{ border: `1px solid ${fp.inputBorderColor}`, fontFamily: fp.fontFamily, color: fp.textColor, fontSize: `${fp.fontSize}px` }} />
         </div>
@@ -506,7 +507,7 @@ function PublicFormElement({ element, cardId }: { element: CanvasElement; cardId
         {fp.showGuestType && (
           <div className="flex flex-col gap-2" style={{ fontSize: `${fp.fontSize}px` }}>
             <span className="font-bold tracking-wide mb-1">Bạn là khách của <span className="font-normal opacity-70 text-[0.9em] lowercase">(chọn 1 hoặc cả 2)</span></span>
-            
+
             <div className="grid grid-cols-2 gap-3">
               {/* Nhà trai */}
               <div className="border rounded-xl p-3 flex flex-col gap-2 transition-all duration-300" style={{ borderColor: isGroomGuest ? fp.textColor : fp.inputBorderColor, backgroundColor: isGroomGuest ? 'rgba(0,0,0,0.02)' : 'transparent', opacity: isGroomGuest ? 1 : 0.65 }}>
@@ -514,7 +515,7 @@ function PublicFormElement({ element, cardId }: { element: CanvasElement; cardId
                   <input type="checkbox" checked={isGroomGuest} onChange={(e) => setIsGroomGuest(e.target.checked)} style={{ accentColor: fp.textColor, width: 18, height: 18, cursor: 'pointer' }} />
                   <span className="font-bold">Nhà trai</span>
                 </label>
-                
+
                 {fp.showAttendance && (
                   <div className="flex flex-col gap-2 mt-1">
                     <label className="flex items-center gap-2 cursor-pointer group">
@@ -535,7 +536,7 @@ function PublicFormElement({ element, cardId }: { element: CanvasElement; cardId
                   <input type="checkbox" checked={isBrideGuest} onChange={(e) => setIsBrideGuest(e.target.checked)} style={{ accentColor: fp.textColor, width: 18, height: 18, cursor: 'pointer' }} />
                   <span className="font-bold">Nhà gái</span>
                 </label>
-                
+
                 {fp.showAttendance && (
                   <div className="flex flex-col gap-2 mt-1">
                     <label className="flex items-center gap-2 cursor-pointer group">
@@ -712,6 +713,33 @@ export function PublicViewPage() {
       .then(data => { setCard(data); setLoading(false); })
       .catch(() => { setNotFound(true); setLoading(false); });
   }, [slug]);
+
+  // Fetch and inject public fonts
+  useEffect(() => {
+    assetsApi.getPublicFonts().then(data => {
+      let styleEl = document.getElementById('custom-fonts');
+      if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'custom-fonts';
+        document.head.appendChild(styleEl);
+      }
+
+      let css = '';
+      const allFonts = [...data.systemFonts, ...data.myFonts];
+      allFonts.forEach(font => {
+        if (font.thumbnailUrl) {
+          css += `
+            @font-face {
+              font-family: "${font.thumbnailUrl}";
+              src: url("${font.url}");
+              font-display: swap;
+            }
+          `;
+        }
+      });
+      styleEl.innerHTML = css;
+    }).catch(err => console.error("Failed to load public fonts", err));
+  }, []);
 
   // Track scroll direction
   useEffect(() => {

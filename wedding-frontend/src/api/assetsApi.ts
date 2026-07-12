@@ -41,6 +41,11 @@ export const assetsApi = {
     return response.data;
   },
 
+  getPublicFonts: async (): Promise<{ systemFonts: Asset[]; myFonts: Asset[] }> => {
+    const response = await axiosClient.get('/assets/public/fonts');
+    return response.data;
+  },
+
   uploadFont: async (file: File, isSystem: boolean = false): Promise<Asset> => {
     const formData = new FormData();
     formData.append('file', file);

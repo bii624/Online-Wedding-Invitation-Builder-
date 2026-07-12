@@ -19,10 +19,10 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard'; // chỉnh đúng path gu
 import { AssetsService } from './assets.service';
 
 @Controller('assets')
-@UseGuards(JwtAuthGuard) // toàn bộ route trong controller này đều yêu cầu đăng nhập
 export class AssetsController {
   constructor(private readonly assetsService: AssetsService) { }
 
+  @UseGuards(JwtAuthGuard)
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -57,6 +57,7 @@ export class AssetsController {
     return this.assetsService.uploadAsset(file, userId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('upload-font')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -104,6 +105,7 @@ export class AssetsController {
     return this.assetsService.uploadFontAsset(file, finalUserId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('fonts')
   async getFonts(@Req() req: any) {
     const userId = req.user.id;
@@ -112,12 +114,20 @@ export class AssetsController {
     return { systemFonts, myFonts };
   }
 
+  @Get('public/fonts')
+  async getPublicFonts() {
+    const systemFonts = await this.assetsService.getSystemFonts();
+    return { systemFonts, myFonts: [] }; // Return empty myFonts to keep same structure for frontend
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getMyAssets(@Req() req: any) {
     const userId = req.user.id;
     return this.assetsService.getUserAssets(userId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async delete(@Param('id', ParseUUIDPipe) id: string, @Req() req: any) {
     const userId = req.user.id;
