@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { ExternalLink } from 'lucide-react';
 
 export function InAppBrowserBlocker({ children }: { children: React.ReactNode }) {
   const [isInApp, setIsInApp] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
-    // If the path is a public view page (e.g. /thiep/something), don't block
-    if (location.pathname.startsWith('/thiep/')) {
+    // Không block đối với các trang public view (thiệp cưới online)
+    if (location.pathname.startsWith('/view/')) {
       setIsInApp(false);
       return;
     }
 
     const ua = navigator.userAgent || navigator.vendor || (window as any).opera;
-    // Check for common in-app browsers
+    // Kiểm tra các trình duyệt in-app phổ biến
     const inAppBrowsers = [
       'FBAN', 'FBAV', // Facebook
       'Instagram',    // Instagram
@@ -33,6 +34,24 @@ export function InAppBrowserBlocker({ children }: { children: React.ReactNode })
     }
   }, [location.pathname]);
 
+  const handleOpenDefaultBrowser = () => {
+    const ua = navigator.userAgent || navigator.vendor || (window as any).opera;
+    const currentUrl = window.location.href;
+    
+    const urlWithoutProtocol = currentUrl.replace(/^https?:\/\//i, '');
+
+    if (/android/i.test(ua)) {
+      // Dùng Intent scheme của Android để ép mở bằng Chrome
+      const intentUrl = `intent://${urlWithoutProtocol}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(currentUrl)};end`;
+      window.location.href = intentUrl;
+    } else if (/iPad|iPhone|iPod/.test(ua) && !(window as any).MSStream) {
+      // iOS chặn khá gắt, nên fallback nhắc người dùng
+      alert('Trên iOS, vui lòng nhấn biểu tượng [...] và chọn "Mở trong Safari".');
+    } else {
+      window.open(currentUrl, '_blank');
+    }
+  };
+
   if (!isInApp) {
     return <>{children}</>;
   }
@@ -44,7 +63,7 @@ export function InAppBrowserBlocker({ children }: { children: React.ReactNode })
       left: 0,
       width: '100vw',
       height: '100vh',
-      backgroundColor: '#ffffff',
+      backgroundColor: '#242526',
       zIndex: 999999,
       display: 'flex',
       flexDirection: 'column',
@@ -55,43 +74,66 @@ export function InAppBrowserBlocker({ children }: { children: React.ReactNode })
       fontFamily: 'system-ui, -apple-system, sans-serif'
     }}>
       <div style={{
-        width: '64px',
-        height: '64px',
-        backgroundColor: '#fee2e2',
+        width: '80px',
+        height: '80px',
+        backgroundColor: '#523405',
         borderRadius: '50%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: '24px'
+        marginBottom: '32px'
       }}>
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="8" x2="12" y2="12"></line>
-          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+          <path d="M3 9h18" />
         </svg>
       </div>
       
-      <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: '#111827', marginBottom: '16px' }}>
-        Trình duyệt không được hỗ trợ
+      <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#ffffff', marginBottom: '16px' }}>
+        Mở bằng trình duyệt
       </h2>
       
-      <p style={{ fontSize: '15px', color: '#4b5563', lineHeight: '1.5', marginBottom: '32px', maxWidth: '300px' }}>
-        Để trải nghiệm tốt nhất và có thể đăng nhập, vui lòng mở liên kết này bằng trình duyệt mặc định của máy (Chrome, Safari,...).
+      <p style={{ fontSize: '16px', color: '#E4E6EB', lineHeight: '1.6', marginBottom: '32px', maxWidth: '320px', fontWeight: '500' }}>
+        Trang này không hoạt động đúng trong Zalo / Facebook. Vui lòng mở bằng Safari hoặc Chrome để tiếp tục.
       </p>
 
+      <button
+        onClick={handleOpenDefaultBrowser}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          backgroundColor: '#3DB2FF',
+          color: '#ffffff',
+          border: 'none',
+          borderRadius: '12px',
+          padding: '16px 24px',
+          width: '100%',
+          maxWidth: '320px',
+          fontSize: '16px',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          marginBottom: '24px',
+          boxShadow: '0 4px 12px rgba(61, 178, 255, 0.3)'
+        }}
+      >
+        <ExternalLink size={20} />
+        Mở trình duyệt mặc định
+      </button>
+
       <div style={{
-        backgroundColor: '#f3f4f6',
-        padding: '16px',
-        borderRadius: '12px',
+        padding: '12px',
         width: '100%',
-        maxWidth: '300px',
-        textAlign: 'left'
+        maxWidth: '320px',
+        textAlign: 'center',
+        borderTop: '1px solid #3E4042',
+        paddingTop: '24px'
       }}>
-        <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#374151', marginBottom: '12px' }}>Hướng dẫn mở:</p>
-        <ol style={{ fontSize: '14px', color: '#4b5563', margin: 0, paddingLeft: '20px', lineHeight: '1.6' }}>
-          <li>Nhấn vào biểu tượng <strong>dấu 3 chấm</strong> (hoặc ...) ở góc phải màn hình</li>
-          <li>Chọn <strong>"Mở bằng trình duyệt"</strong> (Open in Browser) hoặc <strong>"Mở trong Chrome / Safari"</strong></li>
-        </ol>
+        <p style={{ fontSize: '14px', color: '#B0B3B8', margin: 0, lineHeight: '1.6' }}>
+          iOS: nhấn ... → "Mở trong Safari" <br/>
+          Android: nhấn ⋮ → "Mở trong Chrome"
+        </p>
       </div>
     </div>
   );
