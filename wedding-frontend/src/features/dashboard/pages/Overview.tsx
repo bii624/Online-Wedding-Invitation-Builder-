@@ -632,7 +632,7 @@ export const Overview = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
 
-          <Link to={`/loading?next=${encodeURIComponent('/design')}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`} className="rounded-[2rem] bg-white/45 backdrop-blur-md border border-[rgb(255,166,166)]/30 p-6 flex items-center justify-between shadow-xs hover:shadow-md hover:border-[rgb(255,166,166)]/60 cursor-pointer block hover:no-underline transition-all duration-300">
+          <Link to={`/loading?next=${encodeURIComponent('/design')}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`} className="rounded-[2rem] bg-white border border-[rgb(255,166,166)]/30 p-6 flex items-center justify-between shadow-xs hover:shadow-md hover:border-[rgb(255,166,166)]/60 cursor-pointer block hover:no-underline transition-all duration-300">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-lg bg-[rgb(255,237,199)] flex items-center justify-center text-[rgb(255,112,112)]">
@@ -655,7 +655,7 @@ export const Overview = () => {
             </div>
           </Link>
 
-          <Link to="/dashboard/my-cards" className="rounded-[2rem] bg-white/45 backdrop-blur-md border border-[rgb(255,166,166)]/30 p-6 flex items-center justify-between shadow-xs hover:shadow-md hover:border-[rgb(255,166,166)]/60 cursor-pointer block hover:no-underline transition-all duration-300">
+          <Link to="/dashboard/my-cards" className="rounded-[2rem] bg-white border border-[rgb(255,166,166)]/30 p-6 flex items-center justify-between shadow-xs hover:shadow-md hover:border-[rgb(255,166,166)]/60 cursor-pointer block hover:no-underline transition-all duration-300">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-lg bg-[rgb(255,237,199)] flex items-center justify-center text-[rgb(255,112,112)]">
@@ -678,7 +678,7 @@ export const Overview = () => {
             </div>
           </Link>
 
-          <Link to="/dashboard/my-cards" className="rounded-[2rem] bg-white/45 backdrop-blur-md border border-[rgb(255,166,166)]/30 p-6 flex items-center justify-between shadow-xs hover:shadow-md hover:border-[rgb(255,166,166)]/60 cursor-pointer block hover:no-underline transition-all duration-300">
+          <Link to="/dashboard/my-cards" className="rounded-[2rem] bg-white border border-[rgb(255,166,166)]/30 p-6 flex items-center justify-between shadow-xs hover:shadow-md hover:border-[rgb(255,166,166)]/60 cursor-pointer block hover:no-underline transition-all duration-300">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-lg bg-[rgb(255,237,199)] flex items-center justify-center text-[rgb(255,112,112)]">
@@ -704,7 +704,7 @@ export const Overview = () => {
         </div>
 
         {/* Quick Nav area */}
-        <div className="rounded-[2rem] bg-white/45 backdrop-blur-md border border-[rgb(255,166,166)]/30 p-6 shadow-sm">
+        <div className="rounded-[2rem] bg-white border border-[rgb(255,166,166)]/30 p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-base font-bold text-[rgb(235,76,76)] font-inter">Khu vực điều hướng nhanh</h3>
             <span className="bg-[rgb(255,237,199)] border border-[rgb(255,166,166)]/30 text-[rgb(235,76,76)] text-[10px] font-black tracking-wider uppercase px-2 py-0.5 rounded-md">Lối tắt tiện ích</span>
@@ -736,7 +736,7 @@ export const Overview = () => {
           {/* Left Column: Thiệp của tôi & Mẫu thiết kế gợi ý */}
           <div className="lg:col-span-8 space-y-8">
             {/* Thiệp của tôi */}
-            <div className="bg-white/45 backdrop-blur-md border border-[rgb(255,166,166)]/30 rounded-[2rem] p-6 shadow-xs space-y-5">
+            <div className="bg-white border border-[rgb(255,166,166)]/30 rounded-[2rem] p-6 shadow-xs space-y-5">
               <div className="flex items-center justify-between pb-2 border-b border-[rgb(255,237,199)]">
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg font-black text-[rgb(235,76,76)] font-inter">Thiệp của tôi</h3>
@@ -785,7 +785,7 @@ export const Overview = () => {
             </div>
 
             {/* Mẫu gợi ý */}
-            <div className="bg-white/45 backdrop-blur-md border border-[rgb(255,166,166)]/30 rounded-[2rem] p-6 shadow-xs space-y-5">
+            <div className="bg-white border border-[rgb(255,166,166)]/30 rounded-[2rem] p-6 shadow-xs space-y-5">
               <div className="flex items-center justify-between pb-2 border-b border-[rgb(255,237,199)]">
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg font-black text-[rgb(235,76,76)] font-inter">Mẫu gợi ý thiết kế đẹp</h3>
@@ -838,7 +838,7 @@ export const Overview = () => {
 
           {/* Right Column: Hoạt động gần đây */}
           <div className="lg:col-span-4">
-            <div className="bg-white/45 backdrop-blur-md border border-[rgb(255,166,166)]/30 rounded-[2rem] p-6 shadow-xs space-y-5 min-h-[300px] flex flex-col">
+            <div className="bg-white border border-[rgb(255,166,166)]/30 rounded-[2rem] p-6 shadow-xs space-y-5 min-h-[300px] flex flex-col">
               <div className="flex items-center gap-2 pb-2 border-b border-[rgb(255,237,199)] shrink-0">
                 <h3 className="text-lg font-black text-[rgb(235,76,76)] font-inter">Hoạt động gần đây</h3>
                 <span className="bg-[rgb(255,237,199)] border border-[rgb(255,166,166)]/30 text-[rgb(235,76,76)] text-[10px] font-black tracking-wider uppercase px-2 py-0.5 rounded-md">

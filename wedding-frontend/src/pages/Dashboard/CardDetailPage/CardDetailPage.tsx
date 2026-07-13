@@ -276,7 +276,7 @@ export default function CardDetailPage() {
 
   return (
     <DashboardLayout>
-      <div className="w-full h-full min-h-[calc(100vh-8rem)] bg-white/45 backdrop-blur-md rounded-[2.5rem] p-6 border border-[rgb(255,166,166)]/30 shadow-md shadow-[rgb(255,166,166)]/5 flex flex-col md:flex-row gap-6 animate-in fade-in duration-500">
+      <div className="w-full h-full min-h-[calc(100vh-8rem)] bg-white rounded-[2.5rem] p-6 border border-[rgb(255,166,166)]/30 shadow-md shadow-[rgb(255,166,166)]/5 flex flex-col md:flex-row gap-6 animate-in fade-in duration-500">
         {/* CỘT TRÁI (30%) */}
         <div className="w-full md:w-[30%] flex flex-col gap-4">
  

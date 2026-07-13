@@ -194,7 +194,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode; title
       <main className="flex-1 flex flex-col h-full overflow-hidden relative min-w-0">
 
         {/* Header Desktop */}
-        <header className="hidden md:flex h-14 md:h-16 bg-transparent backdrop-blur-md border-b border-white/5 items-center justify-between px-4 md:px-6 shrink-0 z-10 shadow-none">          <div className="flex items-center gap-2 md:gap-3 min-w-0">
+        <header className="hidden md:flex h-14 md:h-16 bg-white/80 backdrop-blur-xl border-b border-slate-100 items-center justify-between px-4 md:px-6 shrink-0 z-10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.03)] transition-all duration-300">          <div className="flex items-center gap-2 md:gap-3 min-w-0">
           {/* Hamburger / logo toggle */}
           {!isSidebarOpen && (
             <button
