@@ -13,6 +13,7 @@ import { AIRemoveBgModal } from '../components/AIModals/AIRemoveBgModal';
 import { AIExpandModal } from '../components/AIModals/AIExpandModal';
 import { AIRemoveObjectModal } from '../components/AIModals/AIRemoveObjectModal';
 import LoadingPage from '../../../pages/Loading/Loadingpage';
+import { LinhAIWidget } from '../../linh-ai/components/LinhAIWidget';
 
 import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
@@ -241,6 +242,9 @@ export function EditorPage() {
       <AIRemoveBgModal />
       <AIExpandModal />
       <AIRemoveObjectModal />
+
+      {/* ── DearLove AI Chatbot ──────────────── */}
+      {/* <LinhAIWidget /> */}
     </div>
   );
 }

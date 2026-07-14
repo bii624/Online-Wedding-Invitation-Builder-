@@ -1,5 +1,5 @@
 // ============================================================
-// AI "Linh" — Module
+// DearLove AI — Module
 // ============================================================
 
 import { Module } from '@nestjs/common';
@@ -14,4 +14,4 @@ import { VectorSearchService } from './services/vector-search.service';
   controllers: [LinhAIController],
   providers: [LinhChatService, VectorSearchService],
 })
-export class LinhAIModule {}
+export class DearLoveAIModule {}

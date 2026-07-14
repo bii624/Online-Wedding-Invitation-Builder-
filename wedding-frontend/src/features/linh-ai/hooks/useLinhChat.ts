@@ -6,7 +6,7 @@ export function useLinhChat() {
   const [messages, setMessages] = useState<LinhChatMessage[]>([
     {
       role: 'linh',
-      content: 'Xin chào! Mình là Linh 💕 Mình có thể tư vấn về thiệp cưới, kế hoạch cưới, hoặc trả lời bất kỳ câu hỏi nào về đám cưới của bạn. Hỏi mình nhé!',
+      content: 'Xin chào! Mình là DearLove AI 💕 Mình có thể tư vấn về thiệp cưới, kế hoạch cưới, hoặc trả lời bất kỳ câu hỏi nào về đám cưới của bạn. Hỏi mình nhé!',
       emotion: 'happy',
     },
   ]);
@@ -37,7 +37,7 @@ export function useLinhChat() {
         ...prev,
         {
           role: 'linh',
-          content: 'Xin lỗi, Linh đang gặp sự cố. Bạn thử lại sau nhé!',
+          content: 'Xin lỗi, DearLove AI đang gặp sự cố. Bạn thử lại sau nhé!',
           emotion: 'neutral',
         },
       ]);
@@ -50,7 +50,7 @@ export function useLinhChat() {
     setMessages([
       {
         role: 'linh',
-        content: 'Xin chào! Mình là Linh 💕 Mình có thể tư vấn về thiệp cưới, kế hoạch cưới, hoặc trả lời bất kỳ câu hỏi nào về đám cưới của bạn. Hỏi mình nhé!',
+        content: 'Xin chào! Mình là DearLove AI 💕 Mình có thể tư vấn về thiệp cưới, kế hoạch cưới, hoặc trả lời bất kỳ câu hỏi nào về đám cưới của bạn. Hỏi mình nhé!',
         emotion: 'happy',
       },
     ]);

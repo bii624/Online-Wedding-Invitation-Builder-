@@ -1,5 +1,5 @@
 // ============================================================
-// Linh AI — API client
+// DearLove AI — API client
 // ============================================================
 
 import axiosClient from './axiosClient';

@@ -26,7 +26,7 @@ export function LinhAIWidget() {
       <div
         className={`linh-widget__trigger ${isOpen ? 'linh-widget__trigger--active' : ''}`}
         onClick={() => setIsOpen((o) => !o)}
-        title="Hỏi Linh AI"
+        title="Hỏi DearLove AI"
       >
         <LinhCharacter3D emotion={isOpen ? emotion : 'happy'} size={72} />
         {!isOpen && (
@@ -34,7 +34,7 @@ export function LinhAIWidget() {
             <span>💬</span>
           </div>
         )}
-        <div className="linh-widget__label">Linh AI</div>
+        <div className="linh-widget__label">DearLove AI</div>
       </div>
     </div>
   );

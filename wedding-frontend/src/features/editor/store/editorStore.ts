@@ -406,6 +406,7 @@ interface EditorActions {
   // Pages
   setCurrentPage: (page: 'main' | 'cover') => void;
   updateCoverPageProps: (props: Partial<import('../types/editor.types').CoverPageProps>) => void;
+  resetEditorToBlank: () => void;
 }
 
 
@@ -1412,6 +1413,25 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
 
   triggerAnimationPreview: () => {
     set((state) => ({ animationPreviewTick: state.animationPreviewTick + 1 }));
+  },
+
+  // ── Reset về bản trắng ────────────────────────────────
+  resetEditorToBlank: () => {
+    set({
+      ...INITIAL_STATE,
+      elements: [],
+      selectedElement: null,
+      history: [{ elements: [], canvasBackground: INITIAL_BACKGROUND }],
+      historyIndex: 0,
+      cardId: null,
+      templateId: null,
+      music: null,
+      canvasBackground: INITIAL_BACKGROUND,
+      editorMode: 'card',
+      isLoadingEditor: false,
+      autoSaveStatus: 'idle',
+      lastSavedData: null,
+    });
   },
 
   // ── Auto-save ─────────────────────────────────────────

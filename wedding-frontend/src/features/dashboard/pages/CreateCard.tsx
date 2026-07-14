@@ -1,9 +1,25 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from './DashboardLayout';
-import { PaletteIcon, LayoutTemplate, Sparkles, Paintbrush, ArrowRight } from 'lucide-react';
+import { PaletteIcon, LayoutTemplate, Sparkles, Paintbrush, ArrowRight, Loader2 } from 'lucide-react';
 import { RevolvingHeartsIcon } from '../../../components/icons/emojione-revolving-hearts';
+import { useState } from 'react';
+import { cardsApi } from '../../../api/cardsApi';
+
 export const CreateCard = () => {
   const navigate = useNavigate();
+  const [isCreating, setIsCreating] = useState(false);
+
+  const handleCreateBlank = async () => {
+    if (isCreating) return;
+    setIsCreating(true);
+    try {
+      const newCard = await cardsApi.createCard({ title: 'Thiết kế mới' });
+      navigate(`/loading?next=${encodeURIComponent(`/design?id=${newCard.id}`)}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`);
+    } catch (err) {
+      console.error('[CreateCard] Không thể tạo thiệp:', err);
+      setIsCreating(false);
+    }
+  };
 
   return (
     <DashboardLayout>
@@ -26,9 +42,10 @@ export const CreateCard = () => {
 
           {/* Options Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-            <Link
-              to={`/loading?next=${encodeURIComponent('/design')}&message=${encodeURIComponent('Đang mở trình thiết kế...')}`}
-              className="relative flex flex-col justify-between p-8 rounded-[2rem] border border-[rgb(255,166,166)]/40 bg-white/50 backdrop-blur-md hover:border-[rgb(235,76,76)] hover:bg-white/80 transition-all duration-300 group cursor-pointer h-full hover:-translate-y-1 hover:shadow-xl hover:shadow-[rgb(255,166,166)]/15 overflow-hidden"
+            <button
+              onClick={handleCreateBlank}
+              disabled={isCreating}
+              className="relative flex flex-col justify-between p-8 rounded-[2rem] border border-[rgb(255,166,166)]/40 bg-white/50 backdrop-blur-md hover:border-[rgb(235,76,76)] hover:bg-white/80 transition-all duration-300 group cursor-pointer h-full hover:-translate-y-1 hover:shadow-xl hover:shadow-[rgb(255,166,166)]/15 overflow-hidden text-left disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0"
             >
               {/* Graphic Accent */}
               <div className="absolute -top-10 -right-10 p-10 opacity-5 group-hover:opacity-10 transition-all duration-500 group-hover:rotate-12 text-zinc-800">
@@ -37,7 +54,10 @@ export const CreateCard = () => {
 
               <div>
                 <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[rgb(255,112,112)] to-[rgb(235,76,76)] text-white flex items-center justify-center mb-6 shadow-md shadow-[rgb(235,76,76)]/20 group-hover:scale-105 transition-transform duration-300">
-                  <Paintbrush size={24} strokeWidth={2.5} />
+                  {isCreating
+                    ? <Loader2 size={24} className="animate-spin" />
+                    : <Paintbrush size={24} strokeWidth={2.5} />
+                  }
                 </div>
 
                 <h3 className="text-xl font-black text-zinc-800 font-inter mb-3 group-hover:text-[rgb(235,76,76)] transition-colors">
@@ -50,13 +70,13 @@ export const CreateCard = () => {
 
               <div className="flex items-center justify-between mt-auto pt-4 border-t border-zinc-100/60">
                 <span className="inline-flex items-center gap-1.5 text-xs text-[rgb(235,76,76)] font-bold group-hover:translate-x-1 transition-transform">
-                  Bắt đầu ngay <ArrowRight size={13} />
+                  {isCreating ? 'Đang tạo thiệp...' : <> Bắt đầu ngay <ArrowRight size={13} /></>}
                 </span>
                 <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-emerald-50 border border-emerald-100 text-emerald-600">
                   MIỄN PHÍ
                 </span>
               </div>
-            </Link>
+            </button>
 
             <Link
               to="/dashboard/templates"

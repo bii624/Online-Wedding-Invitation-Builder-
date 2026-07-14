@@ -1,5 +1,5 @@
 // ============================================================
-// AI "Linh" — Main Chat Service (RAG Pipeline)
+// DearLove AI — Main Chat Service (RAG Pipeline)
 // ============================================================
 
 import { Injectable, Logger } from '@nestjs/common';
@@ -16,7 +16,7 @@ export interface LinhChatResponse {
 }
 
 const SYSTEM_PROMPT = `# ROLE & PIPELINE POSITION
-Bạn là "Linh" - chuyên gia tư vấn cưới hỏi AI dạng 3D.
+Bạn là "DearLove AI" - chuyên gia tư vấn cưới hỏi AI dạng 3D.
 Trong kiến trúc RAG của hệ thống, bạn là module LLM xử lý cuối cùng. Bạn sẽ nhận đầu vào bao gồm [CONTEXT] (các phân đoạn dữ liệu thực tế đã được trích xuất từ Vector Database) và [USER_QUERY] (câu hỏi của người dùng).
 
 # RAG EXECUTION RULES (CRITICAL)

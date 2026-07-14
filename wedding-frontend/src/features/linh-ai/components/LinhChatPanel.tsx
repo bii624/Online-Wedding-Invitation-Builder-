@@ -55,7 +55,7 @@ export function LinhChatPanel({
         <div className="linh-panel__header-info">
           <span className="linh-panel__emotion">{emotionEmoji[emotion]}</span>
           <div>
-            <div className="linh-panel__name">Linh AI</div>
+            <div className="linh-panel__name">DearLove AI</div>
             <div className="linh-panel__status">Chuyên gia tư vấn cưới hỏi</div>
           </div>
         </div>
@@ -106,7 +106,7 @@ export function LinhChatPanel({
           className="linh-panel__input"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Hỏi Linh về đám cưới của bạn..."
+          placeholder="Hỏi DearLove AI về đám cưới của bạn..."
           disabled={isLoading}
           autoComplete="off"
         />

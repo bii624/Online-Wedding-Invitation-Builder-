@@ -13,7 +13,7 @@ import { AdminStatsModule } from './admin-stats/admin-stats.module';
 import { WishesModule } from './wishes/wishes.module';
 import { RsvpsModule } from './rsvps/rsvps.module';
 import { ImageProcessModule } from './image-process/image-process.module';
-import { LinhAIModule } from './linh-ai/linh-ai.module';
+import { DearLoveAIModule } from './linh-ai/linh-ai.module';
 
 @Module({
   imports: [
@@ -29,7 +29,7 @@ import { LinhAIModule } from './linh-ai/linh-ai.module';
     WishesModule,
     RsvpsModule,
     ImageProcessModule,
-    LinhAIModule,
+    DearLoveAIModule,
   ],
   controllers: [AppController],
   providers: [AppService],
