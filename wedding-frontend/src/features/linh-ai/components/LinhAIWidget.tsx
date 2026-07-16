@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { LinhCharacter3D } from './LinhCharacter3D';
 import { LinhChatPanel } from './LinhChatPanel';
 import { useLinhChat } from '../hooks/useLinhChat';
+import chatbotAIAvatar from '../../../assets/images/chatbotAIAvatar.png';
 import './LinhAIWidget.css';
 
 export function LinhAIWidget() {
@@ -22,13 +22,15 @@ export function LinhAIWidget() {
         />
       </div>
 
-      {/* Floating button with 3D character */}
+      {/* Floating button with image character */}
       <div
         className={`linh-widget__trigger ${isOpen ? 'linh-widget__trigger--active' : ''}`}
         onClick={() => setIsOpen((o) => !o)}
         title="Hỏi DearLove AI"
       >
-        <LinhCharacter3D emotion={isOpen ? emotion : 'happy'} size={72} />
+        <div style={{ width: 72, height: 72, borderRadius: '50%', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff', flexShrink: 0 }}>
+          <img src={chatbotAIAvatar} alt="DearLove AI" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
+        </div>
         {!isOpen && (
           <div className="linh-widget__badge">
             <span>💬</span>

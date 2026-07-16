@@ -40,6 +40,22 @@
   transition: all 0.3s ease;
 }
 
+.linh-panel__avatar-img {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  max-width: 40px !important;
+  max-height: 40px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  object-position: top center;
+  background: #fff;
+  border: 2px solid rgba(255,255,255,0.7);
+  flex-shrink: 0;
+  display: block;
+}
+
 .linh-panel__name {
   font-weight: 700;
   font-size: 15px;
@@ -67,6 +83,9 @@
   padding: 5px 8px;
   color: #fff;
   transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .linh-panel__btn-icon:hover {
@@ -80,7 +99,7 @@
   padding: 14px 14px 8px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   scroll-behavior: smooth;
   background: #fafafa;
 }
@@ -92,6 +111,19 @@
 .linh-panel__messages::-webkit-scrollbar-thumb {
   background: #d1d1d6;
   border-radius: 2px;
+}
+
+/* ── Message group (bubble + rich cards) ───────────────────── */
+.linh-msg-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: msgSlideIn 0.22s ease;
+}
+
+.linh-msg-group__rich {
+  padding-left: 40px; /* align with bubble (avatar width + gap) */
+  padding-right: 4px;
 }
 
 /* ── Message bubbles ───────────────────────────────────────── */
@@ -119,9 +151,20 @@
 }
 
 .linh-msg__avatar {
-  font-size: 20px;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  max-width: 32px !important;
+  max-height: 32px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  object-position: top center;
+  background: #fff;
   flex-shrink: 0;
-  line-height: 1;
+  align-self: flex-end;
+  border: 1.5px solid #f8c0c0;
+  display: block;
 }
 
 .linh-msg__bubble {
@@ -192,25 +235,35 @@
 
 /* ── Quick questions ───────────────────────────────────────── */
 .linh-panel__quick {
-  padding: 8px 12px 10px;
+  padding: 12px 14px;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
   background: #fafafa;
+  border-top: 1px solid rgba(0,0,0,0.03);
 }
 
 .linh-panel__quick-btn {
-  background: #fde8e8;
+  background: #fdf2f2;
   border: 1px solid #f8c0c0;
-  color: #eb4c4c;
-  font-size: 12px;
+  color: #d93838;
+  font-size: 12.5px;
   font-family: 'Inter', system-ui, sans-serif;
   font-weight: 500;
   border-radius: 20px;
-  padding: 5px 12px;
+  padding: 6px 12px;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition: all 0.2s ease;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.linh-panel__quick-icon {
+  font-size: 14px;
+  line-height: 1;
 }
 
 .linh-panel__quick-btn:hover {
@@ -276,4 +329,38 @@
 .linh-panel__send:disabled {
   opacity: 0.35;
   cursor: not-allowed;
+}
+
+/* ── Markdown content in bubbles ───────────────────────────── */
+.linh-msg__bubble .md-para {
+  margin: 0 0 6px 0;
+  line-height: 1.6;
+}
+
+.linh-msg__bubble .md-para:last-child {
+  margin-bottom: 0;
+}
+
+.linh-msg__bubble .md-list {
+  margin: 4px 0 6px 0;
+  padding-left: 18px;
+  line-height: 1.6;
+}
+
+.linh-msg__bubble .md-list li {
+  margin-bottom: 3px;
+}
+
+.linh-msg__bubble .md-heading-2 {
+  font-weight: 700;
+  font-size: 13px;
+  margin: 8px 0 4px 0;
+  color: #eb4c4c;
+}
+
+.linh-msg__bubble .md-heading-3 {
+  font-weight: 600;
+  font-size: 12.5px;
+  margin: 6px 0 3px 0;
+  color: #c0392b;
 }

@@ -244,7 +244,7 @@ export function EditorPage() {
       <AIRemoveObjectModal />
 
       {/* ── DearLove AI Chatbot ──────────────── */}
-      {/* <LinhAIWidget /> */}
+      <LinhAIWidget />
     </div>
   );
 }

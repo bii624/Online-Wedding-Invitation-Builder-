@@ -773,7 +773,7 @@ export const Overview = () => {
                         title: card.title || 'Chưa có tiêu đề',
                         slug: card.slug,
                         thumbnailUrl: card.thumbnailUrl || card.settings?.coverImage || null,
-                        isPublished: card.status === 'published' || card.isPublic,
+                        isPublished: card.status === 'published',
                         viewCount: card.viewCount || 0,
                         updatedAt: card.updatedAt
                       }}

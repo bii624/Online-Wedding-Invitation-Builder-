@@ -1,0 +1,392 @@
+/* ============================================================
+   DearLove AI - Rich Cards  (v3 — project colors #eb4c4c)
+   ============================================================ */
+
+/* ─── Section label ────────────────────────────────────────── */
+.rich-cards__label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #eb4c4c;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: "Inter", system-ui, sans-serif;
+  margin-bottom: 6px;
+  padding-left: 2px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.rich-cards__label::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 2px;
+  background: #eb4c4c;
+  border-radius: 2px;
+}
+
+/* ─── Container ────────────────────────────────────────────── */
+.rich-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 6px;
+  width: 100%;
+  /* nền nhẹ nổi bật trong khung chat */
+  background: #fffafa;
+  /* Màu hồng nhạt */
+  border: 1px solid #fde8e8;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 2px 10px rgba(235, 76, 76, 0.05);
+}
+
+.rich-cards--row {
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 10px;
+  padding-bottom: 6px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  background: linear-gradient(135deg, #fff8f8 0%, #fff0f0 100%);
+}
+
+.rich-cards--row::-webkit-scrollbar {
+  height: 3px;
+}
+
+.rich-cards--row::-webkit-scrollbar-thumb {
+  background: #eb4c4c;
+  border-radius: 99px;
+}
+
+/* ─── Base card ─────────────────────────────────────────────── */
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rich-card {
+  background: #ffffff;
+  border: 1px solid #fcd4d4;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.16s ease, border-color 0.16s;
+  flex-shrink: 0;
+  animation: cardIn 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.rich-card:hover {
+  box-shadow: 0 4px 16px rgba(235, 76, 76, 0.15);
+  transform: translateY(-1px);
+  border-color: #eb4c4c;
+}
+
+/* ─── Badge ──────────────────────────────────────────────────── */
+.rich-card__badge {
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 99px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  letter-spacing: 0.2px;
+}
+
+.rich-card__badge--green {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.rich-card__badge--red {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.rich-card__badge--blue {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.rich-card__badge--gray {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.rich-card__badge--pink {
+  background: #fde8e8;
+  color: #eb4c4c;
+  border: 1px solid #fcd4d4;
+}
+
+/* ─── Action button ─────────────────────────────────────────── */
+.rich-card__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 11px;
+  background: #eb4c4c;
+  border: none;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+  font-family: "Inter", system-ui, sans-serif;
+  text-decoration: none;
+  transition: background 0.15s, transform 0.12s;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(235, 76, 76, 0.28);
+  flex-shrink: 0;
+}
+
+.rich-card__action:hover {
+  background: #d93838;
+  transform: scale(1.04);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TEMPLATE CARD  (horizontal scroll row)
+   ═══════════════════════════════════════════════════════════════ */
+.rich-card--template {
+  width: 148px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+}
+
+.rich-card__thumbnail {
+  width: 100%;
+  height: 92px;
+  object-fit: cover;
+  display: block;
+}
+
+.rich-card__thumbnail-placeholder {
+  width: 100%;
+  height: 92px;
+  background: linear-gradient(135deg, #fde8e8 0%, #fff0f0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+
+.rich-card__body {
+  padding: 8px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.rich-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px;
+  margin-bottom: 2px;
+}
+
+.rich-card__title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #1a1a2e;
+  font-family: "Inter", system-ui, sans-serif;
+  line-height: 1.35;
+  flex: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.rich-card__subtitle {
+  font-size: 10.5px;
+  color: #9ca3af;
+  font-family: "Inter", system-ui, sans-serif;
+  margin-bottom: 2px;
+}
+
+/* Meta (template) */
+.rich-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 8px;
+  margin: 2px 0 6px;
+}
+
+.rich-card__meta-item {
+  font-size: 10.5px;
+  color: #6b7280;
+  font-family: "Inter", system-ui, sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.rich-card__meta-label {
+  color: #b0b7c3;
+}
+
+.rich-card__meta-value {
+  font-weight: 700;
+  color: #4b5563;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MY-CARD  (full-width, 3-column grid)
+   ═══════════════════════════════════════════════════════════════ */
+.rich-card--my-card {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  align-items: flex-start; /* Canh lề trên cùng của hình */
+  gap: 14px;
+  padding: 12px;
+}
+
+.rich-card__card-thumb {
+  width: 76px;
+  height: 108px; /* Chiều cao cố định theo tỷ lệ thẻ dọc (portrait) */
+  border-radius: 8px; /* Bo tròn đều 4 góc */
+  object-fit: cover;
+  background: linear-gradient(135deg, #fde8e8, #fcd4d4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+  border: 1px solid #fcd4d4;
+}
+
+.rich-card__card-content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Đẩy nội dung lên trên */
+  align-items: flex-start;
+  text-align: left;
+  gap: 2px;
+  padding: 0;
+}
+
+/* title inside my-card: 1 line only */
+.rich-card--my-card .rich-card__title {
+  font-size: 13px;
+  font-weight: 700;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  /* Hiện tối đa 2 dòng */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: #1a1a2e;
+  margin-bottom: 2px;
+  width: 100%;
+  text-align: left;
+}
+
+.rich-card__card-meta {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  /* Giảm gap một chút */
+  flex-wrap: wrap;
+  /* Cho phép rớt dòng NẾU quá chật, nhưng nguyên cục không vỡ */
+  margin-top: 1px;
+}
+
+.rich-card__card-stat {
+  font-size: 10.5px;
+  color: #9ca3af;
+  font-family: "Inter", system-ui, sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+  /* Đảm bảo "Lời chúc: 0" không bao giờ vỡ xuống dòng */
+}
+
+.rich-card__card-stat strong {
+  color: #eb4c4c;
+  font-weight: 700;
+}
+
+/* shared subtitle / date */
+.rich-card__list-sub {
+  font-size: 10.5px;
+  color: #b0b7c3;
+  font-family: "Inter", system-ui, sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* badge row inside my-card header (above subtitle) */
+.rich-card--my-card .rich-card__header {
+  display: flex;
+  flex-direction: column;
+  /* Đổi thành column để title luôn chiếm trọn dòng đầu, badge ở dưới hoặc kế bên */
+  align-items: flex-start;
+  gap: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LIST CARD  (RSVP / Wish)
+   ═══════════════════════════════════════════════════════════════ */
+.rich-card--list {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+}
+
+.rich-card__avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f8b4c8, #eb4c4c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  font-family: "Inter", system-ui, sans-serif;
+  flex-shrink: 0;
+  box-shadow: 0 2px 5px rgba(235, 76, 76, 0.22);
+}
+
+.rich-card__list-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.rich-card__list-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #1a1a2e;
+  font-family: "Inter", system-ui, sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rich-card__list-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}

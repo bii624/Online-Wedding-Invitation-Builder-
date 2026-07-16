@@ -43,6 +43,7 @@ interface CardData {
   thumbnailUrl?: string;
   createdAt: string;
   updatedAt: string;
+  status: string;
   settings?: any;
 }
 
@@ -92,10 +93,10 @@ export default function CardDetailPage() {
     }
   };
 
-  const handleUpdateStatus = async (isPublic: boolean) => {
+  const handleUpdateStatus = async (newStatus: string) => {
     try {
-      await cardsApi.updateCard(id!, { isPublic });
-      setCard((prev) => prev ? ({ ...prev, isPublic }) : prev);
+      await cardsApi.updateCard(id!, { status: newStatus });
+      setCard((prev) => prev ? ({ ...prev, status: newStatus }) : prev);
       setShowPublishDropdown(false);
       toast.success('Cập nhật trạng thái thành công');
     } catch (error) {
@@ -422,13 +423,13 @@ export default function CardDetailPage() {
             <div className="relative">
               <button
                 onClick={() => setShowPublishDropdown(!showPublishDropdown)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium text-sm transition-all border ${card.isPublic
+                className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium text-sm transition-all border ${card.status === 'published'
                   ? 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100'
                   : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
                   }`}
               >
-                {card.isPublic ? <Globe size={16} /> : <Lock size={16} />}
-                {card.isPublic ? 'Đang công khai' : 'Bản nháp'}
+                {card.status === 'published' ? <Globe size={16} /> : <Lock size={16} />}
+                {card.status === 'published' ? 'Đang công khai' : 'Bản nháp'}
                 <ChevronDown size={14} className="ml-1 opacity-70" />
               </button>
 
@@ -436,18 +437,18 @@ export default function CardDetailPage() {
               {showPublishDropdown && (
                 <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-slate-100 shadow-xl rounded-xl p-1 z-20">
                   <button
-                    onClick={() => handleUpdateStatus(true)}
+                    onClick={() => handleUpdateStatus('published')}
                     className="w-full flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-slate-50 rounded-lg text-emerald-600 font-medium"
                   >
                     <Globe size={16} /> Xuất bản
-                    {card.isPublic && <Check size={14} className="ml-auto" />}
+                    {card.status === 'published' && <Check size={14} className="ml-auto" />}
                   </button>
                   <button
-                    onClick={() => handleUpdateStatus(false)}
+                    onClick={() => handleUpdateStatus('draft')}
                     className="w-full flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-slate-50 rounded-lg text-slate-600 font-medium"
                   >
                     <Lock size={16} /> Bản nháp
-                    {!card.isPublic && <Check size={14} className="ml-auto" />}
+                    {card.status !== 'published' && <Check size={14} className="ml-auto" />}
                   </button>
                 </div>
               )}

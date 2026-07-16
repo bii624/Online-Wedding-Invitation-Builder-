@@ -1,5 +1,10 @@
 export const WEDDING_KNOWLEDGE = [
   {
+    topic: "Kiêng Kỵ Cưới Hỏi Vào Tháng 7 Âm Lịch (Tháng Cô Hồn)",
+    content:
+      "Theo quan niệm dân gian Việt Nam, tháng 7 âm lịch (còn gọi là tháng cô hồn, tháng ngâu) là thời điểm Diêm Vương mở cửa Quỷ Môn Quan để các vong hồn quay về dương thế. Đây là tháng mang nhiều âm khí, xui xẻo, gắn liền với sự tích Ngưu Lang - Chức Nữ chia ly, cách trở. Do đó, người Việt cực kỳ kiêng kỵ việc tổ chức các việc trọng đại trong tháng 7 âm lịch, đặc biệt là cưới hỏi, xây nhà, khai trương. Việc kết hôn vào tháng này được cho là sẽ dẫn đến cuộc sống vợ chồng bất hòa, chia ly, hoặc gặp nhiều sóng gió. Nếu tính theo dương lịch, tháng 7 âm lịch thường rơi vào khoảng tháng 8 hoặc tháng 9 dương lịch, nhưng ngay cả tháng 7 dương lịch cũng thường bị nhiều gia đình hạn chế vì tâm lý e ngại thời tiết mưa bão (mùa ngâu). Vì vậy, khi được hỏi về việc cưới xin vào tháng 7 (âm lịch hay dương lịch), tuyệt đối không nên khuyên người dùng tổ chức mà nên nhắc nhở họ về quan niệm kiêng kỵ này để họ cân nhắc kỹ lưỡng."
+  },
+  {
     topic: "Triết Lý Hôn Nhân Trong Văn Hóa Việt Nam",
     content:
       "Đối với người Việt, hôn nhân không chỉ là sự gắn kết giữa hai cá nhân mà còn là sự kết nối giữa hai gia đình, hai dòng họ và tổ tiên của cả hai bên. Một đám cưới truyền thống luôn đề cao chữ Hiếu, chữ Lễ và chữ Nghĩa. Mọi nghi thức từ dạm ngõ, ăn hỏi đến lễ cưới đều mang ý nghĩa xin phép tổ tiên, nhận được sự đồng thuận của hai gia đình và công khai sự kiện trọng đại trước cộng đồng. Trong văn hóa Việt Nam, sự thành công của một cuộc hôn nhân không được đánh giá bằng quy mô tiệc cưới mà bằng sự hòa thuận, tôn trọng lẫn nhau, trách nhiệm với gia đình và sự bền vững của đời sống hôn nhân."
