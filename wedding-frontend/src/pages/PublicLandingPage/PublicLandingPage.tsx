@@ -103,7 +103,7 @@ export const videoSlideTemplates = [
     id: "slide-1",
     name: "VIDEO 1",
     code: "SLIDE-01",
-    category: "VIDEO SLIDE 4K",
+    category: "Slide thuong",
     thumbnail: "/slide-thumb-1.png",
     driveUrl: "https://drive.google.com/file/d/1R7SQNED8w49u0l395aBFA80PcbgGUfIn/view?usp=sharing",
     embedUrl: "https://drive.google.com/file/d/1R7SQNED8w49u0l395aBFA80PcbgGUfIn/preview",
@@ -112,7 +112,7 @@ export const videoSlideTemplates = [
     id: "slide-2",
     name: "VIDEO 2",
     code: "SLIDE-02",
-    category: "VIDEO CHIBI",
+    category: "Slide thuong",
     thumbnail: "/slide-thumb-2.png",
     driveUrl: "https://drive.google.com/file/d/1npz4V_asWZhnYQ3wqCdUkiVUxtVo4STU/view",
     embedUrl: "https://drive.google.com/file/d/1npz4V_asWZhnYQ3wqCdUkiVUxtVo4STU/preview",
@@ -121,7 +121,7 @@ export const videoSlideTemplates = [
     id: "slide-3",
     name: "VIDEO 3",
     code: "SLIDE-03",
-    category: "MÀN HÌNH CHỜ",
+    category: "Slide thuong",
     thumbnail: "/slide-thumb-3.jpg",
     driveUrl: "https://drive.google.com/file/d/1RLSYSGRbbxCOzcFGqt-vk7L6cC5RrMnu/view",
     embedUrl: "https://drive.google.com/file/d/1RLSYSGRbbxCOzcFGqt-vk7L6cC5RrMnu/preview",
@@ -130,7 +130,7 @@ export const videoSlideTemplates = [
     id: "slide-4",
     name: "VIDEO 4",
     code: "SLIDE-04",
-    category: "SLIDE VINTAGE",
+    category: "Slide chibi",
     thumbnail: "/slide-thumb-4.png",
     driveUrl: "https://drive.google.com/file/d/1F915bn3_4k8eTqGUROqSN_3GPs5Y1lnh/view?usp=sharing",
     embedUrl: "https://drive.google.com/file/d/1F915bn3_4k8eTqGUROqSN_3GPs5Y1lnh/preview",
@@ -345,8 +345,8 @@ const PublicLandingPage: React.FC = () => {
     const fetchTemplates = async () => {
       try {
         const res: any = await templatesApi.getTemplates({ limit: 100 });
-        const items = Array.isArray(res) 
-          ? res 
+        const items = Array.isArray(res)
+          ? res
           : (res?.items || res?.data?.items || res?.data || []);
         if (items && Array.isArray(items) && items.length > 0) {
           setDbTemplates(items);
@@ -1196,11 +1196,11 @@ const PublicLandingPage: React.FC = () => {
 
       {/* Video Demo Embed Modal rendered at document.body level via React Portal */}
       {selectedVideoSlide && createPortal(
-        <div 
+        <div
           onClick={() => setSelectedVideoSlide(null)}
           className="fixed inset-0 z-[99999] bg-zinc-950/90 backdrop-blur-md flex items-center justify-center sm:p-6 animate-in fade-in duration-200"
         >
-          <div 
+          <div
             onClick={(e) => e.stopPropagation()}
             className="relative w-full h-full sm:h-auto sm:w-full sm:max-w-3xl bg-zinc-900 sm:rounded-3xl overflow-hidden shadow-2xl sm:border border-zinc-800 flex flex-col justify-between"
           >
